@@ -38,8 +38,8 @@ class RobertaTextClassification(BaseModel):
         return outputs
 
     def preprocess(self, inputs: str):
-        inputs = Sentence(inputs).normalize().filter_out(['#', '@'])
-        inputs = self.tokenizer(inputs.text, return_tensors='pt')
+        inputs = Sentence(inputs, tokenizer=self.tokenizer)
+        inputs = inputs.normalize().filter_out(['#', '@']).tokenize(return_tensors='pt')
         return inputs
 
     def predict(self, inputs: str, **kwargs) -> Dict:

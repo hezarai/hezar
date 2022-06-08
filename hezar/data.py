@@ -14,10 +14,10 @@ class Sentence:
         self.normalizer = normalizer
         self.tokenizer = tokenizer
 
-    def tokenize(self):
+    def tokenize(self, **kwargs):
         if self.tokenizer is None:
             raise ValueError(f'There was no tokenizer provided for this sentence!')
-        inputs = self.tokenizer(self.text)
+        inputs = self.tokenizer(self.text, **kwargs)
         return inputs
 
     def normalize(self):
