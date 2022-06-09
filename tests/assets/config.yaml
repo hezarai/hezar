@@ -1,6 +1,0 @@
-model:
-  layers: 4
-trainer:
-  batch_size: 32
-dataset:
-  shuffle: true

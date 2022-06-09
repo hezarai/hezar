@@ -4,7 +4,7 @@ from typing import Dict, Type
 from hezar.configs import ModelConfig
 
 
-class BaseModel(metaclass=abc.ABC):
+class BaseModel(abc.ABC):
     def __init__(self, **kwargs):
         super(BaseModel, self).__init__()
         self.model = self.build_model()

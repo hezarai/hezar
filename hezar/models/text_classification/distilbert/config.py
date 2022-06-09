@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+from omegaconf import DictConfig
 from hezar.configs import ModelConfig
 
 

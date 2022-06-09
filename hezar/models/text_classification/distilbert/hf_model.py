@@ -8,7 +8,7 @@ from hezar.models.base_model import BaseModel
 from hezar.data import Sentence
 from hezar.utils.hub_utils import load_state_dict_from_hub
 
-from config import DistilBertTextClassificationConfig
+from .config import DistilBertTextClassificationConfig
 
 
 class DistilBertTextClassification(BaseModel):
@@ -30,7 +30,7 @@ class DistilBertTextClassification(BaseModel):
         config = DistilBertTextClassificationConfig.from_pretrained(path)
         model = cls(config, **kwargs)
         state_dict = load_state_dict_from_hub(path)
-        model.model.load_state_dict(state_dict)
+        model.model.load_state_dict(state_dict, strict=False)
         return model
 
     def forward(self, inputs: torch.Tensor, **kwargs) -> Dict:

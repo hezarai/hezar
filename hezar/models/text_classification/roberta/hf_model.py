@@ -1,3 +1,6 @@
+"""
+A Roberta model for text classification using transformers.RobertaForSequenceClassification
+"""
 from typing import Dict, Union
 
 import torch
@@ -8,7 +11,7 @@ from hezar.models.base_model import BaseModel
 from hezar.data import Sentence
 from hezar.utils.hub_utils import load_state_dict_from_hub
 
-from config import RobertaTextClassificationConfig
+from .config import RobertaTextClassificationConfig
 
 
 class RobertaTextClassification(BaseModel):
