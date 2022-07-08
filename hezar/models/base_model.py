@@ -1,14 +1,14 @@
 import abc
 from typing import Dict, Type
 
-from hezar.configs import ModelConfig
+from hezar import ModelConfig, merge_kwargs_into_config
 
 
 class BaseModel(abc.ABC):
-    def __init__(self, **kwargs):
+    def __init__(self, config: ModelConfig, **kwargs):
         super(BaseModel, self).__init__()
+        self.config = merge_kwargs_into_config(config, kwargs)
         self.model = self.build_model()
-        self.__dict__.update(kwargs)
 
     def __str__(self):
         return self.model

@@ -16,8 +16,7 @@ from .config import RobertaTextClassificationConfig
 
 class RobertaTextClassification(BaseModel):
     def __init__(self, config: RobertaTextClassificationConfig, **kwargs):
-        super(RobertaTextClassification, self).__init__()
-        self.config = config
+        super(RobertaTextClassification, self).__init__(config, **kwargs)
         self.vocab_size = self.config.vocab_size
         self.pretrained_path = self.config.pretrained_path
         self.tokenizer = transformers.RobertaTokenizer.from_pretrained(self.pretrained_path)

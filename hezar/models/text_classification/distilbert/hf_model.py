@@ -13,12 +13,10 @@ from .config import DistilBertTextClassificationConfig
 
 class DistilBertTextClassification(BaseModel):
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
-        super(DistilBertTextClassification, self).__init__()
-        self.config = config
+        super(DistilBertTextClassification, self).__init__(config, **kwargs)
         self.vocab_size = self.config.vocab_size
         self.pretrained_path = self.config.pretrained_path
         self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(self.pretrained_path)
-        self.__dict__.update(kwargs)
 
     def build_model(self):
         model_config = transformers.DistilBertConfig(vocab_size=self.vocab_size)
