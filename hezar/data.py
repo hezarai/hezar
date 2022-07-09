@@ -6,7 +6,6 @@ from typing import Union, Optional, Literal, List
 from dataclasses import dataclass, field
 
 
-@dataclass
 class Sentence:
     def __init__(self, text: str, language=None, normalizer=None, tokenizer=None):
         self.text = text
@@ -30,10 +29,10 @@ class Sentence:
         return Sentence(self.text, self.language, self.normalizer, self.tokenizer)
 
 
-@dataclass
 class Image:
-    path: Union[os.PathLike, str]
-    LIB = Literal['opencv', 'pil']
+    def __init__(self, path: Union[os.PathLike, str], lib: Literal['opencv', 'pil'] = 'opencv') -> None:
+        self.path = path
+        self.lib = lib
 
     @classmethod
     def load(cls, path, lib: LIB):
@@ -44,6 +43,6 @@ class Image:
             import PIL.Image as Image
             image = Image.open(path).convert('RGB')
         else:
-            raise ValueError(f'Invalid value for `lib` : {lib}, expected {cls.LIB}')
+            raise ValueError(f'Invalid value for `lib` : {lib}, expected {cls.lib}')
 
         return image
