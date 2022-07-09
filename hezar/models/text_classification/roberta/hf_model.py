@@ -20,7 +20,6 @@ class RobertaTextClassification(BaseModel):
         self.vocab_size = self.config.vocab_size
         self.pretrained_path = self.config.pretrained_path
         self.tokenizer = transformers.RobertaTokenizer.from_pretrained(self.pretrained_path)
-        self.__dict__.update(kwargs)
 
     def build_model(self):
         model_config = transformers.RobertaConfig(vocab_size=self.vocab_size)
