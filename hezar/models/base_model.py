@@ -1,7 +1,8 @@
 import abc
 from typing import Dict, Type
 
-from hezar import ModelConfig, merge_kwargs_into_config
+from ..configs import ModelConfig
+from ..utils import merge_kwargs_into_config
 
 
 class BaseModel(abc.ABC):

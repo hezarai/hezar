@@ -15,11 +15,11 @@ class DistilBertTextClassification(BaseModel):
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super(DistilBertTextClassification, self).__init__(config, **kwargs)
         self.vocab_size = self.config.vocab_size
-        self.pretrained_path = self.config.pretrained_path
-        self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(self.pretrained_path)
+        self.hf_pretrained_path = self.config.hf_pretrained_path
+        self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(self.hf_pretrained_path)
 
     def build_model(self):
-        model_config = transformers.DistilBertConfig(vocab_size=self.vocab_size)
+        model_config = transformers.DistilBertConfig(vocab_size=self.config.vocab_size)
         model = transformers.DistilBertForSequenceClassification(model_config)
         return model
 
