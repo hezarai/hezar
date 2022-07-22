@@ -20,7 +20,7 @@ def load_config_from_hub(path_name: str, filename='config.yaml'):
     return dict_config
 
 
-def load_state_dict_from_hub(path_name: str, filename='pytorch_model.pt'):
+def load_state_dict_from_hub(path_name: str, filename='pytorch_model.bin'):
     """
     Load a PyTorch model state dict from HuggingFace Hub
     """
