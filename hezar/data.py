@@ -2,8 +2,10 @@
 General classes for different data types.
 """
 import os
-from typing import Union, Optional, Literal, List
-from dataclasses import dataclass, field
+from typing import *
+
+import PIL
+import numpy as np
 
 
 class Sentence:
@@ -30,19 +32,30 @@ class Sentence:
 
 
 class Image:
-    def __init__(self, path: Union[os.PathLike, str], lib: Literal['opencv', 'pil'] = 'opencv') -> None:
+    def __init__(self, path: Union[os.PathLike, str], lib: Literal['np', 'torch', 'tf']):
         self.path = path
         self.lib = lib
+        self.pil_image = PIL.Image.open(self.path).convert('RGB')
+        self.np_image = np.array(self.pil_image)
+        self._image = self.load()
 
-    @classmethod
-    def load(cls, path, lib: LIB):
-        if lib == 'opencv':
-            import cv2
-            image = cv2.imread(path)
-        elif lib == 'pil':
-            import PIL.Image as Image
-            image = Image.open(path).convert('RGB')
+    def __str__(self):
+        return f'<Hezar.Image> size: {self.pil_image.width}x{self.pil_image.height}, mode: {self.pil_image.mode}'
+
+    def load(self):
+        if self.lib == 'np':
+            return self.np_image
+        elif self.lib == 'pil':
+            return self.pil_image
+        elif self.lib == 'torch':
+            import torch
+            return torch.from_numpy(self.np_image)
+        elif self.lib == 'tf':
+            import tensorflow as tf
+            return tf.convert_to_tensor(self.np_image, dtype=tf.float32)
         else:
-            raise ValueError(f'Invalid value for `lib` : {lib}, expected {cls.lib}')
+            raise ValueError(f'Invalid value for `lib` : `{self.lib}`!')
 
-        return image
+    @property
+    def image(self):
+        return self._image
