@@ -16,7 +16,11 @@ class BaseModel(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def from_pretrained(cls, path, **kwargs):
+    def from_hub(cls, path, **kwargs):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def push_to_hub(self, path, **kwargs):
         raise NotImplementedError
 
     @abc.abstractmethod
