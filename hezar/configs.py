@@ -22,7 +22,7 @@ class BaseConfig:
     )
 
     @classmethod
-    def from_pretrained(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
+    def from_hub(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
         """
         Load config from Hub
         """

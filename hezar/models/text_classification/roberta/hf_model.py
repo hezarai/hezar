@@ -28,7 +28,7 @@ class RobertaTextClassification(BaseModel):
 
     @classmethod
     def from_hub(cls, path, **kwargs):
-        config = RobertaTextClassificationConfig.from_pretrained(path)
+        config = RobertaTextClassificationConfig.from_hub(path)
         model = cls(config, **kwargs)
         state_dict = load_state_dict_from_hub(path)
         model.model.load_state_dict(state_dict)
