@@ -15,6 +15,9 @@ class Sentence:
         self.normalizer = normalizer
         self.tokenizer = tokenizer
 
+    def __str__(self):
+        return f'Sentence(text={self.text}, lang={self.language}, tokenizer={self.tokenizer})'
+
     def tokenize(self, **kwargs):
         if self.tokenizer is None:
             raise ValueError(f'There was no tokenizer provided for this sentence!')
@@ -23,7 +26,7 @@ class Sentence:
 
     def normalize(self):
         # TODO: implement normalization
-        return Sentence(self.text, self.language, self.tokenizer)
+        return Sentence(self.text, self.language, self.normalizer, self.tokenizer)
 
     def filter_out(self, filter_list: List):
         for item in filter_list:

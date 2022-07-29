@@ -22,7 +22,7 @@ class RobertaTextClassification(BaseModel):
         self.tokenizer = transformers.RobertaTokenizer.from_pretrained(self.pretrained_path)
 
     def build_model(self):
-        model_config = transformers.RobertaConfig(vocab_size=self.vocab_size)
+        model_config = transformers.RobertaConfig(**self.config.hf_model_config)
         model = transformers.RobertaForSequenceClassification(model_config)
         return model
 
@@ -34,8 +34,11 @@ class RobertaTextClassification(BaseModel):
         model.model.load_state_dict(state_dict)
         return model
 
-    def forward(self, inputs: torch.Tensor, **kwargs) -> Dict:
-        outputs = self.model(input_ids=inputs, **kwargs)
+    def push_to_hub(self, path, **kwargs):
+        ...
+
+    def forward(self, inputs: transformers.BatchEncoding, **kwargs) -> Dict:
+        outputs = self.model(**inputs, **kwargs)
         return outputs
 
     def preprocess(self, inputs: str):
@@ -45,7 +48,7 @@ class RobertaTextClassification(BaseModel):
 
     def predict(self, inputs: str, **kwargs) -> Dict:
         inputs = self.preprocess(inputs)
-        outputs = self.forward(**inputs, **kwargs)
+        outputs = self.forward(inputs, **kwargs)
         processed_outputs = self.postprocess(outputs)
         return processed_outputs
 

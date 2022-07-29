@@ -34,18 +34,18 @@ class DistilBertTextClassification(BaseModel):
     def push_to_hub(self, path, **kwargs):
         ...
 
-    def forward(self, inputs: torch.Tensor, **kwargs) -> Dict:
-        outputs = self.model(input_ids=inputs, **kwargs)
+    def forward(self, inputs: transformers.BatchEncoding, **kwargs) -> Dict:
+        outputs = self.model(**inputs, **kwargs)
         return outputs
 
     def preprocess(self, inputs: str):
-        inputs = Sentence(inputs).normalize().filter_out(['#', '@'])
-        inputs = self.tokenizer(inputs.text, return_tensors='pt')
+        inputs = Sentence(inputs, tokenizer=self.tokenizer)
+        inputs = inputs.normalize().filter_out(['#', '@']).tokenize(return_tensors='pt')
         return inputs
 
     def predict(self, inputs: str, **kwargs) -> Dict:
         inputs = self.preprocess(inputs)
-        outputs = self.forward(**inputs, **kwargs)
+        outputs = self.forward(inputs, **kwargs)
         processed_outputs = self.postprocess(outputs)
         return processed_outputs
 
