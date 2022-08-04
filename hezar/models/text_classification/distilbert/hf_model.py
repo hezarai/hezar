@@ -4,10 +4,10 @@ import torch
 import torch.nn as nn
 import transformers
 
-from hezar.models.base_model import BaseModel
 from hezar.data import Sentence
 from hezar.utils.hub_utils import load_state_dict_from_hub
 
+from ...base_model import BaseModel
 from .config import DistilBertTextClassificationConfig
 
 
