@@ -1,11 +1,11 @@
-import abc
-from typing import Dict, Type
+from abc import abstractmethod, ABC
+from typing import Dict
 
 from ..configs import ModelConfig
 from ..utils import merge_kwargs_into_config
 
 
-class BaseModel(abc.ABC):
+class BaseModel(ABC):
     def __init__(self, config: ModelConfig, **kwargs):
         super(BaseModel, self).__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
@@ -15,26 +15,34 @@ class BaseModel(abc.ABC):
         return self.model
 
     @classmethod
-    @abc.abstractmethod
+    @abstractmethod
     def from_hub(cls, path, **kwargs):
         raise NotImplementedError
 
-    @abc.abstractmethod
+    @abstractmethod
     def push_to_hub(self, path, **kwargs):
         raise NotImplementedError
 
-    @abc.abstractmethod
+    @abstractmethod
     def build_model(self):
         raise NotImplementedError
 
-    @abc.abstractmethod
+    @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:
         raise NotImplementedError
 
-    @abc.abstractmethod
+    @abstractmethod
     def predict(self, inputs, **kwargs) -> Dict:
         raise NotImplementedError
 
-    @abc.abstractmethod
+    @abstractmethod
     def postprocess(self, inputs, **kwargs) -> Dict:
+        raise NotImplementedError
+
+    @abstractmethod
+    def train_batch(self, inputs, **kwargs) -> Dict:
+        raise NotImplementedError
+
+    @abstractmethod
+    def eval_batch(self, inputs, **kwargs) -> Dict:
         raise NotImplementedError

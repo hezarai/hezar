@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+
 from omegaconf import DictConfig
 
 from hezar.configs import ModelConfig
@@ -12,4 +13,3 @@ class DistilBertTextClassificationConfig(ModelConfig):
     framework = 'pt'
     task = 'text classification'
     vocab_size: int = field(default=10000)
-
