@@ -8,7 +8,7 @@ import PIL
 import numpy as np
 
 
-class Sentence:
+class Text:
     def __init__(self, text: str, language=None, normalizer=None, tokenizer=None):
         self.text = text
         self.language = language
@@ -26,12 +26,12 @@ class Sentence:
 
     def normalize(self):
         # TODO: implement normalization
-        return Sentence(self.text, self.language, self.normalizer, self.tokenizer)
+        return Text(self.text, self.language, self.normalizer, self.tokenizer)
 
     def filter_out(self, filter_list: List):
         for item in filter_list:
             self.text.replace(item, '')
-        return Sentence(self.text, self.language, self.normalizer, self.tokenizer)
+        return Text(self.text, self.language, self.normalizer, self.tokenizer)
 
 
 class Image:

@@ -2,7 +2,7 @@ from typing import Dict
 
 import transformers
 
-from hezar.data import Sentence
+from hezar.data import Text
 from hezar.models.base_model import BaseModel
 from hezar.utils.hub_utils import load_state_dict_from_hub
 from .config import DistilBertTextClassificationConfig
@@ -36,7 +36,7 @@ class DistilBertTextClassification(BaseModel):
         return outputs
 
     def preprocess(self, inputs: str):
-        inputs = Sentence(inputs, tokenizer=self.tokenizer)
+        inputs = Text(inputs, tokenizer=self.tokenizer)
         inputs = inputs.normalize().filter_out(['#', '@']).tokenize(return_tensors='pt')
         return inputs
 
