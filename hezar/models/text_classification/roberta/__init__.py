@@ -1,2 +1,2 @@
-from .hf_model import RobertaTextClassification
 from .config import RobertaTextClassificationConfig
+from .hf_model import RobertaTextClassification

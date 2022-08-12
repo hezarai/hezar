@@ -1,7 +1,6 @@
 import json
 import os
 from typing import Dict, Union
-import json
 
 import omegaconf
 from omegaconf import DictConfig

@@ -1,5 +1,4 @@
-from hezar.configs import BaseConfig, ModelConfig, TrainerConfig, DatasetConfig
-from hezar.models import RobertaTextClassificationConfig
+from hezar.configs import ModelConfig
 
 
 def test_load_config(path):

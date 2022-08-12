@@ -1,10 +1,8 @@
 import os
-from typing import *
 
 import torch
-import torch.nn as nn
-from omegaconf import OmegaConf, DictConfig
-from huggingface_hub import HfApi, Repository, hf_hub_url, cached_download, hf_hub_download
+from huggingface_hub import hf_hub_download
+from omegaconf import OmegaConf
 
 HEZAR_REPO_ID = 'hezar-ai'
 HEZAR_CACHE_DIR = f'{os.path.expanduser("~")}/.hezar'
@@ -29,5 +27,3 @@ def load_state_dict_from_hub(path_name: str, filename='pytorch_model.bin'):
     model_state_dict = torch.load(cached_file_path)
 
     return model_state_dict
-
-

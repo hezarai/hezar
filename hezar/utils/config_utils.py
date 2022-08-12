@@ -1,5 +1,3 @@
-from typing import *
-import os
 import logging
 
 

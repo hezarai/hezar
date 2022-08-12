@@ -1,12 +1,11 @@
-import abc
 import os
 import copy
-from typing import Union, Dict, Literal, Type
+import os
 from dataclasses import dataclass, field
+from typing import Union, Dict, Literal
 
-from omegaconf import OmegaConf, DictConfig
+from omegaconf import DictConfig
 
-from hezar.utils.io import flatten_dict
 from hezar.utils.hub_utils import load_config_from_hub
 
 CONFIG_CLASS = Literal['base', 'model', 'trainer', 'dataset']

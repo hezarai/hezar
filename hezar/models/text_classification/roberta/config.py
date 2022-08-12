@@ -10,4 +10,3 @@ class RobertaTextClassificationConfig(ModelConfig):
     framework = 'pt'
     task = 'text classification'
     vocab_size: int = field(default=10000)
-
