@@ -1,4 +1,4 @@
-from hezar import DistilBertTextClassification, RobertaTextClassification
+from hezar.models.text_classification import DistilBertTextClassification, RobertaTextClassification
 
 
 def test_build_distilbert_text_classification():

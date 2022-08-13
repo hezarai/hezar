@@ -3,11 +3,13 @@ from typing import Dict
 import transformers
 
 from hezar.data import Text
+from hezar.models import register_model
 from hezar.models.base_model import BaseModel
 from hezar.utils.hub_utils import load_state_dict_from_hub
 from .config import DistilBertTextClassificationConfig
 
 
+@register_model(model_name='distilbert-text-classification', model_config=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(BaseModel):
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super(DistilBertTextClassification, self).__init__(config, **kwargs)
