@@ -6,11 +6,13 @@ from typing import Dict
 import transformers
 
 from hezar.data import Text
+from hezar.models import register_model
 from hezar.models.base_model import BaseModel
 from hezar.utils.hub_utils import load_state_dict_from_hub
 from .config import RobertaTextClassificationConfig
 
 
+@register_model(model_name='roberta_text_classification', model_config=RobertaTextClassificationConfig)
 class RobertaTextClassification(BaseModel):
     def __init__(self, config: RobertaTextClassificationConfig, **kwargs):
         super(RobertaTextClassification, self).__init__(config, **kwargs)

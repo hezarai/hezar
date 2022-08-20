@@ -9,7 +9,7 @@ from hezar.utils.hub_utils import load_state_dict_from_hub
 from .config import DistilBertTextClassificationConfig
 
 
-@register_model(model_name='distilbert-text-classification', model_config=DistilBertTextClassificationConfig)
+@register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(BaseModel):
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super(DistilBertTextClassification, self).__init__(config, **kwargs)

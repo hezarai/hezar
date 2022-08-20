@@ -12,7 +12,7 @@ class BaseModel(ABC):
         self.model = self.build_model()
 
     def __str__(self):
-        return self.model
+        return self.model.__str__()
 
     @classmethod
     @abstractmethod
