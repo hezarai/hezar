@@ -25,15 +25,18 @@ def register_model(model_name, model_config):
 
 
 def import_models(models_dir, namespace):
-    for file in os.listdir(models_dir):
-        path = os.path.join(models_dir, file)
-        if (
-                not file.startswith("_")
-                and not file.startswith(".")
-                and (file.endswith(".py") or os.path.isdir(path))
-        ):
-            model_name = file[: file.find(".py")] if file.endswith(".py") else file
-            importlib.import_module(namespace + "." + model_name)
+    tasks_dir = os.listdir(models_dir)
+    for module in tasks_dir:
+        path = os.path.join(models_dir, module)
+        if not module.startswith('_') and not module.startswith('.') and os.path.isdir(path):
+            for file in os.listdir(path):
+                if (
+                        not file.startswith("_")
+                        and not file.startswith(".")
+                        and (file.endswith(".py") or os.path.isdir(path))
+                ):
+                    model_name = module[: module.find(".py")] if file.endswith(".py") else file
+                    importlib.import_module(f'{namespace}.{module}.{model_name}')
 
 
 import_models(os.path.dirname(__file__), "hezar.models")
