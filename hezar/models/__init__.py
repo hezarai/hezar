@@ -16,16 +16,14 @@ __all__ = [
 models_registry = {}
 
 
-def register_model(model_name, model_config):
+def register_model(model_name: str, model_config: ModelConfig):
     def register_model_class(cls):
         if model_name in models_registry:
             raise ValueError(f'Requested model `{model_name}` already exists in the registry!')
         if not issubclass(cls, BaseModel):
             raise ValueError(f'The model class for `{model_name}: {cls.__name__}` must extend `BaseModel`!')
-        if not issubclass(model_config, ModelConfig):
-            raise ValueError(
-                f'The model config for `{model_config}: {model_config.__name__}` must extend `ModelConfig`!')
 
+        model_config.name = model_name
         models_registry[model_name] = dict(model_class=cls, model_config=model_config)
 
         return cls
