@@ -1,14 +1,16 @@
 import os
 import copy
 import os
-from dataclasses import dataclass, field
-from typing import Union, Dict, Literal
+from dataclasses import dataclass, field, asdict
+from typing import *
 
+import torch
+from torch import Tensor
 from omegaconf import DictConfig
 
 from hezar.utils.hub_utils import load_config_from_hub
 
-CONFIG_CLASS = Literal['base', 'model', 'trainer', 'dataset']
+CONFIG_CLASS = Literal['base', 'model', 'dataset', 'task']
 
 
 @dataclass
@@ -19,6 +21,7 @@ class BaseConfig:
             'help': "The category this config is responsible for"
         }
     )
+    dict = asdict
 
     @classmethod
     def from_hub(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
@@ -61,36 +64,8 @@ class ModelConfig(BaseConfig):
     name: str = field(
         default=None,
         metadata={
-            'help': "Name of the model's class"
+            'help': "Name of the model's key in the models_registry"
         })
-    framework: str = field(
-        default=None,
-        metadata={
-            'help': 'ML/DL framework this model is built with, e.g. PyTorch, TensorFlow, etc'
-        }
-    )
-    task: str = field(
-        default=None,
-        metadata={
-            'help': 'The task name this model is built for, e.g. ImageCaptioning, TextClassification, etc.'
-        }
-    )
-
-
-@dataclass
-class TrainerConfig(BaseConfig):
-    config_class = 'trainer'
-    name: str = field(
-        default=None,
-        metadata={
-            'help': 'Name of the trainer'
-        })
-    task: str = field(
-        default=None,
-        metadata={
-            'help': 'The task name this trainer is built for e.g Masked LM, etc.'
-        }
-    )
 
 
 @dataclass
@@ -101,9 +76,60 @@ class DatasetConfig(BaseConfig):
         metadata={
             'help': 'Name of the dataset'
         })
-    task: str = field(
+    task: Union[str, List[str]] = field(
         default=None,
         metadata={
             'help': 'Name of the task(s) this dataset is built for'
         }
     )
+
+
+@dataclass
+class CriterionConfig(BaseConfig):
+    name: str = None
+    weight: Optional[Tensor] = None
+    reduce: str = None
+    ignore_index: int = -100
+
+
+@dataclass
+class OptimizerConfig(BaseConfig):
+    name: str = None
+    lr: float = None
+
+
+@dataclass
+class TaskConfig(BaseConfig):
+    config_class = 'task'
+    device: str = 'cpu'
+    model_name: str = field(
+        default=None,
+        metadata={
+            'help': 'name of the model in the models_registry'
+        })
+    name: str = field(
+        default=None,
+        metadata={
+            'help': 'Name of the task'
+        })
+    model_config: ModelConfig = field(
+        default=None,
+        metadata={
+            'help': 'model config for this task'
+        })
+    dataset_config: DatasetConfig = field(
+        default=None,
+        metadata={
+            'help': 'dataset config for this task'
+        }
+    )
+    criterion_config: CriterionConfig = field(
+        default=None,
+        metadata={
+            'help': 'criterion config for this task'
+        })
+    optimizer_config: OptimizerConfig = field(
+        default=None,
+        metadata={
+            'help': 'optimizer config for this task'
+        })
