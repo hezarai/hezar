@@ -1,5 +1,5 @@
 """
-A Roberta model for text classification using transformers.RobertaForSequenceClassification
+A RoBERTa model for text classification built using HuggingFace Transformers
 """
 from typing import Dict
 
@@ -21,7 +21,7 @@ class RobertaTextClassification(BaseModel):
         self.tokenizer = transformers.RobertaTokenizer.from_pretrained(self.pretrained_path)
 
     def build_model(self):
-        model_config = transformers.RobertaConfig(**self.config.hf_model_config)
+        model_config = transformers.RobertaConfig(**self.config.hft_model_config)
         model = transformers.RobertaForSequenceClassification(model_config)
         return model
 
@@ -58,5 +58,5 @@ class RobertaTextClassification(BaseModel):
     def train_batch(self, inputs, **kwargs) -> Dict:
         ...
 
-    def eval_batch(self, inputs, **kwargs) -> Dict:
+    def evaluate_batch(self, inputs, **kwargs) -> Dict:
         ...

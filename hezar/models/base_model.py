@@ -44,5 +44,5 @@ class BaseModel(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def eval_batch(self, inputs, **kwargs) -> Dict:
+    def evaluate_batch(self, inputs, **kwargs) -> Dict:
         raise NotImplementedError

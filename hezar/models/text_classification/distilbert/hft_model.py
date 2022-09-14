@@ -1,3 +1,7 @@
+"""
+A DistilBERT model for text classification built using HuggingFace Transformers
+"""
+
 from typing import Dict
 
 import transformers
@@ -18,7 +22,7 @@ class DistilBertTextClassification(BaseModel):
         self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(self.pretrained_path)
 
     def build_model(self):
-        model_config = transformers.DistilBertConfig(**self.config.hf_model_config)
+        model_config = transformers.DistilBertConfig(**self.config.hft_model_config)
         model = transformers.DistilBertForSequenceClassification(model_config)
         return model
 
@@ -55,5 +59,5 @@ class DistilBertTextClassification(BaseModel):
     def train_batch(self, inputs, **kwargs) -> Dict:
         ...
 
-    def eval_batch(self, inputs, **kwargs) -> Dict:
+    def evaluate_batch(self, inputs, **kwargs) -> Dict:
         ...

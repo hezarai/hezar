@@ -1,8 +1,17 @@
 import importlib
 import os
 
+from omegaconf import OmegaConf, DictConfig
+
 from .base_model import BaseModel
 from ..configs import ModelConfig
+
+__all__ = [
+    "BaseModel",
+    "ModelConfig",
+    "models_registry",
+    "register_model"
+]
 
 models_registry = {}
 
