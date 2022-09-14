@@ -23,7 +23,7 @@ class DistilBertTextClassification(BaseModel):
         return model
 
     @classmethod
-    def from_hub(cls, path, **kwargs):
+    def from_pretrained(cls, path, **kwargs):
         config = DistilBertTextClassificationConfig.from_hub(path)
         model = cls(config, **kwargs)
         state_dict = load_state_dict_from_hub(path)
