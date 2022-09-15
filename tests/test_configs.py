@@ -2,7 +2,7 @@ from hezar.configs import ModelConfig
 
 
 def test_load_config(path):
-    pretrained_config = ModelConfig.from_hub(path)
+    pretrained_config = ModelConfig.from_pretrained(path)
     return pretrained_config
 
 

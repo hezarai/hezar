@@ -24,9 +24,9 @@ class BaseConfig:
     dict = asdict
 
     @classmethod
-    def from_hub(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
+    def from_pretrained(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
         """
-        Load config from Hub
+        Load config from Hub or locally if it already exists (handled by HfApi)
         """
         kwargs = copy.deepcopy(kwargs)
         config = load_config_from_hub(pretrained_path, filename=filename)
@@ -113,23 +113,23 @@ class TaskConfig(BaseConfig):
             'help': 'Name of the task'
         })
     model_config: ModelConfig = field(
-        default=None,
+        default=ModelConfig(),
         metadata={
             'help': 'model config for this task'
         })
     dataset_config: DatasetConfig = field(
-        default=None,
+        default=DatasetConfig(),
         metadata={
             'help': 'dataset config for this task'
         }
     )
     criterion_config: CriterionConfig = field(
-        default=None,
+        default=CriterionConfig(),
         metadata={
             'help': 'criterion config for this task'
         })
     optimizer_config: OptimizerConfig = field(
-        default=None,
+        default=OptimizerConfig(),
         metadata={
             'help': 'optimizer config for this task'
         })

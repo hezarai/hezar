@@ -39,10 +39,3 @@ class BaseModel(ABC):
     def postprocess(self, inputs, **kwargs) -> Dict:
         raise NotImplementedError
 
-    @abstractmethod
-    def train_batch(self, inputs, **kwargs) -> Dict:
-        raise NotImplementedError
-
-    @abstractmethod
-    def evaluate_batch(self, inputs, **kwargs) -> Dict:
-        raise NotImplementedError

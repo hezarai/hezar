@@ -28,7 +28,7 @@ class DistilBertTextClassification(BaseModel):
 
     @classmethod
     def from_pretrained(cls, path, **kwargs):
-        config = DistilBertTextClassificationConfig.from_hub(path)
+        config = DistilBertTextClassificationConfig.from_pretrained(path)
         model = cls(config, **kwargs)
         state_dict = load_state_dict_from_hub(path)
         model.model.load_state_dict(state_dict, strict=False)
@@ -56,8 +56,3 @@ class DistilBertTextClassification(BaseModel):
         # TODO
         return inputs
 
-    def train_batch(self, inputs, **kwargs) -> Dict:
-        ...
-
-    def evaluate_batch(self, inputs, **kwargs) -> Dict:
-        ...

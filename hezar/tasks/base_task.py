@@ -6,7 +6,7 @@ from hezar.registry import criterions_registry, optimizers_registry
 
 
 class BaseTask(ABC):
-    def __init__(self, config: TaskConfig):
+    def __init__(self, config: TaskConfig, **kwargs):
         self.config = config
         self.device = self.config.device
         self.model_config = self.config.model_config
@@ -28,16 +28,12 @@ class BaseTask(ABC):
         return model
 
     def build_criterion(self):
-        criterion_name = self.criterion_config.name
-        criterion_config = self.criterion_config.dict()
-        criterion = criterions_registry[criterion_name](**criterion_config)
+        criterion = criterions_registry[self.criterion_config.name](**self.criterion_config.dict())
         criterion.to(self.device)
         return criterion
 
     def build_optimizer(self):
-        optimizer_name = self.optimizer_config.name
-        optimizer_config = self.optimizer_config.dict()
-        optimizer = optimizers_registry[optimizer_name](**optimizer_config)
+        optimizer = optimizers_registry[self.optimizer_config.name](**self.optimizer_config.dict())
         return optimizer
 
     @abstractmethod

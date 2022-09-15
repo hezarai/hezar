@@ -1,5 +1,6 @@
 import importlib
 import os
+from typing import *
 
 from omegaconf import OmegaConf, DictConfig
 
@@ -16,7 +17,7 @@ __all__ = [
 models_registry = {}
 
 
-def register_model(model_name: str, model_config: ModelConfig):
+def register_model(model_name: str, model_config: Type[ModelConfig]):
     def register_model_class(cls):
         if model_name in models_registry:
             raise ValueError(f'Requested model `{model_name}` already exists in the registry!')
