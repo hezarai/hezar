@@ -15,6 +15,7 @@ def load_config_from_hub(path_name: str, filename='config.yaml'):
     repo_id = f'{HEZAR_REPO_ID}/{path_name}'
     cached_file_path = hf_hub_download(repo_id=repo_id, filename=filename)
     dict_config = OmegaConf.load(cached_file_path)
+
     return dict_config
 
 
