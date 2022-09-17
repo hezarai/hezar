@@ -1,2 +1,2 @@
 from .config import DistilBertTextClassificationConfig
-from .hft_model import DistilBertTextClassification
+from .model import DistilBertTextClassification

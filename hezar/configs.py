@@ -8,14 +8,14 @@ import torch
 from torch import Tensor
 from omegaconf import DictConfig
 
-from hezar.utils.hub_utils import load_config_from_hub
+from hezar.hezar_repo import HezarRepo
 
-CONFIG_CLASS = Literal['base', 'model', 'dataset', 'task']
+CONFIG_TYPE = Literal['base', 'model', 'dataset', 'task']
 
 
 @dataclass
 class BaseConfig:
-    config_class: CONFIG_CLASS = field(
+    config_type: CONFIG_TYPE = field(
         default='base',
         metadata={
             'help': "The category this config is responsible for"
@@ -28,10 +28,11 @@ class BaseConfig:
         """
         Load config from Hub or locally if it already exists (handled by HfApi)
         """
+        repo = HezarRepo(pretrained_path)
         kwargs = copy.deepcopy(kwargs)
-        config = load_config_from_hub(pretrained_path, filename=filename)
-        if cls.config_class != 'base':
-            # if config_class is not `base` create a {config_class}Config() instance e.g, ModelConfig()
+        config = repo.get_config(config_file=filename)
+        if cls.config_type != 'base':
+            # if config_type is not `base` create a {config_type}Config() instance e.g, ModelConfig()
             config = cls.from_dict(config, **kwargs)
         return config
 
@@ -40,9 +41,14 @@ class BaseConfig:
         """
         Load config from a dict-like object
         """
-        # load config_class part of the config if config_class is given
-        dict_config = dict_config[cls.config_class]
+        # load config_type part of the config if config_type is given
+        dict_config = dict_config[cls.config_type]
         dict_config.update(**kwargs)
+
+        config = cls(**{
+            k: v for k, v in dict_config.items()
+            if k in cls.__annotations__.keys()
+        })
 
         for k, v in dict_config.items():
             if not hasattr(cls, k):
@@ -50,27 +56,33 @@ class BaseConfig:
                     raise ValueError(f'`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute '
                                      f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)`')
                 else:
-                    setattr(cls, k, v)
+                    setattr(config, k, v)
 
-        config = cls(**dict_config)
         if config is None:
-            raise ValueError(f'This dict config has no `{cls.config_class}` key!')
+            raise ValueError(f'This dict config has no `{cls.config_type}` key!')
         return config
 
 
 @dataclass
 class ModelConfig(BaseConfig):
-    config_class = 'model'
+    config_type = 'model'
     name: str = field(
         default=None,
         metadata={
             'help': "Name of the model's key in the models_registry"
         })
+    pretrained_path: str = field(
+        default=None,
+        metadata={
+            'help': 'pretrained path for the model, automatically filled when loading model from Hub'
+        }
+    )
+    inner_model_config: Union[Dict, DictConfig] = None
 
 
 @dataclass
 class DatasetConfig(BaseConfig):
-    config_class = 'dataset'
+    config_type = 'dataset'
     name: str = field(
         default=None,
         metadata={
@@ -100,7 +112,7 @@ class OptimizerConfig(BaseConfig):
 
 @dataclass
 class TaskConfig(BaseConfig):
-    config_class = 'task'
+    config_type = 'task'
     device: str = 'cpu'
     model_name: str = field(
         default=None,

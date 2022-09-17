@@ -1,3 +1,4 @@
+import hezar.hezar_repo
 import hezar.configs
 import hezar.data
 import hezar.models

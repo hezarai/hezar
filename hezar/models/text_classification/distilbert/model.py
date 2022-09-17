@@ -2,36 +2,33 @@
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
 
-from typing import Dict
+from typing import *
 
+from omegaconf import OmegaConf, DictConfig
 import transformers
 
 from hezar.data import Text
 from hezar.models import register_model
-from hezar.models.base_model import BaseModel
-from hezar.utils.hub_utils import load_state_dict_from_hub
+from hezar.models.base_model import BaseModel, ModelMode
 from .config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(BaseModel):
-    def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
-        super(DistilBertTextClassification, self).__init__(config, **kwargs)
-        self.vocab_size = self.config.vocab_size
-        self.pretrained_path = self.config.pretrained_path
-        self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(self.pretrained_path)
+    def __init__(self, config: DistilBertTextClassificationConfig, mode: ModelMode, **kwargs):
+        super(DistilBertTextClassification, self).__init__(config, mode, **kwargs)
+        self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(**self.config.inner_model_config)
 
-    def build_model(self):
-        model_config = transformers.DistilBertConfig(**self.config.hft_model_config)
-        model = transformers.DistilBertForSequenceClassification(model_config)
-        return model
-
-    @classmethod
-    def from_pretrained(cls, path, **kwargs):
-        config = DistilBertTextClassificationConfig.from_pretrained(path)
-        model = cls(config, **kwargs)
-        state_dict = load_state_dict_from_hub(path)
-        model.model.load_state_dict(state_dict, strict=False)
+    def build_model(self, mode: ModelMode):
+        if mode.value == 'training':
+            model = transformers.DistilBertForSequenceClassification.from_pretrained(**self.config.inner_model_config)
+            model_config = OmegaConf.structured(model.config.__dict__)
+            self.config.inner_model_config = OmegaConf.merge(self.config.inner_model_config, model_config)
+        elif mode.value == 'inference':
+            inner_model_config = transformers.DistilBertConfig(**self.config.inner_model_config)
+            model = transformers.DistilBertForSequenceClassification(inner_model_config)
+        else:
+            raise ValueError(f'Unknown mode for model: `{mode}`, expected: `Literal{ModelMode.list()}`')
         return model
 
     def push_to_hub(self, path, **kwargs):
