@@ -45,7 +45,6 @@ class BaseModel(ABC):
         model.model.load_state_dict(model_state_dict)
         return model
 
-    @abstractmethod
     def save_pretrained(self):
         raise NotImplementedError
 
