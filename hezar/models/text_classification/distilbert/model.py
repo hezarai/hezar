@@ -1,7 +1,6 @@
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
-
 from typing import *
 
 from omegaconf import OmegaConf, DictConfig
@@ -31,16 +30,14 @@ class DistilBertTextClassification(BaseModel):
             raise ValueError(f'Unknown mode for model: `{mode}`, expected: `Literal{ModelMode.list()}`')
         return model
 
-    def push_to_hub(self, path, **kwargs):
-        ...
-
     def forward(self, inputs: transformers.BatchEncoding, **kwargs) -> Dict:
         outputs = self.model(**inputs, **kwargs)
         return outputs
 
     def preprocess(self, inputs: str):
+        invalid_chars = self.config.invalid_chars
         inputs = Text(inputs, tokenizer=self.tokenizer)
-        inputs = inputs.normalize().filter_out(['#', '@']).tokenize(return_tensors='pt')
+        inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors='pt')
         return inputs
 
     def predict(self, inputs: str, **kwargs) -> Dict:

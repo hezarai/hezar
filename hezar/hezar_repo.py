@@ -21,20 +21,18 @@ HEZAR_DATASETS_CACHE_DIR = f'{HEZAR_CACHE_DIR}/datasets'
 class HezarRepo:
     def __init__(self, repo_name):
         self.repo_name = repo_name
+        self.repo_id = f'{HEZAR_HUB_ID}/{repo_name}'
         self.repo_dir = self.setup_repo()
 
     def setup_repo(self):
-        # TODO: load if repo exists, create otherwise
-        repo_dir = self.download_repo()
+        repo_dir = self.load_repo()
         return repo_dir
 
-    def download_repo(self, **kwargs):
+    def load_repo(self, **kwargs):
         target_path = f'{HEZAR_MODELS_CACHE_DIR}/{self.repo_name}'
-        full_repo_id = f'{HEZAR_HUB_ID}/{self.repo_name}'
-        repo_dir = snapshot_download(repo_id=full_repo_id, cache_dir=HEZAR_SNAPSHOTS_DIR, **kwargs)
+        repo_dir = snapshot_download(repo_id=self.repo_id, cache_dir=HEZAR_SNAPSHOTS_DIR, **kwargs)
         self.move_repo(repo_dir, target_path, keep_source=True)
-        logging.info(f'Initiated repo located at: `{target_path}`!')
-
+        logging.info(f'Initiated repo for `{self.repo_id}` ({target_path})')
         return target_path
 
     @staticmethod

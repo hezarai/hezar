@@ -19,8 +19,8 @@ def register_model(model_name: str, model_config):
 
 
 def import_models(models_dir, namespace):
-    tasks_dir = os.listdir(models_dir)
-    for module in tasks_dir:
+    modules = os.listdir(models_dir)
+    for module in modules:
         path = os.path.join(models_dir, module)
         if not module.startswith('_') and not module.startswith('.') and os.path.isdir(path):
             for file in os.listdir(path):
