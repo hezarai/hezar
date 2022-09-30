@@ -8,26 +8,26 @@ import transformers
 
 from hezar.data import Text
 from hezar.models import register_model
-from hezar.models.base_model import BaseModel, ModelMode
+from hezar.models.base_model import BaseModel
 from .config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(BaseModel):
-    def __init__(self, config: DistilBertTextClassificationConfig, mode: ModelMode, **kwargs):
+    def __init__(self, config: DistilBertTextClassificationConfig, mode, **kwargs):
         super(DistilBertTextClassification, self).__init__(config, mode, **kwargs)
         self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(**self.config.inner_model_config)
 
-    def build_model(self, mode: ModelMode):
-        if mode.value == 'training':
+    def build_model(self, mode):
+        if mode == 'training':
             model = transformers.DistilBertForSequenceClassification.from_pretrained(**self.config.inner_model_config)
             model_config = OmegaConf.structured(model.config.__dict__)
             self.config.inner_model_config = OmegaConf.merge(self.config.inner_model_config, model_config)
-        elif mode.value == 'inference':
+        elif mode == 'inference':
             inner_model_config = transformers.DistilBertConfig(**self.config.inner_model_config)
             model = transformers.DistilBertForSequenceClassification(inner_model_config)
         else:
-            raise ValueError(f'Unknown mode for model: `{mode}`, expected: `Literal{ModelMode.list()}`')
+            raise ValueError(f'Unknown mode for model: `{mode}`, expected: `training` or `inference`')
         return model
 
     def forward(self, inputs: transformers.BatchEncoding, **kwargs) -> Dict:

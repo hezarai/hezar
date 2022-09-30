@@ -2,7 +2,8 @@ import importlib
 import os
 from typing import *
 
-models_registry = {}
+from .base_model import BaseModel
+from hezar.registry import models_registry
 
 
 def register_model(model_name: str, model_config):
@@ -34,3 +35,9 @@ def import_models(models_dir, namespace):
 
 
 import_models(os.path.dirname(__file__), "hezar.models")
+
+
+def load_model(name, mode='training', **kwargs):
+    config = models_registry[name]['model_config'](**kwargs)
+    model = models_registry[name]['model_class'](config, mode=mode)
+    return model

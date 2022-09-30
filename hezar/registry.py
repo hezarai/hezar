@@ -1,5 +1,7 @@
 from torch import nn, optim
 
+models_registry = {}
+
 criterions_registry = {
     'bce': nn.BCELoss,
     'nll': nn.NLLLoss,

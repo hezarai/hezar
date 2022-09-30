@@ -1,16 +1,16 @@
+import logging
 import os
 import copy
-import os
 from dataclasses import dataclass, field, asdict
 from typing import *
 
 import torch
 from torch import Tensor
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
-from hezar.hezar_repo import HezarRepo
+from hezar.hub_interface import HubInterface
 
-CONFIG_TYPE = Literal['base', 'model', 'dataset', 'task']
+CONFIG_TYPE = Literal['base', 'model', 'dataset', 'task', 'criterion', 'optimizer']
 
 
 @dataclass
@@ -28,7 +28,7 @@ class BaseConfig:
         """
         Load config from Hub or locally if it already exists (handled by HfApi)
         """
-        repo = HezarRepo(pretrained_path)
+        repo = HubInterface(pretrained_path, repo_type='model')
         kwargs = copy.deepcopy(kwargs)
         config = repo.get_config(config_file=filename)
         if cls.config_type != 'base':
@@ -62,10 +62,16 @@ class BaseConfig:
             raise ValueError(f'This dict config has no `{cls.config_type}` key!')
         return config
 
+    def save_pretrained(self, save_dir, filename='config.yaml'):
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, filename)
+        OmegaConf.save(self.dict(), save_path)
+        logging.info(f'Saved config to `{save_path}`')
+
 
 @dataclass
 class ModelConfig(BaseConfig):
-    config_type = 'model'
+    config_type: CONFIG_TYPE = 'model'
     name: str = field(
         default=None,
         metadata={
@@ -82,7 +88,7 @@ class ModelConfig(BaseConfig):
 
 @dataclass
 class DatasetConfig(BaseConfig):
-    config_type = 'dataset'
+    config_type: CONFIG_TYPE = 'dataset'
     name: str = field(
         default=None,
         metadata={
@@ -98,6 +104,7 @@ class DatasetConfig(BaseConfig):
 
 @dataclass
 class CriterionConfig(BaseConfig):
+    config_type: CONFIG_TYPE = 'criterion'
     name: str = None
     weight: Optional[Tensor] = None
     reduce: str = None
@@ -106,13 +113,14 @@ class CriterionConfig(BaseConfig):
 
 @dataclass
 class OptimizerConfig(BaseConfig):
+    config_type: CONFIG_TYPE = 'optimizer'
     name: str = None
     lr: float = None
 
 
 @dataclass
 class TaskConfig(BaseConfig):
-    config_type = 'task'
+    config_type: CONFIG_TYPE = 'task'
     device: str = 'cpu'
     model_name: str = field(
         default=None,
