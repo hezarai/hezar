@@ -37,6 +37,7 @@ class BaseModel(ABC, nn.Module):
         return model
 
     def save_pretrained(self, path):
+        # TODO handle the case when files exist
         # save config
         self.config.save_pretrained(path)
         # save model

@@ -8,7 +8,7 @@ import torch
 from torch import Tensor
 from omegaconf import DictConfig, OmegaConf
 
-from hezar.hub_interface import HubInterface
+from .hub_interface import HubInterface
 
 CONFIG_TYPE = Literal['base', 'model', 'dataset', 'task', 'criterion', 'optimizer']
 
@@ -21,7 +21,9 @@ class BaseConfig:
             'help': "The category this config is responsible for"
         }
     )
-    dict = asdict
+
+    def dict(self):
+        return asdict(self)
 
     @classmethod
     def from_pretrained(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
@@ -54,7 +56,8 @@ class BaseConfig:
             if not hasattr(cls, k):
                 if strict:
                     raise ValueError(f'`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute '
-                                     f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)`')
+                                     f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` '
+                                     f'or set `strict=False` when using `from_pretrained()`')
                 else:
                     setattr(config, k, v)
 

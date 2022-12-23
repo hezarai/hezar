@@ -4,7 +4,7 @@ from typing import *
 import logging
 
 import torch
-from huggingface_hub import snapshot_download, Repository, HfApi, create_repo
+from huggingface_hub import Repository, HfApi, create_repo
 from omegaconf import OmegaConf, DictConfig
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -36,7 +36,7 @@ class HubInterface:
         return repo_id, repo_name
 
     def _setup_repo(self, **kwargs):
-        if self.model_exists(self.repo_name):
+        if not self.exists(self.repo_name):
             create_repo(self.repo_id)
             logging.info(f'Created `{self.repo_id}` on the Hub!')
         else:
@@ -51,9 +51,19 @@ class HubInterface:
         model_names = [model.modelId.split('/')[-1] for model in models]
         return model_names
 
-    def model_exists(self, model_name) -> bool:
-        models = self.list_models()
-        return model_name in models
+    def list_datasets(self):
+        datasets = self.api.list_datasets(author=HEZAR_HUB_ID)
+        dataset_names = [dataset.datasetId.split('/')[-1] for dataset in datasets]
+        return dataset_names
+
+    def exists(self, repo_name) -> bool:
+        if self.repo_type == 'model':
+            repos = self.list_models()
+        elif self.repo_type == 'dataset':
+            repos = self.list_datasets()
+        else:
+            raise ValueError(f'Unknown repo type : `{self.repo_type}`')
+        return repo_name in repos
 
     def push_to_hub(self, commit_message: str = 'Commit from Hezar'):
         self.repo.push_to_hub(commit_message=commit_message)
