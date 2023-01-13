@@ -19,25 +19,22 @@ def register_model(model_name: str, model_config):
     return register_model_class
 
 
-def import_models(models_dir, namespace):
-    modules = os.listdir(models_dir)
-    for module in modules:
-        path = os.path.join(models_dir, module)
-        if not module.startswith('_') and not module.startswith('.') and os.path.isdir(path):
-            for file in os.listdir(path):
-                if (
-                        not file.startswith("_")
-                        and not file.startswith(".")
-                        and (file.endswith(".py") or os.path.isdir(path))
-                ):
-                    model_name = module[: module.find(".py")] if file.endswith(".py") else file
-                    importlib.import_module(f'{namespace}.{module}.{model_name}')
-
-
-import_models(os.path.dirname(__file__), "hezar.models")
-
-
 def load_model(name, mode='training', **kwargs):
     config = models_registry[name]['model_config'](**kwargs)
     model = models_registry[name]['model_class'](config, mode=mode)
     return model
+
+
+def import_models(models_dir, namespace):
+    for module in os.listdir(models_dir):
+        path = os.path.join(models_dir, module)
+        if (
+                not module.startswith("_")
+                and not module.startswith(".")
+                and (module.endswith(".py") or os.path.isdir(path))
+        ):
+            model_name = module[: module.find(".py")] if module.endswith(".py") else module
+            importlib.import_module(namespace + "." + model_name)
+
+
+import_models(os.path.dirname(__file__), "hezar.models")

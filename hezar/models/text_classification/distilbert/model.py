@@ -16,7 +16,6 @@ from .config import DistilBertTextClassificationConfig
 class DistilBertTextClassification(BaseModel):
     def __init__(self, config: DistilBertTextClassificationConfig, mode, **kwargs):
         super(DistilBertTextClassification, self).__init__(config, mode, **kwargs)
-        self.tokenizer = transformers.DistilBertTokenizer.from_pretrained(**self.config.inner_model_config)
 
     def build_model(self, mode):
         if mode == 'training':

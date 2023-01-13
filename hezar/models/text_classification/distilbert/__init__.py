@@ -1,2 +1,2 @@
-from .config import DistilBertTextClassificationConfig
-from .model import DistilBertTextClassification
+from .config import *
+from .model import *

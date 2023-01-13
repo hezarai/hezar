@@ -24,6 +24,7 @@ class BaseModel(ABC, nn.Module):
                  **kwargs):
         super(BaseModel, self).__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
+        # TODO refactor model building. The whole model must be created for the task in subclasses
         self.model = self.build_model(mode=mode)
 
     @classmethod

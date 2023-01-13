@@ -1,1 +1,1 @@
-from .distilbert import DistilBertTextClassification, DistilBertTextClassificationConfig
+from .distilbert import *
