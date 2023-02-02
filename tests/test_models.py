@@ -7,7 +7,7 @@ from hezar.models import BaseModel
 
 def test_build_distilbert_text_classification():
     model_name = 'distilbert_text_classification'
-    model = models_registry[model_name]['model_class'](models_registry[model_name]['model_config'](num_labels=10))
+    model = models_registry[model_name]['model_class'](models_registry[model_name]['model_config'](num_labels=3))
     print(model)
 
 

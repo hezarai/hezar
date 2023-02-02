@@ -3,12 +3,11 @@ A DistilBERT model for text classification built using HuggingFace Transformers
 """
 from typing import Dict
 
-from omegaconf import OmegaConf, DictConfig
-from transformers import DistilBertForSequenceClassification, DistilBertConfig, AutoTokenizer, BatchEncoding
+from transformers import DistilBertForSequenceClassification, DistilBertConfig
 
 from hezar.data import Text
 from hezar.models import register_model, BaseModel
-from .config import DistilBertTextClassificationConfig
+from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)

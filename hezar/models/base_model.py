@@ -62,7 +62,5 @@ class BaseModel(ABC, nn.Module):
     def predict(self, inputs, **kwargs) -> Dict:
         raise NotImplementedError
 
-    @abstractmethod
-    def postprocess(self, inputs, **kwargs) -> Dict:
-        raise NotImplementedError
+
 
