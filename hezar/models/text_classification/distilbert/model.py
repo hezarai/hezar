@@ -1,40 +1,41 @@
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
-from typing import *
+from typing import Dict
 
 from omegaconf import OmegaConf, DictConfig
-import transformers
+from transformers import DistilBertForSequenceClassification, DistilBertConfig, AutoTokenizer, BatchEncoding
 
 from hezar.data import Text
-from hezar.models import register_model
-from hezar.models.base_model import BaseModel
+from hezar.models import register_model, BaseModel
 from .config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(BaseModel):
-    def __init__(self, config: DistilBertTextClassificationConfig, mode, **kwargs):
-        super(DistilBertTextClassification, self).__init__(config, mode, **kwargs)
+    """
+    A standard 🤗Transformers DistilBert model for text classification
 
-    def build_model(self, mode):
-        if mode == 'training':
-            model = transformers.DistilBertForSequenceClassification.from_pretrained(**self.config.inner_model_config)
-            model_config = OmegaConf.structured(model.config.__dict__)
-            self.config.inner_model_config = OmegaConf.merge(self.config.inner_model_config, model_config)
-        elif mode == 'inference':
-            inner_model_config = transformers.DistilBertConfig(**self.config.inner_model_config)
-            model = transformers.DistilBertForSequenceClassification(inner_model_config)
-        else:
-            raise ValueError(f'Unknown mode for model: `{mode}`, expected: `training` or `inference`')
+    Args:
+        config: The whole model config including arguments needed for the inner 🤗Transformers model.
+    """
+
+    def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
+        super(DistilBertTextClassification, self).__init__(config, **kwargs)
+        self.model = self.build_model()
+        self.tokenizer = None
+
+    def build_model(self):
+        config = DistilBertConfig(**self.config.dict())
+        model = DistilBertForSequenceClassification(config)
         return model
 
-    def forward(self, inputs: transformers.BatchEncoding, **kwargs) -> Dict:
+    def forward(self, inputs, **kwargs) -> Dict:
         outputs = self.model(**inputs, **kwargs)
         return outputs
 
     def preprocess(self, inputs: str):
-        invalid_chars = self.config.invalid_chars
+        invalid_chars = self.config.get('invalid_chars', [])
         inputs = Text(inputs, tokenizer=self.tokenizer)
         inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors='pt')
         return inputs

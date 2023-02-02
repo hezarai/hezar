@@ -20,12 +20,14 @@ from hezar.registry import models_registry
 class BaseModel(ABC, nn.Module):
     def __init__(self,
                  config,
-                 mode: Literal['training', 'inference'],
                  **kwargs):
         super(BaseModel, self).__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
-        # TODO refactor model building. The whole model must be created for the task in subclasses
-        self.model = self.build_model(mode=mode)
+        self.model = self.build_model()
+
+    @abstractmethod
+    def build_model(self):
+        raise NotImplementedError
 
     @classmethod
     def from_pretrained(cls, path, **kwargs):
@@ -51,10 +53,6 @@ class BaseModel(ABC, nn.Module):
         repo = HubInterface(repo_name_or_id=repo_name_or_id, repo_type='model')
         self.save_pretrained(repo.repo_dir)
         repo.push_to_hub('Upload from Hezar!')
-
-    @abstractmethod
-    def build_model(self, mode) -> Type[nn.Module]:
-        raise NotImplementedError
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:

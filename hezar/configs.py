@@ -25,6 +25,12 @@ class BaseConfig:
     def dict(self):
         return asdict(self)
 
+    def get(self, key, default=None):
+        if hasattr(self, key):
+            return getattr(self, key)
+        else:
+            return default
+
     @classmethod
     def from_pretrained(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
         """

@@ -29,8 +29,9 @@ class Text:
         return Text(self.text, self.language, self.normalizer, self.tokenizer)
 
     def filter_out(self, filter_list: List):
-        for item in filter_list:
-            self.text.replace(item, '')
+        if len(filter_list):
+            for item in filter_list:
+                self.text.replace(item, '')
         return Text(self.text, self.language, self.normalizer, self.tokenizer)
 
 
