@@ -1,15 +1,13 @@
 import os
-import shutil
 from typing import *
-import logging
 
 import torch
 from huggingface_hub import Repository, HfApi, create_repo
 from omegaconf import OmegaConf, DictConfig
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.Logger(__name__)
-logger.setLevel(20)
+from hezar.utils.logging import get_logger
+
+logger = get_logger('hezar.hub_interface')
 
 HEZAR_HUB_ID = 'hezar-ai'
 HEZAR_CACHE_DIR = f'{os.path.expanduser("~")}/.hezar'
@@ -30,7 +28,8 @@ class HubInterface:
         self.repo = self._setup_repo(**kwargs)
         self.repo_dir = self.repo.local_dir
 
-    def _get_repo_name_and_id(self, repo_name_or_id):
+    @staticmethod
+    def _get_repo_name_and_id(repo_name_or_id):
         repo_id = f'{HEZAR_HUB_ID}/{repo_name_or_id}' if '/' not in repo_name_or_id else repo_name_or_id
         repo_name = repo_name_or_id if '/' not in repo_name_or_id else os.path.basename(repo_name_or_id)
         return repo_id, repo_name
@@ -38,9 +37,9 @@ class HubInterface:
     def _setup_repo(self, **kwargs):
         if not self.exists(self.repo_name):
             create_repo(self.repo_id)
-            logging.info(f'Created `{self.repo_id}` on the Hub!')
+            logger.info(f'Created `{self.repo_id}` on the Hub!')
         else:
-            logging.info(f'Repo `{self.repo_id}` already exists on the Hub, skipping repo creation...')
+            logger.info(f'Repo `{self.repo_id}` already exists on the Hub, skipping repo creation...')
 
         local_dir = f'{REPO_TYPE_TO_DIR_MAPPING[self.repo_type]}/{self.repo_name}'
         repo = Repository(local_dir=local_dir, clone_from=self.repo_id, **kwargs)

@@ -17,11 +17,11 @@ from hezar.utils import merge_kwargs_into_config
 from hezar.registry import models_registry
 
 
-class BaseModel(ABC, nn.Module):
+class Model(ABC, nn.Module):
     def __init__(self,
                  config,
                  **kwargs):
-        super(BaseModel, self).__init__()
+        super(Model, self).__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
         self.model = self.build_model()
 

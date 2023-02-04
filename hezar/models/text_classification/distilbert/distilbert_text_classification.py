@@ -6,12 +6,12 @@ from typing import Dict
 from transformers import DistilBertForSequenceClassification, DistilBertConfig
 
 from hezar.data import Text
-from hezar.models import register_model, BaseModel
+from hezar.models import register_model, Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)
-class DistilBertTextClassification(BaseModel):
+class DistilBertTextClassification(Model):
     """
     A standard 🤗Transformers DistilBert model for text classification
 

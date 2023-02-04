@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-from hezar.configs import TaskConfig
+from hezar.configs import TrainConfig
 from hezar.models import models_registry
 from hezar.registry import criterions_registry, optimizers_registry
 
 
 class BaseTask(ABC):
-    def __init__(self, config: TaskConfig, **kwargs):
+    def __init__(self, config: TrainConfig, **kwargs):
         self.config = config
         self.device = self.config.device
         self.model_config = self.config.model_config

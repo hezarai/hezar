@@ -14,7 +14,7 @@ CONFIG_TYPE = Literal['base', 'model', 'dataset', 'task', 'criterion', 'optimize
 
 
 @dataclass
-class BaseConfig:
+class Config:
     config_type: CONFIG_TYPE = field(
         default='base',
         metadata={
@@ -79,7 +79,7 @@ class BaseConfig:
 
 
 @dataclass
-class ModelConfig(BaseConfig):
+class ModelConfig(Config):
     config_type: CONFIG_TYPE = 'model'
     name: str = field(
         default=None,
@@ -92,11 +92,10 @@ class ModelConfig(BaseConfig):
             'help': 'pretrained path for the model, automatically filled when loading model from Hub'
         }
     )
-    inner_model_config: Union[Dict, DictConfig] = None
 
 
 @dataclass
-class DatasetConfig(BaseConfig):
+class DatasetConfig(Config):
     config_type: CONFIG_TYPE = 'dataset'
     name: str = field(
         default=None,
@@ -112,7 +111,7 @@ class DatasetConfig(BaseConfig):
 
 
 @dataclass
-class CriterionConfig(BaseConfig):
+class CriterionConfig(Config):
     config_type: CONFIG_TYPE = 'criterion'
     name: str = None
     weight: Optional[Tensor] = None
@@ -121,44 +120,30 @@ class CriterionConfig(BaseConfig):
 
 
 @dataclass
-class OptimizerConfig(BaseConfig):
+class OptimizerConfig(Config):
     config_type: CONFIG_TYPE = 'optimizer'
     name: str = None
     lr: float = None
 
 
 @dataclass
-class TaskConfig(BaseConfig):
-    config_type: CONFIG_TYPE = 'task'
+class TrainConfig(Config):
+    config_type: CONFIG_TYPE = 'train'
     device: str = 'cpu'
     model_name: str = field(
         default=None,
         metadata={
             'help': 'name of the model in the models_registry'
         })
-    name: str = field(
-        default=None,
-        metadata={
-            'help': 'Name of the task'
-        })
+    name: str = field(default=None)
     model_config: ModelConfig = field(
         default=ModelConfig(),
         metadata={
-            'help': 'model config for this task'
+            'help': 'model config for the trainer'
         })
     dataset_config: DatasetConfig = field(
         default=DatasetConfig(),
         metadata={
-            'help': 'dataset config for this task'
+            'help': 'dataset config for the trainer'
         }
     )
-    criterion_config: CriterionConfig = field(
-        default=CriterionConfig(),
-        metadata={
-            'help': 'criterion config for this task'
-        })
-    optimizer_config: OptimizerConfig = field(
-        default=OptimizerConfig(),
-        metadata={
-            'help': 'optimizer config for this task'
-        })
