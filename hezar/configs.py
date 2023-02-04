@@ -23,7 +23,7 @@ class Config:
     )
 
     def dict(self):
-        return asdict(self)
+        return self.__dict__
 
     def get(self, key, default=None):
         if hasattr(self, key):
