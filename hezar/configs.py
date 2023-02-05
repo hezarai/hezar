@@ -25,7 +25,7 @@ class Config:
     def dict(self):
         return self.__dict__
 
-    def get(self, key, default=None):
+    def get(self, key, default):
         if hasattr(self, key):
             return getattr(self, key)
         else:
