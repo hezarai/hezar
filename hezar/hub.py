@@ -7,8 +7,6 @@ from omegaconf import OmegaConf, DictConfig
 
 from hezar.utils.logging import get_logger
 
-logger = get_logger('hezar.hub_interface')
-
 HEZAR_HUB_ID = 'hezar-ai'
 HEZAR_CACHE_DIR = f'{os.path.expanduser("~")}/.hezar'
 HEZAR_TMP_DIR = f'{HEZAR_CACHE_DIR}/tmp'
@@ -19,6 +17,23 @@ REPO_TYPE_TO_DIR_MAPPING = dict(
     model=HEZAR_MODELS_CACHE_DIR,
     dataset=HEZAR_DATASETS_CACHE_DIR
 )
+
+logger = get_logger('hezar.hub_interface')
+
+
+def exists_on_hub(hub_path: str, type='model'):
+    author, repo_name = hub_path.split('/')
+    api = HfApi()
+    if type == 'model':
+        paths = list(iter(api.list_models(author=author)))
+    elif type == 'dataset':
+        paths = list(iter(api.list_datasets(author=author)))
+    elif type == 'space':
+        paths = list(iter(api.list_spaces(author=author)))
+    else:
+        raise ValueError(f'Unknown type: {type}! Use `model`, `dataset`, `space`, etc.')
+
+    return hub_path in [path.id for path in paths]
 
 
 class HubInterface:

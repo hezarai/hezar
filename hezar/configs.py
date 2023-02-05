@@ -7,8 +7,8 @@ import torch
 from transformers.utils.hub import cached_file
 from omegaconf import DictConfig, OmegaConf
 
-from hezar.utils import exists_on_hub
-from .hub_interface import HEZAR_TMP_DIR
+from hezar.hub import exists_on_hub
+from .hub import HEZAR_TMP_DIR
 
 CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
 

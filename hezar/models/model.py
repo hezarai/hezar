@@ -7,9 +7,9 @@ import torch
 from torch import nn
 
 from hezar.configs import ModelConfig
-from hezar.hub_interface import (HubInterface,
-                                 HEZAR_HUB_ID,
-                                 HEZAR_MODELS_CACHE_DIR)
+from hezar.hub import (HubInterface,
+                       HEZAR_HUB_ID,
+                       HEZAR_MODELS_CACHE_DIR)
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import models_registry
 

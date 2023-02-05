@@ -5,7 +5,7 @@ from hezar.models import models_registry
 from hezar.registry import criterions_registry, optimizers_registry
 
 
-class BaseTask(ABC):
+class Trainer(ABC):
     def __init__(self, config: TrainConfig, **kwargs):
         self.config = config
         self.device = self.config.device
