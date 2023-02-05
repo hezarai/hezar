@@ -56,7 +56,7 @@ class Model(nn.Module):
         model_name = repo.get_model_registry_name()
         model_config_class = models_registry[model_name]['model_config']
         config = repo.get_config(model_config_class=model_config_class)
-        model = cls(config, mode='inference', repo=repo, **kwargs)
+        model = cls(config, repo=repo, **kwargs)
         model.load_state_dict(repo.get_model(return_state_dict=True))
         return model
 

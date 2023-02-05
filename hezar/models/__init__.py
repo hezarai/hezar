@@ -19,9 +19,9 @@ def register_model(model_name: str, model_config):
     return register_model_class
 
 
-def load_model(name, mode='training', **kwargs):
+def load_model(name, **kwargs):
     config = models_registry[name]['model_config'](**kwargs)
-    model = models_registry[name]['model_class'](config, mode=mode)
+    model = models_registry[name]['model_class'](config)
     return model
 
 
