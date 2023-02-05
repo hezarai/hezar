@@ -11,6 +11,7 @@ logger = get_logger('hezar.hub_interface')
 
 HEZAR_HUB_ID = 'hezar-ai'
 HEZAR_CACHE_DIR = f'{os.path.expanduser("~")}/.hezar'
+HEZAR_TMP_DIR = f'{HEZAR_CACHE_DIR}/tmp'
 HEZAR_SNAPSHOTS_DIR = f'{HEZAR_CACHE_DIR}/snapshots'
 HEZAR_MODELS_CACHE_DIR = f'{HEZAR_CACHE_DIR}/models'
 HEZAR_DATASETS_CACHE_DIR = f'{HEZAR_CACHE_DIR}/datasets'
@@ -21,11 +22,12 @@ REPO_TYPE_TO_DIR_MAPPING = dict(
 
 
 class HubInterface:
-    def __init__(self, repo_name_or_id: str, repo_type: str, **kwargs):
+    def __init__(self, repo_name_or_id: str, repo_type: str, init_repo: bool = False, **kwargs):
         self.repo_id, self.repo_name = self._get_repo_name_and_id(repo_name_or_id)
         self.repo_type = repo_type
         self.api = HfApi()
-        self.repo = self._setup_repo(**kwargs)
+        if init_repo:
+            self.repo = self._setup_repo(**kwargs)
         self.repo_dir = self.repo.local_dir
 
     @staticmethod
@@ -35,11 +37,11 @@ class HubInterface:
         return repo_id, repo_name
 
     def _setup_repo(self, **kwargs):
-        if not self.exists(self.repo_name):
+        if not self.exists_on_hub(self.repo_name):
             create_repo(self.repo_id)
             logger.info(f'Created `{self.repo_id}` on the Hub!')
         else:
-            logger.info(f'Repo `{self.repo_id}` already exists on the Hub, skipping repo creation...')
+            logger.info(f'Repo `{self.repo_id}` already exists_on_hub on the Hub, skipping repo creation...')
 
         local_dir = f'{REPO_TYPE_TO_DIR_MAPPING[self.repo_type]}/{self.repo_name}'
         repo = Repository(local_dir=local_dir, clone_from=self.repo_id, **kwargs)
@@ -55,7 +57,7 @@ class HubInterface:
         dataset_names = [dataset.datasetId.split('/')[-1] for dataset in datasets]
         return dataset_names
 
-    def exists(self, repo_name) -> bool:
+    def exists_on_hub(self, repo_name) -> bool:
         if self.repo_type == 'model':
             repos = self.list_models()
         elif self.repo_type == 'dataset':

@@ -6,11 +6,13 @@ from typing import *
 
 import torch
 from torch import Tensor
+from transformers.utils.hub import cached_file
 from omegaconf import DictConfig, OmegaConf
 
-from .hub_interface import HubInterface
+from hezar.utils import exists_on_hub
+from .hub_interface import HubInterface, HEZAR_TMP_DIR
 
-CONFIG_TYPE = Literal['base', 'model', 'dataset', 'task', 'criterion', 'optimizer']
+CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
 
 
 @dataclass
@@ -32,13 +34,19 @@ class Config:
             return default
 
     @classmethod
-    def from_pretrained(cls, pretrained_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
+    def load(cls, path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
         """
-        Load config from Hub or locally if it already exists (handled by HfApi)
+        Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
         """
-        repo = HubInterface(pretrained_path, repo_type='model')
-        kwargs = copy.deepcopy(kwargs)
-        config = repo.get_config(config_file=filename)
+        if os.path.exists(f'{path}/{filename}'):
+            dict_config = OmegaConf.load(f'{path}/{filename}')
+        elif exists_on_hub(path, type='model'):
+            config_path = cached_file(path, filename=filename, cache_dir=HEZAR_TMP_DIR)
+            dict_config = OmegaConf.load(config_path)
+        else:
+            raise Exception(f'The path `{path}` does not exist neither on the hub nor locally!')
+
+        config = OmegaConf.to_container(dict_config)
         if cls.config_type != 'base':
             # if config_type is not `base` create a {config_type}Config() instance e.g, ModelConfig()
             config = cls.from_dict(config, **kwargs)
@@ -63,7 +71,7 @@ class Config:
                 if strict:
                     raise ValueError(f'`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute '
                                      f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` '
-                                     f'or set `strict=False` when using `from_pretrained()`')
+                                     f'or set `strict=False` when using `load()`')
                 else:
                     setattr(config, k, v)
 
@@ -71,7 +79,14 @@ class Config:
             raise ValueError(f'This dict config has no `{cls.config_type}` key!')
         return config
 
-    def save_pretrained(self, save_dir, filename='config.yaml'):
+    def save(self, save_dir, filename='config.yaml'):
+        """
+        Save the *config.yaml file to a local path
+
+        Args:
+             save_dir: save directory path
+             filename: config file name
+        """
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, filename)
         OmegaConf.save(self.dict(), save_path)
