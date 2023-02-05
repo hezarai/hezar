@@ -1,16 +1,14 @@
 import logging
 import os
-import copy
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 
 import torch
-from torch import Tensor
 from transformers.utils.hub import cached_file
 from omegaconf import DictConfig, OmegaConf
 
 from hezar.utils import exists_on_hub
-from .hub_interface import HubInterface, HEZAR_TMP_DIR
+from .hub_interface import HEZAR_TMP_DIR
 
 CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
 
@@ -129,7 +127,7 @@ class DatasetConfig(Config):
 class CriterionConfig(Config):
     config_type: CONFIG_TYPE = 'criterion'
     name: str = None
-    weight: Optional[Tensor] = None
+    weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
 
