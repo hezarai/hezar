@@ -11,6 +11,12 @@ def test_build_distilbert_text_classification():
     print(model)
 
 
+def test_load():
+    from hezar.configs import ModelConfig
+    config = ModelConfig.load('hezar-ai/distilbert-fa-zwnj-base-sentiment')
+    print(config)
+
+
 def test_distilbert_save_model():
     name = 'distilbert_text_classification'
     inner_model_config = DictConfig(
@@ -28,6 +34,7 @@ def test_distilbert_text_classification_prediction():
 
 
 if __name__ == '__main__':
+    test_load()
     # test_distilbert_save_model()
-    test_build_distilbert_text_classification()
+    # test_build_distilbert_text_classification()
     # test_distilbert_text_classification_prediction()

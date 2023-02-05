@@ -45,9 +45,7 @@ class Config:
             raise Exception(f'The path `{path}` does not exist neither on the hub nor locally!')
 
         config = OmegaConf.to_container(dict_config)
-        if cls.config_type != 'base':
-            # if config_type is not `base` create a {config_type}Config() instance e.g, ModelConfig()
-            config = cls.from_dict(config, **kwargs)
+        config = cls.from_dict(config, **kwargs)
         return config
 
     @classmethod
@@ -56,7 +54,6 @@ class Config:
         Load config from a dict-like object
         """
         # load config_type part of the config if config_type is given
-        dict_config = dict_config[cls.config_type]
         dict_config.update(**kwargs)
 
         config = cls(**{

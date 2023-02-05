@@ -26,4 +26,4 @@ def exists_on_hub(hub_path: str, type='model'):
     else:
         raise ValueError(f'Unknown type: {type}! Use `model`, `dataset`, `space`, etc.')
 
-    return hub_path in paths
+    return hub_path in [path.id for path in paths]
