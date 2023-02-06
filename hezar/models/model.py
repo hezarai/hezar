@@ -7,9 +7,7 @@ import torch
 from torch import nn
 
 from hezar.configs import ModelConfig
-from hezar.hub import (HubInterface,
-                       HEZAR_HUB_ID,
-                       HEZAR_MODELS_CACHE_DIR)
+from hezar.hub import clone_repo, HEZAR_MODELS_CACHE_DIR
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import models_registry
 
@@ -23,9 +21,8 @@ class Model(nn.Module):
     Args:
         config: A dataclass model config
     """
-    def __init__(self,
-                 config,
-                 **kwargs):
+
+    def __init__(self, config, **kwargs):
         super(Model, self).__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
         self.model: nn.Module = self.build_model()
@@ -52,12 +49,15 @@ class Model(nn.Module):
         Returns:
             The fully loaded Hezar model
         """
-        repo = HubInterface(repo_name_or_id=path, repo_type='model')
-        model_name = repo.get_model_registry_name()
-        model_config_class = models_registry[model_name]['model_config']
-        config = repo.get_config(model_config_class=model_config_class)
-        model = cls(config, repo=repo, **kwargs)
-        model.load_state_dict(repo.get_model(return_state_dict=True))
+        # clone full repo from hub
+        repo = clone_repo(hub_path=path, save_path=HEZAR_MODELS_CACHE_DIR)
+        # Load config
+        config = ModelConfig.load(path=repo, filename='config.yaml')
+        # Build model wih config
+        model = load_model(config.name, config, **kwargs)
+        # Get state dict from the model in the cloned repo
+        state_dict = torch.load(f'{repo}/pytorch.bin')
+        model.load_state_dict(state_dict)
         return model
 
     def load_state_dict(self, state_dict, **kwargs):
@@ -122,4 +122,16 @@ class Model(nn.Module):
         raise NotImplementedError
 
 
+def load_model(name, config=None, **kwargs):
+    """
+    Given the name of the model (in the registry), load the model. If config is None then the model will be loaded using
+    the default config.
 
+    Args:
+        name: name of the model in the models registry
+        config: a ModelConfig instance
+        kwargs: extra config parameters that is loaded to the model
+    """
+    config = config or models_registry[name]['model_config']()
+    model = models_registry[name]['model_class'](config, **kwargs)
+    return model

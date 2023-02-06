@@ -7,8 +7,10 @@ import torch
 from transformers.utils.hub import cached_file
 from omegaconf import DictConfig, OmegaConf
 
-from hezar.hub import exists_on_hub
+from hezar.utils.logging import get_logger
 from .hub import HEZAR_TMP_DIR
+
+logger = get_logger('hezar.configs')
 
 CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
 
@@ -36,24 +38,21 @@ class Config:
         """
         Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
         """
-        if os.path.exists(f'{path}/{filename}'):
-            dict_config = OmegaConf.load(f'{path}/{filename}')
-        elif exists_on_hub(path, type='model'):
-            config_path = cached_file(path, filename=filename, cache_dir=HEZAR_TMP_DIR)
-            dict_config = OmegaConf.load(config_path)
-        else:
-            raise Exception(f'The path `{path}` does not exist neither on the hub nor locally!')
+        config_path = cached_file(path, filename=filename, cache_dir=HEZAR_TMP_DIR)
+        dict_config = OmegaConf.load(config_path)
 
         config = OmegaConf.to_container(dict_config)
         config = cls.from_dict(config, **kwargs)
         return config
 
     @classmethod
-    def from_dict(cls, dict_config: Union[Dict, DictConfig], strict=False, **kwargs):
+    def from_dict(cls, dict_config: Union[Dict, DictConfig], **kwargs):
         """
         Load config from a dict-like object
         """
-        # load config_type part of the config if config_type is given
+        strict = kwargs.pop('strict', True)  # Whether ignore redundant parameters in kwargs or force-assign
+
+        # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
         config = cls(**{
@@ -64,14 +63,12 @@ class Config:
         for k, v in dict_config.items():
             if not hasattr(cls, k):
                 if strict:
-                    raise ValueError(f'`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute '
-                                     f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` '
-                                     f'or set `strict=False` when using `load()`')
+                    logger.warning(f'`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute '
+                                   f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` '
+                                   f'or set `strict=False` when using `load()`')
                 else:
                     setattr(config, k, v)
 
-        if config is None:
-            raise ValueError(f'This dict config has no `{cls.config_type}` key!')
         return config
 
     def save(self, save_dir, filename='config.yaml'):
@@ -96,12 +93,6 @@ class ModelConfig(Config):
         metadata={
             'help': "Name of the model's key in the models_registry"
         })
-    pretrained_path: str = field(
-        default=None,
-        metadata={
-            'help': 'pretrained path for the model, automatically filled when loading model from Hub'
-        }
-    )
 
 
 @dataclass

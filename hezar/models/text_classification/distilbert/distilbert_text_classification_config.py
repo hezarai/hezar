@@ -8,7 +8,7 @@ from hezar.configs import ModelConfig
 class DistilBertTextClassificationConfig(ModelConfig):
     name: str = None  # initialized on registry
     task: str = 'text_classification'
-    num_labels: int = None
+    num_labels: int = 2
     activation: str = 'gelu'
     attention_dropout: float = 0.1
     dim: int = 768

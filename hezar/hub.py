@@ -8,11 +8,11 @@ from omegaconf import OmegaConf, DictConfig
 from hezar.utils.logging import get_logger
 
 HEZAR_HUB_ID = 'hezar-ai'
-HEZAR_CACHE_DIR = f'{os.path.expanduser("~")}/.hezar'
-HEZAR_TMP_DIR = f'{HEZAR_CACHE_DIR}/tmp'
-HEZAR_SNAPSHOTS_DIR = f'{HEZAR_CACHE_DIR}/snapshots'
-HEZAR_MODELS_CACHE_DIR = f'{HEZAR_CACHE_DIR}/models'
-HEZAR_DATASETS_CACHE_DIR = f'{HEZAR_CACHE_DIR}/datasets'
+HEZAR_CACHE_DIR = os.getenv('HEZAR_CACHE_DIR', f'{os.path.expanduser("~")}/.hezar')
+HEZAR_TMP_DIR = os.getenv('HEZAR_TMP_DIR', f'{HEZAR_CACHE_DIR}/tmp')
+HEZAR_SNAPSHOTS_DIR = os.getenv('HEZAR_SNAPSHOTS_DIR', f'{HEZAR_CACHE_DIR}/snapshots')
+HEZAR_MODELS_CACHE_DIR = os.getenv('HEZAR_MODELS_CACHE_DIR', f'{HEZAR_CACHE_DIR}/models')
+HEZAR_DATASETS_CACHE_DIR = os.getenv('HEZAR_DATASETS_CACHE_DIR', f'{HEZAR_CACHE_DIR}/datasets')
 REPO_TYPE_TO_DIR_MAPPING = dict(
     model=HEZAR_MODELS_CACHE_DIR,
     dataset=HEZAR_DATASETS_CACHE_DIR
@@ -22,6 +22,16 @@ logger = get_logger('hezar.hub_interface')
 
 
 def exists_on_hub(hub_path: str, type='model'):
+    """
+    Determine whether the repo exists on the hub or not
+
+    Args:
+        hub_path: repo name or id
+        type: repo type like model, dataset, etc.
+
+    Returns:
+        True or False
+    """
     author, repo_name = hub_path.split('/')
     api = HfApi()
     if type == 'model':
@@ -36,9 +46,25 @@ def exists_on_hub(hub_path: str, type='model'):
     return hub_path in [path.id for path in paths]
 
 
+def clone_repo(hub_path: str, save_path: str, **kwargs):
+    """
+    Clone a repo on the hub to local directory
+
+    Args:
+        hub_path: repo name or id
+        save_path: path to clone the repo to
+
+    Returns:
+        the local path to the repo
+    """
+    repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
+    repo = Repository(local_dir=save_path, clone_from=repo_id, **kwargs)
+    return repo.local_dir
+
+
 class HubInterface:
-    def __init__(self, repo_name_or_id: str, repo_type: str, init_repo: bool = False, **kwargs):
-        self.repo_id, self.repo_name = self._get_repo_name_and_id(repo_name_or_id)
+    def __init__(self, hub_path: str, repo_type: str, init_repo: bool = False, **kwargs):
+        self.repo_id, self.repo_name = self._get_repo_name_and_id(hub_path)
         self.repo_type = repo_type
         self.api = HfApi()
         if init_repo:
@@ -46,9 +72,9 @@ class HubInterface:
         self.repo_dir = self.repo.local_dir
 
     @staticmethod
-    def _get_repo_name_and_id(repo_name_or_id):
-        repo_id = f'{HEZAR_HUB_ID}/{repo_name_or_id}' if '/' not in repo_name_or_id else repo_name_or_id
-        repo_name = repo_name_or_id if '/' not in repo_name_or_id else os.path.basename(repo_name_or_id)
+    def _get_repo_name_and_id(hub_path):
+        repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
+        repo_name = hub_path if '/' not in hub_path else os.path.basename(hub_path)
         return repo_id, repo_name
 
     def _setup_repo(self, **kwargs):

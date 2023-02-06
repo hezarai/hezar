@@ -1,29 +1,19 @@
 from typing import *
 from omegaconf import DictConfig
 
-from hezar import models_registry, load_model
-from hezar.models import Model
+from hezar.models import models_registry, load_model
 
 
 def test_build_distilbert_text_classification():
     model_name = 'distilbert_text_classification'
-    model = models_registry[model_name]['model_class'](models_registry[model_name]['model_config'](num_labels=3))
+    model = load_model(model_name, num_labels2=10)
     print(model)
 
 
 def test_load():
     from hezar.configs import ModelConfig
-    config = ModelConfig.load('hezar-ai/distilbert-fa-zwnj-base-sentiment')
+    config = ModelConfig.load('hezar-ai/distilbert-fa-sentiment-v1')
     print(config)
-
-
-def test_distilbert_save_model():
-    name = 'distilbert_text_classification'
-    inner_model_config = DictConfig(
-        {'pretrained_model_name_or_path': 'hezar-ai/distilbert-fa-zwnj-base', 'num_labels': 10})
-    model: Type[Model] = load_model(name, inner_model_config=inner_model_config)
-    model.save(path='../examples/test_save')
-    print(model)
 
 
 def test_distilbert_text_classification_prediction():
@@ -34,7 +24,7 @@ def test_distilbert_text_classification_prediction():
 
 
 if __name__ == '__main__':
-    test_load()
+    # test_load()
     # test_distilbert_save_model()
-    # test_build_distilbert_text_classification()
+    test_build_distilbert_text_classification()
     # test_distilbert_text_classification_prediction()

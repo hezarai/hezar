@@ -2,7 +2,7 @@ import importlib
 import os
 from typing import *
 
-from .model import Model
+from .model import Model, load_model
 from hezar.registry import models_registry
 
 
@@ -17,12 +17,6 @@ def register_model(model_name: str, model_config):
         return cls
 
     return register_model_class
-
-
-def load_model(name, **kwargs):
-    config = models_registry[name]['model_config'](**kwargs)
-    model = models_registry[name]['model_class'](config)
-    return model
 
 
 def import_models(models_dir, namespace):

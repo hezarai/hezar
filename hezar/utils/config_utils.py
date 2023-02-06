@@ -1,11 +1,13 @@
-import logging
+from .logging import get_logger
+
+logger = get_logger('hezar.config_utils')
 
 
 def merge_kwargs_into_config(config, args):
-    for k, v in args:
+    for k, v in args.items():
         if hasattr(config, k):
             setattr(config, k, v)
         else:
-            logging.warning(f'{str(config.__class__.__name__)} does not take `{k}` as a config parameter!')
+            logger.warning(f'{str(config.__class__.__name__)} does not take `{k}` as a config parameter!')
 
     return config
