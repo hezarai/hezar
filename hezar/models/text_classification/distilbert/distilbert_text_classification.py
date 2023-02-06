@@ -20,7 +20,7 @@ class DistilBertTextClassification(Model):
     """
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
-        super(DistilBertTextClassification, self).__init__(config, **kwargs)
+        super().__init__(config, **kwargs)
         self.model = self.build_model()
         self.tokenizer = None
 

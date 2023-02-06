@@ -6,7 +6,7 @@ from hezar.configs import ModelConfig
 
 @dataclass
 class DistilBertTextClassificationConfig(ModelConfig):
-    name: str = None  # initialized on registry
+    name: str = 'distilbert_text_classification'
     task: str = 'text_classification'
     num_labels: int = 2
     activation: str = 'gelu'

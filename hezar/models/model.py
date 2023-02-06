@@ -24,8 +24,8 @@ class Model(nn.Module):
     """
 
     def __init__(self, config, **kwargs):
-        super(Model, self).__init__()
-        self.config: Type[ModelConfig] = merge_kwargs_into_config(config, kwargs)
+        super().__init__()
+        self.config = merge_kwargs_into_config(config, kwargs)
         self.model: nn.Module = self.build_model()
 
     @abstractmethod
@@ -131,7 +131,7 @@ def load_model(name, config=None, **kwargs):
     the default config.
 
     Args:
-        name: name of the model in the models registry
+        name: name of the model in the models' registry
         config: a ModelConfig instance
         kwargs: extra config parameters that is loaded to the model
     """
