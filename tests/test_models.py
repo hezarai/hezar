@@ -6,7 +6,14 @@ from hezar.models import models_registry, load_model
 
 def test_build_distilbert_text_classification():
     model_name = 'distilbert_text_classification'
-    model = load_model(model_name, num_labels2=10)
+    model = load_model(model_name, num_labels=10)
+    print(model)
+
+
+def test_model_save():
+    model_name = 'distilbert_text_classification'
+    model = load_model(model_name, num_labels=10)
+    model.save('saved/test')
     print(model)
 
 
@@ -26,5 +33,6 @@ def test_distilbert_text_classification_prediction():
 if __name__ == '__main__':
     # test_load()
     # test_distilbert_save_model()
-    test_build_distilbert_text_classification()
+    # test_build_distilbert_text_classification()
     # test_distilbert_text_classification_prediction()
+    test_model_save()

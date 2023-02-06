@@ -77,9 +77,10 @@ class Model(nn.Module):
             path: A local directory to save model, config, etc.
         """
         # save model and config to the repo
+        os.makedirs(path, exist_ok=True)
         torch.save(self.state_dict(), f'{path}/pytorch.bin')
         self.config.save(save_dir=path, filename='config.yaml')
-        logging.info(f'Saved model weights to `{path}`')
+        logger.info(f'Saved model and config to `{path}`')
 
     def push_to_hub(self, hub_path):
         """
@@ -94,9 +95,10 @@ class Model(nn.Module):
         api.create_repo(repo_id, repo_type='model', exist_ok=True)
         # create local repo
         cache_path = get_local_cache_path(hub_path, repo_type='model')
-        repo = Repository(local_dir=cache_path)
+        repo = Repository(local_dir=cache_path, clone_from=repo_id)
         self.save(cache_path)
         repo.push_to_hub(f'Hezar: Upload {self.config.name}')
+        logger.info(f'Model successfully pushed to `{repo_id}`')
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:
