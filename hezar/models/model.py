@@ -5,9 +5,10 @@ from typing import *
 
 import torch
 from torch import nn
+from huggingface_hub import HfApi, Repository
 
 from hezar.configs import ModelConfig
-from hezar.hub import clone_repo, HEZAR_MODELS_CACHE_DIR
+from hezar.hub import clone_repo, resolve_hub_path, get_local_cache_path, HEZAR_MODELS_CACHE_DIR
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import models_registry
 
@@ -24,7 +25,7 @@ class Model(nn.Module):
 
     def __init__(self, config, **kwargs):
         super(Model, self).__init__()
-        self.config = merge_kwargs_into_config(config, kwargs)
+        self.config: Type[ModelConfig] = merge_kwargs_into_config(config, kwargs)
         self.model: nn.Module = self.build_model()
 
     @abstractmethod
@@ -75,25 +76,27 @@ class Model(nn.Module):
         Args:
             path: A local directory to save model, config, etc.
         """
-        # TODO handle the case when files exist
-        # save config
-        self.config.save(path)
-        # save model
-        model_state_dict = self.model.state_dict()
-        save_path = os.path.join(path, 'pytorch.bin')
-        torch.save(model_state_dict, save_path)
-        logging.info(f'Saved model weights to `{save_path}`')
+        # save model and config to the repo
+        torch.save(self.state_dict(), f'{path}/pytorch.bin')
+        self.config.save(save_dir=path, filename='config.yaml')
+        logging.info(f'Saved model weights to `{path}`')
 
-    def push_to_hub(self, repo_name_or_id):
+    def push_to_hub(self, hub_path):
         """
         Push the model and required files to the hub
 
         Args:
-            repo_name_or_id: The path (id or repo name) on the hub
+            hub_path: The path (id or repo name) on the hub
         """
-        repo = HubInterface(repo_name_or_id=repo_name_or_id, repo_type='model')
-        self.save(repo.repo_dir)
-        repo.push_to_hub('Upload from Hezar!')
+        api = HfApi()
+        repo_id = resolve_hub_path(hub_path)
+        # create remote repo
+        api.create_repo(repo_id, repo_type='model', exist_ok=True)
+        # create local repo
+        cache_path = get_local_cache_path(hub_path, repo_type='model')
+        repo = Repository(local_dir=cache_path)
+        self.save(cache_path)
+        repo.push_to_hub(f'Hezar: Upload {self.config.name}')
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:

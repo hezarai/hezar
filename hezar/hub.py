@@ -21,6 +21,37 @@ REPO_TYPE_TO_DIR_MAPPING = dict(
 logger = get_logger('hezar.hub_interface')
 
 
+def resolve_hub_path(hub_path):
+    """
+    If hub_path contains the namespace leave it as is, otherwise change to hezar-ai/{hub_path}
+
+    Args:
+        hub_path: repo name or id
+
+    Returns:
+        A proper repo id on the hub
+    """
+    repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
+    return repo_id
+
+
+def get_local_cache_path(hub_path, repo_type):
+    """
+    Given the hub path and repo type, configure the local path to save everything e.g, ~/.hezar/models/<repo_name>
+
+    Args:
+        hub_path: repo name or id
+        repo_type: repo type e.g, model, dataset, etc
+
+    Returns:
+        path to local cache directory
+    """
+    repo_id = resolve_hub_path(hub_path)
+    repo_name = repo_id.split('/')[1]
+    cache_path = f'{REPO_TYPE_TO_DIR_MAPPING[repo_type]}/{repo_name}'
+    return cache_path
+
+
 def exists_on_hub(hub_path: str, type='model'):
     """
     Determine whether the repo exists on the hub or not
@@ -57,7 +88,7 @@ def clone_repo(hub_path: str, save_path: str, **kwargs):
     Returns:
         the local path to the repo
     """
-    repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
+    repo_id = resolve_hub_path(hub_path)
     repo = Repository(local_dir=save_path, clone_from=repo_id, **kwargs)
     return repo.local_dir
 

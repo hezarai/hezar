@@ -10,7 +10,7 @@ def test_push_to_hub():
     inner_model_config = DictConfig(
         {'pretrained_model_name_or_path': 'hezar-ai/distilbert-fa-zwnj-base', 'num_labels': 2})
     model: Type[Model] = load_model(name, inner_model_config=inner_model_config)
-    model.push_to_hub(repo_name_or_id='hezar-ai/distilbert-fa-zwnj-base-test2')
+    model.push_to_hub(hub_path='hezar-ai/distilbert-fa-zwnj-base-test2')
     print()
 
 
