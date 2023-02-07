@@ -31,8 +31,8 @@ class Model(nn.Module):
     @abstractmethod
     def build(self):
         """
-        Build the model using the properties in `self.config`. This method is only responsible for building the model
-        architecture. No weights loading is necessary here.
+        An abstract method to build the model using the properties in `self.config`. This method is only responsible
+        for building the model architecture. No weights loading is necessary here.
 
         Returns:
             A :class:`nn.Module` instance
