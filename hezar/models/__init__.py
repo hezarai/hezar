@@ -2,7 +2,7 @@ import importlib
 import os
 from typing import *
 
-from .model import Model, load_model
+from .model import Model, build_model
 from hezar.registry import models_registry
 
 

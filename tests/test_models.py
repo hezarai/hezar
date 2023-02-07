@@ -1,18 +1,18 @@
 from typing import *
 from omegaconf import DictConfig
 
-from hezar.models import models_registry, load_model
+from hezar.models import models_registry, build_model
 
 
 def test_build_distilbert_text_classification():
     model_name = 'distilbert_text_classification'
-    model = load_model(model_name, num_labels=10)
+    model = build_model(model_name, num_labels=10)
     print(model)
 
 
 def test_model_save():
     model_name = 'distilbert_text_classification'
-    model = load_model(model_name, num_labels=10)
+    model = build_model(model_name, num_labels=10)
     model.save('saved/test')
     print(model)
 

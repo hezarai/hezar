@@ -21,10 +21,10 @@ class DistilBertTextClassification(Model):
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
-        self.model = self.build_model()
+        self.model = self.build()
         self.tokenizer = None
 
-    def build_model(self):
+    def build(self):
         config = DistilBertConfig(**self.config.dict())
         model = DistilBertForSequenceClassification(config)
         return model

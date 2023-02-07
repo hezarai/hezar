@@ -26,10 +26,10 @@ class Model(nn.Module):
     def __init__(self, config, **kwargs):
         super().__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
-        self.model: nn.Module = self.build_model()
+        self.model: nn.Module = self.build()
 
     @abstractmethod
-    def build_model(self):
+    def build(self):
         """
         Build the model using the properties in `self.config`. This method is only responsible for building the model
         architecture. No weights loading is necessary here.
@@ -55,7 +55,7 @@ class Model(nn.Module):
         # Load config
         config = ModelConfig.load(path=repo, filename='config.yaml')
         # Build model wih config
-        model = load_model(config.name, config, **kwargs)
+        model = build_model(config.name, config, **kwargs)
         # Get state dict from the model in the cloned repo
         state_dict = torch.load(f'{repo}/pytorch.bin')
         model.load_state_dict(state_dict)
@@ -127,7 +127,7 @@ class Model(nn.Module):
         raise NotImplementedError
 
 
-def load_model(name, config=None, **kwargs):
+def build_model(name, config=None, **kwargs):
     """
     Given the name of the model (in the registry), load the model. If config is None then the model will be loaded using
     the default config.
@@ -137,6 +137,7 @@ def load_model(name, config=None, **kwargs):
         config: a ModelConfig instance
         kwargs: extra config parameters that is loaded to the model
     """
+
     config = config or models_registry[name]['model_config']()
     model = models_registry[name]['model_class'](config, **kwargs)
     return model
