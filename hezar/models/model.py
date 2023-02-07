@@ -12,7 +12,7 @@ from hezar.hub import clone_repo, resolve_hub_path, get_local_cache_path, HEZAR_
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import models_registry
 
-logger = get_logger('hezar.model')
+logger = get_logger(__name__)
 
 
 class Model(nn.Module):

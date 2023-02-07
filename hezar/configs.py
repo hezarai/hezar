@@ -10,7 +10,7 @@ from omegaconf import DictConfig, OmegaConf
 from hezar.utils.logging import get_logger
 from .hub import HEZAR_TMP_DIR
 
-logger = get_logger('hezar.configs')
+logger = get_logger(__name__)
 
 CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
 

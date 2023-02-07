@@ -18,7 +18,7 @@ REPO_TYPE_TO_DIR_MAPPING = dict(
     dataset=HEZAR_DATASETS_CACHE_DIR
 )
 
-logger = get_logger('hezar.hub_interface')
+logger = get_logger(__name__)
 
 
 def resolve_hub_path(hub_path):

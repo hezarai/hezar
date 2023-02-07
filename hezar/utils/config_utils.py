@@ -1,6 +1,6 @@
 from .logging import get_logger
 
-logger = get_logger('hezar.config_utils')
+logger = get_logger(__name__)
 
 
 def merge_kwargs_into_config(config, args):
