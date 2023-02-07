@@ -1,7 +1,6 @@
-from typing import *
-from omegaconf import DictConfig
+from transformers import AutoTokenizer
 
-from hezar.models import models_registry, build_model
+from hezar.models import build_model
 
 
 def test_build_distilbert_text_classification():
@@ -25,14 +24,16 @@ def test_load():
 
 def test_distilbert_text_classification_prediction():
     model_name = 'distilbert_text_classification'
-    model = models_registry[model_name]['model_class'].load('test')
+    model = build_model(model_name, num_labels=10)
+    model.tokenizer = AutoTokenizer.from_pretrained('hezar-ai/distilbert-fa-sentiment-v1')
     text = 'hello from Hezar!'
-    print(model.predict(text))
+    outputs = model.predict(text)
+    print(outputs)
 
 
 if __name__ == '__main__':
     # test_load()
     # test_distilbert_save_model()
     # test_build_distilbert_text_classification()
-    # test_distilbert_text_classification_prediction()
-    test_model_save()
+    test_distilbert_text_classification_prediction()
+    # test_model_save()

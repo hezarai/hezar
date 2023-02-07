@@ -3,6 +3,7 @@ A DistilBERT model for text classification built using HuggingFace Transformers
 """
 from typing import Dict
 
+import torch
 from transformers import DistilBertForSequenceClassification, DistilBertConfig
 
 from hezar.data import Text
@@ -27,6 +28,8 @@ class DistilBertTextClassification(Model):
     def build(self):
         config = DistilBertConfig(**self.config.dict())
         model = DistilBertForSequenceClassification(config)
+        if self.config.id2label is None:
+            self.config.id2label = model.config.id2label
         return model
 
     def forward(self, inputs, **kwargs) -> Dict:
@@ -39,13 +42,21 @@ class DistilBertTextClassification(Model):
         inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors='pt')
         return inputs
 
+    @torch.no_grad()
     def predict(self, inputs: str, **kwargs) -> Dict:
+        self.eval()
         inputs = self.preprocess(inputs)
         outputs = self.forward(inputs, **kwargs)
         processed_outputs = self.postprocess(outputs)
         return processed_outputs
 
     def postprocess(self, inputs, **kwargs) -> Dict:
-        # TODO
-        return inputs
-
+        logits = inputs['logits']
+        predictions = logits.argmax(1)
+        predictions_probs = logits.max(1)
+        outputs = {'labels': [], 'probs': []}
+        for prediction, prob in zip(predictions, predictions_probs):
+            label = self.config.id2label[prediction.item()]
+            outputs['labels'].append(label)
+            outputs['probs'].append(prob.item())
+        return outputs

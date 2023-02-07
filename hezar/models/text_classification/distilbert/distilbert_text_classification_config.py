@@ -9,6 +9,7 @@ class DistilBertTextClassificationConfig(ModelConfig):
     name: str = 'distilbert_text_classification'
     task: str = 'text_classification'
     num_labels: int = 2
+    id2label: dict = None
     activation: str = 'gelu'
     attention_dropout: float = 0.1
     dim: int = 768
