@@ -135,7 +135,7 @@ def build_model(name, config=None, **kwargs):
     Args:
         name: name of the model in the models' registry
         config: a ModelConfig instance
-        kwargs: extra config parameters that is loaded to the model
+        kwargs: extra config parameters that are loaded to the model
     """
 
     config = config or models_registry[name]['model_config']()
