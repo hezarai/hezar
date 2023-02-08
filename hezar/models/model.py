@@ -5,10 +5,11 @@ from typing import *
 
 import torch
 from torch import nn
-from huggingface_hub import HfApi, Repository
+from huggingface_hub import HfApi, Repository, hf_hub_download
 
 from hezar.configs import ModelConfig
-from hezar.hub import clone_repo, resolve_hub_path, get_local_cache_path, HEZAR_MODELS_CACHE_DIR
+from hezar.hub import resolve_hub_path, get_local_cache_path
+from hezar.hub import HEZAR_TMP_DIR
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import models_registry
 
@@ -22,6 +23,7 @@ class Model(nn.Module):
     Args:
         config: A dataclass model config
     """
+    model_filename = 'model.pt'
 
     def __init__(self, config, **kwargs):
         super().__init__()
@@ -40,25 +42,34 @@ class Model(nn.Module):
         raise NotImplementedError
 
     @classmethod
-    def load(cls, path, **kwargs):
+    def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):
         """
         Load the model from local path or hub
 
         Args:
-            path: path to the model living on the Hub or local disk.
+            hub_or_local_path: path to the model living on the Hub or local disk.
+            load_locally: force loading from local path
+            save_to_cache: Whether to save model and config to Hezar's permanent cache folder
 
         Returns:
             The fully loaded Hezar model
         """
-        # clone full repo from hub
-        repo = clone_repo(hub_path=path, save_path=HEZAR_MODELS_CACHE_DIR)
         # Load config
-        config = ModelConfig.load(path=repo, filename='config.yaml')
+        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename='config.yaml')
         # Build model wih config
         model = build_model(config.name, config, **kwargs)
-        # Get state dict from the model in the cloned repo
-        state_dict = torch.load(f'{repo}/pytorch.bin')
+        # does the path exist locally?
+        is_local = load_locally or os.path.isdir(hub_or_local_path)
+        if not is_local:
+            model_path = hf_hub_download(hub_or_local_path, filename=cls.model_filename, cache_dir=HEZAR_TMP_DIR)
+        else:
+            model_path = os.path.join(hub_or_local_path, cls.model_filename)
+        # Get state dict from the model
+        state_dict = torch.load(model_path)
         model.load_state_dict(state_dict)
+        if save_to_cache:
+            cache_path = get_local_cache_path(hub_or_local_path, repo_type='model')
+            model.save(cache_path)
         return model
 
     def load_state_dict(self, state_dict, **kwargs):
@@ -78,7 +89,7 @@ class Model(nn.Module):
         """
         # save model and config to the repo
         os.makedirs(path, exist_ok=True)
-        torch.save(self.state_dict(), f'{path}/pytorch.bin')
+        torch.save(self.state_dict(), os.path.join(path, self.model_filename))
         self.config.save(save_dir=path, filename='config.yaml')
         logger.info(f'Saved model and config to `{path}`')
 

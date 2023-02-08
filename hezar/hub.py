@@ -9,7 +9,7 @@ from hezar.utils.logging import get_logger
 
 HEZAR_HUB_ID = 'hezar-ai'
 HEZAR_CACHE_DIR = os.getenv('HEZAR_CACHE_DIR', f'{os.path.expanduser("~")}/.hezar')
-HEZAR_TMP_DIR = os.getenv('HEZAR_TMP_DIR', f'{HEZAR_CACHE_DIR}/tmp')
+HEZAR_TMP_DIR = os.getenv('HEZAR_TMP_DIR', f'{os.path.expanduser("~")}/.cache/hezar')
 HEZAR_SNAPSHOTS_DIR = os.getenv('HEZAR_SNAPSHOTS_DIR', f'{HEZAR_CACHE_DIR}/snapshots')
 HEZAR_MODELS_CACHE_DIR = os.getenv('HEZAR_MODELS_CACHE_DIR', f'{HEZAR_CACHE_DIR}/models')
 HEZAR_DATASETS_CACHE_DIR = os.getenv('HEZAR_DATASETS_CACHE_DIR', f'{HEZAR_CACHE_DIR}/datasets')
@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 def resolve_hub_path(hub_path):
     """
-    If hub_path contains the namespace leave it as is, otherwise change to hezar-ai/{hub_path}
+    If hub_path contains the namespace (author/org) leave it as is, otherwise change to hezar-ai/{hub_path}
 
     Args:
         hub_path: repo name or id
@@ -31,6 +31,8 @@ def resolve_hub_path(hub_path):
     Returns:
         A proper repo id on the hub
     """
+    if os.path.isdir(hub_path):
+        logger.warning(f'{hub_path} does not seem to be a valid or existing repo on the Hub!')
     repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
     return repo_id
 

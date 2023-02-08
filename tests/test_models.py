@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer
 
-from hezar.models import build_model
+from hezar.models import build_model, Model
 
 
 def test_build_distilbert_text_classification():
@@ -9,11 +9,12 @@ def test_build_distilbert_text_classification():
     print(model)
 
 
-def test_model_save():
+def test_model_save_load():
     model_name = 'distilbert_text_classification'
-    model = build_model(model_name, num_labels=10)
-    model.save('saved/test')
-    print(model)
+    model1 = build_model(model_name, num_labels=10)
+    model1.save('saved/test')
+    model2 = Model.load('saved/test')
+    print(model2)
 
 
 def test_load():
@@ -35,5 +36,5 @@ if __name__ == '__main__':
     # test_load()
     # test_distilbert_save_model()
     # test_build_distilbert_text_classification()
-    test_distilbert_text_classification_prediction()
-    # test_model_save()
+    # test_distilbert_text_classification_prediction()
+    test_model_save_load()

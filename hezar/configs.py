@@ -4,8 +4,8 @@ from dataclasses import dataclass, field
 from typing import *
 
 import torch
-from transformers.utils.hub import cached_file
 from omegaconf import DictConfig, OmegaConf
+from huggingface_hub import hf_hub_download
 
 from hezar.utils.logging import get_logger
 from .hub import HEZAR_TMP_DIR
@@ -34,15 +34,20 @@ class Config:
             return default
 
     @classmethod
-    def load(cls, path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
+    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
         """
         Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
         """
-        config_path = cached_file(path, filename=filename, cache_dir=HEZAR_TMP_DIR)
-        dict_config = OmegaConf.load(config_path)
+        config_path = os.path.join(hub_or_local_path, filename)
+        is_local = os.path.isfile(config_path)
 
+        # if the file or repo_id does not exist locally, load from the Hub
+        if not is_local:
+            config_path = hf_hub_download(hub_or_local_path, filename=filename, cache_dir=HEZAR_TMP_DIR)
+
+        dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
-        config = cls.from_dict(config, **kwargs)
+        config = cls.from_dict(config, strict=False, **kwargs)
         return config
 
     @classmethod
@@ -79,6 +84,8 @@ class Config:
              save_dir: save directory path
              filename: config file name
         """
+        config = self.dict()
+        config.pop('config_type', None)
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, filename)
         OmegaConf.save(self.dict(), save_path)
