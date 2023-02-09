@@ -36,21 +36,13 @@ class DistilBertTextClassification(Model):
         outputs = self.model(**inputs, **kwargs)
         return outputs
 
-    def preprocess(self, inputs: str):
+    def preprocess(self, inputs: str, **kwargs):
         invalid_chars = self.config.get('invalid_chars', [])
         inputs = Text(inputs, tokenizer=self.tokenizer)
         inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors='pt')
         return inputs
 
-    @torch.no_grad()
-    def predict(self, inputs: str, **kwargs) -> Dict:
-        self.eval()
-        inputs = self.preprocess(inputs)
-        outputs = self.forward(inputs, **kwargs)
-        processed_outputs = self.postprocess(outputs)
-        return processed_outputs
-
-    def postprocess(self, inputs, **kwargs) -> Dict:
+    def postprocess(self, inputs) -> Dict:
         logits = inputs['logits']
         predictions = logits.argmax(1)
         predictions_probs = logits.max(1)

@@ -31,8 +31,6 @@ def resolve_hub_path(hub_path):
     Returns:
         A proper repo id on the hub
     """
-    if os.path.isdir(hub_path):
-        logger.warning(f'{hub_path} does not seem to be a valid or existing repo on the Hub!')
     repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
     return repo_id
 

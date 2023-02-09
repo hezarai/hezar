@@ -25,7 +25,7 @@ class Model(nn.Module):
     """
     model_filename = 'model.pt'
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config, *args, **kwargs):
         super().__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
         self.model: nn.Module = self.build()
@@ -124,7 +124,35 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
+    def preprocess(self, inputs, **kwargs):
+        """
+        Preprocess method intended for use in `self.predict()`. Given raw inputs to the model, perform all the necessary
+        preprocessing to get proper inputs for model forward.
+
+        Args:
+             inputs: Inputs container e.g, list of texts, list of image paths, etc.
+             kwargs: extra arguments specific to the derived class
+
+        Returns:
+            Processed input values to feed to the model to forward
+        """
+        return inputs
+
+    def postprocess(self, inputs, **kwargs):
+        """
+        Postprocess method intended for use in `self.predict()`. Process model outputs and return human-readable results
+
+        Args:
+            inputs: model outputs
+            kwargs: extra arguments specific to the derived class
+
+        Returns:
+            Processed model output values and converted to human-readable results
+        """
+        return inputs
+
     @abstractmethod
+    @torch.inference_mode()
     def predict(self, inputs, **kwargs) -> Dict:
         """
         Perform an end-to-end prediction on raw inputs.
@@ -135,18 +163,27 @@ class Model(nn.Module):
         Returns:
             Output dict of results
         """
-        raise NotImplementedError
+        self.eval()
+        model_inputs = self.preprocess(inputs, **kwargs)
+        model_outputs = self.forward(model_inputs, **kwargs)
+        processed_outputs = self.postprocess(model_outputs, **kwargs)
+
+        return processed_outputs
 
 
-def build_model(name, config=None, **kwargs):
+def build_model(name: str, config: ModelConfig = None, **kwargs):
     """
-    Given the name of the model (in the registry), load the model. If config is None then the model will be loaded using
-    the default config.
+    Build the model using its registry name. If config is None then the model is built using the default config. Notice
+    that this function only builds the model and does not perform any weights loading/initialization unless these
+    actions are done in the model's `.build()` method.
 
     Args:
-        name: name of the model in the models' registry
-        config: a ModelConfig instance
+        name (str): name of the model in the models' registry
+        config (ModelConfig): a ModelConfig instance
         kwargs: extra config parameters that are loaded to the model
+
+    Returns:
+        A Model instance
     """
 
     config = config or models_registry[name]['model_config']()
