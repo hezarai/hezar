@@ -36,5 +36,5 @@ if __name__ == '__main__':
     # test_load()
     # test_distilbert_save_model()
     # test_build_distilbert_text_classification()
-    # test_distilbert_text_classification_prediction()
-    test_model_save_load()
+    test_distilbert_text_classification_prediction()
+    # test_model_save_load()

@@ -17,12 +17,7 @@ CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimiz
 
 @dataclass
 class Config:
-    config_type: CONFIG_TYPE = field(
-        default='base',
-        metadata={
-            'help': "The category this config is responsible for"
-        }
-    )
+    name: str = None
 
     def dict(self):
         return self.__dict__
@@ -94,7 +89,6 @@ class Config:
 
 @dataclass
 class ModelConfig(Config):
-    config_type: CONFIG_TYPE = 'model'
     name: str = field(
         default=None,
         metadata={
@@ -104,7 +98,6 @@ class ModelConfig(Config):
 
 @dataclass
 class DatasetConfig(Config):
-    config_type: CONFIG_TYPE = 'dataset'
     name: str = field(
         default=None,
         metadata={
@@ -120,7 +113,6 @@ class DatasetConfig(Config):
 
 @dataclass
 class CriterionConfig(Config):
-    config_type: CONFIG_TYPE = 'criterion'
     name: str = None
     weight: Optional[torch.Tensor] = None
     reduce: str = None
@@ -128,16 +120,28 @@ class CriterionConfig(Config):
 
 
 @dataclass
+class LRSchedulerConfig(Config):
+    name: str = None
+    verbose: bool = True
+
+
+@dataclass
 class OptimizerConfig(Config):
-    config_type: CONFIG_TYPE = 'optimizer'
     name: str = None
     lr: float = None
+    weight_decay: float = None
+    scheduler: LRSchedulerConfig = None
 
 
 @dataclass
 class TrainConfig(Config):
-    config_type: CONFIG_TYPE = 'train'
-    device: str = 'cpu'
+    device: str = 'cuda'
+    optimizer: OptimizerConfig = None
+    batch_size: int = field(
+        default=None,
+        metadata={
+            'help': 'training batch size'
+        })
     model_name: str = field(
         default=None,
         metadata={
