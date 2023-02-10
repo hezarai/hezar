@@ -22,10 +22,10 @@ class DistilBertTextClassification(Model):
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
-        self.model = self.build()
+        self.model = self._build()
         self.tokenizer = None
 
-    def build(self):
+    def _build(self):
         config = DistilBertConfig(**self.config.dict())
         model = DistilBertForSequenceClassification(config)
         if self.config.id2label is None:
@@ -42,7 +42,7 @@ class DistilBertTextClassification(Model):
         inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors='pt')
         return inputs
 
-    def postprocess(self, inputs) -> Dict:
+    def postprocess(self, inputs, **kwargs) -> Dict:
         logits = inputs['logits']
         predictions = logits.argmax(1)
         predictions_probs = logits.max(1)

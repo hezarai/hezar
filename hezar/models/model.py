@@ -28,18 +28,6 @@ class Model(nn.Module):
     def __init__(self, config, *args, **kwargs):
         super().__init__()
         self.config = merge_kwargs_into_config(config, kwargs)
-        self.model: nn.Module = self.build()
-
-    @abstractmethod
-    def build(self):
-        """
-        An abstract method to build the model using the properties in `self.config`. This method is only responsible
-        for building the model architecture. No weights loading is necessary here.
-
-        Returns:
-            A :class:`nn.Module` instance
-        """
-        raise NotImplementedError
 
     @classmethod
     def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):
@@ -151,7 +139,6 @@ class Model(nn.Module):
         """
         return inputs
 
-    @abstractmethod
     @torch.inference_mode()
     def predict(self, inputs, **kwargs) -> Dict:
         """
