@@ -11,7 +11,7 @@ from hezar.models import register_model, Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
-@register_model(model_name='distilbert_text_classification', model_config=DistilBertTextClassificationConfig)
+@register_model(model_name='distilbert_text_classification', config_class=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(Model):
     """
     A standard 🤗Transformers DistilBert model for text classification

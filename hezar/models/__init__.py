@@ -13,13 +13,13 @@ __all__ = [
 ]
 
 
-def register_model(model_name: str, model_config):
+def register_model(model_name: str, config_class):
     def register_model_class(cls):
         if model_name in models_registry:
             raise ValueError(f'Requested model `{model_name}` already exists in the registry!')
 
-        model_config.name = model_name
-        models_registry[model_name] = dict(model_class=cls, model_config=model_config)
+        config_class.name = model_name
+        models_registry[model_name] = dict(model_class=cls, config_class=config_class)
 
         return cls
 

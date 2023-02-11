@@ -7,7 +7,7 @@ from hezar.models import Model, register_model
 from .mlp_config import MLPConfig
 
 
-@register_model('mlp', model_config=MLPConfig)
+@register_model('mlp', config_class=MLPConfig)
 class MLP(Model):
     """
     A simple MLP for out tests
