@@ -8,8 +8,8 @@ from torch import nn
 from huggingface_hub import HfApi, Repository, hf_hub_download
 
 from hezar.configs import ModelConfig
-from hezar.hub import resolve_hub_path, get_local_cache_path
-from hezar.hub import HEZAR_TMP_DIR
+from hezar.hub_utils import resolve_hub_path, get_local_cache_path
+from hezar.hub_utils import HEZAR_TMP_DIR
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import build_model
 
@@ -24,6 +24,7 @@ class Model(nn.Module):
         config: A dataclass model config
     """
     model_filename = 'model.pt'
+    config_filename = 'config.yaml'
 
     def __init__(self, config, *args, **kwargs):
         super().__init__()
@@ -68,36 +69,57 @@ class Model(nn.Module):
             logger.warning(f"Partially loading the weights as the model architecture and the given state dict are "
                            f"incompatible! \nIgnore this warning in case you plan on fine-tuning this model")
 
-    def save(self, path: Union[str, os.PathLike]):
+    def save(self, path: Union[str, os.PathLike], save_config: bool = True):
         """
         Save model weights and config to a local path
 
         Args:
             path: A local directory to save model, config, etc.
+            save_config (bool): Whether to save config along with the model or not.
+
+        Returns:
+            Path to the saved model
         """
         # save model and config to the repo
         os.makedirs(path, exist_ok=True)
-        torch.save(self.state_dict(), os.path.join(path, self.model_filename))
-        self.config.save(save_dir=path, filename='config.yaml')
-        logger.info(f'Saved model and config to `{path}`')
+        model_save_path = os.path.join(path, self.model_filename)
+        torch.save(self.state_dict(), model_save_path)
+        if save_config:
+            config_save_path = self.config.save(save_dir=path, filename=self.config_filename)
+            logger.info(f'Saved model config to {config_save_path}')
+        logger.info(f'Saved model weights to `{path}`')
+        return model_save_path
 
-    def push_to_hub(self, hub_path):
+    def push_to_hub(self, hub_path, commit_message=None):
         """
         Push the model and required files to the hub
 
         Args:
             hub_path: The path (id or repo name) on the hub
+            commit_message (str): Commit message for this push
         """
         api = HfApi()
         repo_id = resolve_hub_path(hub_path)
         # create remote repo
-        api.create_repo(repo_id, repo_type='model', exist_ok=True)
+        repo_url = api.create_repo(repo_id, repo_type='model', exist_ok=True)
+        logger.info(f'Prepared repo `{repo_url}`. Starting push process...')
         # create local repo
         cache_path = get_local_cache_path(hub_path, repo_type='model')
-        repo = Repository(local_dir=cache_path, clone_from=repo_id)
-        self.save(cache_path)
-        repo.push_to_hub(f'Hezar: Upload {self.config.name}')
-        logger.info(f'Model successfully pushed to `{repo_id}`')
+        model_save_path = self.save(cache_path, save_config=False)
+        if commit_message is None:
+            commit_message = f'Hezar: Upload model and config'
+        # upload config file
+        self.config.push_to_hub(repo_id,
+                                filename=self.config_filename,
+                                repo_type='model',
+                                commit_message=commit_message)
+        # upload model file
+        logger.info(f'Pushing model file: `{self.model_filename}`')
+        api.upload_file(path_or_fileobj=model_save_path,
+                        path_in_repo=self.model_filename,
+                        repo_id=repo_id,
+                        commit_message=commit_message)
+        logger.info(f'Uploaded `{model_save_path}` to `{repo_id}` as `{self.file_name}`')
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:

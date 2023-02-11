@@ -1,4 +1,4 @@
-import hezar.hub
+import hezar.hub_utils
 import hezar.configs
 import hezar.data
 import hezar.models

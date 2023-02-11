@@ -1,14 +1,14 @@
 import logging
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 
 import torch
 from omegaconf import DictConfig, OmegaConf
-from huggingface_hub import hf_hub_download
+from huggingface_hub import HfApi, hf_hub_download
 
 from hezar.utils.logging import get_logger
-from .hub import HEZAR_TMP_DIR
+from .hub_utils import HEZAR_TMP_DIR, resolve_hub_path, get_local_cache_path
 
 __all__ = [
     'Config',
@@ -94,7 +94,33 @@ class Config:
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, filename)
         OmegaConf.save(self.dict(), save_path)
-        logging.info(f'Saved config to `{save_path}`')
+        logger.info(f'Saved config to `{save_path}`')
+        return save_path
+
+    def push_to_hub(self, hub_path, filename, repo_type='model', commit_message=None):
+        """
+        Push the config file to the hub
+
+        Args:
+            hub_path (str): Repo name or id on the Hub
+            filename (str) config file name
+            repo_type (str): Type of the repo e.g, model, dataset, space
+            commit_message (str): Push commit message
+        """
+        api = HfApi()
+        repo_id = resolve_hub_path(hub_path)
+        api.create_repo(repo_id, repo_type=repo_type, exist_ok=True)
+        cache_path = get_local_cache_path(repo_id, repo_type=repo_type)
+        config_path = self.save(cache_path, filename=filename)
+        # push to hub
+        if commit_message is None:
+            commit_message = f'Hezar: Upload {filename}'
+        logger.info(f'Pushing config file: `{filename}`')
+        api.upload_file(path_or_fileobj=config_path,
+                        path_in_repo=filename,
+                        repo_id=repo_id,
+                        commit_message=commit_message)
+        logger.info(f'Uploaded `{config_path}` to `{repo_id}` as `{filename}`')
 
 
 @dataclass

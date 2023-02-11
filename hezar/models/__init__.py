@@ -2,13 +2,14 @@ import importlib
 import os
 
 from .model import Model
-from hezar.registry import models_registry
+from hezar.registry import models_registry, build_model
 
 __all__ = [
     'Model',
     'register_model',
     'models_registry',
-    'import_models'
+    'import_models',
+    'build_model'
 ]
 
 
