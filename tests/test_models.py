@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer
 
-from hezar.models import build_model, Model
+from hezar.models import Model, build_model
 
 
 def test_build_distilbert_text_classification():
@@ -26,15 +26,25 @@ def test_load():
 def test_distilbert_text_classification_prediction():
     model_name = 'distilbert_text_classification'
     model = build_model(model_name, num_labels=10)
+    model.push_to_hub('hezar-ai/distilbert-fa-sentiment-v1')
     model.tokenizer = AutoTokenizer.from_pretrained('hezar-ai/distilbert-fa-sentiment-v1')
     text = 'hello from Hezar!'
     outputs = model.predict(text)
     print(outputs)
 
 
+def test_mlp():
+    model_name = 'mlp'
+    model = build_model(model_name)
+    outputs = model.predict([1, 2, 3, 4])
+    print(outputs)
+    model.push_to_hub('hezar-ai/mlp-test')
+
+
 if __name__ == '__main__':
     # test_load()
     # test_distilbert_save_model()
     # test_build_distilbert_text_classification()
-    test_distilbert_text_classification_prediction()
+    # test_distilbert_text_classification_prediction()
     # test_model_save_load()
+    test_mlp()
