@@ -119,7 +119,7 @@ class Model(nn.Module):
                         path_in_repo=self.model_filename,
                         repo_id=repo_id,
                         commit_message=commit_message)
-        logger.info(f'Uploaded `{model_save_path}` to `{repo_id}` as `{self.file_name}`')
+        logger.info(f'Uploaded `{model_save_path}` to `{repo_id}` as `{self.model_filename}`')
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:

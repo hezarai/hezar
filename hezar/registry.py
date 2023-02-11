@@ -3,6 +3,7 @@ from typing import Iterator
 from torch import nn, optim
 
 from .configs import ModelConfig, CriterionConfig, OptimizerConfig, LRSchedulerConfig
+from hezar.utils.logging import get_logger
 
 __all__ = [
     'models_registry',
@@ -14,6 +15,8 @@ __all__ = [
     'build_optimizer',
     'build_scheduler'
 ]
+
+logger = get_logger(__name__)
 
 models_registry = {}
 

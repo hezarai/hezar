@@ -93,7 +93,7 @@ class Config:
         config.pop('config_type', None)
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, filename)
-        OmegaConf.save(self.dict(), save_path)
+        OmegaConf.save(config, save_path)
         logger.info(f'Saved config to `{save_path}`')
         return save_path
 
