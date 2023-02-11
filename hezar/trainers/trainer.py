@@ -1,45 +1,65 @@
-from abc import ABC, abstractmethod
+from typing import Union, List, Dict, Optional
+
+from torch import nn, optim
+from torch.utils.data import Dataset, DataLoader
 
 from hezar.configs import TrainConfig
-from hezar.models import models_registry
-from hezar.registry import criterions_registry, optimizers_registry
+from hezar.models import Model
+from hezar.registry import build_optimizer, build_scheduler
 
 
-class Trainer(ABC):
-    def __init__(self, config: TrainConfig, **kwargs):
+class Trainer:
+    def __int__(self,
+                model: Union[nn.Module, Model] = None,
+                config: TrainConfig = None,
+                train_dataset: Optional[Dataset] = None,
+                eval_dataset: Optional[Dataset] = None,
+                data_collator=None,
+                optimizer: optim.Optimizer = None,
+                lr_scheduler=None
+                ):
         self.config = config
-        self.device = self.config.device
-        self.model_config = self.config.model_config
-        self.dataset_config = self.config.dataset_config
-        self.criterion_config = self.config.criterion_config
-        self.optimizer_config = self.config.optimizer_config
+        self.model = model
+        self.train_dataset = train_dataset
+        self.eval_dataset = eval_dataset
+        self.data_collator = data_collator
+        self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
+        self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
-        self.model = self.build_model()
-        self.criterion = self.build_criterion()
-        self.optimizer = self.build_optimizer()
-        self.data_loaders = self.build_dataloaders()
+    def _setup_dataloaders(self):
+        train_dataloader = DataLoader(dataset=self.train_dataset,
+                                      batch_size=self.config.batch_size,
+                                      collate_fn=self.data_collator)
+        eval_dataloader = DataLoader(dataset=self.eval_dataset,
+                                     batch_size=self.config.batch_size,
+                                     collate_fn=self.data_collator)
+        return train_dataloader, eval_dataloader
 
-    def build_dataloaders(self):
-        raise NotImplementedError
+    def _setup_optimizers(self, optimizer=None, lr_scheduler=None):
+        optimizer_config = self.config.optimizer.dict()
+        optimizer_name = optimizer_config.pop('name')
+        scheduler_name = optimizer_name.pop('scheduler')
+        if optimizer is None:
+            optimizer = build_optimizer(optimizer_name, self.model.parameters(), optimizer_config)
+        if lr_scheduler is None:
+            lr_scheduler = build_scheduler(scheduler_name, optimizer, optimizer_config.scheduler)
+        return optimizer, lr_scheduler
 
-    def build_model(self):
-        model_name = self.model_config.name
-        model = models_registry[model_name](self.model_config)
-        return model
+    def train_one_batch(self, batch):
+        ...
 
-    def build_criterion(self):
-        criterion = criterions_registry[self.criterion_config.name](**self.criterion_config.dict())
-        criterion.to(self.device)
-        return criterion
+    def eval_one_batch(self, batch):
+        ...
 
-    def build_optimizer(self):
-        optimizer = optimizers_registry[self.optimizer_config.name](**self.optimizer_config.dict())
-        return optimizer
+    def train(self):
+        ...
 
-    @abstractmethod
-    def train(self, **kwargs):
-        raise NotImplementedError
+    def evaluate(self):
+        ...
 
-    @abstractmethod
-    def evaluate(self, **kwargs):
-        raise NotImplementedError
+    def save(self, path):
+        ...
+
+    def push_to_hub(self):
+        ...
+
