@@ -48,7 +48,7 @@ class Trainer:
     def train_one_batch(self, batch):
         ...
 
-    def eval_one_batch(self, batch):
+    def evaluate_one_batch(self, batch):
         ...
 
     def train(self):
