@@ -1,7 +1,7 @@
 import logging
 import os
 from dataclasses import dataclass, field, asdict
-from typing import *
+from typing import Union, Dict, List, Optional
 
 import torch
 from omegaconf import DictConfig, OmegaConf
@@ -31,10 +31,7 @@ class Config:
         return self.__dict__
 
     def get(self, key, default):
-        if hasattr(self, key):
-            return getattr(self, key)
-        else:
-            return default
+        return getattr(self, key, default)
 
     @classmethod
     def load(cls, hub_or_local_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
