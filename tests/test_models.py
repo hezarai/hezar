@@ -19,7 +19,8 @@ def test_model_save_load():
 
 def test_load():
     from hezar.configs import ModelConfig
-    config = ModelConfig.load('hezar-ai/distilbert-fa-sentiment-v1')
+    from hezar.models.mlp import MLPConfig
+    config = MLPConfig.load('hezar-ai/mlp-test')
     print(config)
 
 
@@ -42,9 +43,9 @@ def test_mlp():
 
 
 if __name__ == '__main__':
-    # test_load()
+    test_load()
     # test_distilbert_save_model()
     # test_build_distilbert_text_classification()
     # test_distilbert_text_classification_prediction()
     # test_model_save_load()
-    test_mlp()
+    # test_mlp()
