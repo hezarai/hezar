@@ -1,4 +1,8 @@
+from typing import Iterator
+
 from torch import nn, optim
+
+from .configs import ModelConfig, CriterionConfig, OptimizerConfig, LRSchedulerConfig
 
 models_registry = {}
 
@@ -22,11 +26,11 @@ lr_schedulers_registry = {
 }
 
 
-def build_model(name: str, config=None, **kwargs):
+def build_model(name: str, config: ModelConfig = None, **kwargs):
     """
     Build the model using its registry name. If config is None then the model is built using the default config. Notice
     that this function only builds the model and does not perform any weights loading/initialization unless these
-    actions are done in the model's `.build()` method.
+    actions are done in the model's __init__ .
 
     Args:
         name (str): name of the model in the models' registry
@@ -42,7 +46,7 @@ def build_model(name: str, config=None, **kwargs):
     return model
 
 
-def build_criterion(name, config=None):
+def build_criterion(name: str, config: CriterionConfig = None):
     """
         Build the loss function using its registry name.
 
@@ -53,11 +57,11 @@ def build_criterion(name, config=None):
         Returns:
             An nn.Module instance
         """
-    criterion = criterions_registry[name](**config)
+    criterion = criterions_registry[name](**config.dict())
     return criterion
 
 
-def build_optimizer(name, params, config=None):
+def build_optimizer(name: str, params: Iterator[nn.Parameter], config: OptimizerConfig = None):
     """
     Build the optimizer using its registry name.
 
@@ -69,21 +73,21 @@ def build_optimizer(name, params, config=None):
     Returns:
         An optim.Optimizer instance
     """
-    optimizer = optimizers_registry[name](params, **config)
+    optimizer = optimizers_registry[name](params, **config.dict())
     return optimizer
 
 
-def build_scheduler(name, optimizer, config=None):
+def build_scheduler(name: str, optimizer: optim.Optimizer, config: LRSchedulerConfig = None):
     """
         Build the LR scheduler using its registry name.
 
         Args:
             name (str): Name of the optimizer in the lr_schedulers_registry
             optimizer (optim.Optimizer): The optimizer
-            config (OptimizerConfig): An LRSchedulerConfig  instance
+            config (LRSchedulerConfig): An LRSchedulerConfig  instance
 
         Returns:
             An optim.lr_scheduler._LRScheduler instance
         """
-    scheduler = lr_schedulers_registry[name](optimizer, **config)
+    scheduler = lr_schedulers_registry[name](optimizer, **config.dict())
     return scheduler
