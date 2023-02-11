@@ -10,6 +10,16 @@ from huggingface_hub import hf_hub_download
 from hezar.utils.logging import get_logger
 from .hub import HEZAR_TMP_DIR
 
+__all__ = [
+    'Config',
+    'ModelConfig',
+    'TrainConfig',
+    'DatasetConfig',
+    'CriterionConfig',
+    'OptimizerConfig',
+    'LRSchedulerConfig'
+]
+
 logger = get_logger(__name__)
 
 CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
