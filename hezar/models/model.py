@@ -11,7 +11,7 @@ from hezar.configs import ModelConfig
 from hezar.hub import resolve_hub_path, get_local_cache_path
 from hezar.hub import HEZAR_TMP_DIR
 from hezar.utils import merge_kwargs_into_config, get_logger
-from hezar.registry import models_registry
+from hezar.registry import build_model
 
 logger = get_logger(__name__)
 
@@ -158,21 +158,4 @@ class Model(nn.Module):
         return processed_outputs
 
 
-def build_model(name: str, config: ModelConfig = None, **kwargs):
-    """
-    Build the model using its registry name. If config is None then the model is built using the default config. Notice
-    that this function only builds the model and does not perform any weights loading/initialization unless these
-    actions are done in the model's `.build()` method.
 
-    Args:
-        name (str): name of the model in the models' registry
-        config (ModelConfig): a ModelConfig instance
-        kwargs: extra config parameters that are loaded to the model
-
-    Returns:
-        A Model instance
-    """
-
-    config = config or models_registry[name]['model_config']()
-    model = models_registry[name]['model_class'](config, **kwargs)
-    return model
