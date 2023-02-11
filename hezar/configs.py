@@ -22,8 +22,6 @@ __all__ = [
 
 logger = get_logger(__name__)
 
-CONFIG_TYPE = Literal['base', 'model', 'dataset', 'train', 'criterion', 'optimizer']
-
 
 @dataclass
 class Config:
@@ -67,7 +65,7 @@ class Config:
 
         config = cls(**{
             k: v for k, v in dict_config.items()
-            if k in cls.__annotations__.keys()
+            if k in cls.__dict__.keys()
         })
 
         for k, v in dict_config.items():
