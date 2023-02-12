@@ -39,7 +39,12 @@ class DistilBertTextClassification(Model):
     def preprocess(self, inputs: str, **kwargs):
         invalid_chars = self.config.get('invalid_chars', [])
         inputs = Text(inputs, tokenizer=self.tokenizer)
-        inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors='pt')
+        inputs = (
+            inputs
+            .normalize()
+            .filter_out(invalid_chars)
+            .tokenize(return_tensors='pt')
+        )
         return inputs
 
     def postprocess(self, inputs, **kwargs) -> Dict:
