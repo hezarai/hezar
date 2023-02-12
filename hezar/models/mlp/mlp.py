@@ -25,4 +25,4 @@ class MLP(Model):
         return inputs
 
     def postprocess(self, inputs: Tensor, **kwargs):
-        return inputs.max(1).values.item()
+        return inputs.argmax(1).item()

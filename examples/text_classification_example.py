@@ -1,6 +1,6 @@
-from hezar.models.text_classification.distilbert import DistilBertTextClassification
+from hezar.models import Model
 
-model = DistilBertTextClassification.load('hezar-ai/distilbert-fa-zwnj-base-sentiment')
+model = Model.load('hezar-ai/distilbert-fa-sentiment-v1')
 text = ['یه تست خیلی خفن']
 outputs = model.predict(text)
 print(outputs)
