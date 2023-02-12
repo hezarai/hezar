@@ -9,15 +9,16 @@ from hezar.registry import build_optimizer, build_scheduler
 
 
 class Trainer:
-    def __int__(self,
-                model: Union[nn.Module, Model] = None,
-                config: TrainConfig = None,
-                train_dataset: Optional[Dataset] = None,
-                eval_dataset: Optional[Dataset] = None,
-                data_collator=None,
-                optimizer: optim.Optimizer = None,
-                lr_scheduler=None
-                ):
+    def __int__(
+        self,
+        model: Union[nn.Module, Model] = None,
+        config: TrainConfig = None,
+        train_dataset: Optional[Dataset] = None,
+        eval_dataset: Optional[Dataset] = None,
+        data_collator=None,
+        optimizer: optim.Optimizer = None,
+        lr_scheduler=None,
+    ):
         self.config = config
         self.model = model
         self.train_dataset = train_dataset
@@ -27,18 +28,18 @@ class Trainer:
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
     def _setup_dataloaders(self):
-        train_dataloader = DataLoader(dataset=self.train_dataset,
-                                      batch_size=self.config.batch_size,
-                                      collate_fn=self.data_collator)
-        eval_dataloader = DataLoader(dataset=self.eval_dataset,
-                                     batch_size=self.config.batch_size,
-                                     collate_fn=self.data_collator)
+        train_dataloader = DataLoader(
+            dataset=self.train_dataset, batch_size=self.config.batch_size, collate_fn=self.data_collator
+        )
+        eval_dataloader = DataLoader(
+            dataset=self.eval_dataset, batch_size=self.config.batch_size, collate_fn=self.data_collator
+        )
         return train_dataloader, eval_dataloader
 
     def _setup_optimizers(self, optimizer=None, lr_scheduler=None):
         optimizer_config = self.config.optimizer.dict()
-        optimizer_name = optimizer_config.pop('name')
-        scheduler_name = optimizer_name.pop('scheduler')
+        optimizer_name = optimizer_config.pop("name")
+        scheduler_name = optimizer_name.pop("scheduler")
         if optimizer is None:
             optimizer = build_optimizer(optimizer_name, self.model.parameters(), optimizer_config)
         if lr_scheduler is None:
@@ -62,4 +63,3 @@ class Trainer:
 
     def push_to_hub(self):
         ...
-

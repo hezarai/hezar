@@ -12,13 +12,13 @@ from .hub_utils import HEZAR_TMP_DIR, resolve_hub_path, get_local_cache_path
 from .registry import get_model_config_class
 
 __all__ = [
-    'Config',
-    'ModelConfig',
-    'TrainConfig',
-    'DatasetConfig',
-    'CriterionConfig',
-    'OptimizerConfig',
-    'LRSchedulerConfig'
+    "Config",
+    "ModelConfig",
+    "TrainConfig",
+    "DatasetConfig",
+    "CriterionConfig",
+    "OptimizerConfig",
+    "LRSchedulerConfig",
 ]
 
 logger = get_logger(__name__)
@@ -35,7 +35,7 @@ class Config:
         return getattr(self, key, default)
 
     @classmethod
-    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename='config.yaml', **kwargs):
+    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename="config.yaml", **kwargs):
         """
         Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
         """
@@ -48,7 +48,7 @@ class Config:
 
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
-        config_cls = get_model_config_class(config['name'])
+        config_cls = get_model_config_class(config["name"])
         config = config_cls.from_dict(config, strict=False, **kwargs)
         return config
 
@@ -57,28 +57,27 @@ class Config:
         """
         Load config from a dict-like object
         """
-        strict = kwargs.pop('strict', True)  # Whether ignore redundant parameters in kwargs or force-assign
+        strict = kwargs.pop("strict", True)  # Whether ignore redundant parameters in kwargs or force-assign
 
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
-        config = cls(**{
-            k: v for k, v in dict_config.items()
-            if k in cls.__dict__.keys()
-        })
+        config = cls(**{k: v for k, v in dict_config.items() if k in cls.__dict__.keys()})
 
         for k, v in dict_config.items():
             if not hasattr(cls, k):
                 if strict:
-                    logger.warning(f'`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute '
-                                   f'to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` '
-                                   f'or set `strict=False` when using `load()`')
+                    logger.warning(
+                        f"`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute "
+                        f"to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` "
+                        f"or set `strict=False` when using `load()`"
+                    )
                 else:
                     setattr(config, k, v)
 
         return config
 
-    def save(self, save_dir, filename='config.yaml'):
+    def save(self, save_dir, filename="config.yaml"):
         """
         Save the *config.yaml file to a local path
 
@@ -87,14 +86,14 @@ class Config:
              filename: config file name
         """
         config = self.dict()
-        config.pop('config_type', None)
+        config.pop("config_type", None)
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, filename)
         OmegaConf.save(config, save_path)
-        logger.info(f'Saved config to `{save_path}`')
+        logger.info(f"Saved config to `{save_path}`")
         return save_path
 
-    def push_to_hub(self, hub_path, filename, repo_type='model', commit_message=None):
+    def push_to_hub(self, hub_path, filename, repo_type="model", commit_message=None):
         """
         Push the config file to the hub
 
@@ -111,36 +110,24 @@ class Config:
         config_path = self.save(cache_path, filename=filename)
         # push to hub
         if commit_message is None:
-            commit_message = f'Hezar: Upload {filename}'
-        logger.info(f'Pushing config file: `{filename}`')
-        api.upload_file(path_or_fileobj=config_path,
-                        path_in_repo=filename,
-                        repo_id=repo_id,
-                        commit_message=commit_message)
-        logger.info(f'Uploaded `{config_path}` to `{repo_id}` as `{filename}`')
+            commit_message = f"Hezar: Upload {filename}"
+        logger.info(f"Pushing config file: `{filename}`")
+        api.upload_file(
+            path_or_fileobj=config_path, path_in_repo=filename, repo_id=repo_id, commit_message=commit_message
+        )
+        logger.info(f"Uploaded `{config_path}` to `{repo_id}` as `{filename}`")
 
 
 @dataclass
 class ModelConfig(Config):
-    name: str = field(
-        default=None,
-        metadata={
-            'help': "Name of the model's key in the models_registry"
-        })
+    name: str = field(default=None, metadata={"help": "Name of the model's key in the models_registry"})
 
 
 @dataclass
 class DatasetConfig(Config):
-    name: str = field(
-        default=None,
-        metadata={
-            'help': 'Name of the dataset'
-        })
+    name: str = field(default=None, metadata={"help": "Name of the dataset"})
     task: Union[str, List[str]] = field(
-        default=None,
-        metadata={
-            'help': 'Name of the task(s) this dataset is built for'
-        }
+        default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
 
 
@@ -168,27 +155,10 @@ class OptimizerConfig(Config):
 
 @dataclass
 class TrainConfig(Config):
-    device: str = 'cuda'
+    device: str = "cuda"
     optimizer: OptimizerConfig = None
-    batch_size: int = field(
-        default=None,
-        metadata={
-            'help': 'training batch size'
-        })
-    model_name: str = field(
-        default=None,
-        metadata={
-            'help': 'name of the model in the models_registry'
-        })
+    batch_size: int = field(default=None, metadata={"help": "training batch size"})
+    model_name: str = field(default=None, metadata={"help": "name of the model in the models_registry"})
     name: str = field(default=None)
-    model_config: ModelConfig = field(
-        default=ModelConfig(),
-        metadata={
-            'help': 'model config for the trainer'
-        })
-    dataset_config: DatasetConfig = field(
-        default=DatasetConfig(),
-        metadata={
-            'help': 'dataset config for the trainer'
-        }
-    )
+    model_config: ModelConfig = field(default=ModelConfig(), metadata={"help": "model config for the trainer"})
+    dataset_config: DatasetConfig = field(default=DatasetConfig(), metadata={"help": "dataset config for the trainer"})

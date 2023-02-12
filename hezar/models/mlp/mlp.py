@@ -7,11 +7,12 @@ from hezar.models import Model, register_model
 from .mlp_config import MLPConfig
 
 
-@register_model('mlp', config_class=MLPConfig)
+@register_model("mlp", config_class=MLPConfig)
 class MLP(Model):
     """
     A simple MLP for out tests
     """
+
     def __init__(self, config):
         super().__init__(config)
         self.nn = nn.Linear(in_features=self.config.input_shape, out_features=self.config.output_shape)

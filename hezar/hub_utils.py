@@ -8,29 +8,26 @@ from omegaconf import OmegaConf, DictConfig
 from hezar.utils.logging import get_logger
 
 __all__ = [
-    'HEZAR_HUB_ID',
-    'HEZAR_CACHE_DIR',
-    'HEZAR_TMP_DIR',
-    'HEZAR_DATASETS_CACHE_DIR',
-    'HEZAR_MODELS_CACHE_DIR',
-    'HEZAR_SNAPSHOTS_DIR',
-    'REPO_TYPE_TO_DIR_MAPPING',
-    'resolve_hub_path',
-    'get_local_cache_path',
-    'exists_on_hub',
-    'clone_repo'
+    "HEZAR_HUB_ID",
+    "HEZAR_CACHE_DIR",
+    "HEZAR_TMP_DIR",
+    "HEZAR_DATASETS_CACHE_DIR",
+    "HEZAR_MODELS_CACHE_DIR",
+    "HEZAR_SNAPSHOTS_DIR",
+    "REPO_TYPE_TO_DIR_MAPPING",
+    "resolve_hub_path",
+    "get_local_cache_path",
+    "exists_on_hub",
+    "clone_repo",
 ]
 
-HEZAR_HUB_ID = 'hezar-ai'
-HEZAR_CACHE_DIR = os.getenv('HEZAR_CACHE_DIR', f'{os.path.expanduser("~")}/.hezar')
-HEZAR_TMP_DIR = os.getenv('HEZAR_TMP_DIR', f'{os.path.expanduser("~")}/.cache/hezar')
-HEZAR_SNAPSHOTS_DIR = os.getenv('HEZAR_SNAPSHOTS_DIR', f'{HEZAR_CACHE_DIR}/snapshots')
-HEZAR_MODELS_CACHE_DIR = os.getenv('HEZAR_MODELS_CACHE_DIR', f'{HEZAR_CACHE_DIR}/models')
-HEZAR_DATASETS_CACHE_DIR = os.getenv('HEZAR_DATASETS_CACHE_DIR', f'{HEZAR_CACHE_DIR}/datasets')
-REPO_TYPE_TO_DIR_MAPPING = dict(
-    model=HEZAR_MODELS_CACHE_DIR,
-    dataset=HEZAR_DATASETS_CACHE_DIR
-)
+HEZAR_HUB_ID = "hezar-ai"
+HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.hezar')
+HEZAR_TMP_DIR = os.getenv("HEZAR_TMP_DIR", f'{os.path.expanduser("~")}/.cache/hezar')
+HEZAR_SNAPSHOTS_DIR = os.getenv("HEZAR_SNAPSHOTS_DIR", f"{HEZAR_CACHE_DIR}/snapshots")
+HEZAR_MODELS_CACHE_DIR = os.getenv("HEZAR_MODELS_CACHE_DIR", f"{HEZAR_CACHE_DIR}/models")
+HEZAR_DATASETS_CACHE_DIR = os.getenv("HEZAR_DATASETS_CACHE_DIR", f"{HEZAR_CACHE_DIR}/datasets")
+REPO_TYPE_TO_DIR_MAPPING = dict(model=HEZAR_MODELS_CACHE_DIR, dataset=HEZAR_DATASETS_CACHE_DIR)
 
 logger = get_logger(__name__)
 
@@ -45,7 +42,7 @@ def resolve_hub_path(hub_path):
     Returns:
         A proper repo id on the hub
     """
-    repo_id = f'{HEZAR_HUB_ID}/{hub_path}' if '/' not in hub_path else hub_path
+    repo_id = f"{HEZAR_HUB_ID}/{hub_path}" if "/" not in hub_path else hub_path
     return repo_id
 
 
@@ -61,12 +58,12 @@ def get_local_cache_path(hub_path, repo_type):
         path to local cache directory
     """
     repo_id = resolve_hub_path(hub_path)
-    repo_name = repo_id.split('/')[1]
-    cache_path = f'{REPO_TYPE_TO_DIR_MAPPING[repo_type]}/{repo_name}'
+    repo_name = repo_id.split("/")[1]
+    cache_path = f"{REPO_TYPE_TO_DIR_MAPPING[repo_type]}/{repo_name}"
     return cache_path
 
 
-def exists_on_hub(hub_path: str, type='model'):
+def exists_on_hub(hub_path: str, type="model"):
     """
     Determine whether the repo exists on the hub or not
 
@@ -77,16 +74,16 @@ def exists_on_hub(hub_path: str, type='model'):
     Returns:
         True or False
     """
-    author, repo_name = hub_path.split('/')
+    author, repo_name = hub_path.split("/")
     api = HfApi()
-    if type == 'model':
+    if type == "model":
         paths = list(iter(api.list_models(author=author)))
-    elif type == 'dataset':
+    elif type == "dataset":
         paths = list(iter(api.list_datasets(author=author)))
-    elif type == 'space':
+    elif type == "space":
         paths = list(iter(api.list_spaces(author=author)))
     else:
-        raise ValueError(f'Unknown type: {type}! Use `model`, `dataset`, `space`, etc.')
+        raise ValueError(f"Unknown type: {type}! Use `model`, `dataset`, `space`, etc.")
 
     return hub_path in [path.id for path in paths]
 

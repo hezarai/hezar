@@ -11,7 +11,7 @@ from hezar.models import register_model, Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
-@register_model(model_name='distilbert_text_classification', config_class=DistilBertTextClassificationConfig)
+@register_model(model_name="distilbert_text_classification", config_class=DistilBertTextClassificationConfig)
 class DistilBertTextClassification(Model):
     """
     A standard 🤗Transformers DistilBert model for text classification
@@ -37,23 +37,18 @@ class DistilBertTextClassification(Model):
         return outputs
 
     def preprocess(self, inputs: str, **kwargs):
-        invalid_chars = self.config.get('invalid_chars', [])
+        invalid_chars = self.config.get("invalid_chars", [])
         inputs = Text(inputs, tokenizer=self.tokenizer)
-        inputs = (
-            inputs
-            .normalize()
-            .filter_out(invalid_chars)
-            .tokenize(return_tensors='pt')
-        )
+        inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors="pt")
         return inputs
 
     def postprocess(self, inputs, **kwargs) -> Dict:
-        logits = inputs['logits']
+        logits = inputs["logits"]
         predictions = logits.argmax(1)
         predictions_probs = logits.max(1)
-        outputs = {'labels': [], 'probs': []}
+        outputs = {"labels": [], "probs": []}
         for prediction, prob in zip(predictions, predictions_probs):
             label = self.config.id2label[prediction.item()]
-            outputs['labels'].append(label)
-            outputs['probs'].append(prob.item())
+            outputs["labels"].append(label)
+            outputs["probs"].append(prob.item())
         return outputs

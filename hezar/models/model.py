@@ -23,8 +23,9 @@ class Model(nn.Module):
     Args:
         config: A dataclass model config
     """
-    model_filename = 'model.pt'
-    config_filename = 'config.yaml'
+
+    model_filename = "model.pt"
+    config_filename = "config.yaml"
 
     def __init__(self, config, *args, **kwargs):
         super().__init__()
@@ -44,7 +45,7 @@ class Model(nn.Module):
             The fully loaded Hezar model
         """
         # Load config
-        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename='config.yaml')
+        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename="config.yaml")
         # Build model wih config
         model = build_model(config.name, config, **kwargs)
         # does the path exist locally?
@@ -57,7 +58,7 @@ class Model(nn.Module):
         state_dict = torch.load(model_path)
         model.load_state_dict(state_dict)
         if save_to_cache:
-            cache_path = get_local_cache_path(hub_or_local_path, repo_type='model')
+            cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
             model.save(cache_path)
         return model
 
@@ -66,8 +67,10 @@ class Model(nn.Module):
             super().load_state_dict(state_dict, strict=True)
         except RuntimeError:
             super().load_state_dict(state_dict, strict=False)
-            logger.warning(f"Partially loading the weights as the model architecture and the given state dict are "
-                           f"incompatible! \nIgnore this warning in case you plan on fine-tuning this model")
+            logger.warning(
+                f"Partially loading the weights as the model architecture and the given state dict are "
+                f"incompatible! \nIgnore this warning in case you plan on fine-tuning this model"
+            )
 
     def save(self, path: Union[str, os.PathLike], save_config: bool = True):
         """
@@ -86,8 +89,8 @@ class Model(nn.Module):
         torch.save(self.state_dict(), model_save_path)
         if save_config:
             config_save_path = self.config.save(save_dir=path, filename=self.config_filename)
-            logger.info(f'Saved model config to {config_save_path}')
-        logger.info(f'Saved model weights to `{path}`')
+            logger.info(f"Saved model config to {config_save_path}")
+        logger.info(f"Saved model weights to `{path}`")
         return model_save_path
 
     def push_to_hub(self, hub_path, commit_message=None):
@@ -101,25 +104,26 @@ class Model(nn.Module):
         api = HfApi()
         repo_id = resolve_hub_path(hub_path)
         # create remote repo
-        repo_url = api.create_repo(repo_id, repo_type='model', exist_ok=True)
-        logger.info(f'Prepared repo `{repo_url}`. Starting push process...')
+        repo_url = api.create_repo(repo_id, repo_type="model", exist_ok=True)
+        logger.info(f"Prepared repo `{repo_url}`. Starting push process...")
         # create local repo
-        cache_path = get_local_cache_path(hub_path, repo_type='model')
+        cache_path = get_local_cache_path(hub_path, repo_type="model")
         model_save_path = self.save(cache_path, save_config=False)
         if commit_message is None:
-            commit_message = f'Hezar: Upload model and config'
+            commit_message = f"Hezar: Upload model and config"
         # upload config file
-        self.config.push_to_hub(repo_id,
-                                filename=self.config_filename,
-                                repo_type='model',
-                                commit_message=commit_message)
+        self.config.push_to_hub(
+            repo_id, filename=self.config_filename, repo_type="model", commit_message=commit_message
+        )
         # upload model file
-        logger.info(f'Pushing model file: `{self.model_filename}`')
-        api.upload_file(path_or_fileobj=model_save_path,
-                        path_in_repo=self.model_filename,
-                        repo_id=repo_id,
-                        commit_message=commit_message)
-        logger.info(f'Uploaded `{model_save_path}` to `{repo_id}` as `{self.model_filename}`')
+        logger.info(f"Pushing model file: `{self.model_filename}`")
+        api.upload_file(
+            path_or_fileobj=model_save_path,
+            path_in_repo=self.model_filename,
+            repo_id=repo_id,
+            commit_message=commit_message,
+        )
+        logger.info(f"Uploaded `{model_save_path}` to `{repo_id}` as `{self.model_filename}`")
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:
@@ -178,6 +182,3 @@ class Model(nn.Module):
         processed_outputs = self.postprocess(model_outputs, **kwargs)
 
         return processed_outputs
-
-
-
