@@ -19,7 +19,7 @@ def test_model_save_load():
 
 def test_load():
     from hezar.configs import ModelConfig
-    config = ModelConfig.load('hezar-ai/mlp-test')
+    config = ModelConfig.load('hezar-ai/distilbert-fa-sentiment-v1')
     print(config)
 
 

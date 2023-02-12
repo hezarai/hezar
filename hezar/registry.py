@@ -12,7 +12,8 @@ __all__ = [
     'build_model',
     'build_criterion',
     'build_optimizer',
-    'build_scheduler'
+    'build_scheduler',
+    'get_model_config_class'
 ]
 
 logger = get_logger(__name__)
@@ -106,6 +107,15 @@ def build_scheduler(name: str, optimizer: optim.Optimizer, config=None):
     return scheduler
 
 
-def get_config_class(name: str):
+def get_model_config_class(name: str):
+    """
+    Get the config class for a given model based on its registry name.
+
+    Args:
+        name (str): model's registry name
+
+    Returns:
+        A class of type :class:`hezar.Config`
+    """
     config_cls = models_registry[name]['config_class']
     return config_cls

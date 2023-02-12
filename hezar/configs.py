@@ -9,7 +9,7 @@ from huggingface_hub import HfApi, hf_hub_download
 
 from hezar.utils.logging import get_logger
 from .hub_utils import HEZAR_TMP_DIR, resolve_hub_path, get_local_cache_path
-from .registry import get_config_class
+from .registry import get_model_config_class
 
 __all__ = [
     'Config',
@@ -48,7 +48,7 @@ class Config:
 
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
-        config_cls = get_config_class(config['name'])
+        config_cls = get_model_config_class(config['name'])
         config = config_cls.from_dict(config, strict=False, **kwargs)
         return config
 
