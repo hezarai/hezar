@@ -2,7 +2,6 @@ from typing import Iterator
 
 from torch import nn, optim
 
-from .configs import ModelConfig, CriterionConfig, OptimizerConfig, LRSchedulerConfig
 from hezar.utils.logging import get_logger
 
 __all__ = [
@@ -40,7 +39,7 @@ lr_schedulers_registry = {
 }
 
 
-def build_model(name: str, config: ModelConfig = None, **kwargs):
+def build_model(name: str, config=None, **kwargs):
     """
     Build the model using its registry name. If config is None then the model is built using the default config. Notice
     that this function only builds the model and does not perform any weights loading/initialization unless these
@@ -55,12 +54,12 @@ def build_model(name: str, config: ModelConfig = None, **kwargs):
         A Model instance
     """
 
-    config = config or models_registry[name]['model_config']()
+    config = config or models_registry[name]['config_class']()
     model = models_registry[name]['model_class'](config, **kwargs)
     return model
 
 
-def build_criterion(name: str, config: CriterionConfig = None):
+def build_criterion(name: str, config=None):
     """
         Build the loss function using its registry name.
 
@@ -75,7 +74,7 @@ def build_criterion(name: str, config: CriterionConfig = None):
     return criterion
 
 
-def build_optimizer(name: str, params: Iterator[nn.Parameter], config: OptimizerConfig = None):
+def build_optimizer(name: str, params: Iterator[nn.Parameter], config=None):
     """
     Build the optimizer using its registry name.
 
@@ -91,7 +90,7 @@ def build_optimizer(name: str, params: Iterator[nn.Parameter], config: Optimizer
     return optimizer
 
 
-def build_scheduler(name: str, optimizer: optim.Optimizer, config: LRSchedulerConfig = None):
+def build_scheduler(name: str, optimizer: optim.Optimizer, config=None):
     """
         Build the LR scheduler using its registry name.
 
@@ -105,3 +104,8 @@ def build_scheduler(name: str, optimizer: optim.Optimizer, config: LRSchedulerCo
         """
     scheduler = lr_schedulers_registry[name](optimizer, **config.dict())
     return scheduler
+
+
+def get_config_class(name: str):
+    config_cls = models_registry[name]['config_class']
+    return config_cls

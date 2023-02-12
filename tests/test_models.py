@@ -19,8 +19,7 @@ def test_model_save_load():
 
 def test_load():
     from hezar.configs import ModelConfig
-    from hezar.models.mlp import MLPConfig
-    config = MLPConfig.load('hezar-ai/mlp-test')
+    config = ModelConfig.load('hezar-ai/mlp-test')
     print(config)
 
 
