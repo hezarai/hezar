@@ -3,7 +3,6 @@ from typing import List
 from torch import nn, Tensor
 
 from hezar.models import Model, register_model
-
 from .mlp_config import MLPConfig
 
 

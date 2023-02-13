@@ -1,6 +1,4 @@
-from dataclasses import dataclass, field
-from typing import *
-
+from dataclasses import dataclass
 from hezar.configs import ModelConfig
 
 

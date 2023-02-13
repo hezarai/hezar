@@ -1,33 +1,14 @@
-import os
-from typing import *
-
-import torch
-from huggingface_hub import Repository, HfApi, create_repo
-from omegaconf import OmegaConf, DictConfig
+from huggingface_hub import Repository, HfApi
 
 from hezar.utils.logging import get_logger
+from .constants import HEZAR_HUB_ID, REPO_TYPE_TO_DIR_MAPPING
 
 __all__ = [
-    "HEZAR_HUB_ID",
-    "HEZAR_CACHE_DIR",
-    "HEZAR_TMP_DIR",
-    "HEZAR_DATASETS_CACHE_DIR",
-    "HEZAR_MODELS_CACHE_DIR",
-    "HEZAR_SNAPSHOTS_DIR",
-    "REPO_TYPE_TO_DIR_MAPPING",
     "resolve_hub_path",
     "get_local_cache_path",
     "exists_on_hub",
     "clone_repo",
 ]
-
-HEZAR_HUB_ID = "hezar-ai"
-HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.hezar')
-HEZAR_TMP_DIR = os.getenv("HEZAR_TMP_DIR", f'{os.path.expanduser("~")}/.cache/hezar')
-HEZAR_SNAPSHOTS_DIR = os.getenv("HEZAR_SNAPSHOTS_DIR", f"{HEZAR_CACHE_DIR}/snapshots")
-HEZAR_MODELS_CACHE_DIR = os.getenv("HEZAR_MODELS_CACHE_DIR", f"{HEZAR_CACHE_DIR}/models")
-HEZAR_DATASETS_CACHE_DIR = os.getenv("HEZAR_DATASETS_CACHE_DIR", f"{HEZAR_CACHE_DIR}/datasets")
-REPO_TYPE_TO_DIR_MAPPING = dict(model=HEZAR_MODELS_CACHE_DIR, dataset=HEZAR_DATASETS_CACHE_DIR)
 
 logger = get_logger(__name__)
 

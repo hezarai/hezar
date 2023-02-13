@@ -1,6 +1,5 @@
-import logging
 import os
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Union, Dict, List, Optional
 
 import torch
@@ -8,7 +7,8 @@ from omegaconf import DictConfig, OmegaConf
 from huggingface_hub import HfApi, hf_hub_download
 
 from hezar.utils.logging import get_logger
-from .hub_utils import HEZAR_TMP_DIR, resolve_hub_path, get_local_cache_path
+from .hub_utils import resolve_hub_path, get_local_cache_path
+from .constants import HEZAR_TMP_DIR
 from .registry import get_model_config_class
 
 __all__ = [

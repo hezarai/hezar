@@ -1,15 +1,14 @@
-import logging
 import os
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 from typing import *
 
 import torch
 from torch import nn
-from huggingface_hub import HfApi, Repository, hf_hub_download
+from huggingface_hub import HfApi, hf_hub_download
 
 from hezar.configs import ModelConfig
 from hezar.hub_utils import resolve_hub_path, get_local_cache_path
-from hezar.hub_utils import HEZAR_TMP_DIR
+from hezar.constants import HEZAR_TMP_DIR
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import build_model
 
