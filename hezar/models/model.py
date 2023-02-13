@@ -51,9 +51,9 @@ class Model(nn.Module):
         # does the path exist locally?
         is_local = load_locally or os.path.isdir(hub_or_local_path)
         if not is_local:
-            model_path = hf_hub_download(hub_or_local_path, filename=cls.model_filename, cache_dir=HEZAR_TMP_DIR)
+            model_path = hf_hub_download(hub_or_local_path, filename=model.model_filename, cache_dir=HEZAR_TMP_DIR)
         else:
-            model_path = os.path.join(hub_or_local_path, cls.model_filename)
+            model_path = os.path.join(hub_or_local_path, model.model_filename)
         # Get state dict from the model
         state_dict = torch.load(model_path)
         model.load_state_dict(state_dict)

@@ -19,6 +19,7 @@ class DistilBertTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+    model_filename = 'pytorch.bin'
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
