@@ -93,18 +93,19 @@ class Model(nn.Module):
         logger.info(f"Saved model weights to `{path}`")
         return model_save_path
 
-    def push_to_hub(self, hub_path, commit_message=None):
+    def push_to_hub(self, hub_path, commit_message=None, private=False):
         """
         Push the model and required files to the hub
 
         Args:
             hub_path: The path (id or repo name) on the hub
             commit_message (str): Commit message for this push
+            private (bool): Whether to create a private repo or not
         """
         api = HfApi()
         repo_id = resolve_hub_path(hub_path)
         # create remote repo
-        repo_url = api.create_repo(repo_id, repo_type="model", exist_ok=True)
+        repo_url = api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
         logger.info(f"Prepared repo `{repo_url}`. Starting push process...")
         # create local repo
         cache_path = get_local_cache_path(hub_path, repo_type="model")
