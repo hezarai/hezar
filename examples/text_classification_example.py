@@ -1,6 +1,9 @@
-from hezar.models import Model
+from transformers import AutoTokenizer
 
-model = Model.load('hezar-ai/distilbert-fa-sentiment-v1')
+from hezar.models import Model
+path = 'hezar-ai/distilbert-fa-sentiment-v1'
+model = Model.load(path)
+model.tokenizer = AutoTokenizer.from_pretrained(path)
 text = ['یه تست خیلی خفن']
 outputs = model.predict(text)
 print(outputs)

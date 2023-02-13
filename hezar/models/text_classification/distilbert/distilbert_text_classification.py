@@ -19,7 +19,6 @@ class DistilBertTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
-    model_filename = 'pytorch.bin'
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -46,7 +45,7 @@ class DistilBertTextClassification(Model):
     def postprocess(self, inputs, **kwargs) -> Dict:
         logits = inputs["logits"]
         predictions = logits.argmax(1)
-        predictions_probs = logits.max(1)
+        predictions_probs = logits.softmax(1).max(1)
         outputs = {"labels": [], "probs": []}
         for prediction, prob in zip(predictions, predictions_probs):
             label = self.config.id2label[prediction.item()]

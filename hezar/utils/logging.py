@@ -2,7 +2,7 @@ import logging
 
 
 def get_logger(name, level=None, fmt=None):
-    fmt = fmt or "%(name)s - %(levelname)s - %(funcName)s - %(message)s"
+    fmt = fmt or "%(levelname)s: %(message)s"
     level = level or "INFO"
 
     logger = logging.Logger(name, level)
