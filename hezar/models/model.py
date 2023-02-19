@@ -8,7 +8,7 @@ from huggingface_hub import HfApi, hf_hub_download
 
 from hezar.configs import ModelConfig
 from hezar.hub_utils import resolve_hub_path, get_local_cache_path
-from hezar.constants import HEZAR_TMP_DIR
+from hezar.constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
 from hezar.utils import merge_kwargs_into_config, get_logger
 from hezar.registry import build_model
 
@@ -23,8 +23,8 @@ class Model(nn.Module):
         config: A dataclass model config
     """
 
-    model_filename = "model.pt"
-    config_filename = "config.yaml"
+    model_filename = DEFAULT_MODEL_FILENAME
+    config_filename = DEFAULT_CONFIG_FILENAME
 
     def __init__(self, config, *args, **kwargs):
         super().__init__()
@@ -92,7 +92,6 @@ class Model(nn.Module):
         torch.save(self.state_dict(), model_save_path)
         if save_config:
             config_save_path = self.config.save(save_dir=path, filename=self.config_filename)
-            logger.info(f"Saved model config to {config_save_path}")
         logger.info(f"Saved model weights to `{path}`")
         return model_save_path
 
