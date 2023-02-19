@@ -14,6 +14,7 @@ from .registry import get_model_config_class
 __all__ = [
     "Config",
     "ModelConfig",
+    "PreprocessorConfig",
     "TrainConfig",
     "DatasetConfig",
     "CriterionConfig",
@@ -28,6 +29,25 @@ logger = get_logger(__name__)
 class Config:
     name: str = None
 
+    def keys(self):
+        return self.dict().keys()
+
+    def pop(self, key):
+        value = self.dict().pop(key)
+        return value
+
+    def __getitem__(self, item):
+        try:
+            return self.dict()[item]
+        except KeyError:
+            raise ValueError(f'`{self.__class__.__name__}` has no attribute `{item}`')
+
+    def __len__(self):
+        return len(self.dict())
+
+    def __iter__(self):
+        return iter(self.dict())
+
     def dict(self):
         return self.__dict__
 
@@ -39,6 +59,7 @@ class Config:
         """
         Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
         """
+        hub_or_local_path = resolve_hub_path(hub_or_local_path)
         config_path = os.path.join(hub_or_local_path, filename)
         is_local = os.path.isfile(config_path)
 
@@ -121,6 +142,11 @@ class Config:
 @dataclass
 class ModelConfig(Config):
     name: str = field(default=None, metadata={"help": "Name of the model's key in the models_registry"})
+
+
+@dataclass
+class PreprocessorConfig(Config):
+    name: str = field(default=None, metadata={"help": "Name of the preprocessor's key in the preprocessor_registry"})
 
 
 @dataclass

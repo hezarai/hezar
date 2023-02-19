@@ -56,3 +56,15 @@ def load_json_config(path: Union[str, os.PathLike]):
     with open(path) as f:
         config = json.load(f)
     return config
+
+
+def hezar_config_to_hf_config(config):
+    """
+    Convert a :class:`hezar.Config` instance to HuggingFace :class:`transformers.PretrainedConfig` format
+    
+    Args:
+        config: A :class:`Hezar.Config` instance
+    """
+    from transformers import PretrainedConfig
+    hf_config = PretrainedConfig(**config)
+    return hf_config

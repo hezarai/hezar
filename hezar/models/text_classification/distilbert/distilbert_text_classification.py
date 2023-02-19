@@ -26,7 +26,7 @@ class DistilBertTextClassification(Model):
         self.tokenizer = None
 
     def _build(self):
-        config = DistilBertConfig(**self.config.dict())
+        config = DistilBertConfig(**self.config)
         model = DistilBertForSequenceClassification(config)
         if self.config.id2label is None:
             self.config.id2label = model.config.id2label
