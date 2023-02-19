@@ -14,6 +14,7 @@ from .registry import get_model_config_class
 __all__ = [
     "Config",
     "ModelConfig",
+    "PreprocessorConfig",
     "TrainConfig",
     "DatasetConfig",
     "CriterionConfig",
@@ -30,6 +31,10 @@ class Config:
 
     def keys(self):
         return self.dict().keys()
+
+    def pop(self, key):
+        value = self.dict().pop(key)
+        return value
 
     def __getitem__(self, item):
         try:
@@ -137,6 +142,11 @@ class Config:
 @dataclass
 class ModelConfig(Config):
     name: str = field(default=None, metadata={"help": "Name of the model's key in the models_registry"})
+
+
+@dataclass
+class PreprocessorConfig(Config):
+    name: str = field(default=None, metadata={"help": "Name of the preprocessor's key in the preprocessor_registry"})
 
 
 @dataclass
