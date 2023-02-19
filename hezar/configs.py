@@ -28,6 +28,21 @@ logger = get_logger(__name__)
 class Config:
     name: str = None
 
+    def keys(self):
+        return self.dict().keys()
+
+    def __getitem__(self, item):
+        try:
+            return self.dict()[item]
+        except KeyError:
+            raise ValueError(f'`{self.__class__.__name__}` has no attribute `{item}`')
+
+    def __len__(self):
+        return len(self.dict())
+
+    def __iter__(self):
+        return iter(self.dict())
+
     def dict(self):
         return self.__dict__
 
