@@ -54,6 +54,7 @@ class Config:
         """
         Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
         """
+        hub_or_local_path = resolve_hub_path(hub_or_local_path)
         config_path = os.path.join(hub_or_local_path, filename)
         is_local = os.path.isfile(config_path)
 
