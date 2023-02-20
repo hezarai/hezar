@@ -33,7 +33,7 @@ class DistilBertTextClassification(Model):
         outputs = self.model(**inputs, **kwargs)
         return outputs
 
-    def postprocess(self, inputs, **kwargs) -> Dict:
+    def post_process(self, inputs, **kwargs) -> Dict:
         logits = inputs["logits"]
         predictions = logits.argmax(1)
         predictions_probs = logits.softmax(1).max(1)

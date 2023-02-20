@@ -153,9 +153,9 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def postprocess(self, inputs, **kwargs):
+    def post_process(self, inputs, **kwargs):
         """
-        Postprocess method intended for use in `self.predict()`. Process model outputs and return human-readable results
+        Process model outputs and return human-readable results. Called in `self.predict()`
 
         Args:
             inputs: model outputs
@@ -179,6 +179,6 @@ class Model(nn.Module):
         """
         self.eval()
         model_outputs = self.forward(inputs, **kwargs)
-        processed_outputs = self.postprocess(model_outputs, **kwargs)
+        processed_outputs = self.post_process(model_outputs, **kwargs)
 
         return processed_outputs

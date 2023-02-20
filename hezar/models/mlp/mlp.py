@@ -21,5 +21,5 @@ class MLP(Model):
         x = self.nn(inputs)
         return x
 
-    def postprocess(self, inputs: Tensor, **kwargs):
+    def post_process(self, inputs: Tensor, **kwargs):
         return inputs.argmax(1).item()

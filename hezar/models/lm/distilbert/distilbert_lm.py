@@ -23,7 +23,7 @@ class DistilBertLM(Model):
         outputs = self.model(**inputs, **kwargs)
         return outputs
 
-    def postprocess(self, inputs, **kwargs):
+    def post_process(self, inputs, **kwargs):
         hidden_states = inputs.get("hidden_states", None)
         attentions = inputs.get("attentions", None)
         outputs = {
