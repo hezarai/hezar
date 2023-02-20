@@ -2,10 +2,12 @@
 General classes for different data types.
 """
 import os
-from typing import *
+from typing import List, Union, Literal
 
 import PIL
 import numpy as np
+
+from ..preprocessors import Preprocessor
 
 __all__ = [
     'Text',
@@ -14,30 +16,16 @@ __all__ = [
 
 
 class Text:
-    def __init__(self, text: str, language=None, normalizer=None, tokenizer=None):
+    def __init__(self, text: List[str]):
         self.text = text
-        self.language = language
-        self.normalizer = normalizer
-        self.tokenizer = tokenizer
 
     def __str__(self):
-        return f"Sentence(text={self.text}, lang={self.language}, tokenizer={self.tokenizer})"
+        return f"Sentence(text={self.text})"
 
-    def tokenize(self, **kwargs):
-        if self.tokenizer is None:
-            raise ValueError(f"There was no tokenizer provided for this sentence!")
-        inputs = self.tokenizer(self.text, **kwargs)
-        return inputs
-
-    def normalize(self):
-        # TODO: implement normalization
-        return Text(self.text, self.language, self.normalizer, self.tokenizer)
-
-    def filter_out(self, filter_list: List):
-        if len(filter_list):
-            for item in filter_list:
-                self.text.replace(item, "")
-        return Text(self.text, self.language, self.normalizer, self.tokenizer)
+    def process(self, preprocessors: List[Preprocessor], **kwargs):
+        for p in preprocessors:
+            self.text = p(self.text, **kwargs)
+        return self.text
 
 
 class Image:
