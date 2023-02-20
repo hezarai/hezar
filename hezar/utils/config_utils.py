@@ -10,8 +10,8 @@ from .logging import get_logger
 logger = get_logger(__name__)
 
 
-def merge_kwargs_into_config(config, args):
-    for k, v in args.items():
+def merge_kwargs_into_config(config, **kwargs):
+    for k, v in kwargs.items():
         if hasattr(config, k):
             setattr(config, k, v)
         else:
