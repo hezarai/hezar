@@ -29,10 +29,14 @@ class Trainer:
 
     def _setup_dataloaders(self):
         train_dataloader = DataLoader(
-            dataset=self.train_dataset, batch_size=self.config.batch_size, collate_fn=self.data_collator
+            dataset=self.train_dataset,
+            batch_size=self.config.batch_size,
+            collate_fn=self.data_collator,
         )
         eval_dataloader = DataLoader(
-            dataset=self.eval_dataset, batch_size=self.config.batch_size, collate_fn=self.data_collator
+            dataset=self.eval_dataset,
+            batch_size=self.config.batch_size,
+            collate_fn=self.data_collator,
         )
         return train_dataloader, eval_dataloader
 
@@ -41,9 +45,17 @@ class Trainer:
         optimizer_name = optimizer_config.pop("name")
         scheduler_name = optimizer_name.pop("scheduler")
         if optimizer is None:
-            optimizer = build_optimizer(optimizer_name, self.model.parameters(), optimizer_config)
+            optimizer = build_optimizer(
+                optimizer_name,
+                self.model.parameters(),
+                optimizer_config,
+            )
         if lr_scheduler is None:
-            lr_scheduler = build_scheduler(scheduler_name, optimizer, optimizer_config.scheduler)
+            lr_scheduler = build_scheduler(
+                scheduler_name,
+                optimizer,
+                optimizer_config.scheduler,
+            )
         return optimizer, lr_scheduler
 
     def train_one_batch(self, batch):
