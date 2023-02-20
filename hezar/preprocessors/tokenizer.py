@@ -33,7 +33,10 @@ class Tokenizer(Preprocessor):
         super().__init__(config, **kwargs)
         pretrained_path = config.pop("pretrained_path")
         self._tokenizer = AutoTokenizer.from_pretrained(
-            pretrained_path, config=PretrainedConfig(**self.config), cache_dir=HEZAR_TMP_DIR, **self.config
+            pretrained_path,
+            config=PretrainedConfig(**self.config),
+            cache_dir=HEZAR_TMP_DIR,
+            **self.config,
         )
 
     def __call__(self, inputs: List[str], **kwargs):
