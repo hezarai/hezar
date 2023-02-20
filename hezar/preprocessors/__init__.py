@@ -30,9 +30,9 @@ def import_preprocessors(preprocessors_dir, namespace):
     for module in os.listdir(preprocessors_dir):
         path = os.path.join(preprocessors_dir, module)
         if (
-                not module.startswith("_")
-                and not module.startswith(".")
-                and (module.endswith(".py") or os.path.isdir(path))
+            not module.startswith("_")
+            and not module.startswith(".")
+            and (module.endswith(".py") or os.path.isdir(path))
         ):
             preprocessor_name = module[: module.find(".py")] if module.endswith(".py") else module
             importlib.import_module(namespace + "." + preprocessor_name)

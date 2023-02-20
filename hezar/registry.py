@@ -58,17 +58,17 @@ def build_model(name: str, config=None, **kwargs):
 
 def build_preprocessor(name: str, config=None, **kwargs):
     """
-        Build the preprocessor using its registry name. If config is None then the preprocessor is built using the
-        default config.
+    Build the preprocessor using its registry name. If config is None then the preprocessor is built using the
+    default config.
 
-        Args:
-            name (str): name of the preprocessor in the preprocessors' registry
-            config (PreprocessorConfig): a PreprocessorConfig instance
-            kwargs: extra config parameters that are loaded to the preprocessor
+    Args:
+        name (str): name of the preprocessor in the preprocessors' registry
+        config (PreprocessorConfig): a PreprocessorConfig instance
+        kwargs: extra config parameters that are loaded to the preprocessor
 
-        Returns:
-            A Preprocessor instance
-        """
+    Returns:
+        A Preprocessor instance
+    """
 
     config = config or preprocessors_registry[name]["config_class"]()
     preprocessor = preprocessors_registry[name]["preprocessor_class"](config, **kwargs)

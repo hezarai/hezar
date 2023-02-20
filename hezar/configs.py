@@ -40,7 +40,7 @@ class Config:
         try:
             return self.dict()[item]
         except KeyError:
-            raise ValueError(f'`{self.__class__.__name__}` has no attribute `{item}`')
+            raise ValueError(f"`{self.__class__.__name__}` has no attribute `{item}`")
 
     def __len__(self):
         return len(self.dict())

@@ -7,8 +7,8 @@ with open("README.md", "r") as f:
 setuptools.setup(
     name="hezar",
     version="0.1.0",
-    url='https://github.com/hezar-ai/hezar',
-    license='MIT',
+    url="https://github.com/hezar-ai/hezar",
+    license="MIT",
     author="Aryan Shekarlaban",
     author_email="arxyzan@gmail.com",
     description="Hezar: A seamless AI framework & library for Persian",
@@ -16,11 +16,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     install_requires=[
-        "torch>=1.10.0"
-        "omegaconf>=2.3.0"
+        "torch>=1.10.0",
+        "omegaconf>=2.3.0",
         "transformers>=4.26",
         "huggingface_hub>=0.12.0",
-        'pillow'
+        "pillow",
     ],
-    python_requires='>=3.8',
+    python_requires=">=3.8",
 )

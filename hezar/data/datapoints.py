@@ -10,8 +10,8 @@ import numpy as np
 from ..preprocessors import Preprocessor
 
 __all__ = [
-    'Text',
-    'Image',
+    "Text",
+    "Image",
 ]
 
 

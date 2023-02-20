@@ -3,10 +3,8 @@ A DistilBERT model for text classification built using HuggingFace Transformers
 """
 from typing import Dict
 
-import torch
 from transformers import DistilBertForSequenceClassification, DistilBertConfig
 
-from hezar.data import Text
 from hezar.models import register_model, Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
