@@ -3,14 +3,14 @@ from abc import abstractmethod
 from typing import *
 
 import torch
-from torch import nn
 from huggingface_hub import HfApi, hf_hub_download
+from torch import nn
 
 from hezar.configs import ModelConfig
-from hezar.hub_utils import resolve_hub_path, get_local_cache_path
 from hezar.constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
-from hezar.utils import merge_kwargs_into_config, get_logger
+from hezar.hub_utils import resolve_hub_path, get_local_cache_path
 from hezar.registry import build_model
+from hezar.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -28,7 +28,17 @@ class Model(nn.Module):
 
     def __init__(self, config, *args, **kwargs):
         super().__init__()
-        self.config = merge_kwargs_into_config(config, kwargs)
+        self.config = self._build_config(config, **kwargs)
+
+    @staticmethod
+    def _build_config(config: ModelConfig, **kwargs) -> ModelConfig:
+        for k, v in kwargs.items():
+            if hasattr(config, k):
+                setattr(config, k, v)
+            else:
+                logger.warning(f"{str(config.__class__.__name__)} does not take `{k}` as a config parameter!")
+
+        return config
 
     @classmethod
     def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):
@@ -91,7 +101,7 @@ class Model(nn.Module):
         model_save_path = os.path.join(path, self.model_filename)
         torch.save(self.state_dict(), model_save_path)
         if save_config:
-            config_save_path = self.config.save(save_dir=path, filename=self.config_filename)
+            self.config.save(save_dir=path, filename=self.config_filename)
         logger.info(f"Saved model weights to `{path}`")
         return model_save_path
 
@@ -141,20 +151,6 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def preprocess(self, inputs, **kwargs):
-        """
-        Preprocess method intended for use in `self.predict()`. Given raw inputs to the model, perform all the necessary
-        preprocessing to get proper inputs for model forward.
-
-        Args:
-             inputs: Inputs container e.g, list of texts, list of image paths, etc.
-             kwargs: extra arguments specific to the derived class
-
-        Returns:
-            Processed input values to feed to the model to forward
-        """
-        return inputs
-
     def postprocess(self, inputs, **kwargs):
         """
         Postprocess method intended for use in `self.predict()`. Process model outputs and return human-readable results
@@ -180,8 +176,7 @@ class Model(nn.Module):
             Output dict of results
         """
         self.eval()
-        model_inputs = self.preprocess(inputs, **kwargs)
-        model_outputs = self.forward(model_inputs, **kwargs)
+        model_outputs = self.forward(inputs, **kwargs)
         processed_outputs = self.postprocess(model_outputs, **kwargs)
 
         return processed_outputs

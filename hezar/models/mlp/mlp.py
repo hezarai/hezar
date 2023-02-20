@@ -16,13 +16,10 @@ class MLP(Model):
         super().__init__(config)
         self.nn = nn.Linear(in_features=self.config.input_shape, out_features=self.config.output_shape)
 
-    def forward(self, inputs: Tensor, **kwargs):
+    def forward(self, inputs: list, **kwargs):
+        inputs = Tensor(inputs).reshape(1, -1)
         x = self.nn(inputs)
         return x
-
-    def preprocess(self, inputs: List[int], **kwargs):
-        inputs = Tensor(inputs).reshape(1, -1)
-        return inputs
 
     def postprocess(self, inputs: Tensor, **kwargs):
         return inputs.argmax(1).item()

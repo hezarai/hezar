@@ -23,7 +23,6 @@ class DistilBertTextClassification(Model):
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.model = self._build()
-        self.tokenizer = None
 
     def _build(self):
         config = DistilBertConfig(**self.config)
@@ -35,12 +34,6 @@ class DistilBertTextClassification(Model):
     def forward(self, inputs, **kwargs) -> Dict:
         outputs = self.model(**inputs, **kwargs)
         return outputs
-
-    def preprocess(self, inputs: str, **kwargs):
-        invalid_chars = self.config.get("invalid_chars", [])
-        inputs = Text(inputs, tokenizer=self.tokenizer)
-        inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors="pt")
-        return inputs
 
     def postprocess(self, inputs, **kwargs) -> Dict:
         logits = inputs["logits"]

@@ -23,12 +23,6 @@ class DistilBertLM(Model):
         outputs = self.model(**inputs, **kwargs)
         return outputs
 
-    def preprocess(self, inputs: str, **kwargs):
-        invalid_chars = self.config.get("invalid_chars", [])
-        inputs = Text(inputs, tokenizer=self.tokenizer)
-        inputs = inputs.normalize().filter_out(invalid_chars).tokenize(return_tensors="pt")
-        return inputs
-
     def postprocess(self, inputs, **kwargs):
         hidden_states = inputs.get('hidden_states', None)
         attentions = inputs.get('attentions', None)
