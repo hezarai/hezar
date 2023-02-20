@@ -1,9 +1,9 @@
-from transformers import AutoTokenizer
-
 from hezar.models import Model
+from hezar.preprocessors.tokenizer import Tokenizer
+
 path = 'hezar-ai/distilbert-fa-sentiment-v1'
 model = Model.load(path)
-model.tokenizer = AutoTokenizer.from_pretrained(path)
-text = ['یه تست خیلی خفن']
-outputs = model.predict(text)
+tokenizer = Tokenizer.load(path)
+inputs = tokenizer(['یه تست خیلی خفن'], return_tensors='pt')
+outputs = model.predict(inputs)
 print(outputs)
