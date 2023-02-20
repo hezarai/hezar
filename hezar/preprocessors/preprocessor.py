@@ -10,7 +10,7 @@ class Preprocessor:
     """
 
     def __init__(self, config, **kwargs):
-        self.config = merge_kwargs_into_config(config, **kwargs)
+        self.config = config.update(**kwargs)
 
     def __call__(self, inputs, **kwargs):
         """

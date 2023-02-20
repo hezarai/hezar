@@ -54,10 +54,17 @@ class Config:
     def get(self, key, default):
         return getattr(self, key, default)
 
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            if not hasattr(self, k):
+                logger.warning(f"{str(self.__class__.__name__)} does not take `{k}` as a config parameter!")
+            setattr(self, k, v)
+        return self
+
     @classmethod
     def load(cls, hub_or_local_path: Union[str, os.PathLike], filename="config.yaml", **kwargs):
         """
-        Load config from Hub or locally if it already exists_on_hub (handled by HfApi)
+        Load config from Hub or locally if it already exists on disk (handled by HfApi)
         """
         hub_or_local_path = resolve_hub_path(hub_or_local_path)
         config_path = os.path.join(hub_or_local_path, filename)

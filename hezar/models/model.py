@@ -26,19 +26,9 @@ class Model(nn.Module):
     model_filename = DEFAULT_MODEL_FILENAME
     config_filename = DEFAULT_CONFIG_FILENAME
 
-    def __init__(self, config, *args, **kwargs):
+    def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
-        self.config = self._build_config(config, **kwargs)
-
-    @staticmethod
-    def _build_config(config: ModelConfig, **kwargs) -> ModelConfig:
-        for k, v in kwargs.items():
-            if hasattr(config, k):
-                setattr(config, k, v)
-            else:
-                logger.warning(f"{str(config.__class__.__name__)} does not take `{k}` as a config parameter!")
-
-        return config
+        self.config = config.update(**kwargs)
 
     @classmethod
     def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):
