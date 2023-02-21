@@ -1,4 +1,4 @@
-from hezar.utils import merge_kwargs_into_config
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER
 
 
 class Preprocessor:
@@ -8,6 +8,7 @@ class Preprocessor:
     Args:
         config: Preprocessor properties
     """
+    preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
     def __init__(self, config, **kwargs):
         self.config = config.update(**kwargs)
