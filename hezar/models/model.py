@@ -44,7 +44,8 @@ class Model(nn.Module):
             The fully loaded Hezar model
         """
         hub_or_local_path = resolve_hub_path(hub_or_local_path)
-        cache_dir = HEZAR_MODELS_CACHE_DIR if save_to_cache else HEZAR_TMP_DIR
+        cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
+        cache_dir = HEZAR_MODELS_CACHE_DIR if os.path.exists(cache_path) else HEZAR_TMP_DIR
         # Load config
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename="config.yaml")
         # Build model wih config
@@ -64,7 +65,6 @@ class Model(nn.Module):
         state_dict = torch.load(model_path)
         model.load_state_dict(state_dict)
         if save_to_cache:
-            cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
             model.save(cache_path)
         return model
 
