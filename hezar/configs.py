@@ -54,8 +54,9 @@ class Config:
     def get(self, key, default):
         return getattr(self, key, default)
 
-    def update(self, **kwargs):
-        for k, v in kwargs.items():
+    def update(self, d: dict, **kwargs):
+        d.update(kwargs)
+        for k, v in d.items():
             if not hasattr(self, k):
                 logger.warning(f"{str(self.__class__.__name__)} does not take `{k}` as a config parameter!")
             setattr(self, k, v)

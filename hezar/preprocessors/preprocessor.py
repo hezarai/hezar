@@ -1,5 +1,9 @@
 from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER
 
+__all__ = [
+    "Preprocessor",
+]
+
 
 class Preprocessor:
     """
@@ -11,7 +15,7 @@ class Preprocessor:
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
     def __init__(self, config, **kwargs):
-        self.config = config.update(**kwargs)
+        self.config = config.update(kwargs)
 
     def __call__(self, inputs, **kwargs):
         """

@@ -7,11 +7,13 @@ from hezar.utils.logging import get_logger
 __all__ = [
     "models_registry",
     "preprocessors_registry",
+    "datasets_registry",
     "criterions_registry",
     "optimizers_registry",
     "lr_schedulers_registry",
     "build_model",
     "build_preprocessor",
+    "build_dataset",
     "build_criterion",
     "build_optimizer",
     "build_scheduler",
@@ -22,6 +24,7 @@ logger = get_logger(__name__)
 
 models_registry = {}
 preprocessors_registry = {}
+datasets_registry = {}
 criterions_registry = {
     "bce": nn.BCELoss,
     "nll": nn.NLLLoss,
@@ -73,6 +76,12 @@ def build_preprocessor(name: str, config=None, **kwargs):
     config = config or preprocessors_registry[name]["config_class"]()
     preprocessor = preprocessors_registry[name]["preprocessor_class"](config, **kwargs)
     return preprocessor
+
+
+def build_dataset(name: str, config=None, split=None, **kwargs):
+    config = config or datasets_registry[name]["config_class"]()
+    dataset = datasets_registry[name]["dataset_class"](config, split=split, **kwargs)
+    return dataset
 
 
 def build_criterion(name: str, config=None):

@@ -28,7 +28,7 @@ class Model(nn.Module):
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
-        self.config = config.update(**kwargs)
+        self.config = config.update(kwargs)
 
     @classmethod
     def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):

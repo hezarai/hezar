@@ -11,6 +11,11 @@ from ..registry import build_preprocessor
 from ..constants import HEZAR_TMP_DIR
 from ..preprocessors import Preprocessor, register_preprocessor
 
+__all__ = [
+    "Tokenizer",
+    "TokenizerConfig",
+]
+
 
 @dataclass
 class TokenizerConfig(PreprocessorConfig):
