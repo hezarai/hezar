@@ -3,10 +3,10 @@ from typing import List
 from dataclasses import dataclass
 
 from transformers import AutoTokenizer, PretrainedConfig
+from huggingface_hub import HfApi
 
 from ..configs import PreprocessorConfig
 from ..hub_utils import resolve_hub_path, get_local_cache_path
-from ..utils import hezar_config_to_hf_config
 from ..registry import build_preprocessor
 from ..constants import HEZAR_TMP_DIR
 from ..preprocessors import Preprocessor, register_preprocessor
@@ -27,8 +27,6 @@ class Tokenizer(Preprocessor):
         kwargs: Extra/manual config parameters
     """
 
-    preprocessor_filename = "tokenizer_config.yaml"
-
     def __init__(self, config: TokenizerConfig, **kwargs):
         super().__init__(config, **kwargs)
         pretrained_path = config.pop("pretrained_path")
@@ -36,6 +34,7 @@ class Tokenizer(Preprocessor):
             pretrained_path,
             config=PretrainedConfig(**self.config),
             cache_dir=HEZAR_TMP_DIR,
+            subfolder=self.preprocessor_subfolder,
             **self.config,
         )
 
@@ -44,10 +43,24 @@ class Tokenizer(Preprocessor):
         return outputs
 
     def push_to_hub(self, hub_path, **kwargs):
-        self._tokenizer.push_to_hub(hub_path, **kwargs)
+        save_path = f"{get_local_cache_path(hub_path, repo_type='model')}/{self.preprocessor_subfolder}"
+        hub_path = resolve_hub_path(hub_path)
+        self._tokenizer.save_pretrained(
+            save_path,
+            repo_id=hub_path,
+            **kwargs,
+        )
+        api = HfApi()
+        api.upload_folder(
+            repo_id=hub_path,
+            folder_path=save_path,
+            repo_type='model',
+            path_in_repo=self.preprocessor_subfolder,
+        )
 
     def save(self, path, **kwargs):
-        self._tokenizer.save_pretrained(path, **kwargs)
+        save_path = os.path.join(path, self.preprocessor_subfolder)
+        self._tokenizer.save_pretrained(save_path, subfolder=self.preprocessor_subfolder, **kwargs)
 
     @classmethod
     def load(cls, hub_or_local_path, save_to_cache=False, **kwargs):
