@@ -1,3 +1,5 @@
+import os.path
+
 from huggingface_hub import Repository, HfApi
 
 from hezar.utils.logging import get_logger
@@ -44,27 +46,32 @@ def get_local_cache_path(hub_path, repo_type):
     return cache_path
 
 
-def exists_on_hub(hub_path: str, type="model"):
+def exists_in_cache(hub_path, repo_type="model"):
+    cache_path = get_local_cache_path(hub_path, repo_type)
+    return os.path.exists(cache_path)
+
+
+def exists_on_hub(hub_path: str, repo_type="model"):
     """
     Determine whether the repo exists on the hub or not
 
     Args:
         hub_path: repo name or id
-        type: repo type like model, dataset, etc.
+        repo_type: repo type like model, dataset, etc.
 
     Returns:
         True or False
     """
     author, repo_name = hub_path.split("/")
     api = HfApi()
-    if type == "model":
+    if repo_type == "model":
         paths = list(iter(api.list_models(author=author)))
-    elif type == "dataset":
+    elif repo_type == "dataset":
         paths = list(iter(api.list_datasets(author=author)))
-    elif type == "space":
+    elif repo_type == "space":
         paths = list(iter(api.list_spaces(author=author)))
     else:
-        raise ValueError(f"Unknown type: {type}! Use `model`, `dataset`, `space`, etc.")
+        raise ValueError(f"Unknown type: {repo_type}! Use `model`, `dataset`, `space`, etc.")
 
     return hub_path in [path.id for path in paths]
 
