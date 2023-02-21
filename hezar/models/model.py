@@ -7,7 +7,7 @@ from huggingface_hub import HfApi, hf_hub_download
 from torch import nn
 
 from hezar.configs import ModelConfig
-from hezar.constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
+from hezar.constants import HEZAR_TMP_DIR, HEZAR_MODELS_CACHE_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
 from hezar.hub_utils import resolve_hub_path, get_local_cache_path
 from hezar.registry import build_model
 from hezar.utils import get_logger
@@ -44,6 +44,7 @@ class Model(nn.Module):
             The fully loaded Hezar model
         """
         hub_or_local_path = resolve_hub_path(hub_or_local_path)
+        cache_dir = HEZAR_MODELS_CACHE_DIR if save_to_cache else HEZAR_TMP_DIR
         # Load config
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename="config.yaml")
         # Build model wih config
@@ -54,7 +55,7 @@ class Model(nn.Module):
             model_path = hf_hub_download(
                 hub_or_local_path,
                 filename=model.model_filename,
-                cache_dir=HEZAR_TMP_DIR,
+                cache_dir=cache_dir,
                 resume_download=True,
             )
         else:
