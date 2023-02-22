@@ -3,12 +3,12 @@ from typing import List
 
 import torch
 from datasets import load_dataset
-from torch.utils.data import Dataset
 from transformers.data import DataCollatorWithPadding
 
 from ...configs import DatasetConfig
 from ...preprocessors.tokenizer import Tokenizer
 from ...registry import register_dataset
+from .dataset import Dataset
 
 
 @dataclass
@@ -25,7 +25,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
 @register_dataset("text_classification", config_class=TextClassificationDatasetConfig)
 class TextClassificationDataset(Dataset):
     def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
-        self.config = config.update(kwargs)
+        super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
         self.preprocessor = Tokenizer.load(self.config.tokenizer_path)
