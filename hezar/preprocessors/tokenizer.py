@@ -1,15 +1,15 @@
 import os
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
-from transformers import AutoTokenizer, PretrainedConfig
 from huggingface_hub import HfApi
+from transformers import AutoTokenizer, PretrainedConfig
 
 from ..configs import PreprocessorConfig
-from ..hub_utils import resolve_hub_path, get_local_cache_path
-from ..registry import build_preprocessor
 from ..constants import HEZAR_TMP_DIR
+from ..hub_utils import resolve_hub_path, get_local_cache_path
 from ..preprocessors import Preprocessor, register_preprocessor
+from ..registry import build_preprocessor
 
 __all__ = [
     "Tokenizer",
@@ -59,7 +59,7 @@ class Tokenizer(Preprocessor):
         api.upload_folder(
             repo_id=hub_path,
             folder_path=save_path,
-            repo_type='model',
+            repo_type="model",
             path_in_repo=self.preprocessor_subfolder,
         )
 
@@ -76,3 +76,7 @@ class Tokenizer(Preprocessor):
             cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
             preprocessor.save(cache_path)
         return preprocessor
+
+    @property
+    def tokenizer(self):
+        return self._tokenizer

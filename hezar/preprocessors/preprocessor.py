@@ -12,6 +12,7 @@ class Preprocessor:
     Args:
         config: Preprocessor properties
     """
+
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
     def __init__(self, config, **kwargs):
