@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 
 from hezar.configs import TrainConfig
 from hezar.models import Model
-from hezar.registry import build_optimizer, build_scheduler
+from hezar.builders import build_optimizer, build_scheduler
 
 
 class Trainer:

@@ -6,10 +6,10 @@ import torch
 from omegaconf import DictConfig, OmegaConf
 from huggingface_hub import HfApi, hf_hub_download
 
-from hezar.utils.logging import get_logger
-from .hub_utils import resolve_hub_path, get_local_cache_path
+from .utils.logging import get_logger
+from .utils.hub_utils import resolve_hub_path, get_local_cache_path
 from .constants import HEZAR_TMP_DIR
-from .registry import get_model_config_class
+from .builders import get_model_config_class
 
 __all__ = [
     "Config",

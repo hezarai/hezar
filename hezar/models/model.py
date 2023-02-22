@@ -8,8 +8,8 @@ from torch import nn
 
 from hezar.configs import ModelConfig
 from hezar.constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
-from hezar.hub_utils import resolve_hub_path, get_local_cache_path
-from hezar.registry import build_model
+from hezar.utils.hub_utils import resolve_hub_path, get_local_cache_path
+from hezar.builders import build_model
 from hezar.utils import get_logger
 
 logger = get_logger(__name__)

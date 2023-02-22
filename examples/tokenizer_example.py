@@ -1,4 +1,4 @@
-from hezar.registry import build_preprocessor
+from hezar.builders import build_preprocessor
 from hezar.preprocessors.tokenizer import Tokenizer
 
 

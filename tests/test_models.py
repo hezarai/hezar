@@ -1,6 +1,7 @@
 from transformers import AutoTokenizer
 
-from hezar.models import Model, build_model
+from hezar.builders import build_model
+from hezar.models import Model
 
 
 def test_build_distilbert_text_classification():

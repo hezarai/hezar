@@ -2,13 +2,12 @@ import importlib
 import os
 
 from .preprocessor import Preprocessor
-from hezar.registry import preprocessors_registry, build_preprocessor
+from hezar.registry import preprocessors_registry
 
 __all__ = [
     "Preprocessor",
     "preprocessors_registry",
     "register_preprocessor",
-    "build_preprocessor",
     "import_preprocessors",
 ]
 
