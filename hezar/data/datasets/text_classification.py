@@ -10,11 +10,6 @@ from ...configs import DatasetConfig
 from ...preprocessors.tokenizer import Tokenizer
 from ...registry import register_dataset
 
-__all__ = [
-    "TextClassificationDataset",
-    "TextClassificationDatasetConfig",
-]
-
 
 @dataclass
 class TextClassificationDatasetConfig(DatasetConfig):

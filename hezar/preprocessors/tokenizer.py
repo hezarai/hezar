@@ -12,11 +12,6 @@ from ..utils.hub_utils import resolve_hub_path, get_local_cache_path
 from ..preprocessors import Preprocessor
 from ..builders import build_preprocessor
 
-__all__ = [
-    "Tokenizer",
-    "TokenizerConfig",
-]
-
 
 @dataclass
 class TokenizerConfig(PreprocessorConfig):

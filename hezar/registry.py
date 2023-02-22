@@ -2,12 +2,6 @@ from torch import nn, optim
 
 
 __all__ = [
-    "models_registry",
-    "preprocessors_registry",
-    "datasets_registry",
-    "criterions_registry",
-    "optimizers_registry",
-    "lr_schedulers_registry",
     "register_model",
     "register_preprocessor",
     "register_dataset",

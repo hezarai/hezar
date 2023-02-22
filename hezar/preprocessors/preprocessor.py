@@ -1,9 +1,5 @@
 from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER
 
-__all__ = [
-    "Preprocessor",
-]
-
 
 class Preprocessor:
     """

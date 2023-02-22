@@ -1,16 +1,16 @@
 import os
 from abc import abstractmethod
-from typing import *
+from typing import Dict, Union
 
 import torch
 from huggingface_hub import HfApi, hf_hub_download
 from torch import nn
 
-from hezar.configs import ModelConfig
-from hezar.constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
-from hezar.utils.hub_utils import resolve_hub_path, get_local_cache_path
-from hezar.builders import build_model
-from hezar.utils import get_logger
+from ..configs import ModelConfig
+from ..constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
+from ..utils.hub_utils import resolve_hub_path, get_local_cache_path
+from ..builders import build_model
+from ..utils import get_logger
 
 __all__ = [
     "Model",

@@ -90,6 +90,6 @@ def get_model_config_class(name: str):
     Returns:
         A class of type :class:`hezar.Config`
     """
-    from hezar.registry import models_registry
+    from ..registry import models_registry
     config_cls = models_registry[name]["config_class"]
     return config_cls

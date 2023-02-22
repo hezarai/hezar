@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from hezar.configs import ModelConfig
+from ....configs import ModelConfig
 
 
 @dataclass
