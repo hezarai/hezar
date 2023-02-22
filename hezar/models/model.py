@@ -12,6 +12,11 @@ from hezar.utils.hub_utils import resolve_hub_path, get_local_cache_path
 from hezar.builders import build_model
 from hezar.utils import get_logger
 
+__all__ = [
+    "Model",
+    "ModelConfig",
+]
+
 logger = get_logger(__name__)
 
 
