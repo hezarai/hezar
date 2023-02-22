@@ -31,7 +31,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
 class TextClassificationDataset(Dataset):
     def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
         self.config = config.update(kwargs)
-        self._dataset = self._load(split)
+        self.dataset = self._load(split)
         self._extract_labels()
         self.preprocessor = Tokenizer.load(self.config.tokenizer_path)
         self.data_collator = DataCollatorWithPadding(self.preprocessor.tokenizer)
@@ -41,17 +41,17 @@ class TextClassificationDataset(Dataset):
         return dataset
 
     def _extract_labels(self):
-        labels_list = self._dataset.to_pandas()[self.config.label_field].unique().tolist()
+        labels_list = self.dataset.to_pandas()[self.config.label_field].unique().tolist()
         self.id2label = self.config.id2label = {str(k): str(v) for k, v in dict(list(enumerate(labels_list))).items()}
         self.label2id = self.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(labels_list)
 
     def __len__(self):
-        return len(self._dataset)
+        return len(self.dataset)
 
     def __getitem__(self, index):
-        text = self._dataset[index][self.config.text_field]
-        label = self._dataset[index][self.config.label_field]
+        text = self.dataset[index][self.config.text_field]
+        label = self.dataset[index][self.config.label_field]
         inputs = self.preprocessor(
             text,
             return_tensors="pt",
