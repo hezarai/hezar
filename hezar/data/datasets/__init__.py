@@ -1,12 +1,11 @@
 import importlib
 import os
 
-from hezar.registry import datasets_registry, build_dataset
+from hezar.registry import datasets_registry
 
 __all__ = [
     "datasets_registry",
     "register_dataset",
-    "build_dataset",
     "import_datasets",
 ]
 

@@ -2,9 +2,9 @@ import importlib
 import os
 
 from .model import Model
-from hezar.registry import models_registry, build_model
+from hezar.registry import models_registry
 
-__all__ = ["Model", "register_model", "models_registry", "import_models", "build_model"]
+__all__ = ["Model", "register_model", "models_registry", "import_models"]
 
 
 def register_model(model_name: str, config_class):
