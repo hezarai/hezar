@@ -7,6 +7,15 @@ from omegaconf import DictConfig
 
 from .logging import get_logger
 
+__all__ = [
+    "merge_kwargs_into_config",
+    "flatten_dict",
+    "load_yaml_config",
+    "load_json_config",
+    "hezar_config_to_hf_config",
+    "get_model_config_class",
+]
+
 logger = get_logger(__name__)
 
 
@@ -69,3 +78,18 @@ def hezar_config_to_hf_config(config):
 
     hf_config = PretrainedConfig(**config)
     return hf_config
+
+
+def get_model_config_class(name: str):
+    """
+    Get the config class for a given model based on its registry name.
+
+    Args:
+        name (str): model's registry name
+
+    Returns:
+        A class of type :class:`hezar.Config`
+    """
+    from hezar.registry import models_registry
+    config_cls = models_registry[name]["config_class"]
+    return config_cls

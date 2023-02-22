@@ -8,6 +8,7 @@ from ..constants import HEZAR_HUB_ID, REPO_TYPE_TO_DIR_MAPPING
 __all__ = [
     "resolve_hub_path",
     "get_local_cache_path",
+    "exists_in_cache",
     "exists_on_hub",
     "clone_repo",
 ]

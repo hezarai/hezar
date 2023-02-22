@@ -52,6 +52,18 @@ def build_preprocessor(name: str, config=None, **kwargs):
 
 
 def build_dataset(name: str, config=None, split=None, **kwargs):
+    """
+    Build the dataset using its registry name. If config is None then the dataset is built using the
+    default config.
+
+    Args:
+        name (str): name of the dataset in the datasets' registry
+        config (DatasetConfig): a PreprocessorConfig instance
+        kwargs: extra config parameters that are loaded to the preprocessor
+
+    Returns:
+        A Preprocessor instance
+    """
     config = config or datasets_registry[name]["config_class"]()
     dataset = datasets_registry[name]["dataset_class"](config, split=split, **kwargs)
     return dataset
@@ -102,17 +114,3 @@ def build_scheduler(name: str, optimizer: optim.Optimizer, config=None):
     """
     scheduler = lr_schedulers_registry[name](optimizer, **config.dict())
     return scheduler
-
-
-def get_model_config_class(name: str):
-    """
-    Get the config class for a given model based on its registry name.
-
-    Args:
-        name (str): model's registry name
-
-    Returns:
-        A class of type :class:`hezar.Config`
-    """
-    config_cls = models_registry[name]["config_class"]
-    return config_cls
