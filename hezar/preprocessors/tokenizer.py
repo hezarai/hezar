@@ -7,8 +7,9 @@ from transformers import AutoTokenizer, PretrainedConfig
 
 from ..configs import PreprocessorConfig
 from ..constants import HEZAR_TMP_DIR
-from hezar.utils.hub_utils import resolve_hub_path, get_local_cache_path
-from ..preprocessors import Preprocessor, register_preprocessor
+from ..registry import register_preprocessor
+from ..utils.hub_utils import resolve_hub_path, get_local_cache_path
+from ..preprocessors import Preprocessor
 from ..builders import build_preprocessor
 
 __all__ = [

@@ -3,8 +3,8 @@ A DistilBERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model 
 """
 from transformers import DistilBertModel, DistilBertConfig
 
-from hezar.models import register_model, Model
-from hezar.data import Text
+from ....models import Model
+from ....registry import register_model
 from .distilbert_lm_config import DistilBertLMConfig
 
 

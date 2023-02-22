@@ -5,7 +5,8 @@ from typing import Dict
 
 from transformers import DistilBertForSequenceClassification, DistilBertConfig
 
-from hezar.models import register_model, Model
+from ....models import Model
+from ....registry import register_model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 

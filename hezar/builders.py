@@ -8,7 +8,7 @@ from .registry import (
     datasets_registry,
     criterions_registry,
     optimizers_registry,
-    lr_schedulers_registry
+    lr_schedulers_registry,
 )
 
 

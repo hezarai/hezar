@@ -1,14 +1,14 @@
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
 import torch
-from torch.utils.data import Dataset
 from datasets import load_dataset
+from torch.utils.data import Dataset
 from transformers.data import DataCollatorWithPadding
 
 from ...configs import DatasetConfig
 from ...preprocessors.tokenizer import Tokenizer
-from . import register_dataset
+from ...registry import register_dataset
 
 __all__ = [
     "TextClassificationDataset",
