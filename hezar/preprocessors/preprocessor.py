@@ -24,3 +24,9 @@ class Preprocessor:
             kwargs: Extra keyword arguments depending on the preprocessor
         """
         raise NotImplementedError
+
+    def save(self, path):
+        ...
+
+    def push_to_hub(self, hub_path):
+        ...
