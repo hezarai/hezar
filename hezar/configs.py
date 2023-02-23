@@ -187,10 +187,12 @@ class OptimizerConfig(Config):
 
 @dataclass
 class TrainConfig(Config):
+    name: str = field(default=None)
     device: str = "cuda"
     optimizer: OptimizerConfig = None
     batch_size: int = field(default=None, metadata={"help": "training batch size"})
     model_name: str = field(default=None, metadata={"help": "name of the model in the models_registry"})
-    name: str = field(default=None)
+    num_train_epochs: int = None
+    checkpoints_dir: str = None
     model_config: ModelConfig = field(default=ModelConfig(), metadata={"help": "model config for the trainer"})
     dataset_config: DatasetConfig = field(default=DatasetConfig(), metadata={"help": "dataset config for the trainer"})
