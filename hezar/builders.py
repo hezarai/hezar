@@ -1,14 +1,23 @@
-from typing import Iterator
+r"""
+Builder functions are used to create an instance of a module e.g, models, preprocessors, etc. without having to import
+their corresponding classes manually. These builders use modules' registries to do so. Every builder gets a name and
+optional config or config kwargs to build the object.
 
-from torch import optim
+Examples:
+    ```python
+    from hezar.builders import build_model
+    model = build_model('distilbert_text_classification', id2label={0: 'negative', 1: 'positive'})
+    print(model)
+    ```
+"""
 
-from .registry import (
-    models_registry,
-    preprocessors_registry,
-    datasets_registry,
-    criterions_registry,
-    optimizers_registry,
-    lr_schedulers_registry,
+from .registry import (  # noqa
+    models_registry,  # noqa
+    preprocessors_registry,  # noqa
+    datasets_registry,  # noqa
+    criterions_registry,  # noqa
+    optimizers_registry,  # noqa
+    lr_schedulers_registry,  # noqa
 )
 
 __all__ = [
@@ -109,7 +118,7 @@ def build_optimizer(name: str, params, config=None):
     return optimizer
 
 
-def build_scheduler(name: str, optimizer: optim.Optimizer, config=None):
+def build_scheduler(name: str, optimizer, config=None):
     """
     Build the LR scheduler using its registry name.
 
