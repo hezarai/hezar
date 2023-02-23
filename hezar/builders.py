@@ -76,11 +76,11 @@ def build_dataset(name: str, config=None, split=None, **kwargs):
 
     Args:
         name (str): name of the dataset in the datasets' registry
-        config (DatasetConfig): a PreprocessorConfig instance
-        kwargs: extra config parameters that are loaded to the preprocessor
+        config (DatasetConfig): a DatasetConfig instance
+        kwargs: extra config parameters that are loaded to the dataset
 
     Returns:
-        A Preprocessor instance
+        A Dataset instance
     """
     config = config or datasets_registry[name]["config_class"]()
     dataset = datasets_registry[name]["dataset_class"](config, split=split, **kwargs)
