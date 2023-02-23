@@ -38,7 +38,11 @@ class Model(nn.Module):
     @classmethod
     def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):
         """
-        Load the model from local path or hub
+        Load the model from local path or hub.
+
+        It's recommended to actually use this method with :class:`hezar.Model` rather than any other model class
+        unless you actually know that the class is the same as the one on the Hub, because the output will always be
+        the one specified on the Hub!
 
         Args:
             hub_or_local_path: path to the model living on the Hub or local disk.
@@ -54,6 +58,11 @@ class Model(nn.Module):
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename="config.yaml")
         # Build model wih config
         model = build_model(config.name, config, **kwargs)
+        # Raise a warning if model class is not compatible with the one on the Hub
+        if cls.__name__ != "Model" and cls.__name__ != model.__class__.__name__:
+            logger.warning(f"You attempted to load a Hub model using `{cls.__name__}` "
+                           f"but the model in `{hub_or_local_path}` is of type `{model.__class__.__name__}`, "
+                           f"So the output model is going to be a `{model.__class__.__name__}` instance!")
         # does the path exist locally?
         is_local = load_locally or os.path.isdir(hub_or_local_path)
         if not is_local:
