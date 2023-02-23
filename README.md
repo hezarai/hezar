@@ -1,2 +1,2 @@
-# Hezar: A Persian AI library that doesn't suck!
+# Hezar: A seamless AI framework & library for Persian
 Docs coming soon!
