@@ -98,11 +98,12 @@ def build_criterion(name: str, config=None):
     Returns:
         An nn.Module instance
     """
+    config = config or criterions_registry[name]["config_class"]()
     criterion = criterions_registry[name](**config.dict())
     return criterion
 
 
-def build_optimizer(name: str, params, config=None):
+def build_optimizer(name: str, params, **kwargs):
     """
     Build the optimizer using its registry name.
 
@@ -114,11 +115,11 @@ def build_optimizer(name: str, params, config=None):
     Returns:
         An optim.Optimizer instance
     """
-    optimizer = optimizers_registry[name](params, **config.dict())
+    optimizer = optimizers_registry[name](params, **kwargs)
     return optimizer
 
 
-def build_scheduler(name: str, optimizer, config=None):
+def build_scheduler(name: str, optimizer, **kwargs):
     """
     Build the LR scheduler using its registry name.
 
@@ -130,5 +131,5 @@ def build_scheduler(name: str, optimizer, config=None):
     Returns:
         An optim.lr_scheduler._LRScheduler instance
     """
-    scheduler = lr_schedulers_registry[name](optimizer, **config.dict())
+    scheduler = lr_schedulers_registry[name](optimizer, **kwargs)
     return scheduler

@@ -68,21 +68,21 @@ class Trainer:
         return train_dataloader, eval_dataloader
 
     def _setup_optimizers(self, optimizer=None, lr_scheduler=None):
-        optimizer_config = self.config.optimizer.dict()
-        optimizer_name = optimizer_config.pop("name")
-        scheduler_name = optimizer_name.pop("scheduler")
         if optimizer is None:
+            optimizer_config = self.config.optimizer.dict()
+            optimizer_name = optimizer_config.pop("name")
             optimizer = build_optimizer(
                 optimizer_name,
                 self.model.parameters(),
-                optimizer_config,
+                **optimizer_config,
             )
-        if lr_scheduler is None:
-            lr_scheduler = build_scheduler(
-                scheduler_name,
-                optimizer,
-                optimizer_config.scheduler,
-            )
+            if lr_scheduler is None:
+                scheduler_name = optimizer_name.pop("scheduler")
+                lr_scheduler = build_scheduler(
+                    scheduler_name,
+                    optimizer,
+                    **optimizer_config.scheduler,
+                )
         return optimizer, lr_scheduler
 
     def train_one_batch(self, input_batch):
