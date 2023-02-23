@@ -1,5 +1,24 @@
-from torch import nn, optim
+r"""
+Hezar uses a registry system in a way that for any core module like model, dataset, etc. there is an entry in its
+specific registry. These registries are simple python dictionaries that map a module's name to its class and its config
+class. These registries are initialized here and filled automatically when you import hezar or a registry itself.
 
+Examples:
+    ```python
+    >> from hezar.registry import models_registry
+    >> print(models_registry)
+    ```
+
+    ```bash
+    >> # outputs
+    >> {'distilbert_lm': {'model_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
+    >> 'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>}}
+    ```
+Notice that registries usually don't need to be used directly. There is a bunch of functions to build modules using a
+module's registry name in `hezar.builders` module. See the file `builders.py` for more info.
+"""
+
+from torch import nn, optim
 
 __all__ = [
     "register_model",
