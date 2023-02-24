@@ -19,6 +19,7 @@ setuptools.setup(
         "torch>=1.10.0",
         "omegaconf>=2.3.0",
         "transformers>=4.26",
+        "datasets>=2.9.0",
         "huggingface_hub>=0.12.0",
         "pillow",
     ],
