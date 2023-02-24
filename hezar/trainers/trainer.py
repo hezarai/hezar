@@ -45,7 +45,8 @@ class Trainer:
     ):
         self.config = config
         self.num_train_epochs = self.config.num_train_epochs
-        self.model = model
+        self.device = self.config.device
+        self.model = model.to(self.device)
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
@@ -95,6 +96,7 @@ class Trainer:
         Returns:
             The loss value
         """
+        input_batch = input_batch.to(self.device)
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
@@ -116,6 +118,7 @@ class Trainer:
         Returns:
             The loss value
         """
+        input_batch = input_batch.to(self.device)
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
