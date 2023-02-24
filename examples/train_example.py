@@ -7,22 +7,22 @@ from hezar import (
     TrainConfig,
 )
 
+dataset_config = dict(
+    path="Khedesh/MirasOpinion",
+    text_field="comment",
+    label_field="label",
+    tokenizer_path="hezar-ai/distilbert-fa",
+)
 train_dataset = build_dataset(
     name="text_classification",
     split="train",
-    path="mteb/amazon_massive_intent",
-    text_field="text",
-    label_field="label_text",
-    tokenizer_path="hezar-ai/distilbert-fa"
+    **dataset_config
 )
 
 eval_dataset = build_dataset(
     name="text_classification",
-    split="train",
-    path="mteb/amazon_massive_intent",
-    text_field="text",
-    label_field="label_text",
-    tokenizer_path="hezar-ai/distilbert-fa"
+    split="validation",
+    **dataset_config
 )
 model = build_model("distilbert_text_classification", num_labels=train_dataset.num_labels)
 optimizer = build_optimizer("adamw", model.parameters())
