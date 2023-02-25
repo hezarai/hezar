@@ -14,7 +14,7 @@ from ..constants import DEFAULT_TRAINER_SUBFOLDER
 from ..builders import build_optimizer, build_scheduler
 from ..data.datasets import Dataset
 from ..utils import resolve_hub_path, get_local_cache_path
-from .train_utils import AverageMeter, write_to_tensorboard
+from .trainer_utils import AverageMeter, write_to_tensorboard
 
 
 class Trainer:
