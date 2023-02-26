@@ -30,8 +30,8 @@ class Config:
     def keys(self):
         return self.dict().keys()
 
-    def pop(self, key):
-        value = self.dict().pop(key)
+    def pop(self, key, default=None):
+        value = self.dict().pop(key, default=default)
         return value
 
     def __getitem__(self, item):
