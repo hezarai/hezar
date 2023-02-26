@@ -13,7 +13,7 @@ __all__ = [
     "load_yaml_config",
     "load_json_config",
     "hezar_config_to_hf_config",
-    "get_model_config_class",
+    "get_module_config_class",
 ]
 
 logger = get_logger(__name__)
@@ -80,16 +80,27 @@ def hezar_config_to_hf_config(config):
     return hf_config
 
 
-def get_model_config_class(name: str):
+def get_module_config_class(name: str, config_type: str):
     """
     Get the config class for a given model based on its registry name.
 
     Args:
         name (str): model's registry name
+        config_type (str): registry type
 
     Returns:
         A class of type :class:`hezar.Config`
     """
-    from ..registry import models_registry
-    config_cls = models_registry[name]["config_class"]
+    if config_type == "model":
+        from ..registry import models_registry
+        registry = models_registry
+    elif config_type == "preprocessor":
+        from ..registry import preprocessors_registry
+        registry = preprocessors_registry
+    elif config_type == "dataset":
+        from ..registry import datasets_registry
+        registry = datasets_registry
+    else:
+        raise ValueError(f"Invalid `config_type`: {config_type}!")
+    config_cls = registry[name]["config_class"]
     return config_cls
