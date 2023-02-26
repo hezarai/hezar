@@ -6,7 +6,7 @@ from ..utils.logging import get_logger
 from ..constants import HEZAR_HUB_ID, REPO_TYPE_TO_DIR_MAPPING
 
 __all__ = [
-    "resolve_hub_path",
+    "resolve_pretrained_path",
     "get_local_cache_path",
     "exists_in_cache",
     "exists_on_hub",
@@ -16,17 +16,20 @@ __all__ = [
 logger = get_logger(__name__)
 
 
-def resolve_hub_path(hub_path):
+def resolve_pretrained_path(hub_or_local_path):
     """
-    If hub_path contains the namespace (author/org) leave it as is, otherwise change to hezar-ai/{hub_path}
+    Resolve a local or Hub path. If path exists locally it just returns the input, otherwise tries to resolve
+    hub_or_local_path. If it contains the namespace (author/org) leave it as is, otherwise change to hezar-ai/{hub_path}
 
     Args:
-        hub_path: repo name or id
+        hub_or_local_path: repo name or id
 
     Returns:
-        A proper repo id on the hub
+        A proper pretrained path
     """
-    repo_id = f"{HEZAR_HUB_ID}/{hub_path}" if "/" not in hub_path else hub_path
+    if os.path.isdir(hub_or_local_path):
+        return hub_or_local_path
+    repo_id = f"{HEZAR_HUB_ID}/{hub_or_local_path}" if "/" not in hub_or_local_path else hub_or_local_path
     return repo_id
 
 
@@ -41,7 +44,7 @@ def get_local_cache_path(hub_path, repo_type):
     Returns:
         path to local cache directory
     """
-    repo_id = resolve_hub_path(hub_path)
+    repo_id = resolve_pretrained_path(hub_path)
     repo_name = repo_id.split("/")[1]
     cache_path = f"{REPO_TYPE_TO_DIR_MAPPING[repo_type]}/{repo_name}"
     return cache_path
@@ -88,6 +91,6 @@ def clone_repo(hub_path: str, save_path: str, **kwargs):
     Returns:
         the local path to the repo
     """
-    repo_id = resolve_hub_path(hub_path)
+    repo_id = resolve_pretrained_path(hub_path)
     repo = Repository(local_dir=save_path, clone_from=repo_id, **kwargs)
     return repo.local_dir

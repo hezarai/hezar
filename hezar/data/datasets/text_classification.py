@@ -52,7 +52,7 @@ class TextClassificationDataset(Dataset):
             return_tensors="pt",
             truncation=True,
             padding=True,
-            return_attention_mask=False,
+            return_attention_mask=True,
             return_token_type_ids=False,
         )
         label_idx = int(self.label2id[str(label)])

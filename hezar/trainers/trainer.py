@@ -13,7 +13,7 @@ from ..models import Model
 from ..constants import DEFAULT_TRAINER_SUBFOLDER
 from ..builders import build_optimizer, build_scheduler
 from ..data.datasets import Dataset
-from ..utils import resolve_hub_path, get_local_cache_path
+from ..utils import resolve_pretrained_path, get_local_cache_path
 from .trainer_utils import AverageMeter, write_to_tensorboard
 
 
@@ -191,7 +191,7 @@ class Trainer:
             hub_path: Path to hub
             commit_message: Commit message for the push
         """
-        hub_path = resolve_hub_path(hub_path)
+        hub_path = resolve_pretrained_path(hub_path)
         cache_path = get_local_cache_path(hub_path, repo_type="model")
 
         self.save(cache_path)
