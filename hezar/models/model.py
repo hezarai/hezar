@@ -8,7 +8,7 @@ from torch import nn
 
 from ..configs import ModelConfig
 from ..constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
-from ..utils.hub_utils import resolve_hub_path, get_local_cache_path
+from ..utils.hub_utils import resolve_pretrained_path, get_local_cache_path
 from ..builders import build_model
 from ..utils import get_logger
 
@@ -52,7 +52,7 @@ class Model(nn.Module):
         Returns:
             The fully loaded Hezar model
         """
-        hub_or_local_path = resolve_hub_path(hub_or_local_path)
+        hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
         # Load config
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename="config.yaml")
@@ -121,7 +121,7 @@ class Model(nn.Module):
             private (bool): Whether to create a private repo or not
         """
         api = HfApi()
-        repo_id = resolve_hub_path(hub_path)
+        repo_id = resolve_pretrained_path(hub_path)
         # create remote repo
         repo_url = api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
         logger.info(f"Prepared repo `{repo_url}`. Starting push process...")

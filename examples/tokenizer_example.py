@@ -2,7 +2,7 @@ from hezar.builders import build_preprocessor
 from hezar.preprocessors.tokenizer import Tokenizer
 
 
-preprocessor = build_preprocessor("tokenizer", pretrained_path="hezar-ai/distilbert-fa")
-preprocessor2 = Tokenizer.load(hub_or_local_path="hezar-ai/distilbert-fa")
-print(preprocessor(["hello guys"]))
-print(preprocessor2((["hello guys"])))
+preprocessor = Tokenizer.load(hub_or_local_path="hezar-ai/distilbert-fa-sentiment-v1")
+y1 = preprocessor(["hello guys", "my name is", "Aryan"], return_attention_mask=True, return_tensors="pt")
+...
+

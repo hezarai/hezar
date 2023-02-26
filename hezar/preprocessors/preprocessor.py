@@ -14,7 +14,7 @@ class Preprocessor:
     def __init__(self, config, **kwargs):
         self.config = config.update(kwargs)
 
-    def __call__(self, inputs, **kwargs):
+    def __call__(self, inputs, *args, **kwargs):
         """
         An abstract call method for a preprocessor. All preprocessors must implement this.
 
