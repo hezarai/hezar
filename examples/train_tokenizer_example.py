@@ -10,10 +10,5 @@ data = [
     "Readability counts."
 ]
 
-train_config = TokenizerTrainerConfig(
-    model="wordpiece",
-    vocab_size=20000,
-    special_tokens=["<PAD>", "<BOS>", "<EOS>"]
-
-)
+train_config = TokenizerTrainerConfig(model="wordpiece", vocab_size=20000, special_tokens=["<PAD>", "<BOS>", "<EOS>"])
 t = Tokenizer.train(data, train_config)

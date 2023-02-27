@@ -28,7 +28,7 @@ TOKENIZERS_MAP = {
     "wordpiece": {"encoder": WordPiece, "decoder": WordPieceDecoder, "trainer": WordPieceTrainer},
     "bpe": {"encoder": BPE, "decoder": BPEDecoder, "trainers": BpeTrainer},
     "wordlevel": {"encoder": WordLevel, "trainer": WordLevelTrainer},
-    "unigram": {"encoder": Unigram, "trainer": UnigramTrainer}
+    "unigram": {"encoder": Unigram, "trainer": UnigramTrainer},
 }
 
 
@@ -45,7 +45,7 @@ class TokenizerConfig(PreprocessorConfig):
     padding_direction: str = "right"
     pad_to_multiple_of: int = None
     pad_token_id: int = 0
-    pad_token: str = '[PAD]'
+    pad_token: str = "[PAD]"
     pad_token_type_id: int = 0
 
 
@@ -65,8 +65,10 @@ class Tokenizer(Preprocessor):
         config: Preprocessor config for the tokenizer
         kwargs: Extra/manual config parameters
     """
+
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
+    token_ids_name = "token_ids"
 
     def __init__(self, config: TokenizerConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -92,8 +94,10 @@ class Tokenizer(Preprocessor):
             tokenizer = HFTokenizer.from_file(tokenizer_path)
         else:
             if config.model:
-                logger.info(f"Creating tokenizer `{config.model}` with default values since no `pretrained_path`"
-                            f" was given in config!")
+                logger.info(
+                    f"Creating tokenizer `{config.model}` with default values since no `pretrained_path`"
+                    f" was given in config!"
+                )
                 encoder = TOKENIZERS_MAP[config.model]["encoder"]()
                 tokenizer = HFTokenizer(encoder)
                 tokenizer.decoder = TOKENIZERS_MAP[config.model]["decoder"]()
@@ -102,25 +106,50 @@ class Tokenizer(Preprocessor):
         return tokenizer
 
     def __call__(
-            self,
-            inputs: List[str],
-            add_special_tokens: bool = True,
-            padding_strategy="longest",
-            truncation_strategy=None,
-            max_length: int = None,
-            return_tensors: str = None,
-            stride: int = 0,
-            is_split_into_words: bool = False,
-            pad_to_multiple_of: int = None,
-            return_token_type_ids: bool = None,
-            return_attention_mask: bool = None,
-            return_overflowing_tokens: bool = False,
-            return_special_tokens_mask: bool = False,
-            return_offsets_mapping: bool = False,
-            return_length: bool = False,
-            verbose: bool = True,
-            **kwargs
+        self,
+        inputs: List[str],
+        add_special_tokens: bool = True,
+        padding_strategy="longest",
+        truncation_strategy=None,
+        max_length: int = None,
+        return_tensors: str = None,
+        stride: int = 0,
+        is_split_into_words: bool = False,
+        pad_to_multiple_of: int = None,
+        return_token_type_ids: bool = None,
+        return_attention_mask: bool = None,
+        return_overflowing_tokens: bool = False,
+        return_special_tokens_mask: bool = False,
+        return_offsets_mapping: bool = False,
+        return_length: bool = False,
+        verbose: bool = True,
+        **kwargs,
     ):
+        """
+        Tokenize a batch of string inputs and return the relevant properties e.g, token ids, attention mask, etc.
+
+        Args:
+            inputs: A list of string inputs to tokenize
+            add_special_tokens: Whether to add special tokens or not
+            padding_strategy: Determines how to pad inputs
+            truncation_strategy:
+            max_length:
+            return_tensors:
+            stride:
+            is_split_into_words:
+            pad_to_multiple_of:
+            return_token_type_ids:
+            return_attention_mask:
+            return_overflowing_tokens:
+            return_special_tokens_mask:
+            return_offsets_mapping:
+            return_length:
+            verbose:
+            kwargs:
+
+        Returns:
+
+        """
         self.set_truncation_and_padding(
             padding_strategy=self.config.padding_strategy,
             truncation_strategy=self.config.truncation_strategy,
@@ -143,7 +172,7 @@ class Tokenizer(Preprocessor):
                 return_overflowing_tokens=return_overflowing_tokens,
                 return_special_tokens_mask=return_special_tokens_mask,
                 return_offsets_mapping=return_offsets_mapping,
-                return_length=return_length
+                return_length=return_length,
             )
             for encoding in encodings
         ]
@@ -162,20 +191,22 @@ class Tokenizer(Preprocessor):
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
         if return_tensors is not None:
-            return self._to_tensor(sanitized_outputs, tensors_type=return_tensors)
+            cast = np.array if return_tensors == "np" else torch.tensor
+            for k, v in sanitized_outputs.items():
+                if isinstance(v, list):
+                    sanitized_outputs[k] = cast(v)
         return sanitized_outputs
 
-    @staticmethod
     def _convert_encodings(
-            encoding,
-            return_token_type_ids: bool = None,
-            return_attention_mask: bool = None,
-            return_overflowing_tokens: bool = False,
-            return_special_tokens_mask: bool = False,
-            return_offsets_mapping: bool = False,
-            return_length: bool = False,
+        self,
+        encoding,
+        return_token_type_ids: bool = None,
+        return_attention_mask: bool = None,
+        return_overflowing_tokens: bool = False,
+        return_special_tokens_mask: bool = False,
+        return_offsets_mapping: bool = False,
+        return_length: bool = False,
     ):
-
         if return_overflowing_tokens and encoding.overflowing is not None:
             encodings = [encoding] + encoding.overflowing
         else:
@@ -183,7 +214,7 @@ class Tokenizer(Preprocessor):
 
         encoding_dict = defaultdict(list)
         for e in encodings:
-            encoding_dict["token_ids"].append(e.ids)
+            encoding_dict[self.token_ids_name].append(e.ids)
 
             if return_token_type_ids:
                 encoding_dict["token_type_ids"].append(e.type_ids)
@@ -199,14 +230,14 @@ class Tokenizer(Preprocessor):
         return encoding_dict
 
     def set_truncation_and_padding(
-            self,
-            padding_strategy=None,
-            truncation_strategy=None,
-            padding_side=None,
-            truncation_side=None,
-            max_length: int = None,
-            stride: int = None,
-            pad_to_multiple_of: int = None,
+        self,
+        padding_strategy=None,
+        truncation_strategy=None,
+        padding_side=None,
+        truncation_side=None,
+        max_length: int = None,
+        stride: int = None,
+        pad_to_multiple_of: int = None,
     ):
         _truncation = self._tokenizer.truncation
         _padding = self._tokenizer.padding
@@ -244,16 +275,6 @@ class Tokenizer(Preprocessor):
                 }
                 if _padding != target:
                     self._tokenizer.enable_padding(**target)
-
-    @staticmethod
-    def _to_tensor(encodings_dict, tensors_type):
-        for k, v in encodings_dict.items():
-            if isinstance(v, list):
-                if tensors_type == "pt":
-                    encodings_dict[k] = torch.tensor(v)
-                elif tensors_type == "np":
-                    encodings_dict[k] = np.array(v)
-        return encodings_dict
 
     def decode(self, token_ids: List[List[int]], **kwargs):
         if not isinstance(token_ids[0], list):

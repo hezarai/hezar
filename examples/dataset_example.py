@@ -7,10 +7,10 @@ config = TextClassificationDatasetConfig(
     path="mteb/amazon_massive_intent",
     text_field="text",
     label_field="label_text",
-    tokenizer_path="hezar-ai/distilbert-fa"
+    tokenizer_path="hezar-ai/distilbert-fa",
 )
 
-dataset = TextClassificationDataset(config, split='train')
+dataset = TextClassificationDataset(config, split="train")
 print(dataset[0])
 
 loader = DataLoader(dataset, batch_size=16, shuffle=True, collate_fn=dataset.data_collator)

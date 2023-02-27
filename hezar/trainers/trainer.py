@@ -31,17 +31,18 @@ class Trainer:
         lr_scheduler: Optional scheduler
 
     """
+
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
 
     def __init__(
-            self,
-            model: Union[nn.Module, Model] = None,
-            config: TrainConfig = None,
-            train_dataset: Optional[Dataset] = None,
-            eval_dataset: Optional[Dataset] = None,
-            data_collator=None,
-            optimizer: optim.Optimizer = None,
-            lr_scheduler=None,
+        self,
+        model: Union[nn.Module, Model] = None,
+        config: TrainConfig = None,
+        train_dataset: Optional[Dataset] = None,
+        eval_dataset: Optional[Dataset] = None,
+        data_collator=None,
+        optimizer: optim.Optimizer = None,
+        lr_scheduler=None,
     ):
         self.config = config
         self.num_train_epochs = self.config.num_train_epochs
@@ -52,7 +53,7 @@ class Trainer:
         self.data_collator = data_collator
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
-        self.loss_tracker = AverageMeter('loss')
+        self.loss_tracker = AverageMeter("loss")
         self.tensorboard = SummaryWriter()
 
     def _setup_dataloaders(self):
@@ -100,7 +101,7 @@ class Trainer:
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
-        loss: Tensor = outputs['loss']
+        loss: Tensor = outputs["loss"]
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -122,7 +123,7 @@ class Trainer:
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
-        loss: Tensor = outputs['loss']
+        loss: Tensor = outputs["loss"]
 
         return loss.item()
 
@@ -138,8 +139,13 @@ class Trainer:
         """
         self.model.train()
         self.loss_tracker.reset()
-        with tqdm(self.train_dataloader, unit="batch", desc=f'Epoch: {epoch_num}/{self.num_train_epochs} ',
-                  bar_format='{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}', ascii=" #") as iterator:
+        with tqdm(
+            self.train_dataloader,
+            unit="batch",
+            desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
+            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+            ascii=" #",
+        ) as iterator:
             for input_batch in iterator:
                 loss = self.train_one_batch(input_batch)
                 self.loss_tracker.update(loss)
@@ -150,8 +156,13 @@ class Trainer:
 
     def evaluate(self):
         self.model.eval()
-        with tqdm(self.eval_dataloader, unit="batch", desc=f'Evaluating... ',
-                  bar_format='{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}', ascii=" #") as iterator:
+        with tqdm(
+            self.eval_dataloader,
+            unit="batch",
+            desc=f"Evaluating... ",
+            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+            ascii=" #",
+        ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
                     loss = self.evaluate_one_batch(input_batch)
@@ -171,15 +182,15 @@ class Trainer:
             self.lr_scheduler.step(eval_loss)
 
             # tensorboard
-            write_to_tensorboard(self.tensorboard, train_loss, 'train', epoch)
-            write_to_tensorboard(self.tensorboard, eval_loss, 'val', epoch)
+            write_to_tensorboard(self.tensorboard, train_loss, "train", epoch)
+            write_to_tensorboard(self.tensorboard, eval_loss, "val", epoch)
 
             # save checkpoint
             ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
             self.save(ckpt_save_path)
 
     def save(self, path):
-        self.config.save(os.path.join(path, self.trainer_subfolder), filename='train_config.yaml')
+        self.config.save(os.path.join(path, self.trainer_subfolder), filename="train_config.yaml")
         self.model.save(path, save_config=True)
         self.train_dataset.preprocessor.save(path)
 
@@ -205,6 +216,3 @@ class Trainer:
             repo_type="model",
             commit_message=commit_message,
         )
-
-
-

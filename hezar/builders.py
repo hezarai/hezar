@@ -26,7 +26,7 @@ __all__ = [
     "build_preprocessor",
     "build_optimizer",
     "build_criterion",
-    "build_scheduler"
+    "build_scheduler",
 ]
 
 

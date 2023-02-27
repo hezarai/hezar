@@ -5,7 +5,7 @@ from torch.utils.tensorboard import SummaryWriter
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 
-    def __init__(self, name, fmt=':f'):
+    def __init__(self, name, fmt=":f"):
         self.name = name
         self.fmt = fmt
         self.val = 0
@@ -27,7 +27,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
     def __str__(self):
-        fmtstr = '{name} {val' + self.fmt + '} ({avg' + self.fmt + '})'
+        fmtstr = "{name} {val" + self.fmt + "} ({avg" + self.fmt + "})"
         return fmtstr.format(**self.__dict__)
 
 
@@ -59,5 +59,4 @@ def get_trackers_avg(trackers: dict):
 
 def write_to_tensorboard(writer: SummaryWriter, logs: dict, mode: str, step: int):
     for metric_name, value in logs.items():
-        writer.add_scalar(f'{mode}/{metric_name}', value, step)
-
+        writer.add_scalar(f"{mode}/{metric_name}", value, step)

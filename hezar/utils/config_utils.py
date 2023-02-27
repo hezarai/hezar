@@ -93,12 +93,15 @@ def get_module_config_class(name: str, config_type: str):
     """
     if config_type == "model":
         from ..registry import models_registry
+
         registry = models_registry
     elif config_type == "preprocessor":
         from ..registry import preprocessors_registry
+
         registry = preprocessors_registry
     elif config_type == "dataset":
         from ..registry import datasets_registry
+
         registry = datasets_registry
     else:
         raise ValueError(f"Invalid `config_type`: {config_type}!")
