@@ -10,12 +10,12 @@ logger = get_logger(__name__)
 
 class TextPaddingDataCollator:
     def __init__(
-            self,
-            tokenizer: Tokenizer,
-            padding_type: str = "longest",
-            padding_side: str = "right",
-            max_length: int = None,
-            return_tensors: str = "pt",
+        self,
+        tokenizer: Tokenizer,
+        padding_type: str = "longest",
+        padding_side: str = "right",
+        max_length: int = None,
+        return_tensors: str = "pt",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type
@@ -28,12 +28,14 @@ class TextPaddingDataCollator:
             "token_type_ids": self.tokenizer.config.pad_token_type_id,
             "special_tokens_mask": 1,
             "attention_mask": 0,
-            }
+        }
 
         if padding_type == "longest" and max_length is not None:
-            logger.warning(f"You passed `max_length` while also setting `padding_type` to `longest` which are "
-                           f"incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
-                           f"Ignoring `max_length`")
+            logger.warning(
+                f"You passed `max_length` while also setting `padding_type` to `longest` which are "
+                f"incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                f"Ignoring `max_length`"
+            )
             self.max_length = None
 
     def __call__(self, encoded_batch):
@@ -65,5 +67,7 @@ class TextPaddingDataCollator:
             encoded_batch[field] = padded_batch
 
         encoded_batch["labels"] = labels
+
+        encoded_batch = convert_batch_dict_dtype(encoded_batch, dtype=self.return_tensors)
 
         return encoded_batch
