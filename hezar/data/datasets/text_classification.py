@@ -3,12 +3,13 @@ from typing import List
 
 import torch
 from datasets import load_dataset
-from transformers.data import DataCollatorWithPadding
+
 
 from ...configs import DatasetConfig
 from ...preprocessors.tokenizer import Tokenizer
 from ...registry import register_dataset
 from .dataset import Dataset
+from ..data_collators import TextPaddingDataCollator
 
 
 @dataclass
@@ -20,6 +21,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
     tokenizer_path: str = None
     label_field: str = None
     text_field: str = None
+    max_length: int = None
 
 
 @register_dataset("text_classification", config_class=TextClassificationDatasetConfig)
@@ -28,8 +30,11 @@ class TextClassificationDataset(Dataset):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.preprocessor = Tokenizer.load(self.config.tokenizer_path)
-        self.data_collator = DataCollatorWithPadding(self.preprocessor.tokenizer)
+        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.data_collator = TextPaddingDataCollator(
+            tokenizer=self.tokenizer,
+            max_length=self.config.max_length,
+        )
 
     def _load(self, split):
         dataset = load_dataset(self.config.path, split=split)
@@ -47,17 +52,17 @@ class TextClassificationDataset(Dataset):
     def __getitem__(self, index):
         text = self.dataset[index][self.config.text_field]
         label = self.dataset[index][self.config.label_field]
-        inputs = self.preprocessor(
+        inputs = self.tokenizer(
             text,
             return_tensors="pt",
             truncation=True,
             padding=True,
             return_attention_mask=True,
             return_token_type_ids=False,
+            return_special_tokens_mask=True
         )
         label_idx = int(self.label2id[str(label)])
-        label_idx = torch.tensor(label_idx, dtype=torch.long)
-        inputs["input_ids"] = inputs["input_ids"][0]
-        inputs["label"] = label_idx
+        label_idx = torch.tensor([label_idx], dtype=torch.long)
+        inputs["labels"] = label_idx
 
         return inputs
