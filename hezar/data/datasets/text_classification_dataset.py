@@ -58,12 +58,9 @@ class TextClassificationDataset(Dataset):
             truncation=True,
             padding=True,
             return_attention_mask=True,
-            return_token_type_ids=False,
-            return_special_tokens_mask=True
         )
         label_idx = int(self.label2id[str(label)])
         label_idx = torch.tensor([label_idx], dtype=torch.long)
         inputs["labels"] = label_idx
 
         return inputs
-

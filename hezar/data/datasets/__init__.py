@@ -1,2 +1,2 @@
 from .dataset import Dataset
-from .text_classification import TextClassificationDataset, TextClassificationDatasetConfig
+from .text_classification_dataset import TextClassificationDataset, TextClassificationDatasetConfig

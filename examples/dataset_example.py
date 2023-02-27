@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 
-from hezar.data.datasets.text_classification import TextClassificationDataset, TextClassificationDatasetConfig
+from hezar.data.datasets import TextClassificationDataset, TextClassificationDatasetConfig
 
 config = TextClassificationDatasetConfig(
     name="text_classfication",
