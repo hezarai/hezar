@@ -52,7 +52,7 @@ class TextClassificationDataset(Dataset):
     def __getitem__(self, index):
         text = self.dataset[index][self.config.text_field]
         label = self.dataset[index][self.config.label_field]
-        inputs = self.tokenizer(
+        inputs = self.preprocessor(
             text,
             return_tensors="pt",
             truncation=True,
