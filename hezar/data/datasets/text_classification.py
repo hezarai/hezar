@@ -66,3 +66,7 @@ class TextClassificationDataset(Dataset):
         inputs["labels"] = label_idx
 
         return inputs
+
+    @property
+    def preprocessor(self):
+        return self.tokenizer
