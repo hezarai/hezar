@@ -183,7 +183,7 @@ class Tokenizer(Preprocessor):
 
         encoding_dict = defaultdict(list)
         for e in encodings:
-            encoding_dict["input_ids"].append(e.ids)
+            encoding_dict["token_ids"].append(e.ids)
 
             if return_token_type_ids:
                 encoding_dict["token_type_ids"].append(e.type_ids)
