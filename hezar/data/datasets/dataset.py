@@ -6,7 +6,7 @@ from ...configs import DatasetConfig
 class Dataset(TorchDataset):
     def __init__(self, config: DatasetConfig, **kwargs):
         self.config = config.update(kwargs)
-        self.preprocessor = None
+        self.tokenizer = None
 
     def __len__(self):
         ...
