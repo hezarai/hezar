@@ -30,9 +30,9 @@ class TextClassificationDataset(Dataset):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.preprocessor = Tokenizer.load(self.config.tokenizer_path)
         self.data_collator = TextPaddingDataCollator(
-            tokenizer=self.tokenizer,
+            tokenizer=self.preprocessor,
             max_length=self.config.max_length,
         )
 
@@ -67,6 +67,3 @@ class TextClassificationDataset(Dataset):
 
         return inputs
 
-    @property
-    def preprocessor(self):
-        return self.tokenizer
