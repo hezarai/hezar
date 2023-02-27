@@ -19,6 +19,7 @@ from ..configs import Config, PreprocessorConfig
 from ..constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
 from ..registry import register_preprocessor
 from ..utils import resolve_pretrained_path, get_local_cache_path, get_logger
+from ..data.utils import convert_batch_dict_dtype
 from ..preprocessors import Preprocessor
 from ..builders import build_preprocessor
 
@@ -150,6 +151,9 @@ class Tokenizer(Preprocessor):
         Returns:
 
         """
+        if isinstance(inputs, str):
+            inputs = [inputs]
+
         self.set_truncation_and_padding(
             padding_strategy=self.config.padding_strategy,
             truncation_strategy=self.config.truncation_strategy,
@@ -190,12 +194,8 @@ class Tokenizer(Preprocessor):
                 overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
-        if return_tensors is not None:
-            cast = np.array if return_tensors == "np" else torch.tensor
-            for k, v in sanitized_outputs.items():
-                if isinstance(v, list):
-                    sanitized_outputs[k] = cast(v)
-        return sanitized_outputs
+        outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors)
+        return outputs
 
     def _convert_encodings(
         self,
