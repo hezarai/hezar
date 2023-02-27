@@ -97,7 +97,7 @@ class Trainer:
         Returns:
             The loss value
         """
-        input_batch = input_batch.to(self.device)
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items()}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
@@ -119,7 +119,7 @@ class Trainer:
         Returns:
             The loss value
         """
-        input_batch = input_batch.to(self.device)
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items()}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
