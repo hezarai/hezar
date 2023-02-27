@@ -10,8 +10,8 @@ from .distilbert_lm_config import DistilBertLMConfig
 
 @register_model("distilbert_lm", config_class=DistilBertLMConfig)
 class DistilBertLM(Model):
-    def __init__(self, config):
-        super().__init__(config=config)
+    def __init__(self, config, **kwargs):
+        super().__init__(config=config, **kwargs)
         self.model = self._build()
 
     def _build(self):
