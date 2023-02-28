@@ -26,7 +26,7 @@ logger = get_logger(__name__)
 
 TOKENIZERS_MAP = {
     "wordpiece": {"encoder": WordPiece, "decoder": WordPieceDecoder, "trainer": WordPieceTrainer},
-    "bpe": {"encoder": BPE, "decoder": BPEDecoder, "trainers": BpeTrainer},
+    "bpe": {"encoder": BPE, "decoder": BPEDecoder, "trainer": BpeTrainer},
     "wordlevel": {"encoder": WordLevel, "trainer": WordLevelTrainer},
     "unigram": {"encoder": Unigram, "trainer": UnigramTrainer},
 }
@@ -133,23 +133,23 @@ class Tokenizer(Preprocessor):
             inputs: A list of string inputs to tokenize
             add_special_tokens: Whether to add special tokens or not
             padding_strategy: Determines how to pad inputs
-            truncation_strategy:
-            max_length:
-            return_tensors:
-            stride:
-            is_split_into_words:
-            pad_to_multiple_of:
-            return_token_type_ids:
-            return_attention_mask:
-            return_overflowing_tokens:
-            return_special_tokens_mask:
-            return_offsets_mapping:
-            return_length:
-            verbose:
-            kwargs:
+            truncation_strategy: Determines how to truncate inputs
+            max_length: Max input length of the sequences
+            return_tensors: The type of the returning tensors in the batch e.g, pt, np, list
+            stride: Stride level
+            is_split_into_words: Are inputs pre-tokenized or raw string inputs
+            pad_to_multiple_of: Pad inputs by a factor of this value
+            return_token_type_ids: Whether to return token type ids
+            return_attention_mask: Whether to return attention masks
+            return_overflowing_tokens: Whether to return overflowing tokens
+            return_special_tokens_mask: Whether to return special tokens mask
+            return_offsets_mapping: Whether to return offsets
+            return_length: Whether to return input lengths
+            kwargs: Extra arguments reside here and therefore ignored
 
         Returns:
-
+            A dictionary of encoded inputs like
+                {"token_ids": [batch_size x input_len], "attention_mask": [batch_size x input_len], ...}
         """
         if isinstance(inputs, str):
             inputs = [inputs]
