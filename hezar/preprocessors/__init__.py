@@ -1,3 +1,3 @@
 from .preprocessor import Preprocessor
-from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainerConfig
-from .normalizer import *
+from .tokenizers import *
+from .normalizers import *

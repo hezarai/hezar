@@ -1,4 +1,4 @@
-from hezar import Tokenizer, TokenizerConfig, TokenizerTrainerConfig
+from hezar.preprocessors.tokenizers import WordPieceTokenizer, WordPieceConfig, WordPieceTrainConfig
 
 data = [
     "Beautiful is better than ugly."
@@ -12,17 +12,10 @@ data = [
     "A QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
 ]
 
-train_config = TokenizerTrainerConfig(
-    model="wordpiece",
-    vocab_size=2000,
-    special_tokens=["[PAD]", "[BOS]", "[EOS]", "[UNK]"],
-)
-t = Tokenizer.train(
-    data,
-    train_config,
-    tokenizer_config=TokenizerConfig(model_kwargs={"unk_token": "[UNK]"}),
-)
-x = t(["This is a test"], return_tokens=True, return_tensors="pt")
+tokenizer_config = WordPieceConfig()
+tokenizer = WordPieceTokenizer(tokenizer_config)
+tokenizer.train_from_iterator(dataset=data, config=tokenizer_config.train_config)
+x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
 print(x)
-y = t.decode(x["token_ids"].numpy().tolist())
+y = tokenizer.decode_batch(x["token_ids"].numpy().tolist())
 print(y)

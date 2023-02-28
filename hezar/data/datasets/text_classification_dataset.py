@@ -6,7 +6,7 @@ from datasets import load_dataset
 
 
 from ...configs import DatasetConfig
-from ...preprocessors.tokenizer import Tokenizer
+from ...preprocessors.tokenizers import Tokenizer
 from ...registry import register_dataset
 from .dataset import Dataset
 from ..data_collators import TextPaddingDataCollator

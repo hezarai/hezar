@@ -69,7 +69,8 @@ class Config:
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         config_path = os.path.join(hub_or_local_path, subfolder, filename)
         is_local = os.path.isfile(config_path)
-
+        if os.path.isdir(hub_or_local_path) and not is_local:
+            raise EnvironmentError(f"Path `{hub_or_local_path}` exists locally but the config file {filename} is missing!")
         # if the file or repo_id does not exist locally, load from the Hub
         if not is_local:
             config_path = hf_hub_download(
@@ -95,18 +96,7 @@ class Config:
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
-        config = cls(**{k: v for k, v in dict_config.items() if k in cls.__dict__.keys()})
-
-        for k, v in dict_config.items():
-            if not hasattr(cls, k):
-                if strict:
-                    logger.warning(
-                        f"`{cls.__name__}` does not take `{k}` in attributes!\n Hint: add this attribute "
-                        f"to `{cls.__name__}` as:\n `{k}: {v.__class__.__name__} = field(default=None)` "
-                        f"or set `strict=False` when using `load()`"
-                    )
-                else:
-                    setattr(config, k, v)
+        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})
 
         return config
 
