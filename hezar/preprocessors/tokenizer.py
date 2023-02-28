@@ -120,6 +120,7 @@ class Tokenizer(Preprocessor):
         stride: int = 0,
         is_split_into_words: bool = False,
         pad_to_multiple_of: int = None,
+        return_tokens: bool = None,
         return_token_type_ids: bool = None,
         return_attention_mask: bool = None,
         return_overflowing_tokens: bool = False,
@@ -142,6 +143,7 @@ class Tokenizer(Preprocessor):
             stride: Stride level
             is_split_into_words: Are inputs pre-tokenized or raw string inputs
             pad_to_multiple_of: Pad inputs by a factor of this value
+            return_tokens: Whether to return tokens lists
             return_token_type_ids: Whether to return token type ids
             return_attention_mask: Whether to return attention masks
             return_overflowing_tokens: Whether to return overflowing tokens
@@ -174,6 +176,7 @@ class Tokenizer(Preprocessor):
         encodings_dict = [
             self._convert_encodings(
                 encoding=encoding,
+                return_tokens=return_tokens,
                 return_token_type_ids=return_token_type_ids,
                 return_attention_mask=return_attention_mask,
                 return_overflowing_tokens=return_overflowing_tokens,
@@ -203,6 +206,7 @@ class Tokenizer(Preprocessor):
     def _convert_encodings(
         self,
         encoding,
+        return_tokens: bool = None,
         return_token_type_ids: bool = None,
         return_attention_mask: bool = None,
         return_overflowing_tokens: bool = False,
@@ -229,6 +233,8 @@ class Tokenizer(Preprocessor):
                 encoding_dict["offset_mapping"].append(e.offsets)
             if return_length:
                 encoding_dict["length"].append(len(e.ids))
+            if return_tokens:
+                encoding_dict["tokens"].append(e.tokens)
 
         return encoding_dict
 

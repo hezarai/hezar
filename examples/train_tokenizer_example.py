@@ -8,6 +8,8 @@ data = [
     "Flat is better than nested."
     "Sparse is better than dense."
     "Readability counts."
+    "A quick brown fox jumps over the lazy dog"
+    "A QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
 ]
 
 train_config = TokenizerTrainerConfig(
@@ -20,5 +22,7 @@ t = Tokenizer.train(
     train_config,
     tokenizer_config=TokenizerConfig(model_kwargs={"unk_token": "[UNK]"}),
 )
-y = t(["This is just a test!"])
+x = t(["This is a test"], return_tokens=True, return_tensors="pt")
+print(x)
+y = t.decode(x["token_ids"].numpy().tolist())
 print(y)

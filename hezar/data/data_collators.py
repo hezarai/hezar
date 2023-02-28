@@ -26,6 +26,7 @@ class TextPaddingDataCollator:
         self.field_to_pad_id_mapping = {
             "token_ids": self.tokenizer.config.pad_token_id,
             "token_type_ids": self.tokenizer.config.pad_token_type_id,
+            "tokens": "",
             "special_tokens_mask": 1,
             "attention_mask": 0,
         }
