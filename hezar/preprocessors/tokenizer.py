@@ -36,6 +36,7 @@ TOKENIZERS_MAP = {
 class TokenizerConfig(PreprocessorConfig):
     name = "tokenizer"
     model: str = None
+    model_kwargs: dict = None
     pretrained_path: str = None
     max_length: int = 512
     truncation_strategy: str = "no_truncation"
@@ -99,9 +100,11 @@ class Tokenizer(Preprocessor):
                     f"Creating tokenizer `{config.model}` with default values since no `pretrained_path`"
                     f" was given in config!"
                 )
-                encoder = TOKENIZERS_MAP[config.model]["encoder"]()
+                config.model_kwargs = config.model_kwargs or {}
+                encoder = TOKENIZERS_MAP[config.model]["encoder"](**config.model_kwargs)
                 tokenizer = HFTokenizer(encoder)
-                tokenizer.decoder = TOKENIZERS_MAP[config.model]["decoder"]()
+                if "decoder" in TOKENIZERS_MAP[config.model]:
+                    tokenizer.decoder = TOKENIZERS_MAP[config.model]["decoder"]()
             else:
                 raise ValueError(f"Could not create the tokenizer, because `model` is missing!")
         return tokenizer
