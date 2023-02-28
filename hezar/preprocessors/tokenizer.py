@@ -1,14 +1,13 @@
 """
 Hezar Tokenizer is simply a wrapper for HuggingFace Tokenizers in a way that it can be built, loaded, trained, called in
-a single module.
+a single module. As of now a lot of the parts in this file are borrowed from HuggingFace Transformers wrappers for
+Tokenizers like ~transformers.PretrainedTokenizerBase.
 """
 import os
 from dataclasses import dataclass
 from typing import List
 from collections import defaultdict
 
-import numpy as np
-import torch
 from huggingface_hub import HfApi, hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.models import WordPiece, BPE, Unigram, WordLevel
@@ -39,11 +38,11 @@ class TokenizerConfig(PreprocessorConfig):
     model: str = None
     pretrained_path: str = None
     max_length: int = 512
-    truncation_strategy: str = "longest_first"
-    truncation_direction: str = "right"
+    truncation_strategy: str = "no_truncation"
+    truncation_direction: str = None
     stride: int = 0
-    padding_strategy: str = "longest"
-    padding_direction: str = "right"
+    padding_strategy: str = "no_padding"
+    padding_direction: str = None
     pad_to_multiple_of: int = None
     pad_token_id: int = 0
     pad_token: str = "[PAD]"
@@ -55,6 +54,7 @@ class TokenizerTrainerConfig(Config):
     model: str = None
     vocab_size: int = None
     special_tokens: list = None
+    show_progress: bool = True
 
 
 @register_preprocessor("tokenizer", config_class=TokenizerConfig)
@@ -113,7 +113,7 @@ class Tokenizer(Preprocessor):
         padding_strategy="longest",
         truncation_strategy=None,
         max_length: int = None,
-        return_tensors: str = None,
+        return_tensors: str = "list",
         stride: int = 0,
         is_split_into_words: bool = False,
         pad_to_multiple_of: int = None,
@@ -242,7 +242,7 @@ class Tokenizer(Preprocessor):
         _truncation = self._tokenizer.truncation
         _padding = self._tokenizer.padding
         # Set truncation and padding on the backend tokenizer
-        if truncation_strategy == "do_not_truncate":
+        if truncation_strategy == "no_truncation":
             if _truncation is not None:
                 self._tokenizer.no_truncation()
         else:
@@ -260,7 +260,7 @@ class Tokenizer(Preprocessor):
             if current != target:
                 self._tokenizer.enable_truncation(**target)
 
-            if padding_strategy == "no_pad":
+            if padding_strategy == "no_padding":
                 if _padding is not None:
                     self._tokenizer.no_padding()
             else:
@@ -319,9 +319,15 @@ class Tokenizer(Preprocessor):
     @classmethod
     def train(cls, dataset: List[str], config: TokenizerTrainerConfig, tokenizer_config: TokenizerConfig = None):
         tokenizer_model = config.pop("model")
+        # remove irrelevant params from config
+        config.pop("config_type")
+        config.pop("name")
+        # build tokenizer and train it
         tokenizer: Tokenizer = build_preprocessor("tokenizer", model=tokenizer_model, config=tokenizer_config)
         trainer = TOKENIZERS_MAP[tokenizer_model]["trainer"](**config)
+        logger.info(f"Starting training process...")
         tokenizer.train_from_iterator(dataset, trainer, length=len(dataset))
+        logger.info(f"Training finished!")
         return tokenizer
 
     @property
