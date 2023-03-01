@@ -70,7 +70,9 @@ class Config:
         config_path = os.path.join(hub_or_local_path, subfolder, filename)
         is_local = os.path.isfile(config_path)
         if os.path.isdir(hub_or_local_path) and not is_local:
-            raise EnvironmentError(f"Path `{hub_or_local_path}` exists locally but the config file {filename} is missing!")
+            raise EnvironmentError(
+                f"Path `{hub_or_local_path}` exists locally but the config file {filename} is missing!"
+            )
         # if the file or repo_id does not exist locally, load from the Hub
         if not is_local:
             config_path = hf_hub_download(

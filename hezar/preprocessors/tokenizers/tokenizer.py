@@ -47,6 +47,7 @@ class Tokenizer(Preprocessor):
         config: A TokenizerConfig instance
         **kwargs: Extra config parameters that merge into the main config
     """
+
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
     token_ids_name = "token_ids"
@@ -71,25 +72,25 @@ class Tokenizer(Preprocessor):
         return self._tokenizer.decode_batch(sequences, skip_special_tokens=skip_special_tokens)
 
     def __call__(
-            self,
-            inputs: List[str],
-            add_special_tokens: bool = True,
-            padding_strategy="longest",
-            truncation_strategy=None,
-            max_length: int = None,
-            return_tensors: str = "list",
-            stride: int = 0,
-            is_split_into_words: bool = False,
-            pad_to_multiple_of: int = None,
-            return_tokens: bool = None,
-            return_token_type_ids: bool = None,
-            return_attention_mask: bool = None,
-            return_overflowing_tokens: bool = False,
-            return_special_tokens_mask: bool = False,
-            return_offsets_mapping: bool = False,
-            return_length: bool = False,
-            verbose: bool = True,
-            **kwargs,
+        self,
+        inputs: List[str],
+        add_special_tokens: bool = True,
+        padding_strategy="longest",
+        truncation_strategy=None,
+        max_length: int = None,
+        return_tensors: str = "list",
+        stride: int = 0,
+        is_split_into_words: bool = False,
+        pad_to_multiple_of: int = None,
+        return_tokens: bool = None,
+        return_token_type_ids: bool = None,
+        return_attention_mask: bool = None,
+        return_overflowing_tokens: bool = False,
+        return_special_tokens_mask: bool = False,
+        return_offsets_mapping: bool = False,
+        return_length: bool = False,
+        verbose: bool = True,
+        **kwargs,
     ):
         """
         Tokenize a batch of string inputs and return the relevant properties e.g, token ids, attention mask, etc.
