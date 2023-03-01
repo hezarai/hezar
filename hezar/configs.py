@@ -25,7 +25,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class Config:
-    name: str = None
+    name: str
     config_type: str = "base"
 
     def keys(self):
