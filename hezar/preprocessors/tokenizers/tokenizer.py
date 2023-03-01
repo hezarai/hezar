@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class TokenizerConfig(PreprocessorConfig):
-    name = "tokenizer"
+    name: str = "tokenizer"
     pretrained_path: str = None
     max_length: int = None
     truncation_strategy: str = None
@@ -36,7 +36,7 @@ class TokenizerConfig(PreprocessorConfig):
 
 @dataclass
 class TokenizerTrainConfig(Config):
-    pass
+    config_type: str = "preprocessor"
 
 
 class Tokenizer(Preprocessor):

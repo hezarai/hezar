@@ -1,5 +1,5 @@
-from hezar.preprocessors.tokenizers import WordPieceTokenizer, WordPieceConfig, WordPieceTrainConfig
-
+from hezar.preprocessors.tokenizers import (WordPieceTokenizer, WordPieceConfig, WordPieceTrainConfig,
+                                            BPETokenizer, BPEConfig, BPETrainConfig)
 data = [
     "Beautiful is better than ugly."
     "Explicit is better than implicit."
@@ -14,6 +14,14 @@ data = [
 
 tokenizer_config = WordPieceConfig()
 tokenizer = WordPieceTokenizer(tokenizer_config)
+tokenizer.train_from_iterator(dataset=data, config=tokenizer_config.train_config)
+x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
+print(x)
+y = tokenizer.decode_batch(x["token_ids"].numpy().tolist())
+print(y)
+
+tokenizer_config = BPEConfig()
+tokenizer = BPETokenizer(tokenizer_config)
 tokenizer.train_from_iterator(dataset=data, config=tokenizer_config.train_config)
 x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
 print(x)
