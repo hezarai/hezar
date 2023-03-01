@@ -31,6 +31,8 @@ class BPEConfig(TokenizerConfig):
                       "<|endoftext|>", "<|startoftext|>", "<nl>", "<hs>",
                       "<sep>", "<cls>"]
     unk_token: str = None
+    pad_token_id = 0
+    pad_token = "<pad>"
     dropout: float = None
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""

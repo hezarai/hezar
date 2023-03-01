@@ -326,6 +326,7 @@ class Tokenizer(Preprocessor):
             repo_type="model",
             path_in_repo=self.preprocessor_subfolder,
         )
+        logger.info(f"Successfully pushed tokenizer files to `{hub_path}`")
 
     @property
     def model(self) -> Model:
