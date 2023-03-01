@@ -5,6 +5,10 @@ from hezar.utils import get_logger
 from hezar.data.utils import convert_batch_dict_dtype
 from hezar.preprocessors import Tokenizer
 
+__all__ = [
+    "TextPaddingDataCollator",
+]
+
 logger = get_logger(__name__)
 
 

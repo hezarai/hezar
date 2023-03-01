@@ -110,7 +110,6 @@ def build_optimizer(name: str, params, **kwargs):
     Args:
         name (str): Name of the optimizer in the optimizers_registry
         params (Iterator[nn.Parameter]): Model parameters
-        config (OptimizerConfig): An OptimizerConfig  instance
 
     Returns:
         An optim.Optimizer instance
@@ -126,7 +125,6 @@ def build_scheduler(name: str, optimizer, **kwargs):
     Args:
         name (str): Name of the optimizer in the lr_schedulers_registry
         optimizer (optim.Optimizer): The optimizer
-        config (LRSchedulerConfig): An LRSchedulerConfig  instance
 
     Returns:
         An optim.lr_scheduler._LRScheduler instance
