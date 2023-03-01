@@ -44,7 +44,7 @@ class WordPieceConfig(TokenizerConfig):
 @register_preprocessor("wordpiece_tokenizer", config_class=WordPieceConfig)
 class WordPieceTokenizer(Tokenizer):
     """
-    A WordPiece tokenizer
+    A standard WordPiece tokenizer using 🤗HuggingFace Tokenizers
 
     Args:
         config: Preprocessor config for the tokenizer

@@ -41,7 +41,7 @@ class BPEConfig(TokenizerConfig):
 @register_preprocessor("bpe_tokenizer", config_class=BPEConfig)
 class BPETokenizer(Tokenizer):
     """
-    A Byte-level BPE tokenizer
+    A standard Byte-level BPE tokenizer using 🤗HuggingFace Tokenizers
 
     Args:
         config: Preprocessor config for the tokenizer

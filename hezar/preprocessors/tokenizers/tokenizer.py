@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import List, Dict
 from collections import defaultdict
 
+from huggingface_hub import HfApi
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.models import Model
 from tokenizers.decoders import Decoder
@@ -312,6 +313,18 @@ class Tokenizer(Preprocessor):
         # save tokenizer.json
         save_path = os.path.join(path, self.preprocessor_subfolder, self.tokenizer_filename)
         self._tokenizer.save(save_path, pretty=pretty)
+
+    def push_to_hub(self, hub_path):
+        hub_path = resolve_pretrained_path(hub_path)
+        save_dir = get_local_cache_path(hub_path, repo_type="model")
+        self.save(save_dir)
+        api = HfApi()
+        api.upload_folder(
+            repo_id=hub_path,
+            folder_path=os.path.join(save_dir, self.preprocessor_subfolder),
+            repo_type="model",
+            path_in_repo=self.preprocessor_subfolder,
+        )
 
     @property
     def model(self) -> Model:

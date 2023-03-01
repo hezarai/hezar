@@ -115,7 +115,7 @@ class Config:
         # exclude None items
         config = {k: v for k, v in config.items() if v is not None}
         # make and save to directory
-        os.makedirs(save_dir, exist_ok=True)
+        os.makedirs(os.path.join(save_dir, subfolder), exist_ok=True)
         save_path = os.path.join(save_dir, subfolder, filename)
         OmegaConf.save(config, save_path)
         logger.info(f"Saved config to `{save_path}`")
