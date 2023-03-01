@@ -25,8 +25,12 @@ class BPETrainConfig(TokenizerTrainConfig):
 @dataclass
 class BPEConfig(TokenizerConfig):
     name: str = "bpe_tokenizer"
-    truncation_strategy: str = "no_truncation"
-    padding_strategy: str = "no_padding"
+    max_length: int = 512
+    truncation_strategy: str = "longest_first"
+    truncation_direction: str = "right"
+    stride: int = 0
+    padding_strategy: str = "longest"
+    padding_direction: str = "right"
     special_tokens = ["<s>", "<pad>", "</s>", "<unk>", "<mask>",
                       "<|endoftext|>", "<|startoftext|>", "<nl>", "<hs>",
                       "<sep>", "<cls>"]
