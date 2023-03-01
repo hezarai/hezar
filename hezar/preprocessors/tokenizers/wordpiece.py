@@ -2,15 +2,14 @@ import os
 from dataclasses import dataclass
 from typing import List
 
+from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers import models, decoders, trainers
-from huggingface_hub import hf_hub_download
 
-from ...registry import register_preprocessor
-from ...builders import build_preprocessor
-from ...utils.hub_utils import resolve_pretrained_path, get_local_cache_path
-from ...constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
 from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
+from ...constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
+from ...registry import register_preprocessor
+from ...utils.hub_utils import resolve_pretrained_path
 
 
 @dataclass
@@ -25,7 +24,7 @@ class WordPieceTrainConfig(TokenizerTrainConfig):
 
 @dataclass
 class WordPieceConfig(TokenizerConfig):
-    name = "wordpiece_tokenizer"
+    name: str = "wordpiece_tokenizer"
     max_length: int = 512
     truncation_strategy: str = "longest_first"
     truncation_direction: str = "right"
