@@ -60,17 +60,15 @@ class Tokenizer(Preprocessor):
     def build(self) -> HFTokenizer:
         raise NotImplementedError
 
-    def encode(self, sequence, pair=None, is_pretokenized: bool = False, add_special_tokens: bool = True):
-        return self._tokenizer.encode(sequence, pair, is_pretokenized, add_special_tokens)
-
-    def encode_batch(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True):
+    def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True):
+        if isinstance(inputs, str):
+            inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
     def decode(self, ids: List[int], skip_special_tokens: bool = True) -> str:
+        if isinstance(ids[0], list):
+            return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
         return self._tokenizer.decode(ids, skip_special_tokens=skip_special_tokens)
-
-    def decode_batch(self, sequences: List[List[int]], skip_special_tokens: bool = True):
-        return self._tokenizer.decode_batch(sequences, skip_special_tokens=skip_special_tokens)
 
     def __call__(
         self,
@@ -119,6 +117,9 @@ class Tokenizer(Preprocessor):
             A dictionary of encoded inputs like
                 {"token_ids": [batch_size x input_len], "attention_mask": [batch_size x input_len], ...}
         """
+        if isinstance(inputs, str):
+            inputs = [inputs]
+
         self.set_truncation_and_padding(
             padding_strategy=self.config.padding_strategy,
             truncation_strategy=self.config.truncation_strategy,
@@ -128,7 +129,7 @@ class Tokenizer(Preprocessor):
             stride=self.config.stride,
             pad_to_multiple_of=self.config.pad_to_multiple_of,
         )
-        encodings = self._tokenizer.encode_batch(
+        encodings = self.encode(
             inputs,
             add_special_tokens=add_special_tokens,
             is_pretokenized=is_split_into_words,
