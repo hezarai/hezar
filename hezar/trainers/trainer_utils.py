@@ -31,30 +31,33 @@ class AverageMeter(object):
         return fmtstr.format(**self.__dict__)
 
 
-def compute_metrics(metrics: dict, preds: torch.Tensor, labels: torch.Tensor):
-    results = {}
-    for metric_name, metric in metrics.items():
-        results[metric_name] = metric(preds, labels).item()
+class MetricsManager:
+    def __init__(self, metrics_dict):
+        self.metrics_dict = metrics_dict
+        self.trackers = {m: AverageMeter(m) for m in self.metrics_dict.keys()}
 
-    return results
+    def compute(self, preds, labels):
+        results = {}
+        for metric_name, metric in self.metrics_dict.items():
+            if metric is not None:
+                results[metric_name] = metric(preds, labels).item()
 
+        return results
 
-def reset_trackers(trackers: dict):
-    for metric in trackers.values():
-        metric.reset()
+    def update(self, results):
+        for metric_name, metric in self.trackers.items():
+            metric.update(results[metric_name])
 
+    def reset(self):
+        for metric in self.trackers.values():
+            metric.reset()
 
-def update_trackers(trackers: dict, metrics_results: dict):
-    for metric_name, metric in trackers.items():
-        metric.update(metrics_results[metric_name])
+    def avg(self):
+        avg_results = {}
+        for metric_name, metric in self.trackers.items():
+            avg_results[metric_name] = metric.avg
 
-
-def get_trackers_avg(trackers: dict):
-    avg_results = {}
-    for metric_name, metric in trackers.items():
-        avg_results[metric_name] = metric.avg
-
-    return avg_results
+        return avg_results
 
 
 def write_to_tensorboard(writer: SummaryWriter, logs: dict, mode: str, step: int):
