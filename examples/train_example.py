@@ -14,10 +14,11 @@ dataset_config = dict(
     tokenizer_path="hezar-ai/distilbert-fa",
 )
 train_dataset = build_dataset(name="text_classification", split="train", **dataset_config)
-
 eval_dataset = build_dataset(name="text_classification", split="validation", **dataset_config)
+
 model = build_model("distilbert_text_classification", num_labels=train_dataset.num_labels)
-optimizer = build_optimizer("adamw", model.parameters())
+model.config.id2label = train_dataset.id2label
+optimizer = build_optimizer("adamw", model.parameters(), lr=2e-5)
 lr_scheduler = build_scheduler("reduce_on_plateau", optimizer=optimizer)
 
 c = TrainConfig(
@@ -26,6 +27,8 @@ c = TrainConfig(
     batch_size=16,
     num_train_epochs=10,
     checkpoints_dir="checkpoints/",
+    metrics=["f1"],
+    metrics_kwargs={"task": "multiclass", "average": "micro"}
 )
 
 trainer = Trainer(

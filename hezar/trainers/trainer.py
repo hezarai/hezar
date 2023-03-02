@@ -1,20 +1,27 @@
 import os.path
-from typing import Union, List, Dict, Optional
+from typing import Union, Optional
 
 import torch
+from huggingface_hub import upload_folder
 from torch import nn, optim, Tensor
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+from torchmetrics import F1Score, Accuracy, Precision
 from tqdm import tqdm
-from huggingface_hub import upload_folder
 
-from ..configs import TrainConfig
-from ..models import Model
-from ..constants import DEFAULT_TRAINER_SUBFOLDER
+from .trainer_utils import MetricsManager, write_to_tensorboard
 from ..builders import build_optimizer, build_scheduler
+from ..configs import TrainConfig
+from ..constants import DEFAULT_TRAINER_SUBFOLDER, DEFAULT_TRAINER_CONFIG_FILE
 from ..data.datasets import Dataset
+from ..models import Model
 from ..utils import resolve_pretrained_path, get_local_cache_path
-from .trainer_utils import AverageMeter, write_to_tensorboard
+
+METRICS_MAP = {
+    "accuracy": Accuracy,
+    "f1": F1Score,
+    "precision": Precision,
+}
 
 
 class Trainer:
@@ -33,16 +40,17 @@ class Trainer:
     """
 
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
+    trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
 
     def __init__(
-        self,
-        model: Union[nn.Module, Model] = None,
-        config: TrainConfig = None,
-        train_dataset: Optional[Dataset] = None,
-        eval_dataset: Optional[Dataset] = None,
-        data_collator=None,
-        optimizer: optim.Optimizer = None,
-        lr_scheduler=None,
+            self,
+            model: Union[nn.Module, Model] = None,
+            config: TrainConfig = None,
+            train_dataset: Optional[Dataset] = None,
+            eval_dataset: Optional[Dataset] = None,
+            data_collator=None,
+            optimizer: optim.Optimizer = None,
+            lr_scheduler=None,
     ):
         self.config = config
         self.num_train_epochs = self.config.num_train_epochs
@@ -51,9 +59,10 @@ class Trainer:
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
+        self.num_labels = self.train_dataset.num_labels  # noqa
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
-        self.loss_tracker = AverageMeter("loss")
+        self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
         self.tensorboard = SummaryWriter()
 
     def _setup_dataloaders(self):
@@ -61,11 +70,13 @@ class Trainer:
             dataset=self.train_dataset,
             batch_size=self.config.batch_size,
             collate_fn=self.data_collator,
+            shuffle=True,
         )
         eval_dataloader = DataLoader(
             dataset=self.eval_dataset,
             batch_size=self.config.batch_size,
             collate_fn=self.data_collator,
+            shuffle=True,
         )
         return train_dataloader, eval_dataloader
 
@@ -87,6 +98,14 @@ class Trainer:
                 )
         return optimizer, lr_scheduler
 
+    def _setup_metrics_manager(self, metrics):
+        metrics_dict = {"loss": None}
+        metrics_kwargs = self.config.metrics_kwargs
+        for m in metrics:
+            metrics_dict[m] = METRICS_MAP[m](num_classes=self.num_labels, **metrics_kwargs)
+        metrics_manager = MetricsManager(metrics_dict)
+        return metrics_manager
+
     def train_one_batch(self, input_batch):
         """
         Train one batch of data
@@ -97,7 +116,7 @@ class Trainer:
         Returns:
             The loss value
         """
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items()}
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
@@ -107,7 +126,10 @@ class Trainer:
         loss.backward()
         self.optimizer.step()
 
-        return loss.item()
+        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
+        results["loss"] = loss.item()
+
+        return results
 
     def evaluate_one_batch(self, input_batch):
         """
@@ -119,15 +141,18 @@ class Trainer:
         Returns:
             The loss value
         """
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items()}
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError(f"Model outputs must contain `loss`!")
         loss: Tensor = outputs["loss"]
 
-        return loss.item()
+        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
+        results["loss"] = loss.item()
 
-    def _one_train_loop(self, epoch_num):
+        return results
+
+    def _one_training_loop(self, epoch_num):
         """
         Train the model for one epoch on the whole train dataset
 
@@ -137,39 +162,39 @@ class Trainer:
         Returns:
             The average loss through the full iteration
         """
+        self.metrics_manager.reset()
         self.model.train()
-        self.loss_tracker.reset()
         with tqdm(
-            self.train_dataloader,
-            unit="batch",
-            desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
-            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
-            ascii=" #",
+                self.train_dataloader,
+                unit="batch",
+                desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
+                bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+                ascii=" #",
         ) as iterator:
             for input_batch in iterator:
-                loss = self.train_one_batch(input_batch)
-                self.loss_tracker.update(loss)
-                avg_loss = self.loss_tracker.avg
-                iterator.set_postfix({"loss": avg_loss})
-
-        return avg_loss
+                results = self.train_one_batch(input_batch)
+                self.metrics_manager.update(results)
+                avg_results = self.metrics_manager.avg()
+                iterator.set_postfix(**avg_results)
+        return avg_results
 
     def evaluate(self):
+        self.metrics_manager.reset()
         self.model.eval()
         with tqdm(
-            self.eval_dataloader,
-            unit="batch",
-            desc=f"Evaluating... ",
-            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
-            ascii=" #",
+                self.eval_dataloader,
+                unit="batch",
+                desc=f"Evaluating... ",
+                bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+                ascii=" #",
         ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
-                    loss = self.evaluate_one_batch(input_batch)
-                    self.loss_tracker.update(loss)
-                    avg_loss = self.loss_tracker.avg
-                    iterator.set_postfix({"loss": avg_loss})
-        return avg_loss
+                    results = self.evaluate_one_batch(input_batch)
+                    self.metrics_manager.update(results)
+                    avg_results = self.metrics_manager.avg()
+                    iterator.set_postfix(**avg_results)
+        return avg_results
 
     def train(self):
         """
@@ -177,20 +202,20 @@ class Trainer:
         """
         for epoch in range(0, self.num_train_epochs + 1):
             print()
-            train_loss = self._one_train_loop(epoch)
-            eval_loss = self.evaluate()
-            self.lr_scheduler.step(eval_loss)
+            train_results = self._one_training_loop(epoch)
+            eval_results = self.evaluate()
+            self.lr_scheduler.step(eval_results["loss"])
 
             # tensorboard
-            write_to_tensorboard(self.tensorboard, train_loss, "train", epoch)
-            write_to_tensorboard(self.tensorboard, eval_loss, "val", epoch)
+            write_to_tensorboard(self.tensorboard, train_results, "train", epoch)
+            write_to_tensorboard(self.tensorboard, eval_results, "val", epoch)
 
             # save checkpoint
             ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
             self.save(ckpt_save_path)
 
     def save(self, path):
-        self.config.save(os.path.join(path, self.trainer_subfolder), filename="train_config.yaml")
+        self.config.save(path, filename=self.trainer_config_file, subfolder=self.trainer_subfolder)
         self.model.save(path, save_config=True)
         self.train_dataset.preprocessor.save(path)
 

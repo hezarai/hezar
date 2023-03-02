@@ -202,5 +202,7 @@ class TrainConfig(Config):
     device: str = "cuda"
     optimizer: OptimizerConfig = None
     batch_size: int = field(default=None, metadata={"help": "training batch size"})
+    metrics: list = None
+    metrics_kwargs: Dict = None
     num_train_epochs: int = None
     checkpoints_dir: str = None
