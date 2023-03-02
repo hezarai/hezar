@@ -134,3 +134,4 @@ dmypy.json
 # Hezar specific
 misc/
 runs/
+checkpoints/
