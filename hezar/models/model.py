@@ -110,7 +110,6 @@ class Model(nn.Module):
         torch.save(self.state_dict(), model_save_path)
         if save_config:
             self.config.save(save_dir=path, filename=self.config_filename)
-        logger.info(f"Saved model weights to `{path}`")
         return model_save_path
 
     def push_to_hub(self, hub_path, commit_message=None, private=False):
@@ -137,14 +136,13 @@ class Model(nn.Module):
             repo_id, filename=self.config_filename, repo_type="model", commit_message=commit_message
         )
         # upload model file
-        logger.info(f"Pushing model file: `{self.model_filename}`")
         api.upload_file(
             path_or_fileobj=model_save_path,
             path_in_repo=self.model_filename,
             repo_id=repo_id,
             commit_message=commit_message,
         )
-        logger.info(f"Uploaded `{model_save_path}` to `{repo_id}` as `{self.model_filename}`")
+        logger.info(f"Uploaded model files to `{repo_id}`")
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:

@@ -118,7 +118,6 @@ class Config:
         os.makedirs(os.path.join(save_dir, subfolder), exist_ok=True)
         save_path = os.path.join(save_dir, subfolder, filename)
         OmegaConf.save(config, save_path)
-        logger.info(f"Saved config to `{save_path}`")
         return save_path
 
     def push_to_hub(self, hub_path, filename, subfolder="", repo_type="model", commit_message=None):
@@ -140,14 +139,13 @@ class Config:
         # push to hub
         if commit_message is None:
             commit_message = f"Hezar: Upload {filename}"
-        logger.info(f"Pushing config file: `{filename}`")
         api.upload_file(
             path_or_fileobj=config_path,
             path_in_repo=f"{subfolder}/{filename}",
             repo_id=repo_id,
             commit_message=commit_message,
         )
-        logger.info(f"Uploaded `{config_path}` to `{repo_id}` as `{filename}`")
+        logger.info(f"Uploaded `{self.name}` config to `{repo_id}/{subfolder}` as `{filename}`")
 
 
 @dataclass
