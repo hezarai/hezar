@@ -28,7 +28,7 @@ c = TrainConfig(
     num_train_epochs=10,
     checkpoints_dir="checkpoints/",
     metrics=["f1"],
-    metrics_kwargs={"task": "multiclass", "average": "micro"}
+    metrics_kwargs={"task": "multiclass", "average": "micro"},
 )
 
 trainer = Trainer(

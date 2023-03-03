@@ -1,5 +1,12 @@
-from hezar.preprocessors.tokenizers import (WordPieceTokenizer, WordPieceConfig, WordPieceTrainConfig,
-                                            BPETokenizer, BPEConfig, BPETrainConfig)
+from hezar.preprocessors.tokenizers import (
+    WordPieceTokenizer,
+    WordPieceConfig,
+    WordPieceTrainConfig,
+    BPETokenizer,
+    BPEConfig,
+    BPETrainConfig,
+)
+
 data = [
     "Beautiful is better than ugly."
     "Explicit is better than implicit."

@@ -31,9 +31,19 @@ class BPEConfig(TokenizerConfig):
     stride: int = 0
     padding_strategy: str = "longest"
     padding_direction: str = "right"
-    special_tokens = ["<s>", "<pad>", "</s>", "<unk>", "<mask>",
-                      "<|endoftext|>", "<|startoftext|>", "<nl>", "<hs>",
-                      "<sep>", "<cls>"]
+    special_tokens = [
+        "<s>",
+        "<pad>",
+        "</s>",
+        "<unk>",
+        "<mask>",
+        "<|endoftext|>",
+        "<|startoftext|>",
+        "<nl>",
+        "<hs>",
+        "<sep>",
+        "<cls>",
+    ]
     unk_token: str = None
     pad_token_id = 0
     pad_token = "<pad>"
@@ -80,13 +90,15 @@ class BPETokenizer(Tokenizer):
                 )
             tokenizer = HFTokenizer.from_file(tokenizer_path)
         else:
-            tokenizer = HFTokenizer(models.BPE(
-                dropout=self.config.dropout,
-                unk_token=self.config.unk_token,
-                continuing_subword_prefix=self.config.continuing_subword_prefix,
-                end_of_word_suffix=self.config.end_of_word_suffix,
-                fuse_unk=self.config.fuse_unk,
-            ))
+            tokenizer = HFTokenizer(
+                models.BPE(
+                    dropout=self.config.dropout,
+                    unk_token=self.config.unk_token,
+                    continuing_subword_prefix=self.config.continuing_subword_prefix,
+                    end_of_word_suffix=self.config.end_of_word_suffix,
+                    fuse_unk=self.config.fuse_unk,
+                )
+            )
             tokenizer.add_special_tokens(self.config.special_tokens)
             tokenizer.decoder = decoders.ByteLevel()  # noqa
 

@@ -43,14 +43,14 @@ class Trainer:
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
 
     def __init__(
-            self,
-            model: Union[nn.Module, Model] = None,
-            config: TrainConfig = None,
-            train_dataset: Optional[Dataset] = None,
-            eval_dataset: Optional[Dataset] = None,
-            data_collator=None,
-            optimizer: optim.Optimizer = None,
-            lr_scheduler=None,
+        self,
+        model: Union[nn.Module, Model] = None,
+        config: TrainConfig = None,
+        train_dataset: Optional[Dataset] = None,
+        eval_dataset: Optional[Dataset] = None,
+        data_collator=None,
+        optimizer: optim.Optimizer = None,
+        lr_scheduler=None,
     ):
         self.config = config
         self.num_train_epochs = self.config.num_train_epochs
@@ -165,11 +165,11 @@ class Trainer:
         self.metrics_manager.reset()
         self.model.train()
         with tqdm(
-                self.train_dataloader,
-                unit="batch",
-                desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
-                bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
-                ascii=" #",
+            self.train_dataloader,
+            unit="batch",
+            desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
+            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+            ascii=" #",
         ) as iterator:
             for input_batch in iterator:
                 results = self.train_one_batch(input_batch)
@@ -182,11 +182,11 @@ class Trainer:
         self.metrics_manager.reset()
         self.model.eval()
         with tqdm(
-                self.eval_dataloader,
-                unit="batch",
-                desc=f"Evaluating... ",
-                bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
-                ascii=" #",
+            self.eval_dataloader,
+            unit="batch",
+            desc=f"Evaluating... ",
+            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+            ascii=" #",
         ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
