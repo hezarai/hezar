@@ -171,18 +171,21 @@ class Model(nn.Module):
         return inputs
 
     @torch.inference_mode()
-    def predict(self, inputs, **kwargs) -> Dict:
+    def predict(self, inputs, post_process=True, **kwargs) -> Dict:
         """
         Perform an end-to-end prediction on raw inputs.
 
         Args:
-            inputs: raw inputs e.g, a list of texts, path to images, etc.
+            inputs: Raw inputs e.g, a list of texts, path to images, etc.
+            post_process: Whether to do post-processing step
 
         Returns:
             Output dict of results
         """
         self.eval()
         model_outputs = self.forward(inputs, **kwargs)
-        processed_outputs = self.post_process(model_outputs, **kwargs)
+        if post_process and hasattr(self, "post_process"):
+            processed_outputs = self.post_process(model_outputs, **kwargs)
+            return processed_outputs
 
-        return processed_outputs
+        return model_outputs
