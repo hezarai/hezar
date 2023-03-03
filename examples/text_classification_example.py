@@ -1,6 +1,6 @@
 from hezar.builders import build_model
 from hezar.models import Model
-from hezar.preprocessors.tokenizer import Tokenizer
+from hezar.preprocessors import Tokenizer
 
 path = "hezar-ai/distilbert-fa-sentiment-v1"
 model = Model.load(path)
