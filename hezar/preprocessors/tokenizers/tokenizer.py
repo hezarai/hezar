@@ -74,7 +74,7 @@ class Tokenizer(Preprocessor):
         self,
         inputs: List[str],
         add_special_tokens: bool = True,
-        padding_strategy="longest",
+        padding_strategy=None,
         truncation_strategy=None,
         max_length: int = None,
         return_tensors: str = "list",
@@ -120,14 +120,19 @@ class Tokenizer(Preprocessor):
         if isinstance(inputs, str):
             inputs = [inputs]
 
+        padding_strategy = padding_strategy or self.config.padding_strategy
+        truncation_strategy = truncation_strategy or self.config.truncation_strategy
+        max_length = max_length or self.config.max_length
+        pad_to_multiple_of = pad_to_multiple_of or self.config.pad_to_multiple_of
+
         self.set_truncation_and_padding(
-            padding_strategy=self.config.padding_strategy,
-            truncation_strategy=self.config.truncation_strategy,
+            padding_strategy=padding_strategy,
+            truncation_strategy=truncation_strategy,
             padding_side=self.config.padding_direction,
             truncation_side=self.config.truncation_direction,
-            max_length=self.config.max_length,
+            max_length=max_length,
             stride=self.config.stride,
-            pad_to_multiple_of=self.config.pad_to_multiple_of,
+            pad_to_multiple_of=pad_to_multiple_of,
         )
         encodings = self.encode(
             inputs,
