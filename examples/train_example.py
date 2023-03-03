@@ -8,13 +8,13 @@ from hezar import (
 )
 
 dataset_config = dict(
-    path="Khedesh/MirasOpinion",
-    text_field="comment",
+    path="hezar-ai/sentiment_digikala_snappfood",
+    text_field="text",
     label_field="label",
     tokenizer_path="hezar-ai/distilbert-fa",
 )
 train_dataset = build_dataset(name="text_classification", split="train", **dataset_config)
-eval_dataset = build_dataset(name="text_classification", split="validation", **dataset_config)
+eval_dataset = build_dataset(name="text_classification", split="test", **dataset_config)
 
 model = build_model("distilbert_text_classification", num_labels=train_dataset.num_labels)
 model.config.id2label = train_dataset.id2label
