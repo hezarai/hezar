@@ -14,8 +14,8 @@ from ..data_collators import TextPaddingDataCollator
 
 @dataclass
 class TextClassificationDatasetConfig(DatasetConfig):
-    name = "text_classification"
-    task = "text_classification"
+    name: str = "text_classification"
+    task: str = "text_classification"
     path: str = None
     preprocessors: List[str] = None
     tokenizer_path: str = None
@@ -41,9 +41,9 @@ class TextClassificationDataset(Dataset):
         return dataset
 
     def _extract_labels(self):
-        labels_list = self.dataset.to_pandas()[self.config.label_field].unique().tolist()
+        labels_list = self.dataset.features[self.config.label_field].names
         self.id2label = self.config.id2label = {str(k): str(v) for k, v in dict(list(enumerate(labels_list))).items()}
-        self.label2id = self.label2id = {v: k for k, v in self.id2label.items()}
+        self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(labels_list)
 
     def __len__(self):
@@ -55,12 +55,11 @@ class TextClassificationDataset(Dataset):
         inputs = self.preprocessor(
             text,
             return_tensors="pt",
-            truncation=True,
-            padding=True,
+            truncation_strategy="longest_first",
+            padding="longest",
             return_attention_mask=True,
         )
-        label_idx = int(self.label2id[str(label)])
-        label_idx = torch.tensor([label_idx], dtype=torch.long)
+        label_idx = torch.tensor([label], dtype=torch.long)  # noqa
         inputs["labels"] = label_idx
 
         return inputs
