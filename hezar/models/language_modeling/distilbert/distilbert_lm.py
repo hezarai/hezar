@@ -20,10 +20,11 @@ class DistilBertLM(Model):
         return model
 
     def forward(self, inputs, **kwargs):
+        input_ids = inputs.get("token_ids")
+        attention_mask = inputs.get("attention_mask", None)
         outputs = self.model(
-            input_ids=inputs["token_ids"],
-            attention_mask=inputs["attention_mask"],
-            labels=inputs["labels"],
+            input_ids=input_ids,
+            attention_mask=attention_mask,
             **kwargs,
         )
         return outputs

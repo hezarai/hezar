@@ -31,10 +31,13 @@ class DistilBertTextClassification(Model):
         return model
 
     def forward(self, inputs, **kwargs) -> Dict:
+        input_ids = inputs.get("token_ids")
+        attention_mask = inputs.get("attention_mask", None)
+        labels = inputs.get("labels", None)
         outputs = self.model(
-            input_ids=inputs["token_ids"],
-            attention_mask=inputs["attention_mask"],
-            labels=inputs["labels"],
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            labels=labels,
             **kwargs,
         )
         return outputs
