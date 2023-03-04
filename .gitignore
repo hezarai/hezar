@@ -131,6 +131,9 @@ dmypy.json
 # PyCharm
 .idea/
 
+# Ruff
+.ruff_cache/
+
 # Hezar specific
 misc/
 runs/
