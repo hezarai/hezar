@@ -26,7 +26,7 @@ METRICS_MAP = {
 
 class Trainer:
     """
-    A general but fully featured model trainer/evaluator in Hezar. Heavily inspired by :class:`transformers.Trainer()`
+    A general but fully featured model trainer/evaluator for Hezar models.
 
     Args:
         model ([`Model`] or `torch.nn.Module`): model to train and evaluate
