@@ -1,19 +1,18 @@
 from hezar import (
-    TrainConfig,
-    Trainer,
-    build_dataset,
-    build_model,
     build_optimizer,
     build_scheduler,
+    build_model,
+    build_dataset,
+    Trainer,
+    TrainConfig,
 )
 
-
-dataset_config = {
-    "path": "hezar-ai/sentiment_digikala_snappfood",
-    "text_field": "text",
-    "label_field": "label",
-    "tokenizer_path": "hezar-ai/distilbert-fa",
-}
+dataset_config = dict(
+    path="hezar-ai/sentiment_digikala_snappfood",
+    text_field="text",
+    label_field="label",
+    tokenizer_path="hezar-ai/distilbert-fa",
+)
 train_dataset = build_dataset(name="text_classification", split="train", **dataset_config)
 eval_dataset = build_dataset(name="text_classification", split="test", **dataset_config)
 

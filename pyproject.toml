@@ -50,7 +50,9 @@ select = ["C", "E", "F", "I", "W"]
 line-length = 120
 
 [tool.ruff.per-file-ignores]
-"__init__.py" = ["E402", "F401", "F403", "F811"]
+"__init__.py" = ["E402", "F401", "F403", "F811", "I001"]
+"*example*.py" = ["F401", "F841"]
+"*test*.py" = ["F401", "F841"]
 
 [tool.ruff.isort]
 lines-after-imports = 2

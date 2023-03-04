@@ -4,12 +4,12 @@ from typing import List
 
 from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers import decoders, models, trainers
+from tokenizers import models, decoders, trainers
 
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
+from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
+from ...constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
 from ...registry import register_preprocessor
 from ...utils.hub_utils import resolve_pretrained_path
-from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
 
 
 @dataclass

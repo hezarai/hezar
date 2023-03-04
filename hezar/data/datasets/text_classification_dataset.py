@@ -4,11 +4,12 @@ from typing import List
 import torch
 from datasets import load_dataset
 
+
 from ...configs import DatasetConfig
 from ...preprocessors.tokenizers import Tokenizer
 from ...registry import register_dataset
-from ..data_collators import TextPaddingDataCollator
 from .dataset import Dataset
+from ..data_collators import TextPaddingDataCollator
 
 
 @dataclass

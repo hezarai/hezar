@@ -2,13 +2,12 @@
 General classes for different data types.
 """
 import os
-from typing import List, Literal, Union
+from typing import List, Union, Literal
 
-import numpy as np
 import PIL
+import numpy as np
 
 from ..preprocessors import Preprocessor
-
 
 __all__ = [
     "Text",

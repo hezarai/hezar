@@ -1,4 +1,4 @@
-from torch import Tensor, nn
+from torch import nn, Tensor
 
 from ....models import Model
 from ....registry import register_model

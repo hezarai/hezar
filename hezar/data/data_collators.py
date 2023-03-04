@@ -1,10 +1,9 @@
 import numpy as np
 import torch
 
+from hezar.utils import get_logger
 from hezar.data.utils import convert_batch_dict_dtype
 from hezar.preprocessors import Tokenizer
-from hezar.utils import get_logger
-
 
 __all__ = [
     "TextPaddingDataCollator",
@@ -38,9 +37,9 @@ class TextPaddingDataCollator:
 
         if padding_type == "longest" and max_length is not None:
             logger.warning(
-                "You passed `max_length` while also setting `padding_type` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
-                "Ignoring `max_length`"
+                f"You passed `max_length` while also setting `padding_type` to `longest` which are "
+                f"incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                f"Ignoring `max_length`"
             )
             self.max_length = None
 

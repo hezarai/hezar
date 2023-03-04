@@ -4,12 +4,12 @@ from typing import List
 
 from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers import decoders, models, pre_tokenizers, trainers
+from tokenizers import models, decoders, trainers, pre_tokenizers
 
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
+from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
+from ...constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
 from ...registry import register_preprocessor
 from ...utils.hub_utils import resolve_pretrained_path
-from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
 
 
 @dataclass
@@ -44,9 +44,11 @@ class BPEConfig(TokenizerConfig):
         "<sep>",
         "<cls>",
     ]
-    unk_token: str = None
-    pad_token_id = 0
-    pad_token = "<pad>"
+    unk_token: str = "<unk>"
+    pad_token_id: int = 0
+    pad_token_type_id: int = 0
+    pad_token: str = "<pad>"
+    pad_to_multiple_of: int = 0
     dropout: float = None
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""

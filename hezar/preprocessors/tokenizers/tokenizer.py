@@ -1,20 +1,19 @@
 import os
-from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import List, Dict
+from collections import defaultdict
 
 from huggingface_hub import HfApi
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers.decoders import Decoder
 from tokenizers.models import Model
+from tokenizers.decoders import Decoder
 
-from ...builders import build_preprocessor
 from ...configs import Config, PreprocessorConfig
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
+from ...builders import build_preprocessor
+from ...constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
 from ...data.utils import convert_batch_dict_dtype
-from ...utils import get_local_cache_path, get_logger, resolve_pretrained_path
+from ...utils import resolve_pretrained_path, get_local_cache_path, get_logger
 from ..preprocessor import Preprocessor
-
 
 logger = get_logger(__name__)
 
@@ -203,9 +202,8 @@ class Tokenizer(Preprocessor):
                 if self.padding is not None:
                     self.no_padding()
             else:
-                length = max_length if padding_strategy == "max_length" else None
                 target = {
-                    "length": length,
+                    "length": max_length,
                     "direction": padding_side,
                     "pad_id": self.config.pad_token_id,
                     "pad_token": self.config.pad_token,
