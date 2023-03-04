@@ -7,6 +7,7 @@ from omegaconf import DictConfig
 
 from .logging import get_logger
 
+
 __all__ = [
     "merge_kwargs_into_config",
     "flatten_dict",
@@ -40,7 +41,7 @@ def flatten_dict(dict_config: Union[Dict, DictConfig]) -> DictConfig:
         The flattened version of the dict-like object
     """
 
-    config = DictConfig(dict())
+    config = DictConfig({})
     for k, v in dict_config.items():
         if isinstance(v, (Dict, DictConfig)):
             config.update(flatten_dict(v))

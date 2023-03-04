@@ -1,9 +1,10 @@
 import os.path
 
-from huggingface_hub import Repository, HfApi
+from huggingface_hub import HfApi, Repository
 
-from ..utils.logging import get_logger
 from ..constants import HEZAR_HUB_ID, REPO_TYPE_TO_DIR_MAPPING
+from ..utils.logging import get_logger
+
 
 __all__ = [
     "resolve_pretrained_path",
