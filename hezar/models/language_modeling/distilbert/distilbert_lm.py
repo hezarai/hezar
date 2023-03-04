@@ -1,7 +1,7 @@
 """
 A DistilBERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from transformers import DistilBertModel, DistilBertConfig
+from transformers import DistilBertConfig, DistilBertModel
 
 from ....models import Model
 from ....registry import register_model

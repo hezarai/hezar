@@ -1,22 +1,22 @@
-import logging
 import os.path
-from typing import Union, Optional
+from typing import Optional, Union
 
 import torch
 from huggingface_hub import upload_folder
-from torch import nn, optim, Tensor
+from torch import Tensor, nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from torchmetrics import F1Score, Accuracy, Precision
+from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
-from .trainer_utils import MetricsManager, write_to_tensorboard
 from ..builders import build_optimizer, build_scheduler
 from ..configs import TrainConfig
-from ..constants import DEFAULT_TRAINER_SUBFOLDER, DEFAULT_TRAINER_CONFIG_FILE
+from ..constants import DEFAULT_TRAINER_CONFIG_FILE, DEFAULT_TRAINER_SUBFOLDER
 from ..data.datasets import Dataset
 from ..models import Model
-from ..utils import resolve_pretrained_path, get_local_cache_path, get_logger
+from ..utils import get_local_cache_path, get_logger, resolve_pretrained_path
+from .trainer_utils import MetricsManager, write_to_tensorboard
+
 
 logger = get_logger(__name__)
 
@@ -122,7 +122,7 @@ class Trainer:
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
-            raise ValueError(f"Model outputs must contain `loss`!")
+            raise ValueError("Model outputs must contain `loss`!")
         loss: Tensor = outputs["loss"]
 
         self.optimizer.zero_grad()
@@ -147,7 +147,7 @@ class Trainer:
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
-            raise ValueError(f"Model outputs must contain `loss`!")
+            raise ValueError("Model outputs must contain `loss`!")
         loss: Tensor = outputs["loss"]
 
         results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
@@ -187,7 +187,7 @@ class Trainer:
         with tqdm(
             self.eval_dataloader,
             unit="batch",
-            desc=f"Evaluating... ",
+            desc="Evaluating... ",
             bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
             ascii=" #",
         ) as iterator:
@@ -236,7 +236,7 @@ class Trainer:
         self.save(cache_path)
 
         if not commit_message:
-            commit_message = f"Hezar: Upload with Trainer"
+            commit_message = "Hezar: Upload with Trainer"
 
         upload_folder(
             repo_id=hub_path,
