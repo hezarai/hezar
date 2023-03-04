@@ -77,6 +77,7 @@ def build_dataset(name: str, config=None, split=None, **kwargs):
     Args:
         name (str): name of the dataset in the datasets' registry
         config (DatasetConfig): a DatasetConfig instance
+        split (str): Dataset split to load
         kwargs: extra config parameters that are loaded to the dataset
 
     Returns:
