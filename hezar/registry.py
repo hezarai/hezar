@@ -20,6 +20,7 @@ module's registry name in `hezar.builders` module. See the file `builders.py` fo
 
 from torch import nn, optim
 
+
 __all__ = [
     "register_model",
     "register_preprocessor",
@@ -49,7 +50,7 @@ def register_model(model_name: str, config_class):
             raise ValueError(f"Requested model `{model_name}` already exists in the registry!")
 
         config_class.name = model_name
-        models_registry[model_name] = dict(model_class=cls, config_class=config_class)
+        models_registry[model_name] = {"model_class": cls, "config_class": config_class}
 
         return cls
 
@@ -62,7 +63,7 @@ def register_dataset(dataset_name: str, config_class):
             raise ValueError(f"Requested dataset `{dataset_name}` already exists in the registry!")
 
         config_class.name = dataset_name
-        datasets_registry[dataset_name] = dict(dataset_class=cls, config_class=config_class)
+        datasets_registry[dataset_name] = {"dataset_class": cls, "config_class": config_class}
 
         return cls
 
@@ -75,7 +76,7 @@ def register_preprocessor(preprocessor_name: str, config_class):
             raise ValueError(f"Requested preprocessor `{preprocessor_name}` already exists in the registry!")
 
         config_class.name = preprocessor_name
-        preprocessors_registry[preprocessor_name] = dict(preprocessor_class=cls, config_class=config_class)
+        preprocessors_registry[preprocessor_name] = {"preprocessor_class": cls, "config_class": config_class}
 
         return cls
 
