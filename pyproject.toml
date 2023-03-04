@@ -45,7 +45,7 @@ line-length = 120
 target-version = ['py37', 'py38', 'py39', 'py310']
 
 [tool.ruff]
-ignore = ["C901", "E501", "E741", "W605", "I001"]
+ignore = ["C901", "E501", "E741", "W605", "I001", "F403", "F405"]
 select = ["C", "E", "F", "I", "W"]
 line-length = 120
 
