@@ -1,0 +1,60 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "hezar"
+version = "0.1.0"
+packages = [{include="hezar"}]
+description = "Hezar: A seamless AI framework & library for Persian"
+license = "MIT"
+authors = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
+maintainers = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
+repository = "https://github.com/hezar-ai/hezar"
+homepage = "https://github.com/hezar-ai"
+readme = ["README.md", "LICENSE"]
+keywords = ["packaging", "poetry"]
+documentation = "https://github.com/hezar-ai/docs"
+classifiers = [
+    "Development Status :: 0.1 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: AI/ML Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+exclude = [
+    "docs",
+    "examples",
+    "tests",
+    ".gitignore",
+    ".git"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+torch = ">=1.10.0"
+omegaconf=">=2.3.0"
+transformers=">=4.26"
+datasets=">=2.9.0"
+huggingface_hub=">=0.12.0"
+pillow="*"
+black="*"
+ruff="*"
+
+[tool.black]
+line-length = 120
+target-version = ['py37', 'py38', 'py39', 'py310']
+
+[tool.ruff]
+ignore = ["C901", "E501", "E741", "W605"]
+select = ["C", "E", "F", "I", "W"]
+line-length = 120
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402", "F401", "F403", "F811"]
+
+[tool.ruff.isort]
+lines-after-imports = 2
+known-first-party = ["hezar"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
