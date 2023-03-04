@@ -6,11 +6,12 @@ import torch
 from huggingface_hub import HfApi, hf_hub_download
 from torch import nn
 
-from ..configs import ModelConfig
-from ..constants import HEZAR_TMP_DIR, DEFAULT_MODEL_FILENAME, DEFAULT_CONFIG_FILENAME
-from ..utils.hub_utils import resolve_pretrained_path, get_local_cache_path
 from ..builders import build_model
+from ..configs import ModelConfig
+from ..constants import DEFAULT_CONFIG_FILENAME, DEFAULT_MODEL_FILENAME, HEZAR_TMP_DIR
 from ..utils import get_logger
+from ..utils.hub_utils import get_local_cache_path, resolve_pretrained_path
+
 
 __all__ = [
     "Model",
@@ -89,8 +90,8 @@ class Model(nn.Module):
         except RuntimeError:
             super().load_state_dict(state_dict, strict=False)
             logger.warning(
-                f"Partially loading the weights as the model architecture and the given state dict are "
-                f"incompatible! \nIgnore this warning in case you plan on fine-tuning this model"
+                "Partially loading the weights as the model architecture and the given state dict are "
+                "incompatible! \nIgnore this warning in case you plan on fine-tuning this model"
             )
 
     def save(self, path: Union[str, os.PathLike], save_config: bool = True):
@@ -130,7 +131,7 @@ class Model(nn.Module):
         cache_path = get_local_cache_path(hub_path, repo_type="model")
         model_save_path = self.save(cache_path, save_config=False)
         if commit_message is None:
-            commit_message = f"Hezar: Upload model and config"
+            commit_message = "Hezar: Upload model and config"
         # upload config file
         self.config.push_to_hub(
             repo_id, filename=self.config_filename, repo_type="model", commit_message=commit_message

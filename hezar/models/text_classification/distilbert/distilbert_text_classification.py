@@ -3,7 +3,7 @@ A DistilBERT model for text classification built using HuggingFace Transformers
 """
 from typing import Dict
 
-from transformers import DistilBertForSequenceClassification, DistilBertConfig
+from transformers import DistilBertConfig, DistilBertForSequenceClassification
 
 from ....models import Model
 from ....registry import register_model
@@ -25,7 +25,7 @@ class DistilBertTextClassification(Model):
 
     def _build(self):
         if self.config.num_labels is None and self.config.id2label is None:
-            raise ValueError(f"Both `num_labels` and `id2label` are None. Please provide at least one of them!")
+            raise ValueError("Both `num_labels` and `id2label` are None. Please provide at least one of them!")
         if self.config.id2label and self.config.num_labels is None:
             self.config.num_labels = len(self.config.id2label)
         config = DistilBertConfig(**self.config)

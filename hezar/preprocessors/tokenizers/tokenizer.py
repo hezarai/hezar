@@ -1,19 +1,20 @@
 import os
-from dataclasses import dataclass
-from typing import List, Dict
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Dict, List
 
 from huggingface_hub import HfApi
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers.models import Model
 from tokenizers.decoders import Decoder
+from tokenizers.models import Model
 
-from ...configs import Config, PreprocessorConfig
 from ...builders import build_preprocessor
-from ...constants import DEFAULT_TOKENIZER_FILE, DEFAULT_TOKENIZER_CONFIG_FILE
+from ...configs import Config, PreprocessorConfig
+from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
 from ...data.utils import convert_batch_dict_dtype
-from ...utils import resolve_pretrained_path, get_local_cache_path, get_logger
+from ...utils import get_local_cache_path, get_logger, resolve_pretrained_path
 from ..preprocessor import Preprocessor
+
 
 logger = get_logger(__name__)
 

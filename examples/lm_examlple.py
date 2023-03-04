@@ -1,7 +1,7 @@
-from hezar.preprocessors import Tokenizer
-
 from hezar.builders import build_model
 from hezar.models import Model
+from hezar.preprocessors import Tokenizer
+
 
 path = "hezar-ai/distilbert-fa"
 tokenizer = Tokenizer.load(path)

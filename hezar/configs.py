@@ -1,13 +1,14 @@
 import os
 from dataclasses import dataclass, field
-from typing import Union, Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import torch
-from omegaconf import DictConfig, OmegaConf
 from huggingface_hub import HfApi, hf_hub_download
+from omegaconf import DictConfig, OmegaConf
 
-from .utils import get_logger, resolve_pretrained_path, get_module_config_class, get_local_cache_path
 from .constants import HEZAR_TMP_DIR
+from .utils import get_local_cache_path, get_logger, get_module_config_class, resolve_pretrained_path
+
 
 __all__ = [
     "Config",
@@ -93,7 +94,7 @@ class Config:
         """
         Load config from a dict-like object
         """
-        strict = kwargs.pop("strict", True)  # Whether ignore redundant parameters in kwargs or force-assign
+        kwargs.pop("strict", True)  # Whether ignore redundant parameters in kwargs or force-assign
 
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
