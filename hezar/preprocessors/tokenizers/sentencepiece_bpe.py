@@ -22,7 +22,6 @@ class SentencePieceBPETrainConfig(TokenizerTrainConfig):
     show_progress: bool = True
 
 
-
 @dataclass
 class SentencePieceBPEConfig(TokenizerConfig):
     name: str = "sentencepiece_bpe_tokenizer"
@@ -68,7 +67,7 @@ class SentencePieceBPETokenizer(Tokenizer):
 
     Args:
         config: Preprocessor config for the tokenizer
-        kwargs: Extra/manual config parameters
+        **kwargs: Extra/manual config parameters
     """
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE

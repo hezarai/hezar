@@ -21,7 +21,7 @@ class Preprocessor:
         Args:
             inputs: Raw inputs to process. Usually a list or a dict
             args: Extra arguments depending on the preprocessor
-            kwargs: Extra keyword arguments depending on the preprocessor
+            **kwargs: Extra keyword arguments depending on the preprocessor
         """
         raise NotImplementedError
 

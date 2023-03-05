@@ -5,10 +5,8 @@ from hezar.preprocessors.tokenizers import (
     WordPieceConfig,
     WordPieceTokenizer,
     WordPieceTrainConfig,
-    SentencePieceBPETrainConfig,
-    SentencePieceBPEConfig,
-    SentencePieceBPETokenizer,
 )
+
 
 data = [
     "Beautiful is better than ugly."

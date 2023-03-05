@@ -164,7 +164,7 @@ class Model(nn.Module):
 
         Args:
             inputs: model outputs
-            kwargs: extra arguments specific to the derived class
+            **kwargs: extra arguments specific to the derived class
 
         Returns:
             Processed model output values and converted to human-readable results

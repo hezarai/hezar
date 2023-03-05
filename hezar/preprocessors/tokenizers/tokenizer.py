@@ -112,7 +112,7 @@ class Tokenizer(Preprocessor):
             return_special_tokens_mask: Whether to return special tokens mask
             return_offsets_mapping: Whether to return offsets
             return_length: Whether to return input lengths
-            kwargs: Extra arguments reside here and therefore ignored
+            **kwargs: Extra arguments reside here and therefore ignored
 
         Returns:
             A dictionary of encoded inputs like

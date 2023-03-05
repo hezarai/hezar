@@ -1,9 +1,9 @@
 import numpy as np
 import torch
 
-from hezar.data.utils import convert_batch_dict_dtype
-from hezar.preprocessors import Tokenizer
-from hezar.utils import get_logger
+from ..data.utils import convert_batch_dict_dtype
+from ..preprocessors import Tokenizer
+from ..utils import get_logger
 
 
 __all__ = [
@@ -14,6 +14,22 @@ logger = get_logger(__name__)
 
 
 class TextPaddingDataCollator:
+    """
+    A data collator that pads a batch of tokenized inputs.
+
+    Args:
+        tokenizer: A Hezar tokenizer instance. (only its config is going to be used)
+        padding_type: Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
+         `max_length` cannot be None)
+        padding_side: Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
+         `left`.
+        max_length: If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
+         have this value as length.
+        return_tensors: Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
+         can also be `np` or `list`.
+
+    """
+
     def __init__(
         self,
         tokenizer: Tokenizer,
@@ -45,6 +61,15 @@ class TextPaddingDataCollator:
             self.max_length = None
 
     def __call__(self, encoded_batch):
+        """
+        Add padding to every item in the batch
+
+        Args:
+            encoded_batch: A batch dictionary
+
+        Returns:
+            The same batch dictionary but padded
+        """
         encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
         permuted_batch = {}
         for key in encoded_batch[0].keys():

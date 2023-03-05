@@ -1,9 +1,8 @@
-import os.path
-from typing import Optional, Union
+import os
+from typing import Dict, List
 
 import torch
 from huggingface_hub import upload_folder
-from torch import Tensor, nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
@@ -47,12 +46,12 @@ class Trainer:
 
     def __init__(
         self,
-        model: Union[nn.Module, Model] = None,
+        model: Model = None,
         config: TrainConfig = None,
-        train_dataset: Optional[Dataset] = None,
-        eval_dataset: Optional[Dataset] = None,
+        train_dataset: Dataset = None,
+        eval_dataset: Dataset = None,
         data_collator=None,
-        optimizer: optim.Optimizer = None,
+        optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
     ):
         self.config = config
@@ -69,6 +68,12 @@ class Trainer:
         self.tensorboard = SummaryWriter()
 
     def _setup_dataloaders(self):
+        """
+        Set up data loaders (train/eval) and return them.
+
+        Returns:
+             A tuple of train and eval dataloaders
+        """
         train_dataloader = DataLoader(
             dataset=self.train_dataset,
             batch_size=self.config.batch_size,
@@ -83,7 +88,17 @@ class Trainer:
         )
         return train_dataloader, eval_dataloader
 
-    def _setup_optimizers(self, optimizer=None, lr_scheduler=None):
+    def _setup_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
+        """
+        Set up the optimizer and lr scheduler if they're not already given
+
+        Args:
+            optimizer: If None do nothing and return it, otherwise build it using the train config
+            lr_scheduler: If None do nothing and return it, otherwise build it using the train config
+
+        Returns:
+            Optimizer and scheduler
+        """
         if optimizer is None:
             optimizer_config = self.config.optimizer.dict()
             optimizer_name = optimizer_config.pop("name")
@@ -101,7 +116,16 @@ class Trainer:
                 )
         return optimizer, lr_scheduler
 
-    def _setup_metrics_manager(self, metrics):
+    def _setup_metrics_manager(self, metrics: List[str]) -> MetricsManager:
+        """
+        Set up metrics manager to track and update metrics like loss, accuracy, f1, etc.
+
+        Args:
+            metrics: A list of metric names
+
+        Returns:
+             A MetricsManager instance
+        """
         metrics_dict = {"loss": None}
         metrics_kwargs = self.config.metrics_kwargs
         for m in metrics:
@@ -109,21 +133,21 @@ class Trainer:
         metrics_manager = MetricsManager(metrics_dict)
         return metrics_manager
 
-    def train_one_batch(self, input_batch):
+    def train_one_batch(self, input_batch: Dict[str, torch.Tensor]):
         """
-        Train one batch of data
+        Train one batch of data and return metrics outputs
 
         Args:
             input_batch: A batch of inputs to train
 
         Returns:
-            The loss value
+            The metrics results
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError("Model outputs must contain `loss`!")
-        loss: Tensor = outputs["loss"]
+        loss: torch.Tensor = outputs["loss"]
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -134,36 +158,36 @@ class Trainer:
 
         return results
 
-    def evaluate_one_batch(self, input_batch):
+    def evaluate_one_batch(self, input_batch: Dict[str, torch.Tensor]):
         """
-        Evaluate one batch of data
+        Evaluate one batch of data and return metrics outputs
 
         Args:
             input_batch: A batch of inputs to train
 
         Returns:
-            The loss value
+            The metrics results
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
         outputs = self.model(input_batch)
         if "loss" not in outputs:
             raise ValueError("Model outputs must contain `loss`!")
-        loss: Tensor = outputs["loss"]
+        loss: torch.Tensor = outputs["loss"]
 
         results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
         results["loss"] = loss.item()
 
         return results
 
-    def _one_training_loop(self, epoch_num):
+    def _one_training_loop(self, epoch_num: int):
         """
-        Train the model for one epoch on the whole train dataset
+        Train the model for one epoch on the whole train dataset and verbose live metric values in the progress bar
 
         Args:
             epoch_num: number of the current epoch
 
         Returns:
-            The average loss through the full iteration
+            Metrics averages through the full iteration
         """
         self.metrics_manager.reset()
         self.model.train()
@@ -177,11 +201,16 @@ class Trainer:
             for input_batch in iterator:
                 results = self.train_one_batch(input_batch)
                 self.metrics_manager.update(results)
-                avg_results = self.metrics_manager.avg()
-                iterator.set_postfix(**avg_results)
-        return avg_results
+                iterator.set_postfix(**self.metrics_manager.avg())
+        return self.metrics_manager.avg()
 
     def evaluate(self):
+        """
+        Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
+
+        Returns:
+            Metrics averages through the full iteration
+        """
         self.metrics_manager.reset()
         self.model.eval()
         with tqdm(
@@ -195,13 +224,12 @@ class Trainer:
                 for input_batch in iterator:
                     results = self.evaluate_one_batch(input_batch)
                     self.metrics_manager.update(results)
-                    avg_results = self.metrics_manager.avg()
-                    iterator.set_postfix(**avg_results)
-        return avg_results
+                    iterator.set_postfix(**self.metrics_manager.avg())
+        return self.metrics_manager.avg()
 
     def train(self):
         """
-        Train, evaluate, log and save model checkpoints
+        The full training process like training, evaluation, logging and saving model checkpoints.
         """
         for epoch in range(0, self.num_train_epochs + 1):
             print()
@@ -217,12 +245,20 @@ class Trainer:
             ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
             self.save(ckpt_save_path)
 
-    def save(self, path):
+    def save(self, path: str):
+        """
+        Save the trainer and relevant files to a path.
+        Files to save are train config, model weights, model config, preprocessor files and preprocessor config.
+
+        Args:
+            path: A directory to save everything
+        """
+        # TODO save dataset config too?!
         self.config.save(path, filename=self.trainer_config_file, subfolder=self.trainer_subfolder)
         self.model.save(path, save_config=True)
         self.train_dataset.preprocessor.save(path)
 
-    def push_to_hub(self, hub_path, commit_message=None):
+    def push_to_hub(self, hub_path: str, commit_message: str = None):
         """
         Push everything to the Hub
 

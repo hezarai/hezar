@@ -4,17 +4,22 @@ specific registry. These registries are simple python dictionaries that map a mo
 class. These registries are initialized here and filled automatically when you import hezar or a registry itself.
 
 Examples:
-    ```python
+
+    >> # read models registry
     >> from hezar.registry import models_registry
     >> print(models_registry)
-    ```
+    {'distilbert_lm': {'model_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
+    'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>}}
 
-    ```bash
-    >> # outputs
-    >> {'distilbert_lm': {'model_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
-    >> 'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>}}
-    ```
-Notice that registries usually don't need to be used directly. There is a bunch of functions to build modules using a
+    >> # add a model class to models_registry
+    >> from hezar.registry import register_model
+    >>
+    >> @register_model(name="my_awesome_model", config_class=MyAwesomeModelConfig)
+    >> class MyAwesomeModel(Model):
+    >>     def __init__(config: MyAwesomeModelConfig):
+    >>         ...
+
+Keep in mind that registries usually don't need to be used directly. There is a bunch of functions to build modules using a
 module's registry name in `hezar.builders` module. See the file `builders.py` for more info.
 """
 
