@@ -65,7 +65,7 @@ class SentencePieceBPEConfig(TokenizerConfig):
 @register_preprocessor("sentencepiece_bpe_tokenizer", config_class=SentencePieceBPEConfig)
 class SentencePieceBPETokenizer(Tokenizer):
     """
-    A standard Byte-level BPE tokenizer using 🤗HuggingFace Tokenizers
+    A standard SentencePiece BPE tokenizer using 🤗HuggingFace Tokenizers
 
     Args:
         config: Preprocessor config for the tokenizer
