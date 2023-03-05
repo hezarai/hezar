@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 from huggingface_hub import hf_hub_download
@@ -18,7 +18,7 @@ class WordPieceTrainConfig(TokenizerTrainConfig):
     vocab_size: int = 30000
     min_frequency: int = 2
     limit_alphabet: int = 1000
-    initial_alphabet = []
+    initial_alphabet: list = field(default_factory=list)
     show_progress: bool = True
 
 
@@ -35,7 +35,7 @@ class WordPieceConfig(TokenizerConfig):
     pad_token_id: int = 0
     pad_token: str = "[PAD]"
     pad_token_type_id: int = 0
-    special_tokens = ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"]
+    special_tokens: List[str] = field(default_factory=lambda: ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"])
     unk_token: str = "[UNK]"
     wordpieces_prefix: str = "##"
     train_config: WordPieceTrainConfig = WordPieceTrainConfig()
