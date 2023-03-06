@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Tuple
 
 import torch
 from huggingface_hub import HfApi, hf_hub_download
@@ -201,7 +201,6 @@ class TrainConfig(Config):
     device: str = "cuda"
     optimizer: OptimizerConfig = None
     batch_size: int = field(default=None, metadata={"help": "training batch size"})
-    metrics: list = None
-    metrics_kwargs: Dict = None
+    metrics: List[Tuple[str, Dict]] = field(default_factory=list)
     num_train_epochs: int = None
     checkpoints_dir: str = None

@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import torch
 from huggingface_hub import upload_folder
@@ -116,20 +116,19 @@ class Trainer:
                 )
         return optimizer, lr_scheduler
 
-    def _setup_metrics_manager(self, metrics: List[str]) -> MetricsManager:
+    def _setup_metrics_manager(self, metrics: List[Tuple[str, Dict]]) -> MetricsManager:
         """
         Set up metrics manager to track and update metrics like loss, accuracy, f1, etc.
 
         Args:
-            metrics: A list of metric names
+            metrics: A list of metrics in tuple format (metric_name, metric_kwargs)
 
         Returns:
              A MetricsManager instance
         """
         metrics_dict = {"loss": None}
-        metrics_kwargs = self.config.metrics_kwargs
-        for m in metrics:
-            metrics_dict[m] = METRICS_MAP[m](num_classes=self.num_labels, **metrics_kwargs)
+        for name, kwargs in metrics:
+            metrics_dict[name] = METRICS_MAP[name](num_classes=self.num_labels, **kwargs)
         metrics_manager = MetricsManager(metrics_dict)
         return metrics_manager
 
