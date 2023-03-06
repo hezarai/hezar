@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 import torch
@@ -16,7 +16,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
     name: str = "text_classification"
     task: str = "text_classification"
     path: str = None
-    preprocessors: List[str] = None
+    preprocessors: List[str] = field(default_factory=list)
     tokenizer_path: str = None
     label_field: str = None
     text_field: str = None
