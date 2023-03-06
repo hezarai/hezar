@@ -1,11 +1,11 @@
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Dict, Tuple
 
 import torch
 from datasets import load_dataset
 
 from ...configs import DatasetConfig
-from ...preprocessors.tokenizers import Tokenizer
+from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
 from ..data_collators import TextPaddingDataCollator
 from .dataset import Dataset
@@ -16,7 +16,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
     name: str = "text_classification"
     task: str = "text_classification"
     path: str = None
-    preprocessors: List[str] = None
+    normalizers: List[Tuple[str, Dict]] = None
     tokenizer_path: str = None
     label_field: str = None
     text_field: str = None
@@ -29,9 +29,10 @@ class TextClassificationDataset(Dataset):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.preprocessor = Tokenizer.load(self.config.tokenizer_path)
+        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.normalizer = Sequential(self.config.normalizers)
         self.data_collator = TextPaddingDataCollator(
-            tokenizer=self.preprocessor,
+            tokenizer=self.tokenizer,
             max_length=self.config.max_length,
         )
 
@@ -51,7 +52,7 @@ class TextClassificationDataset(Dataset):
     def __getitem__(self, index):
         text = self.dataset[index][self.config.text_field]
         label = self.dataset[index][self.config.label_field]
-        inputs = self.preprocessor(
+        inputs = self.tokenizer(
             text,
             return_tensors="pt",
             truncation_strategy="longest_first",
