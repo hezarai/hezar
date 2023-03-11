@@ -1,7 +1,7 @@
-from typing import List, Union, Tuple, Dict
+from typing import Dict, List, Tuple, Union
 
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER
 from ..builders import build_preprocessor
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER
 
 
 class Preprocessor:
