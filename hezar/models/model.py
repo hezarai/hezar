@@ -8,7 +8,7 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_CONFIG_FILENAME, DEFAULT_MODEL_FILENAME, HEZAR_TMP_DIR
+from ..constants import DEFAULT_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_TMP_DIR
 from ..utils import get_logger
 from ..utils.hub_utils import get_local_cache_path, resolve_pretrained_path
 
@@ -29,8 +29,8 @@ class Model(nn.Module):
         config: A dataclass model config
     """
 
-    model_filename = DEFAULT_MODEL_FILENAME
-    config_filename = DEFAULT_CONFIG_FILENAME
+    model_filename = DEFAULT_MODEL_FILE
+    config_filename = DEFAULT_CONFIG_FILE
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
