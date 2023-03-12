@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import List, Dict, Tuple
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
 
 import torch
 from datasets import load_dataset

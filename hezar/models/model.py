@@ -8,7 +8,7 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_CONFIG_FILENAME, DEFAULT_MODEL_FILENAME, HEZAR_TMP_DIR
+from ..constants import DEFAULT_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_TMP_DIR
 from ..utils import get_logger
 from ..utils.hub_utils import get_local_cache_path, resolve_pretrained_path
 
@@ -29,8 +29,8 @@ class Model(nn.Module):
         config: A dataclass model config
     """
 
-    model_filename = DEFAULT_MODEL_FILENAME
-    config_filename = DEFAULT_CONFIG_FILENAME
+    model_filename = DEFAULT_MODEL_FILE
+    config_filename = DEFAULT_CONFIG_FILE
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
@@ -85,6 +85,17 @@ class Model(nn.Module):
         return model
 
     def load_state_dict(self, state_dict, **kwargs):
+        incompatible_keys = []
+        src_state_dict = self.state_dict()
+        for (src_weight_key, src_weight), (trg_key, trg_weight) in zip(src_state_dict.items(), state_dict.items()):
+            if src_weight.shape != trg_weight.shape:
+                incompatible_keys.append(src_weight_key)
+
+        missing_keys = []
+        diff = len(src_state_dict) - len(state_dict)
+        if diff > 0:
+            missing_keys.extend(list(src_state_dict.keys())[-diff:])
+
         try:
             super().load_state_dict(state_dict, strict=True)
         except RuntimeError:
@@ -92,6 +103,8 @@ class Model(nn.Module):
             logger.warning(
                 "Partially loading the weights as the model architecture and the given state dict are "
                 "incompatible! \nIgnore this warning in case you plan on fine-tuning this model"
+                f"Incompatible keys: {incompatible_keys}\n"
+                f"Missing keys: {missing_keys}\n"
             )
 
     def save(self, path: Union[str, os.PathLike], save_config: bool = True):

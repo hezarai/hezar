@@ -5,6 +5,8 @@ from hezar.preprocessors.tokenizers import (
     WordPieceConfig,
     WordPieceTokenizer,
     WordPieceTrainConfig,
+    SentencePieceBPEConfig,
+    SentencePieceBPETokenizer,
 )
 
 

@@ -21,9 +21,10 @@ model = build_model("distilbert_text_classification", id2label=train_dataset.id2
 optimizer = build_optimizer("adamw", model.parameters(), lr=2e-5)
 lr_scheduler = build_scheduler("reduce_on_plateau", optimizer=optimizer)
 
-c = TrainConfig(
+train_config = TrainConfig(
     name="distilbert_text_classification",
     device="cuda",
+    init_weights_from="hezar-ai/distilbert-fa",
     batch_size=16,
     num_train_epochs=10,
     checkpoints_dir="checkpoints/",
@@ -31,7 +32,7 @@ c = TrainConfig(
 )
 
 trainer = Trainer(
-    config=c,
+    config=train_config,
     model=model,
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,

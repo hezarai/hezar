@@ -2,7 +2,7 @@ import os
 from typing import Dict, List, Tuple
 
 import torch
-from huggingface_hub import upload_folder
+from huggingface_hub import upload_folder, hf_hub_download
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from ..builders import build_optimizer, build_scheduler
 from ..configs import TrainConfig
-from ..constants import DEFAULT_TRAINER_CONFIG_FILE, DEFAULT_TRAINER_SUBFOLDER
+from ..constants import DEFAULT_TRAINER_CONFIG_FILE, DEFAULT_TRAINER_SUBFOLDER, HEZAR_TMP_DIR
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_local_cache_path, get_logger, resolve_pretrained_path
@@ -57,7 +57,7 @@ class Trainer:
         self.config = config
         self.num_train_epochs = self.config.num_train_epochs
         self.device = self.config.device if self.config.device == "cuda" and torch.cuda.is_available() else "cpu"
-        self.model = model.to(self.device)
+        self.model = self._init_model_weights(model).to(self.device)
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
@@ -66,6 +66,13 @@ class Trainer:
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
         self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
         self.tensorboard = SummaryWriter()
+
+    def _init_model_weights(self, model):
+        weights_path = self.config.init_weights_from
+        hub_path = resolve_pretrained_path(weights_path)
+        local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_TMP_DIR)
+        model.load_state_dict(torch.load(local_path))
+        return model
 
     def _setup_dataloaders(self):
         """
