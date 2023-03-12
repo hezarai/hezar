@@ -24,6 +24,7 @@ lr_scheduler = build_scheduler("reduce_on_plateau", optimizer=optimizer)
 train_config = TrainConfig(
     name="distilbert_text_classification",
     device="cuda",
+    init_weights_from="hezar-ai/distilbert-fa",
     batch_size=16,
     num_train_epochs=10,
     checkpoints_dir="checkpoints/",
