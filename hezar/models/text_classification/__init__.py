@@ -1,1 +1,2 @@
 from .distilbert import DistilBertTextClassification, DistilBertTextClassificationConfig
+from .bert import BertTextClassification, BertTextClassificationConfig
