@@ -33,7 +33,11 @@ class Config:
         return self.dict().keys()
 
     def pop(self, key, default=None):
-        value = self.dict().pop(key, default)
+        if hasattr(self, key):
+            value = getattr(self, key)
+            delattr(self, key)
+        else:
+            value = default
         return value
 
     def __getitem__(self, item):
