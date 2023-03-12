@@ -78,7 +78,7 @@ class SentencePieceBPETokenizer(Tokenizer):
         super().__init__(config, **kwargs)
 
     def build(self):
-        pretrained_path = self.config.pop("pretrained_path")
+        pretrained_path = self.config.get("pretrained_path")
         if pretrained_path:
             if not os.path.isdir(pretrained_path):
                 path = resolve_pretrained_path(pretrained_path)
