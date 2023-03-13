@@ -1,5 +1,6 @@
 import os
 from typing import Dict, List, Tuple
+import random
 
 import torch
 from huggingface_hub import upload_folder, hf_hub_download
@@ -7,6 +8,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
+import numpy as np
 
 from ..builders import build_optimizer, build_scheduler
 from ..configs import TrainConfig
@@ -237,6 +239,10 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
+        torch.manual_seed(self.config.seed)
+        np.random.seed(self.config.seed)
+        random.seed(self.config.seed)
+
         for epoch in range(0, self.num_train_epochs + 1):
             print()
             train_results = self._one_training_loop(epoch)
@@ -262,7 +268,8 @@ class Trainer:
         # TODO save dataset config too?!
         self.config.save(path, filename=self.trainer_config_file, subfolder=self.trainer_subfolder)
         self.model.save(path, save_config=True)
-        self.train_dataset.preprocessor.save(path)
+        if hasattr(self.train_dataset, "tokenizer"):
+            self.train_dataset.tokenizer.save(path)
 
     def push_to_hub(self, hub_path: str, commit_message: str = None):
         """

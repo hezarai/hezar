@@ -204,6 +204,7 @@ class TrainConfig(Config):
     config_type: str = "train"
     device: str = "cuda"
     init_weights_from: str = None
+    seed: int = 42
     optimizer: OptimizerConfig = None
     batch_size: int = field(default=None, metadata={"help": "training batch size"})
     metrics: List[Tuple[str, Dict]] = field(default_factory=list)
