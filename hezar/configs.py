@@ -55,7 +55,7 @@ class Config:
     def dict(self):
         return self.__dict__
 
-    def get(self, key, default):
+    def get(self, key, default=None):
         return getattr(self, key, default)
 
     def update(self, d: dict, **kwargs):
