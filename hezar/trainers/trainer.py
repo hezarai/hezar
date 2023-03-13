@@ -12,7 +12,13 @@ import numpy as np
 
 from ..builders import build_optimizer, build_scheduler
 from ..configs import TrainConfig
-from ..constants import DEFAULT_TRAINER_CONFIG_FILE, DEFAULT_TRAINER_SUBFOLDER, HEZAR_TMP_DIR, TQDM_BAR_FORMAT
+from ..constants import (
+    DEFAULT_TRAINER_CONFIG_FILE,
+    DEFAULT_TRAINER_SUBFOLDER,
+    HEZAR_TMP_DIR,
+    DEFAULT_DATASET_CONFIG_FILE,
+    TQDM_BAR_FORMAT,
+)
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_local_cache_path, get_logger, resolve_pretrained_path
@@ -45,6 +51,7 @@ class Trainer:
 
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
+    dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
 
     def __init__(
         self,
@@ -265,9 +272,9 @@ class Trainer:
         Args:
             path: A directory to save everything
         """
-        # TODO save dataset config too?!
         self.config.save(path, filename=self.trainer_config_file, subfolder=self.trainer_subfolder)
         self.model.save(path, save_config=True)
+        self.train_dataset.config.save(path, filename=self.dataset_config_file, subfolder=self.trainer_subfolder)
         if hasattr(self.train_dataset, "tokenizer"):
             self.train_dataset.tokenizer.save(path)
 
