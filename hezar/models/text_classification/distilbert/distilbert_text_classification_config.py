@@ -16,7 +16,6 @@ class DistilBertTextClassificationConfig(ModelConfig):
     hidden_dim: int = 3072
     initializer_range: float = 0.02
     max_position_embeddings: int = 512
-    model_type: str = "distilbert"
     n_heads: int = 12
     n_layers: int = 6
     output_past: bool = True
