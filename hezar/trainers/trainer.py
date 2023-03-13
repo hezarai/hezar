@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from ..builders import build_optimizer, build_scheduler
 from ..configs import TrainConfig
-from ..constants import DEFAULT_TRAINER_CONFIG_FILE, DEFAULT_TRAINER_SUBFOLDER, HEZAR_TMP_DIR
+from ..constants import DEFAULT_TRAINER_CONFIG_FILE, DEFAULT_TRAINER_SUBFOLDER, HEZAR_TMP_DIR, TQDM_BAR_FORMAT
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_local_cache_path, get_logger, resolve_pretrained_path
@@ -201,7 +201,7 @@ class Trainer:
             self.train_dataloader,
             unit="batch",
             desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
-            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+            bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
         ) as iterator:
             for input_batch in iterator:
@@ -223,7 +223,7 @@ class Trainer:
             self.eval_dataloader,
             unit="batch",
             desc="Evaluating... ",
-            bar_format="{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}",
+            bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
         ) as iterator:
             with torch.inference_mode():
