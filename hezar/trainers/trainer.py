@@ -125,7 +125,7 @@ class Trainer:
                 )
         return optimizer, lr_scheduler
 
-    def _setup_metrics_manager(self, metrics: List[Tuple[str, Dict]]) -> MetricsManager:
+    def _setup_metrics_manager(self, metrics: Dict[str, Dict]) -> MetricsManager:
         """
         Set up metrics manager to track and update metrics like loss, accuracy, f1, etc.
 
@@ -136,7 +136,7 @@ class Trainer:
              A MetricsManager instance
         """
         metrics_dict = {"loss": None}
-        for name, kwargs in metrics:
+        for name, kwargs in metrics.items():
             metrics_dict[name] = METRICS_MAP[name](num_classes=self.num_labels, **kwargs)
         metrics_manager = MetricsManager(metrics_dict)
         return metrics_manager

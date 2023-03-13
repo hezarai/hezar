@@ -207,6 +207,6 @@ class TrainConfig(Config):
     seed: int = 42
     optimizer: OptimizerConfig = None
     batch_size: int = field(default=None, metadata={"help": "training batch size"})
-    metrics: List[Tuple[str, Dict]] = field(default_factory=list)
+    metrics: Dict[str, Dict] = field(default_factory=list)
     num_train_epochs: int = None
     checkpoints_dir: str = None
