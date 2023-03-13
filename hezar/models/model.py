@@ -102,7 +102,7 @@ class Model(nn.Module):
             super().load_state_dict(state_dict, strict=False)
             logger.warning(
                 "Partially loading the weights as the model architecture and the given state dict are "
-                "incompatible! \nIgnore this warning in case you plan on fine-tuning this model"
+                "incompatible! \nIgnore this warning in case you plan on fine-tuning this model\n"
                 f"Incompatible keys: {incompatible_keys}\n"
                 f"Missing keys: {missing_keys}\n"
             )
