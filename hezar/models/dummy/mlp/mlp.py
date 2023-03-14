@@ -8,7 +8,7 @@ from .mlp_config import MLPConfig
 @register_model("mlp", config_class=MLPConfig)
 class MLP(Model):
     """
-    A simple MLP for out tests
+    A simple MLP for testing some core features of the base class :class:`hezar.Model`
     """
 
     def __init__(self, config):
