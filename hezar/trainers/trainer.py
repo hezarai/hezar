@@ -71,10 +71,16 @@ class Trainer:
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
         self.num_labels = self.train_dataset.num_labels  # noqa
+        self.set_seed(self.config.seed)
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
         self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
         self.tensorboard = SummaryWriter()
+
+    def set_seed(self, seed):
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
 
     def _init_model_weights(self, model):
         weights_path = self.config.init_weights_from
@@ -246,10 +252,6 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
-        torch.manual_seed(self.config.seed)
-        np.random.seed(self.config.seed)
-        random.seed(self.config.seed)
-
         for epoch in range(0, self.num_train_epochs + 1):
             print()
             train_results = self._one_training_loop(epoch)
