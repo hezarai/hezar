@@ -5,9 +5,9 @@ optional config or config kwargs to build the object.
 
 Examples:
 
-    >> from hezar.builders import build_model
-    >> model = build_model('distilbert_text_classification', id2label={0: 'negative', 1: 'positive'})
-    >> print(model)
+    >>> from hezar.builders import build_model
+    >>> model = build_model('distilbert_text_classification', id2label={0: 'negative', 1: 'positive'})
+    >>> print(model)
 
 """
 
