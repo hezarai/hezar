@@ -1,6 +1,7 @@
 import os
 from abc import abstractmethod
 from typing import Dict, Union
+from collections import OrderedDict
 
 import torch
 from huggingface_hub import HfApi, hf_hub_download
@@ -86,10 +87,13 @@ class Model(nn.Module):
 
     def load_state_dict(self, state_dict, **kwargs):
         incompatible_keys = []
+        compatible_state_dict = OrderedDict()
         src_state_dict = self.state_dict()
         for (src_weight_key, src_weight), (trg_key, trg_weight) in zip(src_state_dict.items(), state_dict.items()):
             if src_weight.shape != trg_weight.shape:
                 incompatible_keys.append(src_weight_key)
+            else:
+                compatible_state_dict[src_weight_key] = trg_weight
 
         missing_keys = []
         diff = len(src_state_dict) - len(state_dict)
@@ -97,9 +101,9 @@ class Model(nn.Module):
             missing_keys.extend(list(src_state_dict.keys())[-diff:])
 
         try:
-            super().load_state_dict(state_dict, strict=True)
+            super().load_state_dict(compatible_state_dict, strict=True)
         except RuntimeError:
-            super().load_state_dict(state_dict, strict=False)
+            super().load_state_dict(compatible_state_dict, strict=False)
             logger.warning(
                 "Partially loading the weights as the model architecture and the given state dict are "
                 "incompatible! \nIgnore this warning in case you plan on fine-tuning this model\n"
