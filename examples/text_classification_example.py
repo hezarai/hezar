@@ -3,7 +3,7 @@ from hezar.models import Model
 from hezar.preprocessors import Tokenizer
 
 
-path = "hezar-ai/distilbert-fa-sentiment-v1"
+path = "hezar-ai/bert-fa-sentiment-digikala-snappfood"
 model = Model.load(path)
 # model = build_model('distilbert_text_classification', id2label={0: 'negative', 1: 'positive'})
 tokenizer = Tokenizer.load(path)
