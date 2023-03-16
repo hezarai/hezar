@@ -79,7 +79,7 @@ class Model(nn.Module):
         else:
             model_path = os.path.join(hub_or_local_path, model.model_filename)
         # Get state dict from the model
-        state_dict = torch.load(model_path)
+        state_dict = torch.load(model_path, map_location=torch.device("cpu"))
         model.load_state_dict(state_dict)
         if save_to_cache:
             model.save(cache_path)
