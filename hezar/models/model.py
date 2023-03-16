@@ -9,7 +9,7 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_TMP_DIR
+from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_TMP_DIR
 from ..utils import get_logger
 from ..utils.hub_utils import get_local_cache_path, resolve_pretrained_path
 
@@ -31,7 +31,7 @@ class Model(nn.Module):
     """
 
     model_filename = DEFAULT_MODEL_FILE
-    config_filename = DEFAULT_CONFIG_FILE
+    config_filename = DEFAULT_MODEL_CONFIG_FILE
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
@@ -57,7 +57,7 @@ class Model(nn.Module):
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
         # Load config
-        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename="config.yaml")
+        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=cls.config_filename)
         # Build model wih config
         model = build_model(config.name, config, **kwargs)
         # Raise a warning if model class is not compatible with the one on the Hub
