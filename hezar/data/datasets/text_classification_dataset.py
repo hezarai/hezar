@@ -42,7 +42,7 @@ class TextClassificationDataset(Dataset):
 
     def _extract_labels(self):
         labels_list = self.dataset.features[self.config.label_field].names
-        self.id2label = self.config.id2label = {str(k): str(v) for k, v in dict(list(enumerate(labels_list))).items()}
+        self.id2label = self.config.id2label = {k: str(v) for k, v in dict(list(enumerate(labels_list))).items()}
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(labels_list)
 
