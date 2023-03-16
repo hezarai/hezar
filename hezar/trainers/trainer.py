@@ -252,7 +252,7 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
-        for epoch in range(0, self.num_train_epochs + 1):
+        for epoch in range(1, self.num_train_epochs + 1):
             print()
             train_results = self._one_training_loop(epoch)
             eval_results = self.evaluate()
