@@ -5,7 +5,7 @@ from ....configs import ModelConfig
 
 @dataclass
 class BertTextClassificationConfig(ModelConfig):
-    name: str = "distilbert_text_classification"
+    name: str = "bert_text_classification"
     task: str = "text_classification"
     num_labels: int = None
     id2label: dict = None
