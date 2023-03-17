@@ -1,4 +1,4 @@
-from hezar.models import Model
+from hezar import Model
 
 
 model = Model.load("hezar-ai/mlp-test")

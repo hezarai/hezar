@@ -1,7 +1,4 @@
-from hezar.builders import build_model
-from hezar.models import Model
-from hezar.preprocessors import Tokenizer
-
+from hezar import build_model, Model, Tokenizer
 
 path = "hezar-ai/bert-fa-sentiment-digikala-snappfood"
 model = Model.load(path)
