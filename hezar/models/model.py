@@ -1,7 +1,7 @@
 import os
 from abc import abstractmethod
-from typing import Dict, Union
 from collections import OrderedDict
+from typing import Dict, Union
 
 import torch
 from huggingface_hub import HfApi, hf_hub_download
@@ -55,7 +55,6 @@ class Model(nn.Module):
             The fully loaded Hezar model
         """
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
-        cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
         # Load config
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=cls.config_filename)
         # Build model wih config
