@@ -38,7 +38,7 @@ class Model(nn.Module):
         self.config = config.update(kwargs)
 
     @classmethod
-    def load(cls, hub_or_local_path, load_locally=False, save_to_cache=False, **kwargs):
+    def load(cls, hub_or_local_path, load_locally=False, save_path=None, **kwargs):
         """
         Load the model from local path or hub.
 
@@ -49,7 +49,7 @@ class Model(nn.Module):
         Args:
             hub_or_local_path: path to the model living on the Hub or local disk.
             load_locally: force loading from local path
-            save_to_cache: Whether to save model and config to Hezar's permanent cache folder
+            save_path: save model to this path after loading
 
         Returns:
             The fully loaded Hezar model
@@ -81,8 +81,8 @@ class Model(nn.Module):
         # Get state dict from the model
         state_dict = torch.load(model_path, map_location=torch.device("cpu"))
         model.load_state_dict(state_dict)
-        if save_to_cache:
-            model.save(cache_path)
+        if save_path:
+            model.save(save_path)
         return model
 
     def load_state_dict(self, state_dict, **kwargs):
