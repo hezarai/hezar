@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "hezar"
-version = "0.2.0"
+version = "0.4.0"
 packages = [{include="hezar"}]
 description = "Hezar: A seamless AI framework & library for Persian"
 license = "MIT"
@@ -16,9 +16,9 @@ readme = ["README.md", "LICENSE"]
 keywords = ["packaging", "poetry"]
 documentation = "https://github.com/hezar-ai/docs"
 classifiers = [
-    "Development Status :: 0.1 - Beta",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "Topic :: Software Development :: AI/ML Tools",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 exclude = [
