@@ -9,7 +9,7 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_TMP_DIR
+from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
 from ..utils import get_logger
 from ..utils.hub_utils import get_local_cache_path, resolve_pretrained_path
 
@@ -73,7 +73,7 @@ class Model(nn.Module):
             model_path = hf_hub_download(
                 hub_or_local_path,
                 filename=model.model_filename,
-                cache_dir=HEZAR_TMP_DIR,
+                cache_dir=HEZAR_CACHE_DIR,
                 resume_download=True,
             )
         else:

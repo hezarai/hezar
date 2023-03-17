@@ -6,7 +6,7 @@ import torch
 from huggingface_hub import HfApi, hf_hub_download
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import HEZAR_TMP_DIR
+from .constants import HEZAR_CACHE_DIR
 from .utils import get_local_cache_path, get_logger, get_module_config_class, resolve_pretrained_path
 
 
@@ -84,7 +84,7 @@ class Config:
                 hub_or_local_path,
                 filename=filename,
                 subfolder=subfolder,
-                cache_dir=HEZAR_TMP_DIR,
+                cache_dir=HEZAR_CACHE_DIR,
             )
 
         dict_config = OmegaConf.load(config_path)
