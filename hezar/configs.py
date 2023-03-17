@@ -98,8 +98,6 @@ class Config:
         """
         Load config from a dict-like object
         """
-        kwargs.pop("strict", True)  # Whether ignore redundant parameters in kwargs or force-assign
-
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
