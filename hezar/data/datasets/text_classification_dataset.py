@@ -25,6 +25,16 @@ class TextClassificationDatasetConfig(DatasetConfig):
 
 @register_dataset("text_classification", config_class=TextClassificationDatasetConfig)
 class TextClassificationDataset(Dataset):
+    """
+    A text classification dataset class.
+    As of now this class is intended for datasets existing on the Hub!
+
+    Args:
+        config: dataset config obj
+        split: which split to use
+        **kwargs: extra config parameters to assign to the original config
+    """
+
     def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
@@ -37,10 +47,23 @@ class TextClassificationDataset(Dataset):
         )
 
     def _load(self, split):
+        """
+        Load the dataset
+
+        Args:
+            split: dataset split
+
+        Returns:
+            The whole dataset
+        """
+        # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split)
         return dataset
 
     def _extract_labels(self):
+        """
+        Extract label names, ids and build dictionaries
+        """
         labels_list = self.dataset.features[self.config.label_field].names
         self.id2label = self.config.id2label = {k: str(v) for k, v in dict(list(enumerate(labels_list))).items()}
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
@@ -50,6 +73,15 @@ class TextClassificationDataset(Dataset):
         return len(self.dataset)
 
     def __getitem__(self, index):
+        """
+        Tokenize inputs and return a dict containing ids, masks, labels, etc.
+
+        Args:
+            index: sample index
+
+        Returns:
+            a dict of tokenized text data and labels and some extra stuff
+        """
         text = self.dataset[index][self.config.text_field]
         label = self.dataset[index][self.config.label_field]
         inputs = self.tokenizer(

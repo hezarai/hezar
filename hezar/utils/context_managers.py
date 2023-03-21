@@ -7,6 +7,14 @@ __all__ = [
 
 
 class exec_timer:
+    """
+    A context manager that captures the execution time of all the operations inside it
+
+    Examples:
+        >>> with exec_timer() as timer:
+        >>>     # operations here
+        >>> print(timer.time)
+    """
     def __enter__(self):
         self.time = perf_counter()
         return self
