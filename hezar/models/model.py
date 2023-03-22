@@ -200,7 +200,7 @@ class Model(nn.Module):
             Output dict of results
         """
         self.eval()
-        model_outputs = self.forward(inputs, **kwargs)
+        model_outputs = self(inputs, **kwargs)
         if post_process and hasattr(self, "post_process"):
             processed_outputs = self.post_process(model_outputs, **kwargs)
             return processed_outputs
