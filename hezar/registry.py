@@ -36,6 +36,7 @@ preprocessors_registry = {}
 datasets_registry = {}
 criterions_registry = {
     "bce": nn.BCELoss,
+    "bce_with_logits": nn.BCEWithLogitsLoss,
     "nll": nn.NLLLoss,
     "cross_entropy": nn.CrossEntropyLoss,
     "mse": nn.MSELoss,
