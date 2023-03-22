@@ -12,17 +12,12 @@ from .bert_lm_config import BertLMConfig
 class BertLM(Model):
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.model = self._build()
-
-    def _build(self):
-        config = BertConfig(**self.config)
-        model = BertModel(config)
-        return model
+        self.bert = BertModel(BertConfig(**self.config))
 
     def forward(self, inputs, **kwargs):
         input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
-        outputs = self.model(
+        outputs = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
             **kwargs,
