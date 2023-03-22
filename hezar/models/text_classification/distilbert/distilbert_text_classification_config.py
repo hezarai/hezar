@@ -21,5 +21,6 @@ class DistilBertTextClassificationConfig(ModelConfig):
     output_past: bool = True
     pad_token_id: int = 0
     qa_dropout: float = 0.1
+    seq_classif_dropout: float = 0.2
     tie_weights_: bool = True
     vocab_size: int = 42000
