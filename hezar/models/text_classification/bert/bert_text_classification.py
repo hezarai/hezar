@@ -3,7 +3,8 @@ A BERT model for text classification built using HuggingFace Transformers
 """
 from typing import Dict
 
-from transformers import BertConfig, BertForSequenceClassification
+from torch import nn
+from transformers import BertConfig, BertModel
 
 from ....models import Model
 from ....registry import register_model
@@ -21,27 +22,37 @@ class BertTextClassification(Model):
 
     def __init__(self, config: BertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
-        self.model = self._build()
+        self.bert = BertModel(self._build_inner_config())
+        classifier_dropout = (
+            self.config.classifier_dropout if self.config.classifier_dropout is not None
+            else self.config.hidden_dropout_prob
+        )
+        self.dropout = nn.Dropout(classifier_dropout)
+        self.classifier = nn.Linear(self.config.hidden_size, self.config.num_labels)
 
-    def _build(self):
+    def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:
             raise ValueError("Both `num_labels` and `id2label` are None. Please provide at least one of them!")
         if self.config.id2label and self.config.num_labels is None:
             self.config.num_labels = len(self.config.id2label)
-        config = BertConfig(**self.config)
-        model = BertForSequenceClassification(config)
-        return model
+        bert_config = BertConfig(**self.config)
+        return bert_config
 
     def forward(self, inputs, **kwargs) -> Dict:
         input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        labels = inputs.get("labels", None)
-        outputs = self.model(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            labels=labels,
-            **kwargs,
-        )
+        labels = inputs.get("labels")
+
+        lm_outputs = self.bert(input_ids=input_ids, **kwargs)
+        pooled_output = lm_outputs[1]
+        pooled_output = self.dropout(pooled_output)
+        logits = self.classifier(pooled_output)
+        loss = nn.BCEWithLogitsLoss()(logits, labels) if labels else None
+        outputs = {
+            "loss": loss,
+            "logits": logits,
+            "hidden_states": lm_outputs.hidden_states,
+            "attentions": lm_outputs.attentions,
+        }
         return outputs
 
     def post_process(self, inputs, **kwargs) -> Dict:
