@@ -29,17 +29,6 @@ class Config:
     name: str
     config_type: str = "base"
 
-    def keys(self):
-        return self.dict().keys()
-
-    def pop(self, key, default=None):
-        if hasattr(self, key):
-            value = getattr(self, key)
-            delattr(self, key)
-        else:
-            value = default
-        return value
-
     def __getitem__(self, item):
         try:
             return self.dict()[item]
@@ -57,6 +46,17 @@ class Config:
 
     def dict(self):
         return self.__dict__
+    
+    def keys(self):
+        return self.dict().keys()
+
+    def pop(self, key, default=None):
+        if hasattr(self, key):
+            value = getattr(self, key)
+            delattr(self, key)
+        else:
+            value = default
+        return value
 
     def get(self, key, default=None):
         return getattr(self, key, default)
