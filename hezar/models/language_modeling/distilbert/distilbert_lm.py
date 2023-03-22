@@ -12,17 +12,12 @@ from .distilbert_lm_config import DistilBertLMConfig
 class DistilBertLM(Model):
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.model = self._build()
-
-    def _build(self):
-        config = DistilBertConfig(**self.config)
-        model = DistilBertModel(config)
-        return model
+        self.distilbert = DistilBertModel(DistilBertConfig(**self.config))
 
     def forward(self, inputs, **kwargs):
         input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
-        outputs = self.model(
+        outputs = self.distilbert(
             input_ids=input_ids,
             attention_mask=attention_mask,
             **kwargs,
