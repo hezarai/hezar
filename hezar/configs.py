@@ -52,6 +52,9 @@ class Config:
     def __iter__(self):
         return iter(self.dict())
 
+    def __getattr__(self, item):
+        return self.dict().get(item)
+
     def dict(self):
         return self.__dict__
 
