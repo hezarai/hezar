@@ -1,8 +1,9 @@
 import os
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Union
 
+import torch
 from huggingface_hub import HfApi
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.decoders import Decoder
@@ -74,6 +75,7 @@ class Tokenizer(Preprocessor):
     def __call__(
         self,
         inputs: List[str],
+        device: Union[str, torch.device] = None,
         add_special_tokens: bool = True,
         padding_strategy=None,
         truncation_strategy=None,
@@ -168,6 +170,9 @@ class Tokenizer(Preprocessor):
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors)
+        if device and return_tensors == "pt":
+            outputs = {k: v.to(device) for k, v in outputs.items() if isinstance(v, torch.Tensor)}
+
         return outputs
 
     def set_truncation_and_padding(
