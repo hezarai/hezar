@@ -46,7 +46,7 @@ class BertTextClassification(Model):
         pooled_output = lm_outputs[1]
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
-        loss = nn.BCEWithLogitsLoss()(logits, labels) if labels else None
+        loss = nn.CrossEntropyLoss()(logits, labels) if labels is not None else None
         outputs = {
             "loss": loss,
             "logits": logits,
