@@ -9,7 +9,7 @@ class BertTextClassificationConfig(ModelConfig):
     task: str = "text_classification"
     num_labels: int = None
     id2label: dict = None
-    vocab_size: int = 30522
+    vocab_size: int = 42000
     hidden_size: int = 768
     num_hidden_layers: int = 12
     num_attention_heads: int = 12
