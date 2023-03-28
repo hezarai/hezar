@@ -75,7 +75,7 @@ class Trainer:
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
         self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
-        self.tensorboard = SummaryWriter()
+        self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
     @staticmethod
     def set_seed(seed):

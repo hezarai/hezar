@@ -211,3 +211,4 @@ class TrainConfig(Config):
     metrics: Dict[str, Dict] = field(default_factory=list)
     num_train_epochs: int = None
     checkpoints_dir: str = None
+    log_dir: str = None
