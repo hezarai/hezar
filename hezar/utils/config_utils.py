@@ -93,15 +93,15 @@ def get_module_config_class(name: str, config_type: str):
         A class of type :class:`hezar.Config`
     """
     if config_type == "model":
-        from ..registry import models_registry
+        from ..registry import models_registry  # noqa
 
         registry = models_registry
     elif config_type == "preprocessor":
-        from ..registry import preprocessors_registry
+        from ..registry import preprocessors_registry  # noqa
 
         registry = preprocessors_registry
     elif config_type == "dataset":
-        from ..registry import datasets_registry
+        from ..registry import datasets_registry  # noqa
 
         registry = datasets_registry
     else:
