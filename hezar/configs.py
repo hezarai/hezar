@@ -46,7 +46,7 @@ class Config:
 
     def dict(self):
         return self.__dict__
-    
+
     def keys(self):
         return self.dict().keys()
 
