@@ -12,11 +12,10 @@ Examples:
 
     >>> # add a model class to models_registry
     >>> from hezar.registry import register_model
-    >>>
     >>> @register_model(name="my_awesome_model", config_class=MyAwesomeModelConfig)
     >>> class MyAwesomeModel(Model):
-    >>>     def __init__(config: MyAwesomeModelConfig):
-    >>>         ...
+    ...    def __init__(config: MyAwesomeModelConfig):
+    ...        ...
 
 Keep in mind that registries usually don't need to be used directly. There is a bunch of functions to build modules
 using a module's registry name in `hezar.builders` module. See the file `builders.py` for more info.
