@@ -1,7 +1,7 @@
 import os
 
 
-HEZAR_HUB_ID = "hezar-ai"
+HEZAR_HUB_ID = "hezarai"
 HEZAR_LOCAL_DIR = os.getenv("HEZAR_LOCAL_DIR", f'{os.path.expanduser("~")}/.hezar')
 HEZAR_CACHE_DIR = os.getenv("HEZAR_TMP_DIR", f'{os.path.expanduser("~")}/.hezar/cache')
 HEZAR_MODELS_CACHE_DIR = os.getenv("HEZAR_MODELS_CACHE_DIR", f"{HEZAR_LOCAL_DIR}/models")

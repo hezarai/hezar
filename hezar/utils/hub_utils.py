@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 def resolve_pretrained_path(hub_or_local_path):
     """
     Resolve a local or Hub path. If path exists locally it just returns the input, otherwise tries to resolve
-    hub_or_local_path. If it contains the namespace (author/org) leave it as is, otherwise change to hezar-ai/{hub_path}
+    hub_or_local_path. If it contains the namespace (author/org) leave it as is, otherwise change to hezarai/{hub_path}
 
     Args:
         hub_or_local_path: repo name or id

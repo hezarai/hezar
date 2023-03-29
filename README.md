@@ -13,7 +13,7 @@ Hezar is a library that:
 ## Installation
 Clone the repo and run:
 ```commandline
-git clone https://github.com/hezar-ai/hezar.git
+git clone https://github.com/hezarai/hezar.git
 pip install ./hezar
 ```
 
@@ -23,7 +23,7 @@ pip install ./hezar
 from hezar import Model, Tokenizer
 
 # this is our Hub repo
-path = "hezar-ai/bert-fa-sentiment-digikala-snappfood"
+path = "hezarai/bert-fa-sentiment-digikala-snappfood"
 # load model and tokenizer
 model = Model.load(path)
 tokenizer = Tokenizer.load(path)

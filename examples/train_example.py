@@ -10,10 +10,10 @@ from hezar import (
 name = "bert_text_classification"
 
 dataset_config = {
-    "path": "hezar-ai/sentiment_digikala_snappfood",
+    "path": "hezarai/sentiment_digikala_snappfood",
     "text_field": "text",
     "label_field": "label",
-    "tokenizer_path": "hezar-ai/bert-base-fa",
+    "tokenizer_path": "hezarai/bert-base-fa",
 }
 train_dataset = build_dataset(name="text_classification", split="train", **dataset_config)
 eval_dataset = build_dataset(name="text_classification", split="test", **dataset_config)
@@ -25,7 +25,7 @@ lr_scheduler = build_scheduler("reduce_on_plateau", optimizer=optimizer)
 train_config = TrainConfig(
     name=name,
     device="cuda",
-    init_weights_from="hezar-ai/bert-base-fa",
+    init_weights_from="hezarai/bert-base-fa",
     batch_size=8,
     num_train_epochs=5,
     checkpoints_dir="checkpoints/",

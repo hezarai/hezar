@@ -1,6 +1,6 @@
 from hezar import build_model, Model, Tokenizer
 
-hub_path = "hezar-ai/bert-fa-sentiment-digikala-snappfood"
+hub_path = "hezarai/bert-fa-sentiment-digikala-snappfood"
 device = "cpu"
 model = Model.load(hub_path).to(device)
 tokenizer = Tokenizer.load(hub_path)

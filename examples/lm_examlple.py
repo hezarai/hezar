@@ -1,7 +1,7 @@
 from hezar import build_model, Model, Tokenizer
 
 
-path = "hezar-ai/bert-base-fa"
+path = "hezarai/bert-base-fa"
 tokenizer = Tokenizer.load(path)
 text = tokenizer(["hello guys"], return_tensors="pt")
 
