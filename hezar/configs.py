@@ -134,12 +134,12 @@ class Config:
         OmegaConf.save(config, save_path)
         return save_path
 
-    def push_to_hub(self, hub_path, filename, subfolder="", repo_type="model", private=False, commit_message=None):
+    def push_to_hub(self, repo_id, filename, subfolder="", repo_type="model", private=False, commit_message=None):
         """
         Push the config file to the hub
 
         Args:
-            hub_path (str): Repo name or id on the Hub
+            repo_id (str): Repo name or id on the Hub
             filename (str): config file name
             subfolder (str): subfolder to save the config
             repo_type (str): Type of the repo e.g, model, dataset, space
@@ -147,7 +147,6 @@ class Config:
             commit_message (str): Push commit message
         """
         api = HfApi()
-        repo_id = resolve_pretrained_path(hub_path)
         api.create_repo(repo_id, repo_type=repo_type, private=private, exist_ok=True)
         cache_path = get_local_cache_path(repo_id, repo_type=repo_type)
         config_path = self.save(cache_path, filename=filename, subfolder=subfolder)
@@ -160,7 +159,9 @@ class Config:
             repo_id=repo_id,
             commit_message=commit_message,
         )
-        logger.info(f"Uploaded `{self.name}` config to `{repo_id}/{subfolder}` as `{filename}`")
+        logger.info(
+            f"Uploaded:`{self.__class__.__name__}(name={self.name})` --> `{os.path.join(repo_id, subfolder, filename)}`"
+        )
 
 
 @dataclass
