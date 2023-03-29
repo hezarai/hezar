@@ -281,24 +281,23 @@ class Trainer:
         if hasattr(self.train_dataset, "tokenizer"):
             self.train_dataset.tokenizer.save(path)
 
-    def push_to_hub(self, hub_path: str, commit_message: str = None):
+    def push_to_hub(self, repo_id: str, commit_message: str = None):
         """
         Push everything to the Hub
 
         Args:
-            hub_path: Path to hub
+            repo_id: Path to hub
             commit_message: Commit message for the push
         """
-        hub_path = resolve_pretrained_path(hub_path)
-        cache_path = get_local_cache_path(hub_path, repo_type="model")
+        cache_path = get_local_cache_path(repo_id, repo_type="model")
 
         self.save(cache_path)
 
         if not commit_message:
-            commit_message = "Hezar: Upload with Trainer"
+            commit_message = "Hezar: Upload training files"
 
         upload_folder(
-            repo_id=hub_path,
+            repo_id=repo_id,
             folder_path=cache_path,
             repo_type="model",
             commit_message=commit_message,
