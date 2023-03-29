@@ -318,26 +318,57 @@ class Tokenizer(Preprocessor):
             tokenizer.save(cache_path)
         return tokenizer
 
-    def save(self, path, pretty=True):
+    def save(self, path, save_config=True, pretty=True):
         os.makedirs(path, exist_ok=True)
         # save config
-        self.config.save(path, filename=self.tokenizer_config_filename, subfolder=self.preprocessor_subfolder)
+        if save_config:
+            self.config.save(path, filename=self.tokenizer_config_filename, subfolder=self.preprocessor_subfolder)
         # save tokenizer.json
         save_path = os.path.join(path, self.preprocessor_subfolder, self.tokenizer_filename)
         self._tokenizer.save(save_path, pretty=pretty)
 
-    def push_to_hub(self, hub_path):
-        hub_path = resolve_pretrained_path(hub_path)
-        save_dir = get_local_cache_path(hub_path, repo_type="model")
-        self.save(save_dir)
+    def push_to_hub(self, repo_id, subfolder=None, commit_message=None, private=False):
+        """
+        Push tokenizer and config to the Hub
+
+        Args:
+            repo_id: The path (id or repo name) on the hub
+            subfolder: subfolder to save the files
+            commit_message: Commit message for this push
+            private: If the repo should be private (ignored if the repo exists)
+        """
         api = HfApi()
-        api.upload_folder(
-            repo_id=hub_path,
-            folder_path=os.path.join(save_dir, self.preprocessor_subfolder),
-            repo_type="model",
-            path_in_repo=self.preprocessor_subfolder,
+        # create remote repo
+        api.create_repo(repo_id, exist_ok=True)
+        # create local repo
+        cache_path = get_local_cache_path(repo_id, repo_type="model")
+        # save tokenizer.json
+        tokenizer_save_path = os.path.join(cache_path, self.preprocessor_subfolder, self.tokenizer_filename)
+        self._tokenizer.save(tokenizer_save_path, pretty=True)
+
+        if commit_message is None:
+            commit_message = "Hezar: Upload tokenizer and config"
+
+        # upload config
+        self.config.push_to_hub(
+            repo_id=repo_id,
+            filename=self.tokenizer_config_filename,
+            subfolder=self.preprocessor_subfolder,
+            commit_message=commit_message,
         )
-        logger.info(f"Successfully pushed tokenizer files to `{hub_path}`")
+        # upload tokenizer
+        api.upload_file(
+            repo_id=repo_id,
+            path_or_fileobj=tokenizer_save_path,
+            repo_type="model",
+            path_in_repo=os.path.join(self.preprocessor_subfolder, self.tokenizer_filename),
+            commit_message=commit_message,
+        )
+        logger.info(
+            f"Uploaded: {self.__class__.__name__}(name={self.config.name})`"
+            f" --> "
+            f"{os.path.join(repo_id, self.preprocessor_subfolder, self.tokenizer_filename)}"
+        )
 
     @property
     def model(self) -> Model:
