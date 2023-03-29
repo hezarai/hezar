@@ -26,6 +26,17 @@ logger = get_logger(__name__)
 
 @dataclass
 class Config:
+    """
+    Base class for all the configs in Hezar.
+
+    All configs are simple dataclasses that have some customized functionalities to manage their attributes. There are
+    also some Hezar specific methods: `load`, `save` and `push_to_hub`.
+
+    Args:
+        name: a mandatory attribute that specifies a unique and pre-defined name for that config that is also used in
+            the registries.
+        config_type: a mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
+    """
     name: str
     config_type: str = "base"
 
@@ -33,16 +44,13 @@ class Config:
         try:
             return self.dict()[item]
         except KeyError:
-            raise ValueError(f"`{self.__class__.__name__}` has no attribute `{item}`")
+            raise ValueError(f"`{self.__class__.__name__}` has no attribute `{item}`!")
 
     def __len__(self):
         return len(self.dict())
 
     def __iter__(self):
         return iter(self.dict())
-
-    def __getattr__(self, item):
-        return self.dict().get(item)
 
     def dict(self):
         return self.__dict__
@@ -51,7 +59,7 @@ class Config:
         return self.dict().keys()
 
     def pop(self, key, default=None):
-        if hasattr(self, key):
+        if key in self.__annotations__.keys():
             value = getattr(self, key)
             delattr(self, key)
         else:
@@ -64,8 +72,8 @@ class Config:
     def update(self, d: dict, **kwargs):
         d.update(kwargs)
         for k, v in d.items():
-            if not hasattr(self, k):
-                logger.warning(f"{str(self.__class__.__name__)} does not take `{k}` as a config parameter!")
+            if k not in self.__annotations__.keys():
+                logger.warning(f"`{str(self.__class__.__name__)}` does not take `{k}` as a config parameter!")
             setattr(self, k, v)
         return self
 
@@ -126,7 +134,7 @@ class Config:
         OmegaConf.save(config, save_path)
         return save_path
 
-    def push_to_hub(self, hub_path, filename, subfolder="", repo_type="model", commit_message=None):
+    def push_to_hub(self, hub_path, filename, subfolder="", repo_type="model", private=False, commit_message=None):
         """
         Push the config file to the hub
 
@@ -135,11 +143,12 @@ class Config:
             filename (str): config file name
             subfolder (str): subfolder to save the config
             repo_type (str): Type of the repo e.g, model, dataset, space
+            private (bool): Whether the repo type should be private or not (ignored if the repo exists)
             commit_message (str): Push commit message
         """
         api = HfApi()
         repo_id = resolve_pretrained_path(hub_path)
-        api.create_repo(repo_id, repo_type=repo_type, exist_ok=True)
+        api.create_repo(repo_id, repo_type=repo_type, private=private, exist_ok=True)
         cache_path = get_local_cache_path(repo_id, repo_type=repo_type)
         config_path = self.save(cache_path, filename=filename, subfolder=subfolder)
         # push to hub
