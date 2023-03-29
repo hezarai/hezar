@@ -129,22 +129,20 @@ class Model(nn.Module):
             self.config.save(save_dir=path, filename=self.config_filename)
         return model_save_path
 
-    def push_to_hub(self, hub_path, commit_message=None, private=False):
+    def push_to_hub(self, repo_id, commit_message=None, private=False):
         """
         Push the model and required files to the hub
 
         Args:
-            hub_path: The path (id or repo name) on the hub
+            repo_id: The path (id or repo name) on the hub
             commit_message (str): Commit message for this push
             private (bool): Whether to create a private repo or not
         """
         api = HfApi()
-        repo_id = resolve_pretrained_path(hub_path)
         # create remote repo
-        repo_url = api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
-        logger.info(f"Prepared repo `{repo_url}`. Starting push process...")
+        api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
         # create local repo
-        cache_path = get_local_cache_path(hub_path, repo_type="model")
+        cache_path = get_local_cache_path(repo_id, repo_type="model")
         model_save_path = self.save(cache_path, save_config=False)
         if commit_message is None:
             commit_message = "Hezar: Upload model and config"
@@ -159,7 +157,12 @@ class Model(nn.Module):
             repo_id=repo_id,
             commit_message=commit_message,
         )
-        logger.info(f"Uploaded model files to `{repo_id}`")
+        logger.info(
+            f"Uploaded: "
+            f"`{self.__class__.__name__}(name={self.config.name})`"
+            f" --> "
+            f"`{os.path.join(repo_id, self.model_filename)}`"
+        )
 
     @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:
