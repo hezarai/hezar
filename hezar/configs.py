@@ -6,7 +6,7 @@ import torch
 from huggingface_hub import HfApi, hf_hub_download
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import HEZAR_CACHE_DIR
+from .constants import HEZAR_CACHE_DIR, DEFAULT_MODEL_CONFIG_FILE
 from .utils import get_local_cache_path, get_logger, get_module_config_class, resolve_pretrained_path
 
 
@@ -78,10 +78,13 @@ class Config:
         return self
 
     @classmethod
-    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename="model_config.yaml", subfolder="", **kwargs):
+    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename=None, subfolder=None, **kwargs):
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
         """
+        filename = filename or DEFAULT_MODEL_CONFIG_FILE
+        subfolder = subfolder or ""
+
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         config_path = os.path.join(hub_or_local_path, subfolder, filename)
         is_local = os.path.isfile(config_path)
@@ -116,7 +119,7 @@ class Config:
 
         return config
 
-    def save(self, save_dir, filename="config.yaml", subfolder=""):
+    def save(self, save_dir, filename, subfolder=None):
         """
         Save the *config.yaml file to a local path
 
@@ -125,6 +128,7 @@ class Config:
              filename: config file name
              subfolder: subfolder to save the config file
         """
+        subfolder = subfolder or ""
         config = self.dict()
         # exclude None items
         config = {k: v for k, v in config.items() if v is not None}
