@@ -78,7 +78,7 @@ class Config:
         return self
 
     @classmethod
-    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename="config.yaml", subfolder="", **kwargs):
+    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename="model_config.yaml", subfolder="", **kwargs):
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
         """
