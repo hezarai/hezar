@@ -24,7 +24,7 @@ logger = get_logger(__name__)
 
 class Model(nn.Module):
     """
-    A base model for all models in this library.
+    A base model for all models in Hezar.
 
     Args:
         config: A dataclass model config
@@ -85,6 +85,14 @@ class Model(nn.Module):
         return model
 
     def load_state_dict(self, state_dict, **kwargs):
+        """
+        Flexibly load a state dict to the model. Any incompatible or missing key is ignored and other layer weights are
+        loaded. In that case a warning with additional info is raised.
+
+        Args:
+            state_dict: model state dict
+            **kwargs:
+        """
         incompatible_keys = []
         compatible_state_dict = OrderedDict()
         src_state_dict = self.state_dict()
