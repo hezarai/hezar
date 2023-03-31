@@ -1,3 +1,7 @@
+"""
+Home to all constant variables in Hezar
+"""
+
 import os
 
 
