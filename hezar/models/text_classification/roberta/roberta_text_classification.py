@@ -2,7 +2,7 @@
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
 from torch import nn, tanh
-from transformers import RobertaModel, RobertaConfig
+from transformers import RobertaConfig, RobertaModel
 
 from ....models import Model
 from ....registry import register_model
