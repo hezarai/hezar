@@ -1,6 +1,6 @@
 # Hezar: A seamless AI library for Persian
 
-Hezar is a multi-purpose AI framework and library built to make using AI easy for the Persian community!
+Hezar is a multi-purpose AI library built to make AI easy for the Persian community!
 
 Hezar is a library that:
 - brings together all the best works in AI for Persian
