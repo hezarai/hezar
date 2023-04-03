@@ -11,7 +11,7 @@ Examples:
     'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>}}
 
     >>> # add a model class to models_registry
-    >>> from hezar.registry import register_model
+    >>> from hezar import Model, register_model
     >>> @register_model(name="my_awesome_model", config_class=MyAwesomeModelConfig)
     >>> class MyAwesomeModel(Model):
     ...    def __init__(config: MyAwesomeModelConfig):
