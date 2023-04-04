@@ -3,4 +3,9 @@ from .dummy import *
 from .image_captioning import *
 from .language_modeling import *
 from .ocr import *
+from .question_answering import *
+from .sequence_labeling import *
+from .speech_recognition import *
+from .summarization import *
 from .text_classification import *
+from .translation import *
