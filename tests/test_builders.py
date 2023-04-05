@@ -5,7 +5,11 @@ def build_models():
     from hezar.registry import models_registry
 
     for name, module in models_registry.items():
-        model = build_model(name, config=module["config_class"](), num_labels=2)
+        config = module["config_class"]()
+        if hasattr(config, "num_labels"):
+            model = build_model(name, config=module["config_class"](), num_labels=2)
+        else:
+            model = build_model(name, config=module["config_class"]())
         print(f"Succesfully built `{name}`")
 
 
@@ -13,7 +17,7 @@ def build_preprocessors():
     from hezar.registry import preprocessors_registry
 
     for name, module in preprocessors_registry.items():
-        model = build_preprocessor(name, config=module["config_class"]())
+        preprocessor = build_preprocessor(name, config=module["config_class"]())
         print(f"Succesfully built `{name}`")
 
 
