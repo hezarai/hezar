@@ -44,7 +44,9 @@ def build_model(name: str, config=None, **kwargs):
     Returns:
         A Model instance
     """
-
+    if name not in models_registry:
+        raise ValueError(f"Unknown model name: `{name}`!\n"
+                         f"Available model names: {list(models_registry.keys())}")
     config = config or models_registry[name]["config_class"]()
     model = models_registry[name]["model_class"](config, **kwargs)
     return model
@@ -63,7 +65,9 @@ def build_preprocessor(name: str, config=None, **kwargs):
     Returns:
         A Preprocessor instance
     """
-
+    if name not in preprocessors_registry:
+        raise ValueError(f"Unknown preprocessor name: `{name}`!\n"
+                         f"Available preprocessor names: {list(preprocessors_registry.keys())}")
     config = config or preprocessors_registry[name]["config_class"]()
     preprocessor = preprocessors_registry[name]["preprocessor_class"](config, **kwargs)
     return preprocessor
@@ -83,6 +87,9 @@ def build_dataset(name: str, config=None, split=None, **kwargs):
     Returns:
         A Dataset instance
     """
+    if name not in datasets_registry:
+        raise ValueError(f"Unknown dataset name: `{name}`!\n"
+                         f"Available dataset names: {list(datasets_registry.keys())}")
     config = config or datasets_registry[name]["config_class"]()
     dataset = datasets_registry[name]["dataset_class"](config, split=split, **kwargs)
     return dataset
@@ -99,6 +106,9 @@ def build_criterion(name: str, **kwargs):
     Returns:
         An nn.Module instance
     """
+    if name not in criterions_registry:
+        raise ValueError(f"Unknown criterion name: `{name}`!\n"
+                         f"Available criterion names: {list(criterions_registry.keys())}")
     criterion = criterions_registry[name](**kwargs)
     return criterion
 
@@ -115,6 +125,9 @@ def build_optimizer(name: str, params, **kwargs):
     Returns:
         An optim.Optimizer instance
     """
+    if name not in optimizers_registry:
+        raise ValueError(f"Unknown optimizer name: `{name}`!\n"
+                         f"Available optimizer names: {list(optimizers_registry.keys())}")
     optimizer = optimizers_registry[name](params, **kwargs)
     return optimizer
 
@@ -131,5 +144,8 @@ def build_scheduler(name: str, optimizer, **kwargs):
     Returns:
         An optim.lr_scheduler._LRScheduler instance
     """
+    if name not in lr_schedulers_registry:
+        raise ValueError(f"Unknown LR scheduler name: `{name}`!\n"
+                         f"Available LR scheduler names: {list(lr_schedulers_registry.keys())}")
     scheduler = lr_schedulers_registry[name](optimizer, **kwargs)
     return scheduler
