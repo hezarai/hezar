@@ -2,6 +2,7 @@ from .model import *
 from .dummy import *
 from .image_captioning import *
 from .language_modeling import *
+from .miscellaneous import *
 from .ocr import *
 from .question_answering import *
 from .sequence_labeling import *
