@@ -23,12 +23,16 @@ using a module's registry name in `hezar.builders` module. See the file `builder
 
 from torch import nn, optim
 
+from .utils import get_logger
+
 
 __all__ = [
     "register_model",
     "register_preprocessor",
     "register_dataset",
 ]
+
+logger = get_logger(__name__)
 
 models_registry = {}
 preprocessors_registry = {}
@@ -51,7 +55,7 @@ lr_schedulers_registry = {
 def register_model(model_name: str, config_class):
     def register_model_class(cls):
         if model_name in models_registry:
-            raise ValueError(f"Requested model `{model_name}` already exists in the registry!")
+            logger.warning(f"Model `{model_name}` is already registered. Overwriting...")
 
         if config_class.name != model_name:
             raise ValueError(f"`model_name` and `config.name` are not compatible for `{cls.__name__}`\n"
@@ -67,7 +71,7 @@ def register_model(model_name: str, config_class):
 def register_dataset(dataset_name: str, config_class):
     def register_dataset_class(cls):
         if dataset_name in datasets_registry:
-            raise ValueError(f"Requested dataset `{dataset_name}` already exists in the registry!")
+            logger.warning(f"Dataset `{dataset_name}` is already registered. Overwriting...")
 
         if config_class.name != dataset_name:
             raise ValueError(f"`dataset_name` and `config.name` are not compatible for `{cls.__name__}`\n"
@@ -83,7 +87,7 @@ def register_dataset(dataset_name: str, config_class):
 def register_preprocessor(preprocessor_name: str, config_class):
     def register_preprocessor_class(cls):
         if preprocessor_name in preprocessors_registry:
-            raise ValueError(f"Requested preprocessor `{preprocessor_name}` already exists in the registry!")
+            logger.warning(f"Preprocessor `{preprocessor_name}` is already registered. Overwriting...")
 
         if config_class.name != preprocessor_name:
             raise ValueError(f"`preprocessor_name` and `config.name` are not compatible for `{cls.__name__}`\n"
