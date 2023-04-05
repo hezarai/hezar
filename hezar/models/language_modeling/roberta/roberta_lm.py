@@ -12,7 +12,7 @@ from .roberta_lm_config import RobertaLMConfig
 class RobertaLM(Model):
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.roberta = RobertaModel(RobertaConfig(**self.config), add_pooling_layer=self.config.add_pooling_layer)
+        self.roberta = RobertaModel(RobertaConfig(**self.config))
 
     def forward(self, inputs, **kwargs):
         input_ids = inputs.get("token_ids")
