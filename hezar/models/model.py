@@ -130,23 +130,33 @@ class Model(nn.Module):
                 f"Missing keys: {missing_keys}\n"
             )
 
-    def save(self, path: Union[str, os.PathLike], save_config: bool = True):
+    def save(
+        self,
+        path: Union[str, os.PathLike],
+        filename: str = None,
+        save_config: bool = True,
+        config_filename: str = None,
+    ):
         """
         Save model weights and config to a local path
 
         Args:
             path: A local directory to save model, config, etc.
-            save_config (bool): Whether to save config along with the model or not.
+            save_config: Whether to save config along with the model or not.
+            config_filename: Model config filename,
+            filename: Model weights filename
 
         Returns:
             Path to the saved model
         """
         # save model and config to the repo
+        config_filename = config_filename or self.config_filename
+        filename = filename or self.model_filename
         os.makedirs(path, exist_ok=True)
-        model_save_path = os.path.join(path, self.model_filename)
+        model_save_path = os.path.join(path, filename)
         torch.save(self.state_dict(), model_save_path)
         if save_config:
-            self.config.save(save_dir=path, filename=self.config_filename)
+            self.config.save(save_dir=path, filename=config_filename)
         return model_save_path
 
     def push_to_hub(self, repo_id, commit_message=None, private=False):
