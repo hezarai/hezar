@@ -144,7 +144,7 @@ class Trainer:
         Set up metrics manager to track and update metrics like loss, accuracy, f1, etc.
 
         Args:
-            metrics: A list of metrics in tuple format (metric_name, metric_kwargs)
+            metrics: A dict of metrics names and their kwargs {metric_name: **kwargs}
 
         Returns:
              A MetricsManager instance
