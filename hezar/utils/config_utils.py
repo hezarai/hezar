@@ -9,7 +9,6 @@ from .logging import get_logger
 
 
 __all__ = [
-    "merge_kwargs_into_config",
     "flatten_dict",
     "load_yaml_config",
     "load_json_config",
@@ -18,16 +17,6 @@ __all__ = [
 ]
 
 logger = get_logger(__name__)
-
-
-def merge_kwargs_into_config(config, **kwargs):
-    for k, v in kwargs.items():
-        if hasattr(config, k):
-            setattr(config, k, v)
-        else:
-            logger.warning(f"{str(config.__class__.__name__)} does not take `{k}` as a config parameter!")
-
-    return config
 
 
 def flatten_dict(dict_config: Union[Dict, DictConfig]) -> DictConfig:
@@ -53,7 +42,7 @@ def flatten_dict(dict_config: Union[Dict, DictConfig]) -> DictConfig:
 
 def load_yaml_config(path: Union[str, os.PathLike]):
     """
-    Load yaml config file using omegaconf
+    Load yaml file using omegaconf
     """
     config = omegaconf.OmegaConf.load(path)
     return config
