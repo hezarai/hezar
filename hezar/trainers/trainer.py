@@ -267,17 +267,30 @@ class Trainer:
             ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
             self.save(ckpt_save_path)
 
-    def save(self, path: str):
+    def save(
+        self,
+        path: str,
+        config_filename=None,
+        subfolder=None,
+        dataset_config_file=None,
+    ):
         """
         Save the trainer and relevant files to a path.
         Files to save are train config, model weights, model config, preprocessor files and preprocessor config.
 
         Args:
             path: A directory to save everything
+            config_filename: Config filename
+            subfolder: Optional sub-folder
+            dataset_config_file: Dataset config filename
         """
-        self.config.save(path, filename=self.trainer_config_file, subfolder=self.trainer_subfolder)
+        config_filename = config_filename or self.trainer_config_file
+        subfolder = subfolder or self.trainer_subfolder
+        dataset_config_file = dataset_config_file or self.dataset_config_file
+
+        self.config.save(path, filename=config_filename, subfolder=subfolder)
         self.model.save(path, save_config=True)
-        self.train_dataset.config.save(path, filename=self.dataset_config_file, subfolder=self.trainer_subfolder)
+        self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         if hasattr(self.train_dataset, "tokenizer"):
             self.train_dataset.tokenizer.save(path)
 
