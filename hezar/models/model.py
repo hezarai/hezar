@@ -38,7 +38,15 @@ class Model(nn.Module):
         self.config = config.update(kwargs)
 
     @classmethod
-    def load(cls, hub_or_local_path, load_locally=False, save_path=None, **kwargs):
+    def load(
+        cls,
+        hub_or_local_path,
+        load_locally=False,
+        model_filename=None,
+        config_filename=None,
+        save_path=None,
+        **kwargs,
+    ):
         """
         Load the model from local path or hub.
 
@@ -48,6 +56,8 @@ class Model(nn.Module):
 
         Args:
             hub_or_local_path: path to the model living on the Hub or local disk.
+            model_filename: optional model filename.
+            config_filename: optional config filename
             load_locally: force loading from local path
             save_path: save model to this path after loading
 
@@ -56,7 +66,8 @@ class Model(nn.Module):
         """
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         # Load config
-        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=cls.config_filename)
+        config_filename = config_filename or cls.config_filename
+        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=config_filename)
         # Build model wih config
         model = build_model(config.name, config, **kwargs)
         # Raise a warning if model class is not compatible with the one on the Hub
@@ -66,17 +77,18 @@ class Model(nn.Module):
                 f"but the model in `{hub_or_local_path}` is of type `{model.__class__.__name__}`, "
                 f"So the output model is going to be a `{model.__class__.__name__}` instance!"
             )
+        model_filename = model_filename or model.model_filename or cls.model_filename
         # does the path exist locally?
         is_local = load_locally or os.path.isdir(hub_or_local_path)
         if not is_local:
             model_path = hf_hub_download(
                 hub_or_local_path,
-                filename=model.model_filename,
+                filename=model_filename,
                 cache_dir=HEZAR_CACHE_DIR,
                 resume_download=True,
             )
         else:
-            model_path = os.path.join(hub_or_local_path, model.model_filename)
+            model_path = os.path.join(hub_or_local_path, model_filename)
         # Get state dict from the model
         state_dict = torch.load(model_path, map_location=torch.device("cpu"))
         model.load_state_dict(state_dict)
