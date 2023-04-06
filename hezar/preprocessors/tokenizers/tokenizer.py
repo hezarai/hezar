@@ -304,12 +304,21 @@ class Tokenizer(Preprocessor):
         return self._tokenizer.id_to_token(id)
 
     @classmethod
-    def load(cls, hub_or_local_path, save_to_cache=False, **kwargs):
+    def load(
+        cls,
+        hub_or_local_path,
+        config_filename=None,
+        subfolder=None,
+        save_to_cache=False,
+        **kwargs,
+    ):
+        config_filename = config_filename or cls.tokenizer_config_filename
+        subfolder = subfolder or cls.preprocessor_subfolder
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         config = TokenizerConfig.load(
             hub_or_local_path,
-            filename=cls.tokenizer_config_filename,
-            subfolder=cls.preprocessor_subfolder,
+            filename=config_filename,
+            subfolder=subfolder,
         )
         config.pretrained_path = hub_or_local_path
         tokenizer = build_preprocessor(config.name, config, **kwargs)
