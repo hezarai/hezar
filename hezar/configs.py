@@ -81,6 +81,15 @@ class Config:
     def load(cls, hub_or_local_path: Union[str, os.PathLike], filename=None, subfolder=None, **kwargs):
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
+
+        Args:
+            hub_or_local_path: local or Hub path for the config
+            filename: configuration filename
+            subfolder: optional subfolder path where the config is in
+            **kwargs: manual config parameters to override
+
+        Returns:
+            A Config instance
         """
         filename = filename or DEFAULT_MODEL_CONFIG_FILE
         subfolder = subfolder or ""
