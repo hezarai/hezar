@@ -83,7 +83,7 @@ def hezar_config_to_hf_config(config):
 
 def get_module_config_class(name: str, config_type: str):
     """
-    Get the config class for a given model based on its registry name.
+    Get the config class for a given module based on its registry name.
 
     Args:
         name (str): model's registry name
@@ -106,5 +106,6 @@ def get_module_config_class(name: str, config_type: str):
         registry = datasets_registry
     else:
         raise ValueError(f"Invalid `config_type`: {config_type}!")
+
     config_cls = registry[name]["config_class"]
     return config_cls
