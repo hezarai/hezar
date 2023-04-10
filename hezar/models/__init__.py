@@ -1,7 +1,6 @@
 from .model import *
 from .audio_classification import *
-from .image_captioning import *
-from .image_text_detection import *
+from .image2text import *
 from .language_modeling import *
 from .miscellaneous import *
 from .ocr import *
@@ -9,5 +8,6 @@ from .question_answering import *
 from .sequence_labeling import *
 from .speech_recognition import *
 from .text_classification import *
+from .text_detection import *
 from .text_summarization import *
 from .text_translation import *
