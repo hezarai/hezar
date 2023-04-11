@@ -235,6 +235,6 @@ class TrainConfig(Config):
     optimizer: OptimizerConfig = None
     batch_size: int = field(default=None, metadata={"help": "training batch size"})
     metrics: Dict[str, Dict] = field(default_factory=list)
-    num_train_epochs: int = None
+    num_epochs: int = None
     checkpoints_dir: str = None
     log_dir: str = None
