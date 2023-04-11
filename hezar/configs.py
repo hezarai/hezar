@@ -27,7 +27,7 @@ logger = get_logger(__name__)
 @dataclass
 class Config:
     """
-    Base class for all the configs in Hezar.
+    Base class for all configs in Hezar.
 
     All configs are simple dataclasses that have some customized functionalities to manage their attributes. There are
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
@@ -70,6 +70,9 @@ class Config:
         return getattr(self, key, default)
 
     def update(self, d: dict, **kwargs):
+        """
+        
+        """
         d.update(kwargs)
         for k, v in d.items():
             if k not in self.__annotations__.keys():
