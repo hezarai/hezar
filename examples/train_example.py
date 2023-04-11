@@ -27,7 +27,7 @@ train_config = TrainConfig(
     device="cuda",
     init_weights_from="hezarai/roberta-base-fa",
     batch_size=8,
-    num_train_epochs=5,
+    num_epochs=5,
     checkpoints_dir="checkpoints/",
     metrics={"f1": {"task": "multiclass"}},
 )
