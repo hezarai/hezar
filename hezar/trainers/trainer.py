@@ -64,7 +64,7 @@ class Trainer:
         lr_scheduler=None,
     ):
         self.config = config
-        self.num_train_epochs = self.config.num_train_epochs
+        self.num_train_epochs = self.config.num_epochs
         self.device = self.config.device if self.config.device == "cuda" and torch.cuda.is_available() else "cpu"
         self.model = self._init_model_weights(model).to(self.device)
         self.train_dataset = train_dataset
