@@ -64,6 +64,9 @@ class Model(nn.Module):
         Returns:
             The fully loaded Hezar model
         """
+        # Get device if provided in the kwargs
+        device = None or kwargs.pop("device")
+        # Configure the right path
         hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         # Load config
         config_filename = config_filename or cls.config_filename
@@ -92,6 +95,8 @@ class Model(nn.Module):
         # Get state dict from the model
         state_dict = torch.load(model_path, map_location=torch.device("cpu"))
         model.load_state_dict(state_dict)
+        if device:
+            model.to(device)
         if save_path:
             model.save(save_path)
         return model
