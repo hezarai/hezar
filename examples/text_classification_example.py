@@ -1,6 +1,6 @@
 from hezar import build_model, Model, Tokenizer
 
-hub_path = "hezarai/roberta-fa-sentiment-digikala-snappfood"
+hub_path = "hezarai/bert-fa-sentiment-digikala-snappfood"
 model = Model.load(hub_path, device="cpu")
 tokenizer = Tokenizer.load(hub_path)
 inputs = ["کتابخانه هزار، بهترین کتابخانه هوش مصنوعیه"]
