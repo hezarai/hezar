@@ -6,11 +6,7 @@ import os
 
 
 HEZAR_HUB_ID = "hezarai"
-HEZAR_LOCAL_DIR = os.getenv("HEZAR_LOCAL_DIR", f'{os.path.expanduser("~")}/.hezar')
-HEZAR_CACHE_DIR = os.getenv("HEZAR_TMP_DIR", f'{os.path.expanduser("~")}/.hezar/cache')
-HEZAR_MODELS_CACHE_DIR = os.getenv("HEZAR_MODELS_CACHE_DIR", f"{HEZAR_LOCAL_DIR}/models")
-HEZAR_DATASETS_CACHE_DIR = os.getenv("HEZAR_DATASETS_CACHE_DIR", f"{HEZAR_LOCAL_DIR}/datasets")
-REPO_TYPE_TO_DIR_MAPPING = {"model": HEZAR_MODELS_CACHE_DIR, "dataset": HEZAR_DATASETS_CACHE_DIR}
+HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.hezar')
 
 DEFAULT_MODEL_FILE = "model.pt"
 DEFAULT_MODEL_CONFIG_FILE = "model_config.yaml"
