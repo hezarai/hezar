@@ -2,7 +2,7 @@ import os.path
 
 from huggingface_hub import HfApi, Repository
 
-from ..constants import HEZAR_HUB_ID, REPO_TYPE_TO_DIR_MAPPING
+from ..constants import HEZAR_HUB_ID, HEZAR_CACHE_DIR
 from ..utils.logging import get_logger
 
 
@@ -46,8 +46,8 @@ def get_local_cache_path(hub_path, repo_type):
         path to local cache directory
     """
     repo_id = resolve_pretrained_path(hub_path)
-    repo_name = repo_id.split("/")[1]
-    cache_path = f"{REPO_TYPE_TO_DIR_MAPPING[repo_type]}/{repo_name}"
+    repo_owner, repo_name = repo_id.split("/")
+    cache_path = f"{HEZAR_CACHE_DIR}/{repo_type}s--{repo_owner}--{repo_name}"
     return cache_path
 
 
