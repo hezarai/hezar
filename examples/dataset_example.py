@@ -7,8 +7,8 @@ config = TextClassificationDatasetConfig(
     name="text_classfication",
     path="mteb/amazon_massive_intent",
     text_field="text",
-    label_field="label_text",
-    tokenizer_path="hezarai/distilbert-fa",
+    label_field="label",
+    tokenizer_path="hezarai/distilbert-base-fa",
 )
 
 dataset = TextClassificationDataset(config, split="train")
