@@ -17,7 +17,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = "list", sk
         skip: A list of key names to skip conversion
 
     Returns:
-        The same dict with casted values
+        The same dict with cast values
     """
     import numpy as np
     import torch
