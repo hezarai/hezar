@@ -53,7 +53,18 @@ lr_schedulers_registry = {
 
 
 def register_model(model_name: str, config_class):
-    def register_model_class(cls):
+    """
+    A class decorator that adds the model class and the config class to the `models_registry`
+
+    Args:
+        model_name: Model's registry name e.g, `bert_sequence_labeling`
+        config_class: Model's config class e.g, `BertSequenceLabelingConfig`. This parameter must be the config class
+            itself not a config instance!
+
+    Returns:
+         The class itself
+    """
+    def register(cls):
         if model_name in models_registry:
             logger.warning(f"Model `{model_name}` is already registered. Overwriting...")
 
@@ -65,11 +76,22 @@ def register_model(model_name: str, config_class):
 
         return cls
 
-    return register_model_class
+    return register
 
 
 def register_dataset(dataset_name: str, config_class):
-    def register_dataset_class(cls):
+    """
+    A class decorator that adds the dataset class and the config class to the `datasets_registry`
+
+    Args:
+        dataset_name: Dataset's registry name e.g, `text_classification`.
+        config_class: Dataset's config class e.g, `TextClassificationDatasetConfig`. This parameter must be the config
+            class itself not a config instance!
+
+    Returns:
+         The class itself
+    """
+    def register(cls):
         if dataset_name in datasets_registry:
             logger.warning(f"Dataset `{dataset_name}` is already registered. Overwriting...")
 
@@ -81,11 +103,22 @@ def register_dataset(dataset_name: str, config_class):
 
         return cls
 
-    return register_dataset_class
+    return register
 
 
 def register_preprocessor(preprocessor_name: str, config_class):
-    def register_preprocessor_class(cls):
+    """
+    A class decorator that adds the preprocessor class and the config class to the `preprocessors_registry`
+
+    Args:
+        preprocessor_name: Preprocessor's registry name e.g, `bpe_tokenizer`.
+        config_class: Preprocessor's config class e.g, BPEConfig. This parameter must be the config
+            class itself not a config instance!
+
+    Returns:
+         The class itself
+    """
+    def register(cls):
         if preprocessor_name in preprocessors_registry:
             logger.warning(f"Preprocessor `{preprocessor_name}` is already registered. Overwriting...")
 
@@ -97,4 +130,4 @@ def register_preprocessor(preprocessor_name: str, config_class):
 
         return cls
 
-    return register_preprocessor_class
+    return register
