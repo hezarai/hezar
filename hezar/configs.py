@@ -56,7 +56,7 @@ class Config:
         return self.__dict__
 
     def keys(self):
-        return self.dict().keys()
+        return list(self.dict().keys())
 
     def pop(self, key, default=None):
         if key in self.__annotations__.keys():
@@ -71,7 +71,15 @@ class Config:
 
     def update(self, d: dict, **kwargs):
         """
-        
+        Update config with a given dictionary or keyword arguments. If a key does not exist in the attributes, prints a
+        warning but sets it anyway.
+
+        Args:
+            d: A dictionary
+            **kwargs: key/values in the form of keyword arguments
+
+        Returns:
+            The config object itself but the operation happens in-place anyway
         """
         d.update(kwargs)
         for k, v in d.items():
