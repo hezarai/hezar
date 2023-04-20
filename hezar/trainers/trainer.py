@@ -4,9 +4,9 @@ from typing import Dict
 
 import numpy as np
 import torch
-from huggingface_hub import hf_hub_download, upload_folder
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+from huggingface_hub import hf_hub_download, upload_folder
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
@@ -64,17 +64,27 @@ class Trainer:
         lr_scheduler=None,
     ):
         self.config = config
-        self.num_train_epochs = self.config.num_epochs
-        self.device = self.config.device if self.config.device == "cuda" and torch.cuda.is_available() else "cpu"
+
+        self.num_epochs = self.config.num_epochs
+        self.device, self.device_type = self._set_device_and_type()
+        self.use_amp = self.config.use_amp
+        self.scaler = torch.cuda.amp.GradScaler(enabled=self.use_amp)
+
         self.model = self._init_model_weights(model).to(self.device)
+
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
         self.num_labels = self.train_dataset.num_labels  # noqa
+
         self.set_seed(self.config.seed)
+
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
+
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
+
         self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
+
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
     @staticmethod
@@ -89,6 +99,11 @@ class Trainer:
         local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
         model.load_state_dict(torch.load(local_path))
         return model
+
+    def _set_device_and_type(self):
+        device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
+        device_type = "cuda" if "cuda" in device else "cpu"
+        return device, device_type
 
     def _setup_dataloaders(self):
         """
@@ -166,14 +181,17 @@ class Trainer:
             The metrics results
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
-        outputs = self.model(input_batch)
-        if "loss" not in outputs:
-            raise ValueError("Model outputs must contain `loss`!")
-        loss: torch.Tensor = outputs["loss"]
 
+        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.use_amp):
+            outputs = self.model(input_batch)
+            if "loss" not in outputs:
+                raise ValueError("Model outputs must contain `loss`!")
+            loss: torch.Tensor = outputs["loss"]
+
+        self.scaler.scale(loss).backward()
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
         self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
 
         results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
         results["loss"] = loss.item()
@@ -191,10 +209,12 @@ class Trainer:
             The metrics results
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
-        outputs = self.model(input_batch)
-        if "loss" not in outputs:
-            raise ValueError("Model outputs must contain `loss`!")
-        loss: torch.Tensor = outputs["loss"]
+
+        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.use_amp):
+            outputs = self.model(input_batch)
+            if "loss" not in outputs:
+                raise ValueError("Model outputs must contain `loss`!")
+            loss: torch.Tensor = outputs["loss"]
 
         results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
         results["loss"] = loss.item()
@@ -216,7 +236,7 @@ class Trainer:
         with tqdm(
             self.train_dataloader,
             unit="batch",
-            desc=f"Epoch: {epoch_num}/{self.num_train_epochs} ",
+            desc=f"Epoch: {epoch_num}/{self.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
         ) as iterator:
@@ -253,7 +273,7 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
-        for epoch in range(1, self.num_train_epochs + 1):
+        for epoch in range(1, self.num_epochs + 1):
             print()
             train_results = self.one_training_loop(epoch)
             eval_results = self.evaluate()

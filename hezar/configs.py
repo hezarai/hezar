@@ -241,8 +241,9 @@ class TrainConfig(Config):
     init_weights_from: str = None
     seed: int = 42
     optimizer: OptimizerConfig = None
-    batch_size: int = field(default=None, metadata={"help": "training batch size"})
-    metrics: Dict[str, Dict] = field(default_factory=list)
+    batch_size: int = None
+    use_amp: bool = False
+    metrics: Dict[str, Dict] = field(default_factory=dict)
     num_epochs: int = None
     checkpoints_dir: str = None
     log_dir: str = None

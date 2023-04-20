@@ -7,13 +7,13 @@ from hezar import (
     build_scheduler,
 )
 
-name = "roberta_text_classification"
+name = "distilbert_text_classification"
 
 dataset_config = {
     "path": "hezarai/sentiment_digikala_snappfood",
     "text_field": "text",
     "label_field": "label",
-    "tokenizer_path": "hezarai/roberta-base-fa",
+    "tokenizer_path": "hezarai/distilbert-base-fa",
 }
 train_dataset = build_dataset(name="text_classification", split="train", **dataset_config)
 eval_dataset = build_dataset(name="text_classification", split="test", **dataset_config)
@@ -25,7 +25,7 @@ lr_scheduler = build_scheduler("reduce_on_plateau", optimizer=optimizer)
 train_config = TrainConfig(
     name=name,
     device="cuda",
-    init_weights_from="hezarai/roberta-base-fa",
+    init_weights_from="hezarai/distilbert-base-fa",
     batch_size=8,
     num_epochs=5,
     checkpoints_dir="checkpoints/",
