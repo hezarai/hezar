@@ -23,7 +23,7 @@ def resolve_pretrained_path(hub_or_local_path):
     hub_or_local_path. If it contains the namespace (author/org) leave it as is, otherwise change to hezarai/{hub_path}
 
     Args:
-        hub_or_local_path: repo name or id
+        hub_or_local_path: Repo name or id
 
     Returns:
         A proper pretrained path
@@ -39,11 +39,11 @@ def get_local_cache_path(hub_path, repo_type):
     Given the hub path and repo type, configure the local path to save everything e.g, ~/.hezar/models/<repo_name>
 
     Args:
-        hub_path: repo name or id
-        repo_type: repo type e.g, model, dataset, etc
+        hub_path: Repo name or id
+        repo_type: Repo type e.g, model, dataset, etc
 
     Returns:
-        path to local cache directory
+        Path to local cache directory
     """
     repo_id = resolve_pretrained_path(hub_path)
     repo_owner, repo_name = repo_id.split("/")
@@ -61,8 +61,8 @@ def exists_on_hub(hub_path: str, repo_type="model"):
     Determine whether the repo exists on the hub or not
 
     Args:
-        hub_path: repo name or id
-        repo_type: repo type like model, dataset, etc.
+        hub_path: Repo name or id
+        repo_type: Repo type like model, dataset, etc.
 
     Returns:
         True or False
@@ -86,8 +86,8 @@ def clone_repo(hub_path: str, save_path: str, **kwargs):
     Clone a repo on the hub to local directory
 
     Args:
-        hub_path: repo name or id
-        save_path: path to clone the repo to
+        hub_path: Repo name or id
+        save_path: Path to clone the repo to
 
     Returns:
         the local path to the repo

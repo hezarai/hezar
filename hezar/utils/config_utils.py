@@ -75,8 +75,8 @@ def get_module_config_class(name: str, config_type: str):
     Get the config class for a given module based on its registry name.
 
     Args:
-        name (str): model's registry name
-        config_type (str): registry type
+        name (str): Model's registry name
+        config_type (str): Registry type
 
     Returns:
         A class of type :class:`hezar.Config`

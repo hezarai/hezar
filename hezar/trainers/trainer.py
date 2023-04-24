@@ -39,7 +39,7 @@ class Trainer:
     A general but fully featured model trainer/evaluator for Hezar models.
 
     Args:
-        model ([`Model`] or `torch.nn.Module`): model to train and evaluate
+        model ([`Model`] or `torch.nn.Module`): The main model to train and evaluate
         config (TrainConfig): Training configuration and parameters
         train_dataset (Dataset): Train dataset
         eval_dataset (Dataset): Evaluation dataset
@@ -238,7 +238,7 @@ class Trainer:
         Train the model for one epoch on the whole train dataset and verbose live metric values in the progress bar
 
         Args:
-            epoch_num: number of the current epoch
+            epoch_num: Number of the current epoch
 
         Returns:
             Metrics averages through the full iteration

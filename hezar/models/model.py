@@ -55,11 +55,11 @@ class Model(nn.Module):
         the one specified on the Hub!
 
         Args:
-            hub_or_local_path: path to the model living on the Hub or local disk.
-            model_filename: optional model filename.
-            config_filename: optional config filename
-            load_locally: force loading from local path
-            save_path: save model to this path after loading
+            hub_or_local_path: Path to the model living on the Hub or local disk.
+            model_filename: Optional model filename.
+            config_filename: Optional config filename
+            load_locally: Force loading from local path
+            save_path: Save model to this path after loading
 
         Returns:
             The fully loaded Hezar model
@@ -103,12 +103,13 @@ class Model(nn.Module):
 
     def load_state_dict(self, state_dict, **kwargs):
         """
-        Flexibly load a state dict to the model. Any incompatible or missing key is ignored and other layer weights are
+        Flexibly load a state dict to the model.
+
+        Any incompatible or missing key is ignored and other layer weights are
         loaded. In that case a warning with additional info is raised.
 
         Args:
-            state_dict: model state dict
-            **kwargs:
+            state_dict: Model state dict
         """
         incompatible_keys = []
         compatible_state_dict = OrderedDict()
