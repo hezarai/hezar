@@ -45,7 +45,52 @@ from hezar import build_model
 model = build_model("bert_text_classification", id2label={0: "negative", 1: "positive"})
 print(model)
 ```
+### Write your own model
+```python
+from dataclasses import dataclass
 
+from torch import Tensor, nn
+
+from hezar import Model, ModelConfig, register_model
+
+
+@dataclass
+class PerceptronConfig(ModelConfig):
+    name: str = "perceptron"
+    input_shape: int = 4
+    output_shape: int = 2
+
+@register_model("perceptron", config_class=PerceptronConfig)
+class Perceptron(Model):
+    """
+    A simple single layer network
+    """
+
+    def __init__(self, config, **kwargs):
+        super().__init__(config, **kwargs)
+        self.nn = nn.Linear(in_features=self.config.input_shape, out_features=self.config.output_shape)
+
+    def forward(self, inputs: list, **kwargs):
+        inputs = Tensor(inputs).reshape(1, -1)
+        x = self.nn(inputs)
+        return x
+
+model = Perceptron(PerceptronConfig())
+inputs = [1, 2, 3, 4]
+model.predict(inputs)
+```
+```
+tensor([[1.6096, 0.4799]])
+```
+As you can see, defining a new network is just like a typical PyTorch module but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
+```python
+hub_repo = "<your_hf_username>/my-awesome-perceptron"
+model.push_to_hub(hub_repo)
+```
+```
+INFO: Uploaded:`PerceptronConfig(name=preceptron)` --> `your_hf_username/my-awesome-perceptron/model_config.yaml`
+INFO: Uploaded: `Perceptron(name=preceptron)` --> `your_hf_username/my-awesome-perceptron/model.pt`
+```
 ## Supported models
 Hezar currently supports these models
 - Text Classification
