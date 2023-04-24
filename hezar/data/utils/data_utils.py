@@ -43,7 +43,7 @@ def get_str_keys(d: Dict, batched=True):
     Get keys that have string values in a dictionary
 
     Args:
-        d: the dict
+        d: The dict
         batched: Are the input dict values batched or not
 
     Returns:

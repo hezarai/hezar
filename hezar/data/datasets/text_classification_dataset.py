@@ -30,9 +30,9 @@ class TextClassificationDataset(Dataset):
     As of now this class is intended for datasets existing on the Hub!
 
     Args:
-        config: dataset config obj
-        split: which split to use
-        **kwargs: extra config parameters to assign to the original config
+        config: Dataset config obj
+        split: Which split to use
+        **kwargs: Extra config parameters to assign to the original config
     """
 
     def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
@@ -51,7 +51,7 @@ class TextClassificationDataset(Dataset):
         Load the dataset
 
         Args:
-            split: dataset split
+            split: Dataset split
 
         Returns:
             The whole dataset
@@ -77,10 +77,10 @@ class TextClassificationDataset(Dataset):
         Tokenize inputs and return a dict containing ids, masks, labels, etc.
 
         Args:
-            index: sample index
+            index: Sample index
 
         Returns:
-            a dict of tokenized text data and labels and some extra stuff
+            A dict of tokenized text data and labels and some extra stuff
         """
         text = self.dataset[index][self.config.text_field]
         label = self.dataset[index][self.config.label_field]

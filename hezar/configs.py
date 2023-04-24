@@ -33,9 +33,9 @@ class Config:
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
 
     Args:
-        name: a mandatory attribute that specifies a unique and pre-defined name for that config that is also used in
+        name: A mandatory attribute that specifies a unique and pre-defined name for that config that is also used in
             the registries.
-        config_type: a mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
+        config_type: A mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
     """
     name: str
     config_type: str = "base"
@@ -76,7 +76,7 @@ class Config:
 
         Args:
             d: A dictionary
-            **kwargs: key/values in the form of keyword arguments
+            **kwargs: Key/value pairs in the form of keyword arguments
 
         Returns:
             The config object itself but the operation happens in-place anyway
@@ -94,10 +94,10 @@ class Config:
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
 
         Args:
-            hub_or_local_path: local or Hub path for the config
-            filename: configuration filename
-            subfolder: optional subfolder path where the config is in
-            **kwargs: manual config parameters to override
+            hub_or_local_path: Local or Hub path for the config
+            filename: Configuration filename
+            subfolder: Optional subfolder path where the config is in
+            **kwargs: Manual config parameters to override
 
         Returns:
             A Config instance
@@ -144,9 +144,9 @@ class Config:
         Save the *config.yaml file to a local path
 
         Args:
-             save_dir: save directory path
-             filename: config file name
-             subfolder: subfolder to save the config file
+             save_dir: Save directory path
+             filename: Config file name
+             subfolder: Subfolder to save the config file
         """
         subfolder = subfolder or ""
         config = self.dict()
