@@ -95,7 +95,7 @@ class Trainer:
         weights_path = self.config.init_weights_from
         hub_path = resolve_pretrained_path(weights_path)
         local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
-        model.load_state_dict(torch.load(local_path))
+        model.load_state_dict(torch.load(local_path, map_location="cpu"))
         return model
 
     def _set_device_and_type(self):
