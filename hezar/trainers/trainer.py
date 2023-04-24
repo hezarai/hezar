@@ -103,6 +103,9 @@ class Trainer:
         device_type = "cuda" if "cuda" in device else "cpu"
         return device, device_type
 
+    def get_autocast_dtype(self):
+        return torch.bfloat16 if self.device_type == "cpu" else torch.float16
+
     def _setup_dataloaders(self):
         """
         Set up data loaders (train/eval) and return them.
@@ -191,7 +194,7 @@ class Trainer:
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
 
-        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.config.use_amp):
+        with torch.autocast(device_type=self.device_type, dtype=self.get_autocast_dtype(), enabled=self.config.use_amp):
             outputs = self.model(input_batch)
             if "loss" not in outputs:
                 raise ValueError("Model outputs must contain `loss`!")
