@@ -65,10 +65,8 @@ class Trainer:
     ):
         self.config = config
 
-        self.num_epochs = self.config.num_epochs
         self.device, self.device_type = self._set_device_and_type()
-        self.use_amp = self.config.use_amp
-        self.scaler = torch.cuda.amp.GradScaler(enabled=self.use_amp)
+        self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp)
 
         self.model = self._init_model_weights(model).to(self.device)
 
@@ -182,7 +180,7 @@ class Trainer:
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
 
-        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.use_amp):
+        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.config.use_amp):
             outputs = self.model(input_batch)
             if "loss" not in outputs:
                 raise ValueError("Model outputs must contain `loss`!")
@@ -210,7 +208,7 @@ class Trainer:
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
 
-        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.use_amp):
+        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.config.use_amp):
             outputs = self.model(input_batch)
             if "loss" not in outputs:
                 raise ValueError("Model outputs must contain `loss`!")
@@ -236,7 +234,7 @@ class Trainer:
         with tqdm(
             self.train_dataloader,
             unit="batch",
-            desc=f"Epoch: {epoch_num}/{self.num_epochs} ",
+            desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
         ) as iterator:
@@ -273,7 +271,7 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
-        for epoch in range(1, self.num_epochs + 1):
+        for epoch in range(1, self.config.num_epochs + 1):
             print()
             train_results = self.one_training_loop(epoch)
             eval_results = self.evaluate()
@@ -283,9 +281,10 @@ class Trainer:
             write_to_tensorboard(self.tensorboard, train_results, "train", epoch)
             write_to_tensorboard(self.tensorboard, eval_results, "val", epoch)
 
-            # save checkpoint
-            ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
-            self.save(ckpt_save_path)
+            # maybe save checkpoint
+            if epoch % self.config.save_freq == 0:
+                ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
+                self.save(ckpt_save_path)
 
     def save(
         self,

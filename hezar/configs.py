@@ -245,5 +245,6 @@ class TrainConfig(Config):
     use_amp: bool = False
     metrics: Dict[str, Dict] = field(default_factory=dict)
     num_epochs: int = None
+    save_freq: int = 1
     checkpoints_dir: str = None
     log_dir: str = None
