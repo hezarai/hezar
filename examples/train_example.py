@@ -19,12 +19,11 @@ train_dataset = build_dataset(name="text_classification", split="train", **datas
 eval_dataset = build_dataset(name="text_classification", split="test", **dataset_config)
 
 model = build_model(name, id2label=train_dataset.id2label)
-optimizer = build_optimizer("adam", model.parameters(), lr=2e-5)
-lr_scheduler = build_scheduler("reduce_on_plateau", optimizer=optimizer)
 
 train_config = TrainConfig(
     name=name,
     device="cuda",
+    optimizer={"name": "adam", "lr": 2e-5, "scheduler": {"name": "reduce_on_plateau"}},
     init_weights_from="hezarai/distilbert-base-fa",
     batch_size=8,
     num_epochs=5,
@@ -38,7 +37,5 @@ trainer = Trainer(
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,
     data_collator=train_dataset.data_collator,
-    optimizer=optimizer,
-    lr_scheduler=lr_scheduler,
 )
 trainer.train()
