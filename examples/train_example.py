@@ -3,8 +3,6 @@ from hezar import (
     Trainer,
     build_dataset,
     build_model,
-    build_optimizer,
-    build_scheduler,
 )
 
 name = "distilbert_text_classification"
