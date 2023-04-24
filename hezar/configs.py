@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
 import torch
 from huggingface_hub import HfApi, hf_hub_download
@@ -230,7 +230,8 @@ class OptimizerConfig(Config):
     name: str = None
     config_type: str = "optimizer"
     lr: float = None
-    weight_decay: float = None
+    weight_decay: float = .0
+    scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
 
 
 @dataclass
@@ -240,7 +241,7 @@ class TrainConfig(Config):
     device: str = "cuda"
     init_weights_from: str = None
     seed: int = 42
-    optimizer: OptimizerConfig = None
+    optimizer: Union[Dict[str, Any], OptimizerConfig] = None
     batch_size: int = None
     use_amp: bool = False
     metrics: Dict[str, Dict] = field(default_factory=dict)

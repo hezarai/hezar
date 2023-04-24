@@ -11,7 +11,7 @@ from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
 from ..builders import build_optimizer, build_scheduler
-from ..configs import TrainConfig
+from ..configs import TrainConfig, OptimizerConfig, LRSchedulerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
@@ -65,7 +65,7 @@ class Trainer:
     ):
         self.config = config
 
-        self.device, self.device_type = self._set_device_and_type()
+        self.device, self.device_type= self._set_device_and_type()
         self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp)
 
         self.model = self._init_model_weights(model).to(self.device)
@@ -136,19 +136,30 @@ class Trainer:
             Optimizer and scheduler
         """
         if optimizer is None:
-            optimizer_config = self.config.optimizer.dict()
+            optimizer_config = self.config.optimizer
+
+            if isinstance(optimizer_config, dict):
+                optimizer_config = OptimizerConfig(**optimizer_config)
+
             optimizer_name = optimizer_config.pop("name")
+            scheduler_config = optimizer_config.pop("scheduler")
+
+            optimizer_config.pop("config_type", None)
             optimizer = build_optimizer(
                 optimizer_name,
                 self.model.parameters(),
-                **optimizer_config,
+                **optimizer_config.dict(),
             )
-            if lr_scheduler is None:
-                scheduler_name = optimizer_name.pop("scheduler")
+
+            if lr_scheduler is None and scheduler_config is not None:
+                if isinstance(scheduler_config, dict):
+                    scheduler_config = LRSchedulerConfig(**scheduler_config)
+                scheduler_name = scheduler_config.pop("name")
+                scheduler_config.pop("config_type", None)
                 lr_scheduler = build_scheduler(
                     scheduler_name,
                     optimizer,
-                    **optimizer_config.scheduler,
+                    **scheduler_config.dict(),
                 )
         return optimizer, lr_scheduler
 
@@ -208,7 +219,7 @@ class Trainer:
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
 
-        with torch.autocast(device_type=self.device_type, dtype=torch.float16, enabled=self.config.use_amp):
+        with torch.autocast(device_type=self.device_type, dtype=self.get_autocast_dtype(), enabled=self.config.use_amp):
             outputs = self.model(input_batch)
             if "loss" not in outputs:
                 raise ValueError("Model outputs must contain `loss`!")
