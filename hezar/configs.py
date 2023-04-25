@@ -53,12 +53,28 @@ class Config:
         return iter(self.dict())
 
     def dict(self):
+        """
+        Returns the config object as a dictionary
+
+        Returns:
+            The config object as a dictionary
+        """
         return self.__dict__
 
     def keys(self):
         return list(self.dict().keys())
 
     def pop(self, key, default=None):
+        """
+        Remove the attribute from config and return it
+
+        Args:
+            key: Attribute name as a string
+            default: Default value if the key does not exist
+
+        Returns:
+             The value of the key
+        """
         if key in self.__annotations__.keys():
             value = getattr(self, key)
             delattr(self, key)
@@ -190,18 +206,27 @@ class Config:
 
 @dataclass
 class ModelConfig(Config):
+    """
+    Base dataclass for all model configs
+    """
     name: str = field(default=None, metadata={"help": "Name of the model's key in the models_registry"})
     config_type: str = "model"
 
 
 @dataclass
 class PreprocessorConfig(Config):
+    """
+    Base dataclass for all preprocessor configs
+    """
     name: str = field(default=None, metadata={"help": "Name of the preprocessor's key in the preprocessor_registry"})
     config_type: str = "preprocessor"
 
 
 @dataclass
 class DatasetConfig(Config):
+    """
+    Base dataclass for all dataset configs
+    """
     name: str = field(default=None, metadata={"help": "Name of the dataset"})
     config_type: str = "dataset"
     task: Union[str, List[str]] = field(
@@ -211,6 +236,9 @@ class DatasetConfig(Config):
 
 @dataclass
 class CriterionConfig(Config):
+    """
+    Base dataclass for all criterion configs
+    """
     name: str = None
     config_type: str = "criterion"
     weight: Optional[torch.Tensor] = None
@@ -220,6 +248,9 @@ class CriterionConfig(Config):
 
 @dataclass
 class LRSchedulerConfig(Config):
+    """
+    Base dataclass for all scheduler configs
+    """
     name: str = None
     config_type: str = "lr_scheduler"
     verbose: bool = True
@@ -227,6 +258,9 @@ class LRSchedulerConfig(Config):
 
 @dataclass
 class OptimizerConfig(Config):
+    """
+    Base dataclass for all optimizer configs
+    """
     name: str = None
     config_type: str = "optimizer"
     lr: float = None
@@ -236,6 +270,9 @@ class OptimizerConfig(Config):
 
 @dataclass
 class TrainConfig(Config):
+    """
+    Base dataclass for all trainer configs
+    """
     name: str = field(default=None)
     config_type: str = "train"
     device: str = "cuda"
