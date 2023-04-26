@@ -65,8 +65,9 @@ class Trainer:
     ):
         self.config = config
 
-        self.device, self.device_type= self._set_device_and_type()
-        self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp)
+        self.device, self.device_type = self._set_device_and_type()
+        self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
+        self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
 
         self.model = self._init_model_weights(model).to(self.device)
 
@@ -102,9 +103,6 @@ class Trainer:
         device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
         device_type = "cuda" if "cuda" in device else "cpu"
         return device, device_type
-
-    def get_autocast_dtype(self):
-        return torch.bfloat16 if self.device_type == "cpu" else torch.float16
 
     def _setup_dataloaders(self):
         """
@@ -194,7 +192,7 @@ class Trainer:
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
 
-        with torch.autocast(device_type=self.device_type, dtype=self.get_autocast_dtype(), enabled=self.config.use_amp):
+        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
             outputs = self.model(input_batch)
             if "loss" not in outputs:
                 raise ValueError("Model outputs must contain `loss`!")
@@ -222,7 +220,7 @@ class Trainer:
         """
         input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
 
-        with torch.autocast(device_type=self.device_type, dtype=self.get_autocast_dtype(), enabled=self.config.use_amp):
+        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
             outputs = self.model(input_batch)
             if "loss" not in outputs:
                 raise ValueError("Model outputs must contain `loss`!")
