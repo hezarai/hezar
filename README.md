@@ -95,14 +95,11 @@ Hezar currently supports these models
 - Text Classification
   - BERT
   - DistilBERT
+  - RoBERTa
 - Language Modeling
   - BERT
   - DistilBERT
   - RoBERTa
-- OCR
-  - CRNN
-  - CRAFT
-  - CTPN
 
 ## Documentation
 Refer to the [docs](docs) for a full documentation.
