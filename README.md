@@ -90,19 +90,10 @@ model.push_to_hub(hub_repo)
 INFO: Uploaded:`PerceptronConfig(name=preceptron)` --> `your_hf_username/my-awesome-perceptron/model_config.yaml`
 INFO: Uploaded: `Perceptron(name=preceptron)` --> `your_hf_username/my-awesome-perceptron/model.pt`
 ```
-## Supported models
-Hezar currently supports these models
-- Text Classification
-  - BERT
-  - DistilBERT
-  - RoBERTa
-- Language Modeling
-  - BERT
-  - DistilBERT
-  - RoBERTa
 
 ## Documentation
 Refer to the [docs](docs) for a full documentation.
 
 ## Contribution
-This is a really heavy project to be maintained by a couple of developers. The idea isn't novel at all but actually doing it is really difficult hence it's the only one in the whole history of the Persian open source! So any contribution is appreciated <3 
+This is a really heavy project to be maintained by a couple of developers. The idea isn't novel at all but actually doing it is really difficult hence it's the only one in the whole history of the Persian open source! So any contribution is appreciated ❤️
+
