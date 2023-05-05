@@ -23,10 +23,10 @@ pip install ./hezar
 from hezar import Model, Tokenizer
 
 # this is our Hub repo
-path = "hezarai/roberta-fa-sentiment-digikala-snappfood"
+model_path = "hezarai/roberta-fa-sentiment-digikala-snappfood"
 # load model and tokenizer
-model = Model.load(path)
-tokenizer = Tokenizer.load(path)
+model = Model.load(model_path)
+tokenizer = Tokenizer.load(model_path)
 # tokenize inputs
 example = ["کتابخانه هزار، بهترین کتابخانه هوش مصنوعیه"]
 inputs = tokenizer(example, return_tensors="pt")
