@@ -81,7 +81,7 @@ model.predict(inputs)
 ```
 tensor([[1.6096, 0.4799]])
 ```
-As you can see, defining a new network is just like a typical PyTorch module but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
+As you can see, defining a new network is just like a typical PyTorch module, but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
 ```python
 hub_repo = "<your_hf_username>/my-awesome-perceptron"
 model.push_to_hub(hub_repo)
