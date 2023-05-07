@@ -22,14 +22,17 @@ pip install ./hezar
 ```python
 from hezar import Model, Tokenizer
 
+# this is our Hub repo
+model_path = "hezarai/roberta-fa-sentiment-digikala-snappfood"
 # load model and tokenizer
-model = Model.load("hezarai/roberta-fa-sentiment-digikala-snappfood")
-tokenizer = Tokenizer.load("hezarai/roberta-fa-sentiment-digikala-snappfood")
-
+model = Model.load(model_path)
+tokenizer = Tokenizer.load(model_path)
+# tokenize inputs
 example = ["کتابخانه هزار، بهترین کتابخانه هوش مصنوعیه"]
 inputs = tokenizer(example, return_tensors="pt")
-
+# inference
 outputs = model.predict(inputs)
+# print outputs
 print(outputs)
 ```
 ```commandline
@@ -78,7 +81,7 @@ model.predict(inputs)
 ```
 tensor([[1.6096, 0.4799]])
 ```
-As you can see, defining a new network is just like a typical PyTorch module but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
+As you can see, defining a new network is just like a typical PyTorch module, but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
 ```python
 hub_repo = "<your_hf_username>/my-awesome-perceptron"
 model.push_to_hub(hub_repo)

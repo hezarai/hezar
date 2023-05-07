@@ -7,12 +7,12 @@ from hezar import Model, ModelConfig, register_model
 
 @dataclass
 class PerceptronConfig(ModelConfig):
-    name: str = "preceptron"
+    name: str = "perceptron"
     input_shape: int = 4
     output_shape: int = 2
 
 
-@register_model("preceptron", config_class=PerceptronConfig)
+@register_model("perceptron", config_class=PerceptronConfig)
 class Perceptron(Model):
     """
     A simple single layer network
