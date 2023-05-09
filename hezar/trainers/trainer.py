@@ -231,7 +231,7 @@ class Trainer:
 
         return results
 
-    def one_training_loop(self, epoch_num: int):
+    def inner_training_loop(self, epoch_num: int):
         """
         Train the model for one epoch on the whole train dataset and verbose live metric values in the progress bar
 
@@ -285,7 +285,7 @@ class Trainer:
         """
         for epoch in range(1, self.config.num_epochs + 1):
             print()
-            train_results = self.one_training_loop(epoch)
+            train_results = self.inner_training_loop(epoch)
             eval_results = self.evaluate()
             self.lr_scheduler.step(eval_results["loss"])
 
