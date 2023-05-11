@@ -1,8 +1,5 @@
 
-<p align="center">
-<img src="https://avatars.githubusercontent.com/u/105852828?s=200&v=4">
-</p>
-
+![Asset 31](https://github.com/hezarai/hezar/assets/38841793/3c7c311d-c115-4e2d-aca1-dd66c2c8898d)
 
 # Hezar: A seamless AI library for Persian
 
