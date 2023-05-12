@@ -44,7 +44,7 @@ class Config:
         try:
             return self.dict()[item]
         except KeyError:
-            raise ValueError(f"`{self.__class__.__name__}` has no attribute `{item}`!")
+            raise AttributeError(f"`{self.__class__.__name__}` has no attribute `{item}`!")
 
     def __len__(self):
         return len(self.dict())
@@ -59,28 +59,10 @@ class Config:
         Returns:
             The config object as a dictionary
         """
-        return self.__dict__
+        return vars(self)
 
     def keys(self):
         return list(self.dict().keys())
-
-    def pop(self, key, default=None):
-        """
-        Remove the attribute from config and return it
-
-        Args:
-            key: Attribute name as a string
-            default: Default value if the key does not exist
-
-        Returns:
-             The value of the key
-        """
-        if key in self.__annotations__.keys():
-            value = getattr(self, key)
-            delattr(self, key)
-        else:
-            value = default
-        return value
 
     def get(self, key, default=None):
         return getattr(self, key, default)
