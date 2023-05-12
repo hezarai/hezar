@@ -165,31 +165,44 @@ class Model(nn.Module):
             self.config.save(save_dir=path, filename=config_filename)
         return model_save_path
 
-    def push_to_hub(self, repo_id, commit_message=None, private=False):
+    def push_to_hub(self, repo_id, filename=None, config_filename=None, commit_message=None, private=False):
         """
         Push the model and required files to the hub
 
         Args:
             repo_id: The path (id or repo name) on the hub
+            filename: Model file name
+            config_filename: Config file name
             commit_message (str): Commit message for this push
             private (bool): Whether to create a private repo or not
         """
+        config_filename = config_filename or self.config_filename
+        filename = filename or self.model_filename
+
         api = HfApi()
         # create remote repo
         api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
         # create local repo
         cache_path = get_local_cache_path(repo_id, repo_type="model")
-        model_save_path = self.save(cache_path, save_config=False)
+        model_save_path = self.save(
+            cache_path,
+            filename=filename,
+            config_filename=config_filename,
+            save_config=False,
+        )
         if commit_message is None:
             commit_message = "Hezar: Upload model and config"
         # upload config file
         self.config.push_to_hub(
-            repo_id, filename=self.config_filename, repo_type="model", commit_message=commit_message
+            repo_id,
+            filename=config_filename,
+            repo_type="model",
+            commit_message=commit_message,
         )
         # upload model file
         api.upload_file(
             path_or_fileobj=model_save_path,
-            path_in_repo=self.model_filename,
+            path_in_repo=filename,
             repo_id=repo_id,
             commit_message=commit_message,
         )
@@ -197,7 +210,7 @@ class Model(nn.Module):
             f"Uploaded: "
             f"`{self.__class__.__name__}(name={self.config.name})`"
             f" --> "
-            f"`{os.path.join(repo_id, self.model_filename)}`"
+            f"`{os.path.join(repo_id, filename)}`"
         )
 
     @abstractmethod
