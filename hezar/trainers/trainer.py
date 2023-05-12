@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from huggingface_hub import hf_hub_download, upload_folder
+from huggingface_hub import hf_hub_download, upload_folder, HfApi
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
@@ -302,16 +302,21 @@ class Trainer:
         self,
         path: str,
         config_filename=None,
+        model_filename=None,
+        model_config_filename=None,
         subfolder=None,
         dataset_config_file=None,
     ):
         """
         Save the trainer and relevant files to a path.
+
         Files to save are train config, model weights, model config, preprocessor files and preprocessor config.
 
         Args:
             path: A directory to save everything
             config_filename: Config filename
+            model_filename: Model file name
+            model_config_filename: Model config file name
             subfolder: Optional sub-folder
             dataset_config_file: Dataset config filename
         """
@@ -320,22 +325,53 @@ class Trainer:
         dataset_config_file = dataset_config_file or self.dataset_config_file
 
         self.config.save(path, filename=config_filename, subfolder=subfolder)
-        self.model.save(path, save_config=True)
+        self.model.save(path, filename=model_filename, config_filename=model_config_filename, save_config=True)
         self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         if hasattr(self.train_dataset, "tokenizer"):
             self.train_dataset.tokenizer.save(path)
 
-    def push_to_hub(self, repo_id: str, commit_message: str = None):
+    def push_to_hub(
+        self,
+        repo_id: str,
+        config_filename: str = None,
+        model_filename: str = None,
+        model_config_filename: str = None,
+        subfolder: str = None,
+        dataset_config_filename: str = None,
+        commit_message: str = None,
+        private: bool = False,
+    ):
         """
         Push everything to the Hub
 
         Args:
             repo_id: Path to hub
+            config_filename: Trainer config file name
+            model_filename: Model file name
+            model_config_filename: Model config file name
+            subfolder: Path to Trainer files
+            dataset_config_filename: Dataset config file name
             commit_message: Commit message for the push
+            private: Whether to create a private repo if it doesn't exist already
         """
+        config_filename = config_filename or self.trainer_config_file
+        subfolder = subfolder or self.trainer_subfolder
+        dataset_config_file = dataset_config_filename or self.dataset_config_file
+
+        api = HfApi()
+        # create remote repo
+        api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
+        # create local repo
         cache_path = get_local_cache_path(repo_id, repo_type="model")
 
-        self.save(cache_path)
+        self.save(
+            cache_path,
+            config_filename=config_filename,
+            model_filename=model_filename,
+            model_config_filename=model_config_filename,
+            subfolder=subfolder,
+            dataset_config_file=dataset_config_file,
+        )
 
         if not commit_message:
             commit_message = "Hezar: Upload training files"
