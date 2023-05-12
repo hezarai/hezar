@@ -1,12 +1,9 @@
 
-<p align="center">
-<img src="https://avatars.githubusercontent.com/u/105852828?s=200&v=4" style="border-radius: 20px;"><br>
-</p>
-
+![Asset 31](https://github.com/hezarai/hezar/assets/38841793/3c7c311d-c115-4e2d-aca1-dd66c2c8898d)
 
 # Hezar: A seamless AI library for Persian
 
-Hezar is a multi-purpose AI library built to make AI easy for the Persian community!
+**Hezar** (meaning **_thousand_** in Persian) is a multi-purpose AI library built to make AI easy for the Persian community!
 
 Hezar is a library that:
 - brings together all the best works in AI for Persian
