@@ -29,10 +29,10 @@ class Preprocessor:
         raise NotImplementedError
 
     def save(self, path):
-        ...
+        raise NotImplementedError
 
     def push_to_hub(self, hub_path):
-        ...
+        raise NotImplementedError
 
 
 class Sequential:
