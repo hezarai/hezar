@@ -139,8 +139,9 @@ class Trainer:
         if optimizer is None:
             optimizer_config = self.config.optimizer
 
-            if isinstance(optimizer_config, dict):
-                optimizer_config = OptimizerConfig(**optimizer_config)
+            # convert to dict so that we can pop some values
+            if isinstance(optimizer_config, OptimizerConfig):
+                optimizer_config = optimizer_config.dict()
 
             optimizer_name = optimizer_config.pop("name")
             scheduler_config = optimizer_config.pop("scheduler")
@@ -149,18 +150,18 @@ class Trainer:
             optimizer = build_optimizer(
                 optimizer_name,
                 self.model.parameters(),
-                **optimizer_config.dict(),
+                **optimizer_config,
             )
 
             if lr_scheduler is None and scheduler_config is not None:
-                if isinstance(scheduler_config, dict):
-                    scheduler_config = LRSchedulerConfig(**scheduler_config)
+                if isinstance(scheduler_config, LRSchedulerConfig):
+                    scheduler_config = scheduler_config.dict()
                 scheduler_name = scheduler_config.pop("name")
                 scheduler_config.pop("config_type", None)
                 lr_scheduler = build_scheduler(
                     scheduler_name,
                     optimizer,
-                    **scheduler_config.dict(),
+                    **scheduler_config,
                 )
         return optimizer, lr_scheduler
 
