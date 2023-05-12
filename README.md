@@ -1,9 +1,10 @@
 
 ![](hezar.png)
 
-# Hezar: A seamless AI library for Persian
 
-**Hezar** (meaning **_thousand_** in Persian) is a multi-purpose AI library built to make AI easy for the Persian community!
+# <p style="text-align: center;"> A seamless AI library for Persian</p>
+
+**Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
 
 Hezar is a library that:
 - brings together all the best works in AI for Persian
