@@ -1,5 +1,5 @@
 
-![Asset 31](https://github.com/hezarai/hezar/assets/38841793/3c7c311d-c115-4e2d-aca1-dd66c2c8898d)
+![](hezar.png)
 
 # Hezar: A seamless AI library for Persian
 
