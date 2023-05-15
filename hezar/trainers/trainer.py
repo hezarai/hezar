@@ -69,14 +69,14 @@ class Trainer:
         self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
         self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
 
+        self.set_seed(self.config.seed)
+
         self.model = self._init_model_weights(model).to(self.device)
 
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator
         self.num_labels = self.train_dataset.num_labels  # noqa
-
-        self.set_seed(self.config.seed)
 
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
 
