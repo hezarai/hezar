@@ -181,9 +181,9 @@ class Trainer:
         metrics_manager = MetricsManager(metrics_dict)
         return metrics_manager
 
-    def train_one_batch(self, input_batch: Dict[str, torch.Tensor]):
+    def training_step(self, input_batch: Dict[str, torch.Tensor]):
         """
-        Train one batch of data and return metrics outputs
+        An abstract method to train one batch of data and return metrics outputs
 
         Args:
             input_batch: A batch of inputs to train
@@ -191,27 +191,11 @@ class Trainer:
         Returns:
             The metrics results
         """
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+        raise NotImplementedError
 
-        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
-            outputs = self.model(input_batch)
-            if "loss" not in outputs:
-                raise ValueError("Model outputs must contain `loss`!")
-            loss: torch.Tensor = outputs["loss"]
-
-        self.scaler.scale(loss).backward()
-        self.scaler.step(self.optimizer)
-        self.scaler.update()
-        self.optimizer.zero_grad()
-
-        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
-        results["loss"] = loss.item()
-
-        return results
-
-    def evaluate_one_batch(self, input_batch: Dict[str, torch.Tensor]):
+    def evaluation_step(self, input_batch: Dict[str, torch.Tensor]):
         """
-        Evaluate one batch of data and return metrics outputs
+        An abstract method to evaluate one batch of data and return metrics outputs
 
         Args:
             input_batch: A batch of inputs to train
@@ -219,18 +203,7 @@ class Trainer:
         Returns:
             The metrics results
         """
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
-
-        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
-            outputs = self.model(input_batch)
-            if "loss" not in outputs:
-                raise ValueError("Model outputs must contain `loss`!")
-            loss: torch.Tensor = outputs["loss"]
-
-        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
-        results["loss"] = loss.item()
-
-        return results
+        raise NotImplementedError
 
     def inner_training_loop(self, epoch_num: int):
         """
@@ -252,7 +225,7 @@ class Trainer:
             ascii=" #",
         ) as iterator:
             for input_batch in iterator:
-                results = self.train_one_batch(input_batch)
+                results = self.training_step(input_batch)
                 self.metrics_manager.update(results)
                 iterator.set_postfix(**self.metrics_manager.avg())
         return self.metrics_manager.avg()
@@ -275,7 +248,7 @@ class Trainer:
         ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
-                    results = self.evaluate_one_batch(input_batch)
+                    results = self.evaluation_step(input_batch)
                     self.metrics_manager.update(results)
                     iterator.set_postfix(**self.metrics_manager.avg())
         return self.metrics_manager.avg()
