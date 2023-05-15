@@ -16,6 +16,7 @@ __all__ = [
     "PreprocessorConfig",
     "TrainConfig",
     "DatasetConfig",
+    "EmbeddingConfig",
     "CriterionConfig",
     "OptimizerConfig",
     "LRSchedulerConfig",
@@ -214,6 +215,15 @@ class DatasetConfig(Config):
     task: Union[str, List[str]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
+
+
+@dataclass
+class EmbeddingConfig(Config):
+    """
+    Base dataclass for all embedding configs
+    """
+    name: str = field(default=None, metadata={"help": "Name of the embedding"})
+    config_type: str = "embedding"
 
 
 @dataclass
