@@ -15,6 +15,7 @@ from .registry import (  # noqa
     models_registry,  # noqa
     preprocessors_registry,  # noqa
     datasets_registry,  # noqa
+    embeddings_registry, # noqa
     criterions_registry,  # noqa
     optimizers_registry,  # noqa
     lr_schedulers_registry,  # noqa
@@ -93,6 +94,27 @@ def build_dataset(name: str, config=None, split=None, **kwargs):
     config = config or datasets_registry[name]["config_class"]()
     dataset = datasets_registry[name]["dataset_class"](config, split=split, **kwargs)
     return dataset
+
+
+def build_embedding(name: str, config=None, **kwargs):
+    """
+    Build the embedding using its registry name. If config is None then the embedding is built using the
+    default config.
+
+    Args:
+        name (str): Name of the embedding in the embeddings' registry
+        config (EmbeddingConfig): An EmbeddingConfig instance
+        **kwargs: Extra config parameters that are loaded to the embedding
+
+    Returns:
+        A Dataset instance
+    """
+    if name not in embeddings_registry:
+        raise ValueError(f"Unknown embedding name: `{name}`!\n"
+                         f"Available embedding names: {list(embeddings_registry.keys())}")
+    config = config or embeddings_registry[name]["config_class"]()
+    embedding = embeddings_registry[name]["embedding_class"](config, **kwargs)
+    return embedding
 
 
 def build_criterion(name: str, **kwargs):
