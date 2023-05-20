@@ -1,9 +1,12 @@
 from typing import Union, Literal
+import os
 from dataclasses import dataclass
 
 import gensim
 
 from .embedding import Embedding, EmbeddingConfig
+
+from ..registry import register_embedding
 
 
 @dataclass
@@ -13,6 +16,7 @@ class Word2VecCBOWConfig(EmbeddingConfig):
     save_format: Literal["binary", "text"] = "binary"
 
 
+@register_embedding("word2vec_cbow", config_class=Word2VecCBOWConfig)
 class Word2VecCBOW(Embedding):
     def __init__(self, config, **kwargs):
         super().__init__(config, **kwargs)
