@@ -93,6 +93,10 @@ def get_module_config_class(name: str, config_type: str):
         from ..registry import datasets_registry  # noqa
 
         registry = datasets_registry
+    elif config_type == "embedding":
+        from ..registry import embeddings_registry
+        registry = embeddings_registry
+
     else:
         raise ValueError(f"Invalid `config_type`: {config_type}!")
 
