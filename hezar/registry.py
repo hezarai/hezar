@@ -19,6 +19,8 @@ Examples:
 
 Keep in mind that registries usually don't need to be used directly. There is a bunch of functions to build modules
 using a module's registry name in `hezar.builders` module. See the file `builders.py` for more info.
+
+Note: In case of adding a new registry container, make sure to add to `__all__` below!
 """
 
 from torch import nn, optim
@@ -30,6 +32,7 @@ __all__ = [
     "register_model",
     "register_preprocessor",
     "register_dataset",
+    "register_embedding",
 ]
 
 logger = get_logger(__name__)
@@ -37,6 +40,8 @@ logger = get_logger(__name__)
 models_registry = {}
 preprocessors_registry = {}
 datasets_registry = {}
+embeddings_registry = {}
+
 criterions_registry = {
     "bce": nn.BCELoss,
     "bce_with_logits": nn.BCEWithLogitsLoss,
@@ -127,6 +132,33 @@ def register_preprocessor(preprocessor_name: str, config_class):
                              f"preprocessor_name: {preprocessor_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
         preprocessors_registry[preprocessor_name] = {"preprocessor_class": cls, "config_class": config_class}
+
+        return cls
+
+    return register
+
+
+def register_embedding(embedding_name: str, config_class):
+    """
+    A class decorator that adds the embedding class and the config class to the `embeddings_registry`
+
+    Args:
+        embedding_name: Embedding's registry name e.g, `word2vec_cbow`.
+        config_class: Embedding's config class e.g, Word2VecCBOWConfig. This parameter must be the config
+            class itself not a config instance!
+
+    Returns:
+         The class itself
+    """
+    def register(cls):
+        if embedding_name in embeddings_registry:
+            logger.warning(f"Embedding `{embedding_name}` is already registered. Overwriting...")
+
+        if config_class.name != embedding_name:
+            raise ValueError(f"`embedding_name` and `config.name` are not compatible for `{cls.__name__}`\n"
+                             f"embedding_name: {embedding_name}\n"
+                             f"{config_class.__name__}.name: {config_class.name}")
+        embeddings_registry[embedding_name] = {"embedding_class": cls, "config_class": config_class}
 
         return cls
 
