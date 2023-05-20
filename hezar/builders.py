@@ -25,6 +25,7 @@ __all__ = [
     "build_model",
     "build_dataset",
     "build_preprocessor",
+    "build_embedding",
     "build_optimizer",
     "build_criterion",
     "build_scheduler",
