@@ -102,7 +102,7 @@ class Embedding:
             repo_id=repo_id,
             path_or_fileobj=embedding_save_path,
             repo_type="model",
-            path_in_repo=os.path.join(subfolder, filename),
+            path_in_repo=f"{subfolder}/{filename}",
             commit_message=commit_message,
         )
 
