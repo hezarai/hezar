@@ -13,7 +13,7 @@ from ...builders import build_preprocessor
 from ...configs import Config, PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
 from ...data.utils import convert_batch_dict_dtype
-from ...utils import get_local_cache_path, get_logger, resolve_pretrained_path
+from ...utils import get_local_cache_path, get_logger
 from ..preprocessor import Preprocessor
 
 

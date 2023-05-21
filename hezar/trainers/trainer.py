@@ -21,7 +21,7 @@ from ..constants import (
 )
 from ..data.datasets import Dataset
 from ..models import Model
-from ..utils import get_local_cache_path, get_logger, resolve_pretrained_path
+from ..utils import get_local_cache_path, get_logger
 from .trainer_utils import MetricsManager, write_to_tensorboard
 
 

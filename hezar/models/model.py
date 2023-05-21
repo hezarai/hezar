@@ -11,7 +11,7 @@ from ..builders import build_model
 from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
 from ..utils import get_logger
-from ..utils.hub_utils import get_local_cache_path, resolve_pretrained_path
+from ..utils.hub_utils import get_local_cache_path
 
 
 __all__ = [
