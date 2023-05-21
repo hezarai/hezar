@@ -7,6 +7,7 @@ import gensim
 from .embedding import Embedding, EmbeddingConfig
 
 from ..registry import register_embedding
+from ..utils import get_local_cache_path
 
 
 @dataclass
@@ -21,5 +22,21 @@ class Word2VecCBOW(Embedding):
     def __init__(self, config, **kwargs):
         super().__init__(config, **kwargs)
 
+    def build(self):
+        ...
+
     def __call__(self, inputs, **kwargs):
         ...
+
+    def save(
+        self,
+        path: Union[str, os.PathLike],
+        filename: str = None,
+        save_config: bool = True,
+        config_filename: str = None,
+    ):
+        filename = filename or self.filename
+        config_filename = config_filename or self.config
+
+        os.makedirs(os.path.basename(path), exist_ok=True)
+        self.config.save(os.path.join(path, config_filename), )

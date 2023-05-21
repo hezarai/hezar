@@ -66,8 +66,6 @@ class Model(nn.Module):
         """
         # Get device if provided in the kwargs
         device = None or kwargs.pop("device", None)
-        # Configure the right path
-        hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         # Load config
         config_filename = config_filename or cls.config_filename
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=config_filename)

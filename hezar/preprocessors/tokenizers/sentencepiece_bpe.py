@@ -81,9 +81,8 @@ class SentencePieceBPETokenizer(Tokenizer):
         pretrained_path = self.config.get("pretrained_path")
         if pretrained_path:
             if not os.path.isdir(pretrained_path):
-                path = resolve_pretrained_path(pretrained_path)
                 tokenizer_path = hf_hub_download(
-                    path,
+                    pretrained_path,
                     filename=self.tokenizer_filename,
                     subfolder=self.preprocessor_subfolder,
                 )

@@ -83,17 +83,16 @@ def exists_on_hub(hub_path: str, repo_type="model"):
     return hub_path in [path.id for path in paths]
 
 
-def clone_repo(hub_path: str, save_path: str, **kwargs):
+def clone_repo(repo_id: str, save_path: str, **kwargs):
     """
     Clone a repo on the hub to local directory
 
     Args:
-        hub_path: Repo name or id
+        repo_id: Repo name or id
         save_path: Path to clone the repo to
 
     Returns:
         the local path to the repo
     """
-    repo_id = resolve_pretrained_path(hub_path)
     repo = Repository(local_dir=save_path, clone_from=repo_id, **kwargs)
     return repo.local_dir

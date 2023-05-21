@@ -314,7 +314,6 @@ class Tokenizer(Preprocessor):
     ):
         config_filename = config_filename or cls.tokenizer_config_filename
         subfolder = subfolder or cls.preprocessor_subfolder
-        hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         config = TokenizerConfig.load(
             hub_or_local_path,
             filename=config_filename,

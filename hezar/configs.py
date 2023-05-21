@@ -104,7 +104,6 @@ class Config:
         filename = filename or DEFAULT_MODEL_CONFIG_FILE
         subfolder = subfolder or ""
 
-        hub_or_local_path = resolve_pretrained_path(hub_or_local_path)
         config_path = os.path.join(hub_or_local_path, subfolder, filename)
         is_local = os.path.isfile(config_path)
         if os.path.isdir(hub_or_local_path) and not is_local:

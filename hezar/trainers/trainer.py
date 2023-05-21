@@ -93,8 +93,7 @@ class Trainer:
         random.seed(seed)
 
     def _init_model_weights(self, model):
-        weights_path = self.config.init_weights_from
-        hub_path = resolve_pretrained_path(weights_path)
+        hub_path = self.config.init_weights_from
         local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
         model.load_state_dict(torch.load(local_path, map_location="cpu"))
         return model
