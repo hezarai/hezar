@@ -6,9 +6,8 @@ from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers import decoders, models, normalizers, pre_tokenizers, trainers
 
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
+from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor
-from ...utils.hub_utils import resolve_pretrained_path
 from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
 
 
@@ -85,6 +84,7 @@ class SentencePieceBPETokenizer(Tokenizer):
                     pretrained_path,
                     filename=self.tokenizer_filename,
                     subfolder=self.preprocessor_subfolder,
+                    cache_dir=HEZAR_CACHE_DIR,
                 )
 
             else:
