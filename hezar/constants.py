@@ -16,7 +16,7 @@ DEFAULT_PREPROCESSOR_SUBFOLDER = "preprocessor"
 DEFAULT_TOKENIZER_FILE = "tokenizer.json"
 DEFAULT_TOKENIZER_CONFIG_FILE = "tokenizer_config.yaml"
 DEFAULT_DATASET_CONFIG_FILE = "dataset_config.yaml"
-DEFAULT_EMBEDDING_FILE = "model.bin"
+DEFAULT_EMBEDDING_FILE = "embedding.bin"
 DEFAULT_EMBEDDING_CONFIG_FILE = "embedding_config.yaml"
 DEFAULT_EMBEDDING_SUBFOLDER = "embedding"
 
