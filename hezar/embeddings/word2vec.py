@@ -8,6 +8,7 @@ from huggingface_hub import hf_hub_download
 from .embedding import Embedding, EmbeddingConfig
 
 from ..registry import register_embedding
+from ..constants import HEZAR_CACHE_DIR
 
 
 @dataclass
@@ -42,6 +43,7 @@ class Word2Vec(Embedding):
                     pretrained_path,
                     filename=self.filename,
                     subfolder=self.subfolder,
+                    cache_dir=HEZAR_CACHE_DIR,
                 )
 
             else:
