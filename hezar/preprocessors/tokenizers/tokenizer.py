@@ -362,7 +362,7 @@ class Tokenizer(Preprocessor):
 
         api = HfApi()
         # create remote repo
-        api.create_repo(repo_id, exist_ok=True)
+        api.create_repo(repo_id, exist_ok=True, private=private)
         # create local repo
         cache_path = get_local_cache_path(repo_id, repo_type="model")
         # save tokenizer.json
