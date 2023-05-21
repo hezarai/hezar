@@ -128,6 +128,11 @@ class Embedding:
             f"{os.path.join(repo_id, subfolder, filename)}"
         )
 
+    def torch_embedding(self):
+        import torch
+        weights = torch.FloatTensor(self.word_vectors.vectors)
+        embedding_layer = torch.nn.Embedding.from_pretrained(weights)
+        return embedding_layer
 
     @property
     def word_vectors(self):
