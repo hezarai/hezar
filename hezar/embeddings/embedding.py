@@ -11,7 +11,7 @@ from ..constants import (
     DEFAULT_EMBEDDING_SUBFOLDER,
 )
 from ..builders import build_embedding
-from ..utils import resolve_pretrained_path, get_local_cache_path, get_logger
+from ..utils import get_local_cache_path, get_logger
 
 logger = get_logger(__name__)
 
