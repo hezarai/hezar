@@ -1,6 +1,7 @@
 import os
-from typing import Union, List
+from typing import Union, List, Dict
 
+import numpy as np
 from huggingface_hub import HfApi, upload_file
 
 from ..configs import EmbeddingConfig
@@ -25,6 +26,7 @@ class Embedding:
 
     def __init__(self, config: EmbeddingConfig, **kwargs):
         self.config = config.update(kwargs)
+        self.model = self.build()
 
     def build(self):
         raise NotImplementedError
@@ -32,8 +34,22 @@ class Embedding:
     def __call__(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
-        # TODO
-        ...
+        vectors = [self.word_vectors[w] for w in inputs]
+        return vectors
+
+    def train(
+        self,
+        dataset,
+        epochs,
+    ):
+        raise NotImplementedError
+
+    def word2index(self, word):
+        return self.vocab.get(word, -1)
+
+    def index2word(self, index):
+        keyed_vocab = {v: k for v, k in self.vocab.items()}
+        return keyed_vocab[index]
 
     @classmethod
     def load(
@@ -113,4 +129,10 @@ class Embedding:
         )
 
 
+    @property
+    def word_vectors(self):
+        raise NotImplementedError
 
+    @property
+    def vocab(self) -> Dict[str, int]:
+        raise NotImplementedError

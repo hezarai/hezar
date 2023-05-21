@@ -68,16 +68,10 @@ class FastText(Embedding):
 
         return embedding_model
 
-    def __call__(self, inputs: Union[str, List[str]], **kwargs):
-        if isinstance(inputs, str):
-            inputs = [inputs]
-        vectors = [self.model.wv[w] for w in inputs]
-        return vectors
-
     def train(
-            self,
-            dataset: List[str],
-            epochs: int = 5,
+        self,
+        dataset: List[str],
+        epochs: int = 5,
     ):
         self.model.build_vocab(dataset)
         self.model.train(
@@ -101,3 +95,11 @@ class FastText(Embedding):
         self.config.save(path, config_filename)
 
         self.model.save(os.path.join(path, filename))
+
+    @property
+    def word_vectors(self):
+        return self.model.wv
+
+    @property
+    def vocab(self):
+        return self.model.wv.key_to_index

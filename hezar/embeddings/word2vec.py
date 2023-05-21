@@ -66,12 +66,6 @@ class Word2Vec(Embedding):
 
         return embedding_model
 
-    def __call__(self, inputs: Union[str, List[str]], **kwargs):
-        if isinstance(inputs, str):
-            inputs = [inputs]
-        vectors = [self.model.wv[w] for w in inputs]
-        return vectors
-
     def train(
         self,
         dataset: List[str],
@@ -99,3 +93,11 @@ class Word2Vec(Embedding):
         self.config.save(path, config_filename)
 
         self.model.save(os.path.join(path, filename))
+
+    @property
+    def word_vectors(self):
+        return self.model.wv
+
+    @property
+    def vocab(self):
+        return self.model.wv.key_to_index
