@@ -47,6 +47,7 @@ class Embedding:
         subfolder = subfolder or cls.subfolder
 
         config = EmbeddingConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder, **kwargs)
+        config.pretrained_path = hub_or_local_path
 
         embedding = build_embedding(config.name, config, **kwargs)
 
@@ -79,14 +80,14 @@ class Embedding:
         api.create_repo(repo_id, exist_ok=True)
         # create local repo
         cache_path = get_local_cache_path(repo_id, repo_type="model")
-        # save tokenizer.json
-        embedding_save_path = os.path.join(cache_path, subfolder, filename)
-        os.makedirs(os.path.join(cache_path, subfolder), exist_ok=True)
+        # save embedding model file
+        embedding_save_dir = os.path.join(cache_path, subfolder)
+        os.makedirs(embedding_save_dir, exist_ok=True)
 
         if commit_message is None:
             commit_message = "Hezar: Upload embedding and config"
 
-        self.save(embedding_save_path, filename, save_config=False)
+        self.save(embedding_save_dir, filename, save_config=False)
 
         self.config.push_to_hub(
             repo_id,
@@ -99,7 +100,7 @@ class Embedding:
 
         api.upload_file(
             repo_id=repo_id,
-            path_or_fileobj=embedding_save_path,
+            path_or_fileobj=os.path.join(embedding_save_dir, filename),
             repo_type="model",
             path_in_repo=f"{subfolder}/{filename}",
             commit_message=commit_message,
