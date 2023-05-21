@@ -36,7 +36,11 @@ class Word2VecCBOW(Embedding):
         config_filename: str = None,
     ):
         filename = filename or self.filename
-        config_filename = config_filename or self.config
+        config_filename = config_filename or self.config_filename
 
-        os.makedirs(os.path.basename(path), exist_ok=True)
-        self.config.save(os.path.join(path, config_filename), )
+        os.makedirs(path, exist_ok=True)
+        self.config.save(path, config_filename)
+
+        # TODO
+        ...
+
