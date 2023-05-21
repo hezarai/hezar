@@ -178,7 +178,7 @@ class Config:
             commit_message = f"Hezar: Upload {filename}"
         api.upload_file(
             path_or_fileobj=config_path,
-            path_in_repo=os.path.join(subfolder, filename),
+            path_in_repo=f"{subfolder}/{filename}",
             repo_id=repo_id,
             commit_message=commit_message,
         )
