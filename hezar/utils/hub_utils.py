@@ -19,6 +19,8 @@ logger = get_logger(__name__)
 
 def resolve_pretrained_path(hub_or_local_path):
     """
+    **DEPRECATED**
+
     Resolve a local or Hub path. If path exists locally it just returns the input, otherwise tries to resolve
     hub_or_local_path. If it contains the namespace (author/org) leave it as is, otherwise change to hezarai/{hub_path}
 
@@ -28,24 +30,24 @@ def resolve_pretrained_path(hub_or_local_path):
     Returns:
         A proper pretrained path
     """
+    logger.warning(f"`resolve_pretrained_path` is deprecated! Use the raw `hub_or_local_path`!")
     if os.path.isdir(hub_or_local_path):
         return hub_or_local_path
     repo_id = f"{HEZAR_HUB_ID}/{hub_or_local_path}" if "/" not in hub_or_local_path else hub_or_local_path
     return repo_id
 
 
-def get_local_cache_path(hub_path, repo_type):
+def get_local_cache_path(repo_id, repo_type):
     """
     Given the hub path and repo type, configure the local path to save everything e.g, ~/.hezar/models/<repo_name>
 
     Args:
-        hub_path: Repo name or id
+        repo_id: Repo name or id
         repo_type: Repo type e.g, model, dataset, etc
 
     Returns:
         Path to local cache directory
     """
-    repo_id = resolve_pretrained_path(hub_path)
     repo_owner, repo_name = repo_id.split("/")
     cache_path = f"{HEZAR_CACHE_DIR}/{repo_type}s--{repo_owner}--{repo_name}"
     return cache_path
