@@ -1,14 +1,13 @@
-from typing import List, Union, Literal
 import os
 from dataclasses import dataclass
+from typing import List, Literal, Union
 
 from gensim.models import fasttext
 from huggingface_hub import hf_hub_download
 
-from .embedding import Embedding, EmbeddingConfig
-
-from ..registry import register_embedding
 from ..constants import HEZAR_CACHE_DIR
+from ..registry import register_embedding
+from .embedding import Embedding, EmbeddingConfig
 
 
 @dataclass

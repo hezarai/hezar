@@ -1,17 +1,17 @@
 import os
-from typing import Union, List, Dict
+from typing import Dict, List, Union
 
-import numpy as np
-from huggingface_hub import HfApi, upload_file
+from huggingface_hub import HfApi
 
+from ..builders import build_embedding
 from ..configs import EmbeddingConfig
 from ..constants import (
-    DEFAULT_EMBEDDING_FILE,
     DEFAULT_EMBEDDING_CONFIG_FILE,
+    DEFAULT_EMBEDDING_FILE,
     DEFAULT_EMBEDDING_SUBFOLDER,
 )
-from ..builders import build_embedding
 from ..utils import get_local_cache_path, get_logger
+
 
 logger = get_logger(__name__)
 
