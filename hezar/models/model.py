@@ -245,7 +245,7 @@ class Model(nn.Module):
         """
         self.eval()
         model_outputs = self(inputs, **kwargs)
-        if post_process and hasattr(self, "post_process"):
+        if post_process:
             processed_outputs = self.post_process(model_outputs, **kwargs)
             return processed_outputs
 
