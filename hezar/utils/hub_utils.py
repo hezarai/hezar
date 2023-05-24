@@ -30,7 +30,7 @@ def resolve_pretrained_path(hub_or_local_path):
     Returns:
         A proper pretrained path
     """
-    logger.warning(f"`resolve_pretrained_path` is deprecated! Use the raw `hub_or_local_path`!")
+    logger.warning("`resolve_pretrained_path` is deprecated! Use the raw `hub_or_local_path`!")
     if os.path.isdir(hub_or_local_path):
         return hub_or_local_path
     repo_id = f"{HEZAR_HUB_ID}/{hub_or_local_path}" if "/" not in hub_or_local_path else hub_or_local_path
