@@ -10,6 +10,8 @@ Hezar is a library that:
 - makes using AI models as easy as a couple of lines of code
 - seamlessly integrates with HuggingFace Hub for all of its models
 - has a highly developer-friendly interface
+- has a task-based model interface which is more convenient for general users.
+- is packed with additional tools like word embeddings, tokenizers, feature extractors, etc.
 - comes with a lot of supplementary ML tools for deployment, benchmarking, optimization, etc.
 - and more!
 
@@ -41,10 +43,10 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.9960528612136841]}
 ```
-### Build a model from scratch
+### Use a raw BERT for text classification
 ```python
 from hezar import build_model
-# build model using its registry name
+
 model = build_model("bert_text_classification", id2label={0: "negative", 1: "positive"})
 print(model)
 ```
@@ -70,7 +72,10 @@ class Perceptron(Model):
 
     def __init__(self, config, **kwargs):
         super().__init__(config, **kwargs)
-        self.nn = nn.Linear(in_features=self.config.input_shape, out_features=self.config.output_shape)
+        self.nn = nn.Linear(
+            in_features=self.config.input_shape, 
+            out_features=self.config.output_shape,
+        )
 
     def forward(self, inputs: list, **kwargs):
         inputs = Tensor(inputs).reshape(1, -1)
