@@ -33,6 +33,7 @@ __all__ = [
     "register_preprocessor",
     "register_dataset",
     "register_embedding",
+    "trainers_registry",
 ]
 
 logger = get_logger(__name__)
@@ -41,6 +42,7 @@ models_registry = {}
 preprocessors_registry = {}
 datasets_registry = {}
 embeddings_registry = {}
+trainers_registry = {}
 
 criterions_registry = {
     "bce": nn.BCELoss,
@@ -50,7 +52,11 @@ criterions_registry = {
     "mse": nn.MSELoss,
     "ctc": nn.CTCLoss,
 }
-optimizers_registry = {"adam": optim.Adam, "adamw": optim.AdamW, "sgd": optim.SGD}
+optimizers_registry = {
+    "adam": optim.Adam,
+    "adamw": optim.AdamW,
+    "sgd": optim.SGD,
+}
 lr_schedulers_registry = {
     "reduce_on_plateau": optim.lr_scheduler.ReduceLROnPlateau,
     "cosine_lr": optim.lr_scheduler.CosineAnnealingLR,
@@ -159,6 +165,33 @@ def register_embedding(embedding_name: str, config_class):
                              f"embedding_name: {embedding_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
         embeddings_registry[embedding_name] = {"embedding_class": cls, "config_class": config_class}
+
+        return cls
+
+    return register
+
+
+def register_trainer(trainer_name: str, config_class):
+    """
+    A class decorator that adds the Trainer class and the config class to the `trainers_registry`
+
+    Args:
+        trainer_name: Trainer's registry name e.g, `text_classification_trainer`
+        config_class: Trainer's config class e.g, `TextClassificationTrainerConfig`.
+            This parameter must be the config class itself not a config instance!
+
+    Returns:
+         The class itself
+    """
+    def register(cls):
+        if trainer_name in trainers_registry:
+            logger.warning(f"Trainer `{trainer_name}` is already registered. Overwriting...")
+
+        if config_class.name != trainer_name:
+            raise ValueError(f"`trainer_name` and `config.name` are not compatible for `{cls.__name__}`\n"
+                             f"trainer_name: {trainer_name}\n"
+                             f"{config_class.__name__}.name: {config_class.name}")
+        trainers_registry[trainer_name] = {"trainer_class": cls, "config_class": config_class}
 
         return cls
 
