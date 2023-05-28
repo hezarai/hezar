@@ -2,7 +2,6 @@ from .model import *
 from .audio_classification import *
 from .image2text import *
 from .language_modeling import *
-from .question_answering import *
 from .sequence_labeling import *
 from .speech_recognition import *
 from .text_classification import *
