@@ -81,11 +81,11 @@ class FastText(Embedding):
         )
 
     def save(
-            self,
-            path: Union[str, os.PathLike],
-            filename: str = None,
-            save_config: bool = True,
-            config_filename: str = None,
+        self,
+        path: Union[str, os.PathLike],
+        filename: str = None,
+        save_config: bool = True,
+        config_filename: str = None,
     ):
         filename = filename or self.filename
         config_filename = config_filename or self.config_filename
