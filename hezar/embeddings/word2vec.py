@@ -98,5 +98,9 @@ class Word2Vec(Embedding):
         return self.model.wv
 
     @property
+    def vectors(self):
+        return self.model.wv.vectors
+
+    @property
     def vocab(self):
         return self.model.wv.key_to_index

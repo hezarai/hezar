@@ -130,12 +130,22 @@ class Embedding:
 
     def torch_embedding(self):
         import torch
-        weights = torch.FloatTensor(self.word_vectors.vectors)
+        weights = torch.FloatTensor(self.vectors)
         embedding_layer = torch.nn.Embedding.from_pretrained(weights)
         return embedding_layer
 
     @property
     def word_vectors(self):
+        """
+        Get key:value pairs of word:vector
+        """
+        raise NotImplementedError
+
+    @property
+    def vectors(self):
+        """
+        Get the all vectors array/tensor
+        """
         raise NotImplementedError
 
     @property
