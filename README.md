@@ -80,6 +80,7 @@ class PerceptronConfig(ModelConfig):
     input_shape: int = 4
     output_shape: int = 2
 
+
 class Perceptron(Model):
     """
     A simple single layer network
@@ -88,7 +89,7 @@ class Perceptron(Model):
     def __init__(self, config, **kwargs):
         super().__init__(config, **kwargs)
         self.nn = nn.Linear(
-            in_features=self.config.input_shape, 
+            in_features=self.config.input_shape,
             out_features=self.config.output_shape,
         )
 
@@ -97,12 +98,18 @@ class Perceptron(Model):
         x = self.nn(inputs)
         return x
 
+    def post_process(self, inputs, **kwargs):
+        # post-process forward outputs (optional method)
+        return inputs.numpy()  # convert torch tensor to numpy array
+
+
 model = Perceptron(PerceptronConfig())
 inputs = [1, 2, 3, 4]
-model.predict(inputs)
+outputs = model.predict(inputs)
+print(outputs)
 ```
 ```
-tensor([[1.6096, 0.4799]])
+[[-0.13248837  0.7039478 ]]
 ```
 As you can see, defining a new network is just like a typical PyTorch module, but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
 ```python
