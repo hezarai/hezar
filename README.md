@@ -23,12 +23,15 @@ pip install ./hezar
 ```
 
 ## Quick Tour
-### Use a model from Hub
+### Ready-to-use models from Hub
+There's a bunch of ready-to-use trained models for different tasks on the Hub. See them [here](https://huggingface.co/hezarai)!
+
+For example, you can grab a BERT-based model for sentiment analysis like so: 
 ```python
 from hezar import Model, Tokenizer
 
 # this is our Hub repo
-model_path = "hezarai/roberta-fa-sentiment-digikala-snappfood"
+model_path = "hezarai/bert-fa-sentiment-digikala-snappfood"
 # load model and tokenizer
 model = Model.load(model_path)
 tokenizer = Tokenizer.load(model_path)
@@ -43,14 +46,26 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.9960528612136841]}
 ```
-### Use a raw BERT for text classification
+### Build models from scratch
+Wanna use models without any pretrained weights? Easy!
+
+Build a raw BERT-based model for text classification with a single line of code!
 ```python
 from hezar import build_model
 
 model = build_model("bert_text_classification", id2label={0: "negative", 1: "positive"})
 print(model)
 ```
+You can also import model directly:
+```python
+from hezar import BertTextClassification, BertTextClassificationConfig
+
+bert_tc = BertTextClassification(BertTextClassificationConfig(num_labels=2))
+```
 ### Write your own model
+It's fairly easy to extend this library or add your own model. Hezar has its own `Model` base class that is simply a normal PyTorch `nn.Module` but with some extra features!
+
+Here's a simple example:
 ```python
 from dataclasses import dataclass
 
