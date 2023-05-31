@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Union
 
 import torch
@@ -55,12 +55,12 @@ class Config:
 
     def dict(self):
         """
-        Returns the config object as a dictionary
+        Returns the config object as a dictionary (works on nested dataclasses too)
 
         Returns:
             The config object as a dictionary
         """
-        return vars(self)
+        return asdict(self)
 
     def keys(self):
         return list(self.dict().keys())
