@@ -121,12 +121,13 @@ class Model(nn.Module):
                     compatible_state_dict[trg_key] = trg_weight
 
             missing_keys, incompatible_keys = super().load_state_dict(compatible_state_dict, strict=False)
-            logger.warning(
-                "Partially loading the weights as the model architecture and the given state dict are "
-                "incompatible! \nIgnore this warning in case you plan on fine-tuning this model\n"
-                f"Incompatible keys: {incompatible_keys}\n"
-                f"Missing keys: {missing_keys}\n"
-            )
+            if len(missing_keys) or len(incompatible_keys):
+                logger.warning(
+                    "Partially loading the weights as the model architecture and the given state dict are "
+                    "incompatible! \nIgnore this warning in case you plan on fine-tuning this model\n"
+                    f"Incompatible keys: {incompatible_keys}\n"
+                    f"Missing keys: {missing_keys}\n"
+                )
 
     def save(
         self,
