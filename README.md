@@ -111,7 +111,7 @@ print(outputs)
 ```
 [[-0.13248837  0.7039478 ]]
 ```
-As you can see, defining a new network is just like a typical PyTorch module, but instead you get access to some amazing functionalities out-of-the-box like pushing to the Hub!
+As you can see, defining a new network is just like a typical PyTorch module, but comes with some amazing functionalities out-of-the-box like pushing to the Hub!
 ```python
 hub_repo = "<your_hf_username>/my-awesome-perceptron"
 model.push_to_hub(hub_repo)
@@ -125,5 +125,5 @@ INFO: Uploaded: `Perceptron(name=preceptron)` --> `your_hf_username/my-awesome-p
 Refer to the [docs](docs) for a full documentation.
 
 ## Contribution
-This is a really heavy project to be maintained by a couple of developers. The idea isn't novel at all but actually doing it is really difficult hence it's the only one in the whole history of the Persian open source! So any contribution is appreciated ❤️
+This is a really heavy project to be maintained by a couple of developers. The idea isn't novel at all but actually doing it is really difficult hence being the only one in the whole history of the Persian open source! So any contribution is appreciated ❤️
 
