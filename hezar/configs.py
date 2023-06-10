@@ -156,7 +156,7 @@ class Config:
         OmegaConf.save(config, save_path)
         return save_path
 
-    def push_to_hub(self, repo_id, filename, subfolder="", repo_type="model", private=False, commit_message=None):
+    def push_to_hub(self, repo_id, filename, subfolder=None, repo_type="model", private=False, commit_message=None):
         """
         Push the config file to the hub
 
@@ -168,6 +168,7 @@ class Config:
             private (bool): Whether the repo type should be private or not (ignored if the repo exists)
             commit_message (str): Push commit message
         """
+        subfolder = subfolder or ""
         api = HfApi()
         api.create_repo(repo_id, repo_type=repo_type, private=private, exist_ok=True)
         cache_path = get_local_cache_path(repo_id, repo_type=repo_type)
