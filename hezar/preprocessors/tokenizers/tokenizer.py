@@ -309,7 +309,6 @@ class Tokenizer(Preprocessor):
         hub_or_local_path,
         config_filename=None,
         subfolder=None,
-        save_to_cache=False,
         **kwargs,
     ):
         config_filename = config_filename or cls.tokenizer_config_filename
@@ -321,9 +320,6 @@ class Tokenizer(Preprocessor):
         )
         config.pretrained_path = hub_or_local_path
         tokenizer = build_preprocessor(config.name, config, **kwargs)
-        if save_to_cache:
-            cache_path = get_local_cache_path(hub_or_local_path, repo_type="model")
-            tokenizer.save(cache_path)
         return tokenizer
 
     def save(self, path, save_config=True, pretty=True):
