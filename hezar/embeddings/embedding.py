@@ -1,4 +1,5 @@
 import os
+import tempfile
 from typing import Dict, List, Union
 
 from huggingface_hub import HfApi
@@ -94,8 +95,8 @@ class Embedding:
         api = HfApi()
         # create remote repo
         api.create_repo(repo_id, exist_ok=True)
-        # create local repo
-        cache_path = get_local_cache_path(repo_id, repo_type="model")
+        # save to tmp and prepare for push
+        cache_path = tempfile.mkdtemp()
         # save embedding model file
         embedding_save_dir = os.path.join(cache_path, subfolder)
         os.makedirs(embedding_save_dir, exist_ok=True)
