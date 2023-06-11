@@ -158,7 +158,14 @@ class Model(nn.Module):
             self.config.save(save_dir=path, filename=config_filename)
         return model_save_path
 
-    def push_to_hub(self, repo_id, filename=None, config_filename=None, commit_message=None, private=False):
+    def push_to_hub(
+        self,
+        repo_id,
+        filename=None,
+        config_filename=None,
+        commit_message=None,
+        private=False,
+    ):
         """
         Push the model and required files to the hub
 
