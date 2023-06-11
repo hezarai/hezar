@@ -1,10 +1,11 @@
 import os
+import tempfile
 from abc import abstractmethod
 from collections import OrderedDict
 from typing import Dict, Union
 
 import torch
-from huggingface_hub import HfApi, hf_hub_download
+from huggingface_hub import hf_hub_download, upload_file, create_repo
 from torch import nn
 
 from ..builders import build_model
@@ -172,11 +173,10 @@ class Model(nn.Module):
         config_filename = config_filename or self.config_filename
         filename = filename or self.model_filename
 
-        api = HfApi()
         # create remote repo
-        api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
-        # create local repo
-        cache_path = get_local_cache_path(repo_id, repo_type="model")
+        create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
+        # save to tmp and prepare for push
+        cache_path = tempfile.mkdtemp()
         model_save_path = self.save(
             cache_path,
             filename=filename,
@@ -193,7 +193,7 @@ class Model(nn.Module):
             commit_message=commit_message,
         )
         # upload model file
-        api.upload_file(
+        upload_file(
             path_or_fileobj=model_save_path,
             path_in_repo=filename,
             repo_id=repo_id,

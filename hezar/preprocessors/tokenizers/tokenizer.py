@@ -1,10 +1,11 @@
 import os
+import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List, Union
 
 import torch
-from huggingface_hub import HfApi
+from huggingface_hub import upload_file, create_repo
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.decoders import Decoder
 from tokenizers.models import Model
@@ -355,11 +356,10 @@ class Tokenizer(Preprocessor):
         tokenizer_filename = tokenizer_filename or self.tokenizer_filename
         config_filename = config_filename or self.tokenizer_config_filename
 
-        api = HfApi()
         # create remote repo
-        api.create_repo(repo_id, exist_ok=True, private=private)
-        # create local repo
-        cache_path = get_local_cache_path(repo_id, repo_type="model")
+        create_repo(repo_id, exist_ok=True, private=private)
+        # save to tmp and prepare for push
+        cache_path = tempfile.mkdtemp()
         # save tokenizer.json
         tokenizer_save_path = os.path.join(cache_path, subfolder, tokenizer_filename)
         os.makedirs(os.path.join(cache_path, subfolder), exist_ok=True)
@@ -376,7 +376,7 @@ class Tokenizer(Preprocessor):
             commit_message=commit_message,
         )
         # upload tokenizer
-        api.upload_file(
+        upload_file(
             repo_id=repo_id,
             path_or_fileobj=tokenizer_save_path,
             repo_type="model",

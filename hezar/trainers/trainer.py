@@ -1,10 +1,11 @@
 import os
 import random
+import tempfile
 from typing import Dict
 
 import numpy as np
 import torch
-from huggingface_hub import HfApi, hf_hub_download, upload_folder
+from huggingface_hub import hf_hub_download, upload_folder, create_repo
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
@@ -358,11 +359,10 @@ class Trainer:
         subfolder = subfolder or self.trainer_subfolder
         dataset_config_file = dataset_config_filename or self.dataset_config_file
 
-        api = HfApi()
         # create remote repo
-        api.create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
-        # create local repo
-        cache_path = get_local_cache_path(repo_id, repo_type="model")
+        create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
+        # save to tmp and prepare for push
+        cache_path = tempfile.mkdtemp()
 
         self.save(
             cache_path,

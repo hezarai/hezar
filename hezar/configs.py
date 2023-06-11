@@ -1,9 +1,10 @@
 import os
+import tempfile
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Union
 
 import torch
-from huggingface_hub import HfApi, hf_hub_download
+from huggingface_hub import hf_hub_download, create_repo, upload_file
 from omegaconf import DictConfig, OmegaConf
 
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR
@@ -168,17 +169,20 @@ class Config:
             private (bool): Whether the repo type should be private or not (ignored if the repo exists)
             commit_message (str): Push commit message
         """
+        path_in_repo = f"{subfolder}/{filename}" if subfolder else filename
         subfolder = subfolder or ""
-        api = HfApi()
-        api.create_repo(repo_id, repo_type=repo_type, private=private, exist_ok=True)
-        cache_path = get_local_cache_path(repo_id, repo_type=repo_type)
+
+        # create remote repo
+        create_repo(repo_id, repo_type=repo_type, private=private, exist_ok=True)
+        # save to tmp and prepare for push
+        cache_path = tempfile.mkdtemp()
         config_path = self.save(cache_path, filename=filename, subfolder=subfolder)
         # push to hub
         if commit_message is None:
             commit_message = f"Hezar: Upload {filename}"
-        api.upload_file(
+        upload_file(
             path_or_fileobj=config_path,
-            path_in_repo=f"{subfolder}/{filename}",
+            path_in_repo=path_in_repo,
             repo_id=repo_id,
             commit_message=commit_message,
         )
