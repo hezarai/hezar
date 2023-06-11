@@ -5,14 +5,13 @@ from collections import OrderedDict
 from typing import Dict, Union
 
 import torch
-from huggingface_hub import hf_hub_download, upload_file, create_repo
+from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
 from ..utils import get_logger
-from ..utils.hub_utils import get_local_cache_path
 
 
 __all__ = [

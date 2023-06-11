@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Union
 
 import torch
-from huggingface_hub import upload_file, create_repo
+from huggingface_hub import create_repo, upload_file
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.decoders import Decoder
 from tokenizers.models import Model
@@ -14,7 +14,7 @@ from ...builders import build_preprocessor
 from ...configs import Config, PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
 from ...data.utils import convert_batch_dict_dtype
-from ...utils import get_local_cache_path, get_logger
+from ...utils import get_logger
 from ..preprocessor import Preprocessor
 
 

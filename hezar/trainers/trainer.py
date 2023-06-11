@@ -5,7 +5,7 @@ from typing import Dict
 
 import numpy as np
 import torch
-from huggingface_hub import hf_hub_download, upload_folder, create_repo
+from huggingface_hub import create_repo, hf_hub_download, upload_folder
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
@@ -22,7 +22,7 @@ from ..constants import (
 )
 from ..data.datasets import Dataset
 from ..models import Model
-from ..utils import get_local_cache_path, get_logger
+from ..utils import get_logger
 from .trainer_utils import MetricsManager, write_to_tensorboard
 
 

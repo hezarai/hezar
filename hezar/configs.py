@@ -1,14 +1,14 @@
 import os
 import tempfile
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
 import torch
-from huggingface_hub import hf_hub_download, create_repo, upload_file
+from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR
-from .utils import get_local_cache_path, get_logger, get_module_config_class
+from .utils import get_logger, get_module_config_class
 
 
 __all__ = [
