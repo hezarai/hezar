@@ -157,7 +157,15 @@ class Config:
         OmegaConf.save(config, save_path)
         return save_path
 
-    def push_to_hub(self, repo_id, filename, subfolder=None, repo_type="model", private=False, commit_message=None):
+    def push_to_hub(
+        self,
+        repo_id,
+        filename,
+        subfolder=None,
+        repo_type="model",
+        private=False,
+        commit_message=None,
+    ):
         """
         Push the config file to the hub
 
