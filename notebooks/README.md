@@ -1,5 +1,4 @@
-# Notebooks
-In this section, we provide a list of the notebooks that use Hezar. Most of these notebooks have a tutorial perspective regarding different features of Hezar. 
+# Notebooks 
 
 |                                             Notebook                                             |                Description                |
 |:------------------------------------------------------------------------------------------------:|:-----------------------------------------:|

@@ -111,7 +111,7 @@ print(outputs)
 ```
 [[-0.13248837  0.7039478 ]]
 ```
-As you can see, defining a new network is just like a typical PyTorch module, but comes with some amazing functionalities out-of-the-box like pushing to the Hub!
+As you can see, defining a new model is just like a typical PyTorch module, but comes with some amazing functionalities out-of-the-box like pushing to the Hub!
 ```python
 hub_repo = "<your_hf_username>/my-awesome-perceptron"
 model.push_to_hub(hub_repo)
