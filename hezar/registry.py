@@ -33,7 +33,6 @@ __all__ = [
     "register_preprocessor",
     "register_dataset",
     "register_embedding",
-    "trainers_registry",
 ]
 
 logger = get_logger(__name__)
