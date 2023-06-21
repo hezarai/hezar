@@ -1,3 +1,17 @@
+"""
+Configs are at the core of Hezar. All core modules like `Model`, `Preprocessor`, `Trainer`, etc. take their parameters
+as a config container which is an instance of `Config` or its derivatives. A `Config` is a Python dataclass with
+auxiliary methods for loading, saving, uploading to the hub and etc.
+
+Examples:
+    >>> from hezar import ModelConfig
+    >>> config = ModelConfig.load("hezarai/bert-base-fa")
+
+    >>> from hezar import BertLMConfig
+    >>> bert_config = BertLMConfig(vocab_size=50000, hidden_size=768)
+    >>> bert_config.save("saved/bert")
+    >>> bert_config.push_to_hub("hezarai/bert-custom")
+"""
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field
@@ -138,7 +152,7 @@ class Config:
 
         return config
 
-    def save(self, save_dir, filename, subfolder=None):
+    def save(self, save_dir: Union[str, os.PathLike], filename: str, subfolder: Optional[str] = None):
         """
         Save the *config.yaml file to a local path
 
@@ -159,12 +173,12 @@ class Config:
 
     def push_to_hub(
         self,
-        repo_id,
-        filename,
-        subfolder=None,
-        repo_type="model",
-        private=False,
-        commit_message=None,
+        repo_id: str,
+        filename: str,
+        subfolder: Optional[str] = None,
+        repo_type: Optional[str] = "model",
+        private: Optional[bool] = False,
+        commit_message: Optional[str] = None,
     ):
         """
         Push the config file to the hub
