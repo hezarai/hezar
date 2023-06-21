@@ -1,8 +1,17 @@
+"""
+Hezar models inherit the base class `Model`. A `Model` itself is a PyTorch Module to implement neural networks but has
+some extra Hezar-specific functionalities and methods e.g, pushing to hub, loading from hub, etc.
+
+Examples:
+    >>> # Load from hub
+    >>> from hezar import Model
+    >>> model = Model.load("hezarai/bert-base-fa")
+"""
 import os
 import tempfile
 from abc import abstractmethod
 from collections import OrderedDict
-from typing import Dict, Union
+from typing import Dict, Union, Mapping, Any, Optional
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -24,7 +33,7 @@ logger = get_logger(__name__)
 
 class Model(nn.Module):
     """
-    A base model for all models in Hezar.
+    A base model for all neural-based models in Hezar.
 
     Args:
         config: A dataclass model config
@@ -40,11 +49,11 @@ class Model(nn.Module):
     @classmethod
     def load(
         cls,
-        hub_or_local_path,
-        load_locally=False,
-        model_filename=None,
-        config_filename=None,
-        save_path=None,
+        hub_or_local_path: Union[str, os.PathLike],
+        load_locally: Optional[bool] = False,
+        model_filename: Optional[str] = None,
+        config_filename: Optional[str] = None,
+        save_path: Optional[Union[str, os.PathLike]] = None,
         **kwargs,
     ):
         """
@@ -99,7 +108,7 @@ class Model(nn.Module):
             model.save(save_path)
         return model
 
-    def load_state_dict(self, state_dict, **kwargs):
+    def load_state_dict(self, state_dict: Mapping[str, Any], **kwargs):
         """
         Flexibly load the state dict to the model.
 
@@ -132,9 +141,9 @@ class Model(nn.Module):
     def save(
         self,
         path: Union[str, os.PathLike],
-        filename: str = None,
-        save_config: bool = True,
-        config_filename: str = None,
+        filename: Optional[str] = None,
+        save_config: Optional[bool] = True,
+        config_filename: Optional[str] = None,
     ):
         """
         Save model weights and config to a local path
@@ -160,11 +169,11 @@ class Model(nn.Module):
 
     def push_to_hub(
         self,
-        repo_id,
-        filename=None,
-        config_filename=None,
-        commit_message=None,
-        private=False,
+        repo_id: str,
+        filename: Optional[str] = None,
+        config_filename: Optional[str] = None,
+        commit_message: Optional[str] = None,
+        private: Optional[bool] = False,
     ):
         """
         Push the model and required files to the hub
