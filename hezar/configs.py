@@ -103,7 +103,13 @@ class Config:
         return self
 
     @classmethod
-    def load(cls, hub_or_local_path: Union[str, os.PathLike], filename=None, subfolder=None, **kwargs):
+    def load(
+        cls,
+        hub_or_local_path: Union[str, os.PathLike],
+        filename: Optional[str] = None,
+        subfolder: Optional[str] = None,
+        **kwargs,
+    ):
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
 
