@@ -6,7 +6,7 @@ from datasets import load_dataset
 from ...configs import DatasetConfig
 from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
-# TODO import sequence labeling data collator here after it's implemented
+from ..data_collators import SequenceLabelingDataCollator
 from .dataset import Dataset
 
 
@@ -42,7 +42,7 @@ class SequenceLabelingDataset(Dataset):
         self._extract_labels()
         self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
         self.normalizer = Sequential(self.config.normalizers)
-        self.data_collator = ...  # TODO: change this after the data collator is implemented
+        self.data_collator = SequenceLabelingDataCollator(self.tokenizer)
 
     def _load(self, split):
         """
@@ -78,7 +78,7 @@ class SequenceLabelingDataset(Dataset):
             padding=True,
             truncation=True,
         )
-        word_ids = tokenized_inputs["word_ids"][0]  # we deal with single inputs (batch_size=1)
+        word_ids = tokenized_inputs["word_ids"]
 
         previous_word_idx = None
         label_ids = []
