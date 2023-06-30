@@ -7,14 +7,14 @@ __all__ = [
 ]
 
 
-def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = "list", skip: list = None):
+def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = "list", skip_keys: list = None):
     """
     Convert data dtypes of the values in a batch dict
 
     Args:
         batch_dict: The batched dictionary
         dtype: Target data type to convert to
-        skip: A list of key names to skip conversion
+        skip_keys: A list of key names to skip conversion
 
     Returns:
         The same dict with cast values
@@ -22,8 +22,8 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = "list", sk
     import numpy as np
     import torch
 
-    skip = skip or []
-    skip += get_str_keys(batch_dict)
+    skip_keys = skip_keys or []
+    skip_keys += get_str_keys(batch_dict)
     if dtype == "list":
         for k, v in batch_dict.items():
             if isinstance(v, np.ndarray):
@@ -33,7 +33,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = "list", sk
         return batch_dict
     caster = np.ndarray if dtype in ["np", "numpy"] else torch.tensor
     for k, v in batch_dict.items():
-        if k not in skip:
+        if k not in skip_keys:
             batch_dict[k] = caster(v)
     return batch_dict
 
