@@ -92,6 +92,7 @@ class Tokenizer(Preprocessor):
         return_special_tokens_mask: bool = True,
         return_offsets_mapping: bool = False,
         return_length: bool = False,
+        return_word_ids: bool = False,
         verbose: bool = True,
         **kwargs,
     ):
@@ -153,6 +154,7 @@ class Tokenizer(Preprocessor):
                 return_special_tokens_mask=return_special_tokens_mask,
                 return_offsets_mapping=return_offsets_mapping,
                 return_length=return_length,
+                return_word_ids=return_word_ids,
             )
             for encoding in encodings
         ]
@@ -231,6 +233,7 @@ class Tokenizer(Preprocessor):
         return_special_tokens_mask: bool = False,
         return_offsets_mapping: bool = False,
         return_length: bool = False,
+        return_word_ids: bool = False,
     ):
         if return_overflowing_tokens and encoding.overflowing is not None:
             encodings = [encoding] + encoding.overflowing
@@ -253,6 +256,8 @@ class Tokenizer(Preprocessor):
                 encoding_dict["length"].append(len(e.ids))
             if return_tokens:
                 encoding_dict["tokens"].append(e.tokens)
+            if return_word_ids:
+                encoding_dict["word_ids"].append(e.word_ids)
 
         return encoding_dict
 
