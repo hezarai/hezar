@@ -2,7 +2,7 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Mapping, Optional
 
 import torch
 from huggingface_hub import create_repo, upload_file
@@ -67,13 +67,78 @@ class Tokenizer(Preprocessor):
         if isinstance(inputs, str):
             inputs = [inputs]
         elif isinstance(inputs, list) and is_pretokenized:
-            inputs = [inputs]
+            if isinstance(inputs[0], str):
+                inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
     def decode(self, ids: List[int], skip_special_tokens: bool = True) -> str:
         if isinstance(ids[0], list):
             return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
         return self._tokenizer.decode(ids, skip_special_tokens=skip_special_tokens)
+
+    def pad_encoded_batch(
+        self,
+        inputs,
+        padding: Union[bool, str] = None,
+        max_length: Optional[int] = None,
+        return_tensors: Optional[str] = None,
+        skip_keys: list = None,
+    ):
+
+        if isinstance(inputs, (list, tuple)) and isinstance(inputs[0], Mapping):
+            inputs = {key: [example[key] for example in inputs] for key in inputs[0].keys()}
+
+        inputs_max_length = max([len(x) for x in inputs[self.token_ids_name]])
+        # resolve padding and max_length parameters
+        padding = padding or self.config.padding_strategy
+
+        if padding is None:
+            if max_length is not None:
+                padding = "max_length"
+            elif max_length is None:
+                logger.warning(f"Both padding and max_length are None so the inputs cannot be padded!")
+                return inputs
+
+        if padding == "longest":
+            if max_length is not None:
+                logger.warning(f"Setting padding='longest' and max_length is not valid. You must set one of them"
+                               f"and leave the other as None. Falling back to padding='longest'")
+
+            inputs_length = inputs_max_length
+
+        elif padding == "max_length":
+            if max_length is None:
+                logger.warning(f"Setting padding='max_length' but no max_length value is provided in the function "
+                               f"parameters nor the tokenizer config! Falling back to padding='longest'")
+                inputs_length = inputs_max_length
+            else:
+                # TODO implement truncation if possible and remove this condition
+                if max_length <= inputs_max_length:
+                    logger.warning(f"Setting max_length to {max_length} while max input length is {inputs_max_length}!"
+                                   f"Falling back to padding='longest' "
+                                   f"since truncation is not available yet in Hezar :(")
+                    inputs_length = inputs_max_length
+                else:
+                    inputs_length = max_length
+
+        inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=skip_keys)
+
+        skip_keys = skip_keys or []
+        for field, batch in inputs.items():
+            if field in skip_keys:
+                continue
+            padding_id = 0 if field == "attention_mask" else self.config.pad_token_id
+            padded_batch = []
+            for x in batch:
+                difference = inputs_length - len(x)
+                paddings = [padding_id] * difference
+                padded_x = x + paddings if self.config.padding_direction == "right" else paddings + x
+                padded_batch.append(padded_x)
+            inputs[field] = padded_batch
+
+        inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors)
+
+        return inputs
 
     def __call__(
         self,
@@ -173,6 +238,12 @@ class Tokenizer(Preprocessor):
             for i, encodings_ in enumerate(encodings_dict):
                 overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
+
+        if return_tensors == "list" or return_tensors is None:
+            sanitized_outputs = {
+                key: value[0] if len(value) > 0 and isinstance(value[0], list) else value
+                for key, value in sanitized_outputs.items()
+            }
 
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors)
         if device and return_tensors == "pt":
