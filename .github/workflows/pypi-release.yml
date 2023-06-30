@@ -3,7 +3,7 @@ name: Release On Pypi
 on:
   push:
     tags:
-      - 'v*.*.*' # Push events to matching v*, i.e. v1.0.0, v20.15.10
+      - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
 
 jobs:
   build:
