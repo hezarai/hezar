@@ -42,9 +42,9 @@ jobs:
 #        run: |
 #          python setup.py sdist bdist_wheel
 #          python -m twine upload dist/*
-      - name: Publish package to CodeArtifact
+      - name: Publish package to PYPI
         run: |
-            poetry config pypi-token.pypi "${{ env.PYPI_TOKEN }}" 
+            poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}" 
             poetry publish --build
     needs:
       - build
