@@ -1,2 +1,3 @@
 from .dataset import Dataset
 from .text_classification_dataset import TextClassificationDataset, TextClassificationDatasetConfig
+from .sequence_labeling_dataset import SequenceLabelingDataset, SequenceLabelingDatasetConfig
