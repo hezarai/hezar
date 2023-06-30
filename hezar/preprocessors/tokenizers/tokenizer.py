@@ -66,6 +66,8 @@ class Tokenizer(Preprocessor):
     def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True):
         if isinstance(inputs, str):
             inputs = [inputs]
+        elif isinstance(inputs, list) and is_pretokenized:
+            inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
     def decode(self, ids: List[int], skip_special_tokens: bool = True) -> str:
