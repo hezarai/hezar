@@ -16,7 +16,12 @@ Hezar is a library that:
 - and more!
 
 ## Installation
-Clone the repo and run:
+Hezar is available on PyPI and can be installed with pip:
+```commandline
+pip install hezar
+```
+You can also install the latest version from the source.
+Clone the repo and execute the following commands:
 ```commandline
 git clone https://github.com/hezarai/hezar.git
 pip install ./hezar
