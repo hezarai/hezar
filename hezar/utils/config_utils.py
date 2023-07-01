@@ -14,6 +14,7 @@ __all__ = [
     "load_json_config",
     "hezar_config_to_hf_config",
     "get_module_config_class",
+    "get_module_class",
 ]
 
 logger = get_logger(__name__)
@@ -94,7 +95,7 @@ def get_module_config_class(name: str, config_type: str):
 
         registry = datasets_registry
     elif config_type == "embedding":
-        from ..registry import embeddings_registry
+        from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
 
     else:
@@ -102,3 +103,37 @@ def get_module_config_class(name: str, config_type: str):
 
     config_cls = registry[name]["config_class"]
     return config_cls
+
+
+def get_module_class(name: str, module_type: str):
+    """
+    Get module class based on registry name
+
+    Args:
+        name: Module's key name in its registry
+        module_type: Type of the module e.g, model, dataset, preprocessor, embedding, etc
+
+    Returns:
+        A class corresponding to the given module
+    """
+    if module_type == "model":
+        from ..registry import models_registry  # noqa
+
+        registry = models_registry
+    elif module_type == "preprocessor":
+        from ..registry import preprocessors_registry  # noqa
+
+        registry = preprocessors_registry
+    elif module_type == "dataset":
+        from ..registry import datasets_registry  # noqa
+
+        registry = datasets_registry
+    elif module_type == "embedding":
+        from ..registry import embeddings_registry  # noqa
+        registry = embeddings_registry
+
+    else:
+        raise ValueError(f"Invalid `config_type`: {module_type}!")
+
+    module_cls = registry[name][f"{module_type}_class"]
+    return module_cls
