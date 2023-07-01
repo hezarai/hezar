@@ -108,6 +108,7 @@ class Config:
         hub_or_local_path: Union[str, os.PathLike],
         filename: Optional[str] = None,
         subfolder: Optional[str] = None,
+        repo_type=None,
         **kwargs,
     ):
         """
@@ -117,6 +118,7 @@ class Config:
             hub_or_local_path: Local or Hub path for the config
             filename: Configuration filename
             subfolder: Optional subfolder path where the config is in
+            repo_type: Repo type e.g, model, dataset, etc
             **kwargs: Manual config parameters to override
 
         Returns:
@@ -138,6 +140,7 @@ class Config:
                 filename=filename,
                 subfolder=subfolder,
                 cache_dir=HEZAR_CACHE_DIR,
+                repo_type=repo_type,
             )
 
         dict_config = OmegaConf.load(config_path)
@@ -212,6 +215,7 @@ class Config:
             path_or_fileobj=config_path,
             path_in_repo=path_in_repo,
             repo_id=repo_id,
+            repo_type=repo_type,
             commit_message=commit_message,
         )
         logger.info(
