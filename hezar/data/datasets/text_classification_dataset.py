@@ -7,8 +7,11 @@ from datasets import load_dataset
 from ...configs import DatasetConfig
 from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
+from ...utils import get_logger
 from ..data_collators import TextPaddingDataCollator
 from .dataset import Dataset
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -39,7 +42,7 @@ class TextClassificationDataset(Dataset):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.tokenizer = self._build_tokenizer()
         self.normalizer = Sequential(self.config.normalizers)
         self.data_collator = TextPaddingDataCollator(
             tokenizer=self.tokenizer,
@@ -59,6 +62,15 @@ class TextClassificationDataset(Dataset):
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split)
         return dataset
+
+    def _build_tokenizer(self):
+        if self.config.tokenizer_path:
+            tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        else:
+            logger.warning(f"This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
+                           f"or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
+            tokenizer = None
+        return tokenizer
 
     def _extract_labels(self):
         """

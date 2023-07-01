@@ -7,7 +7,10 @@ from ...configs import DatasetConfig
 from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
 from ..data_collators import SequenceLabelingDataCollator
+from ...utils import get_logger
 from .dataset import Dataset
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -40,9 +43,10 @@ class SequenceLabelingDataset(Dataset):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.tokenizer = self._build_tokenizer()
         self.normalizer = Sequential(self.config.normalizers)
-        self.data_collator = SequenceLabelingDataCollator(self.tokenizer)
+        if self.tokenizer:
+            self.data_collator = SequenceLabelingDataCollator(self.tokenizer)
 
     def _load(self, split):
         """
@@ -58,8 +62,14 @@ class SequenceLabelingDataset(Dataset):
         dataset = load_dataset(self.config.path, split=split)
         return dataset
 
-    def __len__(self):
-        return len(self.dataset)
+    def _build_tokenizer(self):
+        if self.config.tokenizer_path:
+            tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        else:
+            logger.warning(f"This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
+                           f"or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
+            tokenizer = None
+        return tokenizer
 
     def _extract_labels(self):
         """
@@ -69,6 +79,9 @@ class SequenceLabelingDataset(Dataset):
         self.id2label = self.config.id2label = {k: str(v) for k, v in dict(list(enumerate(tags_list))).items()}
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(tags_list)
+
+    def __len__(self):
+        return len(self.dataset)
 
     def _tokenize_and_align(self, tokens, labels):
         tokenized_inputs = self.tokenizer(
