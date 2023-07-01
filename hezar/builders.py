@@ -10,6 +10,8 @@ Examples:
     >>> print(model)
 
 """
+from typing import Optional
+
 
 from .registry import (  # noqa
     models_registry,  # noqa
@@ -19,6 +21,12 @@ from .registry import (  # noqa
     criterions_registry,  # noqa
     optimizers_registry,  # noqa
     lr_schedulers_registry,  # noqa
+)
+from .configs import (
+    ModelConfig,
+    PreprocessorConfig,
+    DatasetConfig,
+    EmbeddingConfig,
 )
 
 __all__ = [
@@ -32,7 +40,7 @@ __all__ = [
 ]
 
 
-def build_model(name: str, config=None, **kwargs):
+def build_model(name: str, config: Optional[ModelConfig] = None, **kwargs):
     """
     Build the model using its registry name. If config is None then the model is built using the default config. Notice
     that this function only builds the model and does not perform any weights loading/initialization unless these
@@ -54,7 +62,7 @@ def build_model(name: str, config=None, **kwargs):
     return model
 
 
-def build_preprocessor(name: str, config=None, **kwargs):
+def build_preprocessor(name: str, config: Optional[PreprocessorConfig] = None, **kwargs):
     """
     Build the preprocessor using its registry name. If config is None then the preprocessor is built using the
     default config.
@@ -75,7 +83,7 @@ def build_preprocessor(name: str, config=None, **kwargs):
     return preprocessor
 
 
-def build_dataset(name: str, config=None, split=None, **kwargs):
+def build_dataset(name: str, config: Optional[DatasetConfig] = None, split=None, **kwargs):
     """
     Build the dataset using its registry name. If config is None then the dataset is built using the
     default config.
@@ -97,7 +105,7 @@ def build_dataset(name: str, config=None, split=None, **kwargs):
     return dataset
 
 
-def build_embedding(name: str, config=None, **kwargs):
+def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwargs):
     """
     Build the embedding using its registry name. If config is None then the embedding is built using the
     default config.
