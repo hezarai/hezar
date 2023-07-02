@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 __all__ = [
     "convert_batch_dict_dtype",
-    "get_str_keys",
+    "get_non_numeric_keys",
 ]
 
 
@@ -25,7 +25,6 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
     dtype = dtype or "list"
     skip_keys = skip_keys or []
 
-    skip_keys += get_str_keys(batch_dict)
     if dtype == "list":
         for k, v in batch_dict.items():
             if isinstance(v, np.ndarray):
@@ -43,11 +42,14 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
 
     for k, v in batch_dict.items():
         if k not in skip_keys:
-            batch_dict[k] = caster(v)
+            try:
+                batch_dict[k] = caster(v)
+            except Exception as e:
+                continue
     return batch_dict
 
 
-def get_str_keys(d: Dict, batched=True):
+def get_non_numeric_keys(d: Dict, batched=True):
     """
     Get keys that have string values in a dictionary
 
@@ -61,7 +63,7 @@ def get_str_keys(d: Dict, batched=True):
     keys = []
     for k, v in d.items():
         if len(v) and isinstance(v[0], list):
-            if batched and isinstance(v[0][0], str):
+            if batched and not isinstance(v[0][0], (int, float, complex)) and not isinstance(v[0][0], bool):
                 keys.append(k)
             elif isinstance(v[0], str):
                 keys.append(k)
