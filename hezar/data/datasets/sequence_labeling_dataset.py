@@ -9,6 +9,7 @@ from ...registry import register_dataset
 from ..data_collators import SequenceLabelingDataCollator
 from ...utils import get_logger
 from .dataset import Dataset
+from ...constants import Task
 
 logger = get_logger(__name__)
 
@@ -16,7 +17,7 @@ logger = get_logger(__name__)
 @dataclass
 class SequenceLabelingDatasetConfig(DatasetConfig):
     name: str = "sequence_labeling"
-    task: str = "sequence_labeling"
+    task: str = Task.SEQUENCE_LABELING
     path: str = None
     normalizers: List[Tuple[str, Dict]] = None
     tokenizer_path: str = None

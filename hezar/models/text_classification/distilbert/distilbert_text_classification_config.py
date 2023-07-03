@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 
 from ....configs import ModelConfig
+from ....constants import Task
 
 
 @dataclass
 class DistilBertTextClassificationConfig(ModelConfig):
     name: str = "distilbert_text_classification"
-    task: str = "text_classification"
+    task: str = Task.TEXT_CLASSIFICATION
     num_labels: int = None
     id2label: dict = None
     activation: str = "gelu"
