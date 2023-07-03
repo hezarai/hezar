@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from ....configs import ModelConfig
 from ....constants import Task
 
+
 @dataclass
 class DistilBertLMConfig(ModelConfig):
     name: str = "distilbert_lm"

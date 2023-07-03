@@ -12,22 +12,22 @@ Examples:
 """
 from typing import Optional
 
-
-from .registry import (  # noqa
-    models_registry,  # noqa
-    preprocessors_registry,  # noqa
-    datasets_registry,  # noqa
-    embeddings_registry, # noqa
-    criterions_registry,  # noqa
-    optimizers_registry,  # noqa
-    lr_schedulers_registry,  # noqa
-)
 from .configs import (
-    ModelConfig,
-    PreprocessorConfig,
     DatasetConfig,
     EmbeddingConfig,
+    ModelConfig,
+    PreprocessorConfig,
 )
+from .registry import (  # noqa
+    criterions_registry,  # noqa
+    datasets_registry,  # noqa
+    embeddings_registry,  # noqa
+    lr_schedulers_registry,  # noqa
+    models_registry,  # noqa
+    optimizers_registry,  # noqa
+    preprocessors_registry,  # noqa
+)
+
 
 __all__ = [
     "build_model",

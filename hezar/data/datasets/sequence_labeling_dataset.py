@@ -4,12 +4,13 @@ from typing import Dict, List, Tuple
 from datasets import load_dataset
 
 from ...configs import DatasetConfig
+from ...constants import Task
 from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
-from ..data_collators import SequenceLabelingDataCollator
 from ...utils import get_logger
+from ..data_collators import SequenceLabelingDataCollator
 from .dataset import Dataset
-from ...constants import Task
+
 
 logger = get_logger(__name__)
 
@@ -67,8 +68,8 @@ class SequenceLabelingDataset(Dataset):
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
-            logger.warning(f"This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                           f"or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
+            logger.warning("This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
+                           "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
             tokenizer = None
         return tokenizer
 

@@ -12,6 +12,7 @@ from ...utils import get_logger
 from ..data_collators import TextPaddingDataCollator
 from .dataset import Dataset
 
+
 logger = get_logger(__name__)
 
 
@@ -68,8 +69,8 @@ class TextClassificationDataset(Dataset):
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
-            logger.warning(f"This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                           f"or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
+            logger.warning("This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
+                           "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
             tokenizer = None
         return tokenizer
 

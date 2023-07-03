@@ -25,12 +25,13 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 """
 
 from dataclasses import dataclass
-from typing import Type, Dict
+from typing import Dict, Type
 
 from torch import nn, optim
 
+from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainConfig
 from .utils import get_logger
-from .configs import ModelConfig, PreprocessorConfig, EmbeddingConfig, DatasetConfig, TrainConfig
+
 
 __all__ = [
     "register_model",
@@ -94,6 +95,7 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
             raise ValueError(f"`model_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"model_name: {model_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
+
         models_registry[model_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -125,6 +127,7 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
             raise ValueError(f"`dataset_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"dataset_name: {dataset_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
+
         datasets_registry[dataset_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -156,6 +159,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
             raise ValueError(f"`preprocessor_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"preprocessor_name: {preprocessor_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
+
         preprocessors_registry[preprocessor_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -187,6 +191,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
             raise ValueError(f"`embedding_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"embedding_name: {embedding_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
+
         embeddings_registry[embedding_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -218,6 +223,7 @@ def register_trainer(trainer_name: str, config_class: Type[TrainConfig]):
             raise ValueError(f"`trainer_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"trainer_name: {trainer_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
+
         trainers_registry[trainer_name] = Registry(
             module_class=cls,
             config_class=config_class,

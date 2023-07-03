@@ -1,5 +1,5 @@
 import os
-from typing import Union, Optional
+from typing import Optional, Union
 
 from torch.utils.data import Dataset as TorchDataset
 

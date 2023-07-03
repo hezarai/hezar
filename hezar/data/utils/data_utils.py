@@ -44,7 +44,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
         if k not in skip_keys:
             try:
                 batch_dict[k] = caster(v)
-            except Exception as e:
+            except Exception as e:  # noqa
                 continue
     return batch_dict
 

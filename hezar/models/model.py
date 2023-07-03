@@ -11,7 +11,7 @@ import os
 import tempfile
 from abc import abstractmethod
 from collections import OrderedDict
-from typing import Dict, Union, Mapping, Any, Optional
+from typing import Any, Dict, Mapping, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file

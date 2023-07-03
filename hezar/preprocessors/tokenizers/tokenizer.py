@@ -2,7 +2,7 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Union, Mapping, Optional
+from typing import Dict, List, Mapping, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, upload_file
@@ -96,20 +96,20 @@ class Tokenizer(Preprocessor):
             if max_length is not None:
                 padding = "max_length"
             elif max_length is None:
-                logger.warning(f"Both padding and max_length are None so the inputs cannot be padded!")
+                logger.warning("Both padding and max_length are None so the inputs cannot be padded!")
                 return inputs
 
         if padding == "longest":
             if max_length is not None:
-                logger.warning(f"Setting padding='longest' and max_length is not valid. You must set one of them"
-                               f"and leave the other as None. Falling back to padding='longest'")
+                logger.warning("Setting padding='longest' and max_length is not valid. You must set one of them"
+                               "and leave the other as None. Falling back to padding='longest'")
 
             inputs_length = inputs_max_length
 
         elif padding == "max_length":
             if max_length is None:
-                logger.warning(f"Setting padding='max_length' but no max_length value is provided in the function "
-                               f"parameters nor the tokenizer config! Falling back to padding='longest'")
+                logger.warning("Setting padding='max_length' but no max_length value is provided in the function "
+                               "parameters nor the tokenizer config! Falling back to padding='longest'")
                 inputs_length = inputs_max_length
             else:
                 # TODO implement truncation if possible and remove this condition
