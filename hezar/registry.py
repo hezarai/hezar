@@ -7,8 +7,9 @@ Examples:
     >>> # read models registry
     >>> from hezar.registry import models_registry
     >>> print(models_registry)
-    {'distilbert_lm': {'model_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
-    'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>}}
+    {'distilbert_lm': {'module_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
+    'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>},
+    'doc': ''}
 
     >>> # add a model class to models_registry
     >>> from hezar import Model, register_model
@@ -23,10 +24,13 @@ using a module's registry name in `hezar.builders` module. See the file `builder
 Note: In case of adding a new registry container, make sure to add to `__all__` below!
 """
 
+from dataclasses import dataclass
+from typing import Type, Dict
+
 from torch import nn, optim
 
 from .utils import get_logger
-
+from .configs import ModelConfig, PreprocessorConfig, EmbeddingConfig, DatasetConfig, TrainConfig
 
 __all__ = [
     "register_model",
@@ -37,11 +41,19 @@ __all__ = [
 
 logger = get_logger(__name__)
 
-models_registry = {}
-preprocessors_registry = {}
-datasets_registry = {}
-embeddings_registry = {}
-trainers_registry = {}
+
+@dataclass
+class Registry:
+    module_class: type
+    config_class: type
+    doc: str
+
+
+models_registry: Dict[str, Registry] = {}
+preprocessors_registry: Dict[str, Registry] = {}
+datasets_registry: Dict[str, Registry] = {}
+embeddings_registry: Dict[str, Registry] = {}
+trainers_registry: Dict[str, Registry] = {}
 
 criterions_registry = {
     "bce": nn.BCELoss,
@@ -62,7 +74,7 @@ lr_schedulers_registry = {
 }
 
 
-def register_model(model_name: str, config_class):
+def register_model(model_name: str, config_class: Type[ModelConfig]):
     """
     A class decorator that adds the model class and the config class to the `models_registry`
 
@@ -82,14 +94,18 @@ def register_model(model_name: str, config_class):
             raise ValueError(f"`model_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"model_name: {model_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
-        models_registry[model_name] = {"model_class": cls, "config_class": config_class}
+        models_registry[model_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
 
         return cls
 
     return register
 
 
-def register_dataset(dataset_name: str, config_class):
+def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
     """
     A class decorator that adds the dataset class and the config class to the `datasets_registry`
 
@@ -109,14 +125,18 @@ def register_dataset(dataset_name: str, config_class):
             raise ValueError(f"`dataset_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"dataset_name: {dataset_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
-        datasets_registry[dataset_name] = {"dataset_class": cls, "config_class": config_class}
+        datasets_registry[dataset_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
 
         return cls
 
     return register
 
 
-def register_preprocessor(preprocessor_name: str, config_class):
+def register_preprocessor(preprocessor_name: str, config_class: Type[PreprocessorConfig]):
     """
     A class decorator that adds the preprocessor class and the config class to the `preprocessors_registry`
 
@@ -136,14 +156,18 @@ def register_preprocessor(preprocessor_name: str, config_class):
             raise ValueError(f"`preprocessor_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"preprocessor_name: {preprocessor_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
-        preprocessors_registry[preprocessor_name] = {"preprocessor_class": cls, "config_class": config_class}
+        preprocessors_registry[preprocessor_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
 
         return cls
 
     return register
 
 
-def register_embedding(embedding_name: str, config_class):
+def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig]):
     """
     A class decorator that adds the embedding class and the config class to the `embeddings_registry`
 
@@ -163,14 +187,18 @@ def register_embedding(embedding_name: str, config_class):
             raise ValueError(f"`embedding_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"embedding_name: {embedding_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
-        embeddings_registry[embedding_name] = {"embedding_class": cls, "config_class": config_class}
+        embeddings_registry[embedding_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
 
         return cls
 
     return register
 
 
-def register_trainer(trainer_name: str, config_class):
+def register_trainer(trainer_name: str, config_class: Type[TrainConfig]):
     """
     A class decorator that adds the Trainer class and the config class to the `trainers_registry`
 
@@ -190,7 +218,11 @@ def register_trainer(trainer_name: str, config_class):
             raise ValueError(f"`trainer_name` and `config.name` are not compatible for `{cls.__name__}`\n"
                              f"trainer_name: {trainer_name}\n"
                              f"{config_class.__name__}.name: {config_class.name}")
-        trainers_registry[trainer_name] = {"trainer_class": cls, "config_class": config_class}
+        trainers_registry[trainer_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
 
         return cls
 
