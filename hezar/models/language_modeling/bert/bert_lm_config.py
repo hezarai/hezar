@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
 from ....configs import ModelConfig
-from ....constants import Task
+from ....constants import TaskType
 
 
 @dataclass
 class BertLMConfig(ModelConfig):
     name: str = "bert_lm"
-    task: str = Task.LANGUAGE_MODELING
+    task: str = TaskType.LANGUAGE_MODELING
     vocab_size: int = 42000
     hidden_size: int = 768
     num_hidden_layers: int = 12

@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
 from ....configs import ModelConfig
-from ....constants import Task
+from ....constants import TaskType
 
 
 @dataclass
 class BertTextClassificationConfig(ModelConfig):
     name: str = "bert_text_classification"
-    task: str = Task.TEXT_CLASSIFICATION
+    task: str = TaskType.TEXT_CLASSIFICATION
     num_labels: int = None
     id2label: dict = None
     vocab_size: int = 42000

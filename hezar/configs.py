@@ -21,7 +21,7 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, Task
+from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, TaskType
 from .utils import get_logger, get_module_config_class
 
 
@@ -248,7 +248,7 @@ class DatasetConfig(Config):
     """
     name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
     config_type: str = "dataset"
-    task: Union[Task, List[Task]] = field(
+    task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
 
@@ -303,7 +303,7 @@ class TrainConfig(Config):
     """
     name: str = field(default=None, metadata={"help": "The trainer's key in the trainers_registry"})
     config_type: str = "train"
-    task: Task = None
+    task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
     seed: int = 42

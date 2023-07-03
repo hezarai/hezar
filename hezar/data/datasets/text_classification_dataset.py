@@ -5,7 +5,7 @@ import torch
 from datasets import load_dataset
 
 from ...configs import DatasetConfig
-from ...constants import Task
+from ...constants import TaskType
 from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
 from ...utils import get_logger
@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 @dataclass
 class TextClassificationDatasetConfig(DatasetConfig):
     name: str = "text_classification"
-    task: str = Task.TEXT_CLASSIFICATION
+    task: str = TaskType.TEXT_CLASSIFICATION
     path: str = None
     normalizers: List[Tuple[str, Dict]] = None
     tokenizer_path: str = None

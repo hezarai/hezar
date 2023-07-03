@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 
 from ....configs import ModelConfig
-from ....constants import Task
+from ....constants import TaskType
 
 
 @dataclass
 class BertSequenceLabelingConfig(ModelConfig):
     name: str = "bert_sequence_labeling"
-    task: str = Task.SEQUENCE_LABELING
+    task: str = TaskType.SEQUENCE_LABELING
     num_labels: int = None
     id2label: dict = None
     vocab_size: int = 42000

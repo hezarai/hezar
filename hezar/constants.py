@@ -24,7 +24,7 @@ DEFAULT_EMBEDDING_SUBFOLDER = "embedding"
 TQDM_BAR_FORMAT = "{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}"
 
 
-class Task(Enum):
+class TaskType(Enum):
     AUDIO_CLASSIFICATION = "audio_classification"
     IMAGE2TEXT = "image2text"
     LANGUAGE_MODELING = "language_modeling"

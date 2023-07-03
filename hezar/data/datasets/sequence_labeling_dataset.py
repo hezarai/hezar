@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 from datasets import load_dataset
 
 from ...configs import DatasetConfig
-from ...constants import Task
+from ...constants import TaskType
 from ...preprocessors import Sequential, Tokenizer
 from ...registry import register_dataset
 from ...utils import get_logger
@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 @dataclass
 class SequenceLabelingDatasetConfig(DatasetConfig):
     name: str = "sequence_labeling"
-    task: str = Task.SEQUENCE_LABELING
+    task: str = TaskType.SEQUENCE_LABELING
     path: str = None
     normalizers: List[Tuple[str, Dict]] = None
     tokenizer_path: str = None
