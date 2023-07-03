@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 
 from ....configs import ModelConfig
+from ....constants import Task
 
 
 @dataclass
 class RobertaTextClassificationConfig(ModelConfig):
     name: str = "roberta_text_classification"
-    task: str = "text_classification"
+    task: str = Task.TEXT_CLASSIFICATION
     num_labels: int = None
     id2label: dict = None
     attention_probs_dropout_prob: float = 0.1

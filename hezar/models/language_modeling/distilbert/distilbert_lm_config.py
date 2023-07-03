@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
 from ....configs import ModelConfig
-
+from ....constants import Task
 
 @dataclass
 class DistilBertLMConfig(ModelConfig):
     name: str = "distilbert_lm"
-    task: str = "language_modeling"
+    task: str = Task.LANGUAGE_MODELING
     activation: str = "gelu"
     attention_dropout: float = 0.1
     dim: int = 768

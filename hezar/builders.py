@@ -57,8 +57,8 @@ def build_model(name: str, config: Optional[ModelConfig] = None, **kwargs):
     if name not in models_registry:
         raise ValueError(f"Unknown model name: `{name}`!\n"
                          f"Available model names: {list(models_registry.keys())}")
-    config = config or models_registry[name]["config_class"]()
-    model = models_registry[name]["model_class"](config, **kwargs)
+    config = config or models_registry[name].config_class()
+    model = models_registry[name].module_class(config, **kwargs)
     return model
 
 
@@ -78,8 +78,8 @@ def build_preprocessor(name: str, config: Optional[PreprocessorConfig] = None, *
     if name not in preprocessors_registry:
         raise ValueError(f"Unknown preprocessor name: `{name}`!\n"
                          f"Available preprocessor names: {list(preprocessors_registry.keys())}")
-    config = config or preprocessors_registry[name]["config_class"]()
-    preprocessor = preprocessors_registry[name]["preprocessor_class"](config, **kwargs)
+    config = config or preprocessors_registry[name].config_class()
+    preprocessor = preprocessors_registry[name].module_class(config, **kwargs)
     return preprocessor
 
 
@@ -100,8 +100,8 @@ def build_dataset(name: str, config: Optional[DatasetConfig] = None, split=None,
     if name not in datasets_registry:
         raise ValueError(f"Unknown dataset name: `{name}`!\n"
                          f"Available dataset names: {list(datasets_registry.keys())}")
-    config = config or datasets_registry[name]["config_class"]()
-    dataset = datasets_registry[name]["dataset_class"](config, split=split, **kwargs)
+    config = config or datasets_registry[name].config_class()
+    dataset = datasets_registry[name].module_class(config, split, **kwargs)
     return dataset
 
 
@@ -121,8 +121,8 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
     if name not in embeddings_registry:
         raise ValueError(f"Unknown embedding name: `{name}`!\n"
                          f"Available embedding names: {list(embeddings_registry.keys())}")
-    config = config or embeddings_registry[name]["config_class"]()
-    embedding = embeddings_registry[name]["embedding_class"](config, **kwargs)
+    config = config or embeddings_registry[name].config_class()
+    embedding = embeddings_registry[name].module_class(config, **kwargs)
     return embedding
 
 

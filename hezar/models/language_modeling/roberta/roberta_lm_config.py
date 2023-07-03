@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 
 from ....configs import ModelConfig
+from ....constants import Task
 
 
 @dataclass
 class RobertaLMConfig(ModelConfig):
     name: str = "roberta_lm"
-    task: str = "language_modeling"
+    task: str = Task.LANGUAGE_MODELING
     attention_probs_dropout_prob: float = 0.1
     bos_token_id: int = 0
     eos_token_id: int = 2

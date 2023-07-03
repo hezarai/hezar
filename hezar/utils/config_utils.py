@@ -101,7 +101,7 @@ def get_module_config_class(name: str, config_type: str):
     else:
         raise ValueError(f"Invalid `config_type`: {config_type}!")
 
-    config_cls = registry[name]["config_class"]
+    config_cls = registry[name].config_class
     return config_cls
 
 
@@ -135,5 +135,5 @@ def get_module_class(name: str, module_type: str):
     else:
         raise ValueError(f"Invalid `config_type`: {module_type}!")
 
-    module_cls = registry[name][f"{module_type}_class"]
+    module_cls = registry[name].module_class
     return module_cls

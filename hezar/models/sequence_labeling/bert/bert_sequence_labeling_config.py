@@ -1,13 +1,15 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ....configs import ModelConfig
 from ....constants import Task
 
 
 @dataclass
-class BertLMConfig(ModelConfig):
-    name: str = "bert_lm"
-    task: str = Task.LANGUAGE_MODELING
+class BertSequenceLabelingConfig(ModelConfig):
+    name: str = "bert_sequence_labeling"
+    task: str = Task.SEQUENCE_LABELING
+    num_labels: int = None
+    id2label: dict = None
     vocab_size: int = 42000
     hidden_size: int = 768
     num_hidden_layers: int = 12
@@ -24,3 +26,4 @@ class BertLMConfig(ModelConfig):
     position_embedding_type: str = "absolute"
     use_cache: bool = True
     classifier_dropout: float = None
+    prediction_skip_tokens: list = field(default_factory=lambda: ["[SEP]", "[CLS]"])
