@@ -41,7 +41,7 @@ model_path = "hezarai/bert-fa-sentiment-digikala-snappfood"
 model = Model.load(model_path)
 tokenizer = Tokenizer.load(model_path)
 # tokenize inputs
-example = ["کتابخانه هزار، بهترین کتابخانه هوش مصنوعیه"]
+example = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
 inputs = tokenizer(example, return_tensors="pt")
 # inference
 outputs = model.predict(inputs)
@@ -49,7 +49,7 @@ outputs = model.predict(inputs)
 print(outputs)
 ```
 ```commandline
-{'labels': ['positive'], 'probs': [0.9960528612136841]}
+{'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
 ### Build models from scratch
 Wanna use models without any pretrained weights? Easy!
