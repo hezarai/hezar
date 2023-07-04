@@ -75,7 +75,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
                     "tokens": datasets.Sequence(datasets.Value("string")),
                     # TODO YOU SHOULD PUT THE EXTRACTED UNIQUE TAGS IN YOUR DATASET HERE. THIS LIST IS JUST AN EXAMPLE
                     """
-                    TO EXTRACT UNIQUE TAGS FROM A PANDAS DATAFRAME USE THIS CODE AND PASTE THE OUTPUT LIST HERE.
+                    TO EXTRACT UNIQUE TAGS FROM A PANDAS DATAFRAME USE THIS CODE AND PASTE THE OUTPUT LIST BELOW.
 
                     ```python
                     unique_tags = df["TAGS_COLUMN_NAME"].explode().unique()
@@ -84,31 +84,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
                     """
                     "pos_tags": datasets.Sequence(  # USE `pos_tags`, `ner_tags`, `chunk_tags`, etc.
                         datasets.features.ClassLabel(
-                            names=[
-                                'P',
-                                'Ne',
-                                'PRO',
-                                'CONJ',
-                                'N',
-                                'PUNC',
-                                'Pe',
-                                'ADV',
-                                'V',
-                                'AJ',
-                                'AJe',
-                                'DET',
-                                'POSTP',
-                                'NUM',
-                                'DETe',
-                                'NUMe',
-                                'PROe',
-                                'ADVe',
-                                'RES',
-                                'CL',
-                                'INT',
-                                'CONJe',
-                                'RESe',
-                            ]
+                            names=["YOU SHOULD PUT THE UNIQUE TAGS LIST HERE"]  # TODO
                         )
                     ),
                 }
@@ -123,7 +99,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         Returns SplitGenerators.
         """
 
-        # THIS DOWNLOADS AND EXTRACT THE CSV FILES TO CACHE PATH
+        # THIS DOWNLOADS AND EXTRACTS THE CSV FILES TO CACHE PATH
         train_path = dl_manager.download_and_extract(_DOWNLOAD_URLS["train"])
         test_path = dl_manager.download_and_extract(_DOWNLOAD_URLS["test"])
 
@@ -140,7 +116,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath):
         """
         PER EACH file_path READ THE CSV FILE AND ITERATE IT.
-        OR EACH ROW YIELD A TUPLE OF (ID, {"tokens": ..., "tags": ..., ...})
+        FOR EACH ROW YIELD A TUPLE OF (ID, {"tokens": ..., "tags": ..., ...})
         EACH CALL TO THIS METHOD YIELDS AN OUTPUT LIKE BELOW:
         ```
         (124, {"tokens": ["hello", "world"], "pos_tags": ["NOUN", "NOUN"]})
