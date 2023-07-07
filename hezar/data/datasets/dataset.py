@@ -4,7 +4,7 @@ from typing import Optional, Union
 from torch.utils.data import Dataset as TorchDataset
 
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE
+from ...constants import DEFAULT_DATASET_CONFIG_FILE, SplitType
 from ...utils import get_module_class
 
 
@@ -21,6 +21,7 @@ class Dataset(TorchDataset):
     def __init__(self, config: DatasetConfig, **kwargs):
         self.config = config.update(kwargs)
         self.preprocessor = None
+        self.data_collator = None
 
     def __len__(self):
         raise NotImplementedError
@@ -33,7 +34,7 @@ class Dataset(TorchDataset):
         cls,
         hub_path: Union[str, os.PathLike],
         config_filename: Optional[str] = None,
-        split: Optional[str] = None,
+        split: Optional[Union[str, SplitType]] = None,
         **kwargs,
     ):
         """
