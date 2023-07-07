@@ -33,3 +33,10 @@ class TaskType(Enum):
     TEXT_CLASSIFICATION = "text_classification"
     TEXT_DETECTION = "text_detection"
     SEQ2SEQ = "seq2seq"
+
+
+class SplitType(Enum):
+    TRAIN = "train"
+    EVAL = "eval"
+    VALID = "validation"
+    TEST = "test"

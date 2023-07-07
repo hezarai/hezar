@@ -12,6 +12,7 @@ Examples:
 """
 from typing import Optional
 
+from .constants import SplitType
 from .configs import (
     DatasetConfig,
     EmbeddingConfig,
@@ -77,7 +78,7 @@ def build_preprocessor(name: str, config: Optional[PreprocessorConfig] = None, *
     return preprocessor
 
 
-def build_dataset(name: str, config: Optional[DatasetConfig] = None, split=None, **kwargs):
+def build_dataset(name: str, config: Optional[DatasetConfig] = None, split: SplitType = None, **kwargs):
     """
     Build the dataset using its registry name. If config is None then the dataset is built using the
     default config.
