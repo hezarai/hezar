@@ -105,8 +105,9 @@ class Trainer:
 
     def _init_model_weights(self, model):
         hub_path = self.config.init_weights_from
-        local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
-        model.load_state_dict(torch.load(local_path, map_location="cpu"))
+        if hub_path is not None:
+            local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
+            model.load_state_dict(torch.load(local_path, map_location="cpu"))
         return model
 
     def _set_device_and_type(self):
