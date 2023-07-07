@@ -1,7 +1,7 @@
 import os
 import random
 import tempfile
-from typing import Dict
+from typing import Dict, Optional, Union
 
 import numpy as np
 from huggingface_hub import create_repo, hf_hub_download, upload_folder
@@ -75,67 +75,78 @@ class Trainer:
     ):
         self.config = config
 
-        self.device, self.device_type = self._set_device_and_type()
+        self.device, self.device_type = self._prepare_device_and_type()
         self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
         self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
 
-        self.set_seed(self.config.seed)
+        self._set_seed(self.config.seed)
 
-        self.model = self._init_model_weights(model).to(self.device)
+        self.model = self._prepare_model(model)
 
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
-        self.data_collator = data_collator
-        self.num_labels = self.train_dataset.num_labels  # noqa
+        self.data_collator = data_collator or self.train_dataset.data_collator
+        self.train_dataloader, self.eval_dataloader = self._prepare_dataloaders()
 
-        self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
-
-        self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
+        self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
 
         self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
-    @staticmethod
-    def set_seed(seed):
-        torch.manual_seed(seed)
-        np.random.seed(seed)
-        random.seed(seed)
-
-    def _init_model_weights(self, model):
-        hub_path = self.config.init_weights_from
-        if hub_path is not None:
-            local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
-            model.load_state_dict(torch.load(local_path, map_location="cpu"))
-        return model
-
-    def _set_device_and_type(self):
+    def _prepare_device_and_type(self):
         device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
         device_type = "cuda" if "cuda" in device else "cpu"
         return device, device_type
 
-    def _setup_dataloaders(self):
+    @staticmethod
+    def _set_seed(seed):
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+
+    def _prepare_model(self, model: Model):
+        if model is None:
+            raise ValueError("`model` must be given to the Trainer!")
+        hub_path = self.config.init_weights_from
+        if hub_path is not None:
+            local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
+            model.load_state_dict(torch.load(local_path, map_location="cpu"))
+        model.to(self.device)
+        return model
+
+    def _prepare_dataloaders(self):
         """
         Set up data loaders (train/eval) and return them.
 
         Returns:
              A tuple of train and eval dataloaders
         """
-        train_dataloader = DataLoader(
-            dataset=self.train_dataset,
-            batch_size=self.config.batch_size,
-            collate_fn=self.data_collator,
-            shuffle=True,
-        )
-        eval_dataloader = DataLoader(
-            dataset=self.eval_dataset,
-            batch_size=self.config.batch_size,
-            collate_fn=self.data_collator,
-            shuffle=True,
-        )
+        if self.train_dataset is not None:
+            train_dataloader = DataLoader(
+                dataset=self.train_dataset,
+                batch_size=self.config.batch_size,
+                collate_fn=self.data_collator,
+                num_workers=self.config.num_dataloader_workers,
+                shuffle=True,
+            )
+        else:
+            raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
+        if self.eval_dataset is not None:
+            eval_dataloader = DataLoader(
+                dataset=self.eval_dataset,
+                batch_size=self.config.batch_size,
+                collate_fn=self.data_collator,
+                num_workers=self.config.num_dataloader_workers,
+                shuffle=True,
+            )
+        else:
+            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer!")
+            eval_dataloader = None
+
         return train_dataloader, eval_dataloader
 
-    def _setup_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
+    def _prepare_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
         """
         Set up the optimizer and lr scheduler if they're not already given
 
@@ -179,7 +190,7 @@ class Trainer:
         """
         metrics_dict = {"loss": None}
         for name, kwargs in metrics.items():
-            metrics_dict[name] = METRICS_MAP[name](num_classes=self.num_labels, **kwargs)
+            metrics_dict[name] = METRICS_MAP[name](num_classes=self.train_dataset.config.num_labels, **kwargs)
         metrics_manager = MetricsManager(metrics_dict)
         return metrics_manager
 
