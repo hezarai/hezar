@@ -6,7 +6,6 @@ from typing import Dict
 import numpy as np
 from huggingface_hub import create_repo, hf_hub_download, upload_folder
 import torch
-from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
@@ -35,13 +34,13 @@ METRICS_MAP = {
 }
 
 optimizers = {
-    "adam": optim.Adam,
-    "adamw": optim.AdamW,
-    "sgd": optim.SGD,
+    "adam": torch.optim.Adam,
+    "adamw": torch.optim.AdamW,
+    "sgd": torch.optim.SGD,
 }
 lr_schedulers = {
-    "reduce_on_plateau": optim.lr_scheduler.ReduceLROnPlateau,
-    "cosine_lr": optim.lr_scheduler.CosineAnnealingLR,
+    "reduce_on_plateau": torch.optim.lr_scheduler.ReduceLROnPlateau,
+    "cosine_lr": torch.optim.lr_scheduler.CosineAnnealingLR,
 }
 
 
