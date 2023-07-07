@@ -27,8 +27,6 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 from dataclasses import dataclass
 from typing import Dict, Type
 
-from torch import nn, optim
-
 from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainConfig
 from .utils import get_logger
 
@@ -47,7 +45,7 @@ logger = get_logger(__name__)
 class Registry:
     module_class: type
     config_class: type
-    doc: str
+    doc: str = None
 
 
 models_registry: Dict[str, Registry] = {}
@@ -55,24 +53,6 @@ preprocessors_registry: Dict[str, Registry] = {}
 datasets_registry: Dict[str, Registry] = {}
 embeddings_registry: Dict[str, Registry] = {}
 trainers_registry: Dict[str, Registry] = {}
-
-criterions_registry = {
-    "bce": nn.BCELoss,
-    "bce_with_logits": nn.BCEWithLogitsLoss,
-    "nll": nn.NLLLoss,
-    "cross_entropy": nn.CrossEntropyLoss,
-    "mse": nn.MSELoss,
-    "ctc": nn.CTCLoss,
-}
-optimizers_registry = {
-    "adam": optim.Adam,
-    "adamw": optim.AdamW,
-    "sgd": optim.SGD,
-}
-lr_schedulers_registry = {
-    "reduce_on_plateau": optim.lr_scheduler.ReduceLROnPlateau,
-    "cosine_lr": optim.lr_scheduler.CosineAnnealingLR,
-}
 
 
 def register_model(model_name: str, config_class: Type[ModelConfig]):

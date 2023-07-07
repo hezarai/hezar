@@ -19,12 +19,9 @@ from .configs import (
     PreprocessorConfig,
 )
 from .registry import (  # noqa
-    criterions_registry,  # noqa
     datasets_registry,  # noqa
     embeddings_registry,  # noqa
-    lr_schedulers_registry,  # noqa
     models_registry,  # noqa
-    optimizers_registry,  # noqa
     preprocessors_registry,  # noqa
 )
 
@@ -34,9 +31,6 @@ __all__ = [
     "build_dataset",
     "build_preprocessor",
     "build_embedding",
-    "build_optimizer",
-    "build_criterion",
-    "build_scheduler",
 ]
 
 
@@ -124,59 +118,3 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
     config = config or embeddings_registry[name].config_class()
     embedding = embeddings_registry[name].module_class(config, **kwargs)
     return embedding
-
-
-def build_criterion(name: str, **kwargs):
-    """
-    Build the loss function using its registry name.
-
-    Args:
-        name (str): Name of the optimizer in the criterions_registry
-        **kwargs: Criterion's parameters as keyword arguments
-
-    Returns:
-        An nn.Module instance
-    """
-    if name not in criterions_registry:
-        raise ValueError(f"Unknown criterion name: `{name}`!\n"
-                         f"Available criterion names: {list(criterions_registry.keys())}")
-    criterion = criterions_registry[name](**kwargs)
-    return criterion
-
-
-def build_optimizer(name: str, params, **kwargs):
-    """
-    Build the optimizer using its registry name.
-
-    Args:
-        name (str): Name of the optimizer in the optimizers_registry
-        params (Iterator[nn.Parameter]): Model parameters
-        **kwargs: Optimizer parameters as keyword arguments
-
-    Returns:
-        An optim.Optimizer instance
-    """
-    if name not in optimizers_registry:
-        raise ValueError(f"Unknown optimizer name: `{name}`!\n"
-                         f"Available optimizer names: {list(optimizers_registry.keys())}")
-    optimizer = optimizers_registry[name](params, **kwargs)
-    return optimizer
-
-
-def build_scheduler(name: str, optimizer, **kwargs):
-    """
-    Build the LR scheduler using its registry name.
-
-    Args:
-        name (str): Name of the optimizer in the lr_schedulers_registry
-        optimizer (optim.Optimizer): The optimizer
-        **kwargs: Scheduler parameters as keyword arguments
-
-    Returns:
-        An optim.lr_scheduler._LRScheduler instance
-    """
-    if name not in lr_schedulers_registry:
-        raise ValueError(f"Unknown LR scheduler name: `{name}`!\n"
-                         f"Available LR scheduler names: {list(lr_schedulers_registry.keys())}")
-    scheduler = lr_schedulers_registry[name](optimizer, **kwargs)
-    return scheduler

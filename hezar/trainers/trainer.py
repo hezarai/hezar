@@ -4,14 +4,14 @@ import tempfile
 from typing import Dict
 
 import numpy as np
-import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_folder
+import torch
+from torch import nn, optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
-from ..builders import build_optimizer, build_scheduler
 from ..configs import LRSchedulerConfig, OptimizerConfig, TrainConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -32,6 +32,16 @@ METRICS_MAP = {
     "accuracy": Accuracy,
     "f1": F1Score,
     "precision": Precision,
+}
+
+optimizers = {
+    "adam": optim.Adam,
+    "adamw": optim.AdamW,
+    "sgd": optim.SGD,
+}
+lr_schedulers = {
+    "reduce_on_plateau": optim.lr_scheduler.ReduceLROnPlateau,
+    "cosine_lr": optim.lr_scheduler.CosineAnnealingLR,
 }
 
 
@@ -147,22 +157,14 @@ class Trainer:
             scheduler_config = optimizer_config.pop("scheduler")
 
             optimizer_config.pop("config_type", None)
-            optimizer = build_optimizer(
-                optimizer_name,
-                self.model.parameters(),
-                **optimizer_config,
-            )
+            optimizer = optimizers[optimizer_name](self.model.parameters(), **optimizer_config)
 
             if lr_scheduler is None and scheduler_config is not None:
                 if isinstance(scheduler_config, LRSchedulerConfig):
                     scheduler_config = scheduler_config.dict()
                 scheduler_name = scheduler_config.pop("name")
                 scheduler_config.pop("config_type", None)
-                lr_scheduler = build_scheduler(
-                    scheduler_name,
-                    optimizer,
-                    **scheduler_config,
-                )
+                lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_config)
         return optimizer, lr_scheduler
 
     def _setup_metrics_manager(self, metrics: Dict[str, Dict]) -> MetricsManager:
