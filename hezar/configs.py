@@ -306,6 +306,8 @@ class TrainConfig(Config):
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
+    dataset_config: Union[DatasetConfig, Dict] = None
+    num_dataloader_workers: int = 0
     seed: int = 42
     optimizer: Union[Dict[str, Any], OptimizerConfig] = None
     batch_size: int = None
