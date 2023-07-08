@@ -54,7 +54,7 @@ class BPEConfig(TokenizerConfig):
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""
     fuse_unk: bool = False
-    train_config: BPETrainConfig = BPETrainConfig()
+    train_config: BPETrainConfig = field(default_factory=BPETrainConfig)
 
 
 @register_preprocessor("bpe_tokenizer", config_class=BPEConfig)

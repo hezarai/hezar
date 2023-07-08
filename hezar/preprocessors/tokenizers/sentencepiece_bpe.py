@@ -56,7 +56,7 @@ class SentencePieceBPEConfig(TokenizerConfig):
     add_prefix_space: bool = True
     end_of_word_suffix: str = ""
     fuse_unk: bool = False
-    train_config: SentencePieceBPETrainConfig = SentencePieceBPETrainConfig()
+    train_config: SentencePieceBPETrainConfig = field(default_factory=SentencePieceBPETrainConfig)
 
 
 @register_preprocessor("sentencepiece_bpe_tokenizer", config_class=SentencePieceBPEConfig)

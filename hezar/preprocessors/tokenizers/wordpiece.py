@@ -37,7 +37,7 @@ class WordPieceConfig(TokenizerConfig):
     special_tokens: List[str] = field(default_factory=lambda: ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"])
     unk_token: str = "[UNK]"
     wordpieces_prefix: str = "##"
-    train_config: WordPieceTrainConfig = WordPieceTrainConfig()
+    train_config: WordPieceTrainConfig = field(default_factory=WordPieceTrainConfig)
 
 
 @register_preprocessor("wordpiece_tokenizer", config_class=WordPieceConfig)
