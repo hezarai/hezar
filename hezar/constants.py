@@ -35,6 +35,18 @@ class TaskType(Enum):
     SEQ2SEQ = "seq2seq"
 
 
+class ConfigType(Enum):
+    BASE = "base"
+    MODEL = "model"
+    DATASET = "dataset"
+    PREPROCESSOR = "preprocessor"
+    EMBEDDING = "embedding"
+    TRAINER = "trainer"
+    OPTIMIZER = "optimizer"
+    CRITERION = "criterion"
+    LR_SCHEDULER = "lr_scheduler"
+
+
 class SplitType(Enum):
     TRAIN = "train"
     EVAL = "eval"

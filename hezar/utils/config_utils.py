@@ -5,6 +5,7 @@ from typing import Dict, Union
 import omegaconf
 from omegaconf import DictConfig
 
+from ..constants import ConfigType
 from .logging import get_logger
 
 
@@ -82,19 +83,19 @@ def get_module_config_class(name: str, config_type: str):
     Returns:
         A class of type :class:`hezar.Config`
     """
-    if config_type == "model":
+    if config_type == ConfigType.MODEL:
         from ..registry import models_registry  # noqa
 
         registry = models_registry
-    elif config_type == "preprocessor":
+    elif config_type == ConfigType.PREPROCESSOR:
         from ..registry import preprocessors_registry  # noqa
 
         registry = preprocessors_registry
-    elif config_type == "dataset":
+    elif config_type == ConfigType.DATASET:
         from ..registry import datasets_registry  # noqa
 
         registry = datasets_registry
-    elif config_type == "embedding":
+    elif config_type == ConfigType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
 
@@ -116,24 +117,24 @@ def get_module_class(name: str, module_type: str):
     Returns:
         A class corresponding to the given module
     """
-    if module_type == "model":
+    if module_type == ConfigType.MODEL:
         from ..registry import models_registry  # noqa
 
         registry = models_registry
-    elif module_type == "preprocessor":
+    elif module_type == ConfigType.PREPROCESSOR:
         from ..registry import preprocessors_registry  # noqa
 
         registry = preprocessors_registry
-    elif module_type == "dataset":
+    elif module_type == ConfigType.DATASET:
         from ..registry import datasets_registry  # noqa
 
         registry = datasets_registry
-    elif module_type == "embedding":
+    elif module_type == ConfigType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
 
     else:
-        raise ValueError(f"Invalid `config_type`: {module_type}!")
+        raise ValueError(f"Invalid `module_type`: {module_type}!")
 
     module_cls = registry[name].module_class
     return module_cls

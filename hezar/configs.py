@@ -21,7 +21,7 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, TaskType
+from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, TaskType, ConfigType
 from .utils import get_logger, get_module_config_class
 
 
@@ -54,7 +54,7 @@ class Config:
         config_type: A mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
     """
     name: str = field(metadata={"help": "The key in the registry of that module"})
-    config_type: str = "base"
+    config_type: str = ConfigType.BASE
 
     def __getitem__(self, item):
         try:
@@ -229,7 +229,7 @@ class ModelConfig(Config):
     Base dataclass for all model configs
     """
     name: str = field(default=None, metadata={"help": "The model's key in the models_registry"})
-    config_type: str = "model"
+    config_type: str = ConfigType.MODEL
 
 
 @dataclass
@@ -238,7 +238,7 @@ class PreprocessorConfig(Config):
     Base dataclass for all preprocessor configs
     """
     name: str = field(default=None, metadata={"help": "The preprocessor's key in the preprocessor_registry"})
-    config_type: str = "preprocessor"
+    config_type: str = ConfigType.PREPROCESSOR
 
 
 @dataclass
@@ -247,7 +247,7 @@ class DatasetConfig(Config):
     Base dataclass for all dataset configs
     """
     name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
-    config_type: str = "dataset"
+    config_type: str = ConfigType.DATASET
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
@@ -259,7 +259,7 @@ class EmbeddingConfig(Config):
     Base dataclass for all embedding configs
     """
     name: str = field(default=None, metadata={"help": "The embedding's key in the embeddings_registry"})
-    config_type: str = "embedding"
+    config_type: str = ConfigType.EMBEDDING
 
 
 @dataclass
@@ -268,7 +268,7 @@ class CriterionConfig(Config):
     Base dataclass for all criterion configs
     """
     name: str = field(default=None, metadata={"help": "The criterion's key in the criterions_registry"})
-    config_type: str = "criterion"
+    config_type: str = ConfigType.CRITERION
     weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
@@ -280,7 +280,7 @@ class LRSchedulerConfig(Config):
     Base dataclass for all scheduler configs
     """
     name: str = field(default=None, metadata={"help": "The LR scheduler's key in the schedulers_registry"})
-    config_type: str = "lr_scheduler"
+    config_type: str = ConfigType.LR_SCHEDULER
     verbose: bool = True
 
 
@@ -290,7 +290,7 @@ class OptimizerConfig(Config):
     Base dataclass for all optimizer configs
     """
     name: str = field(default=None, metadata={"help": "The optimizer's key in the optimizers_registry"})
-    config_type: str = "optimizer"
+    config_type: str = ConfigType.OPTIMIZER
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
