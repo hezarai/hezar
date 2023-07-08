@@ -1,16 +1,17 @@
 import os
 import random
 import tempfile
-from typing import Dict, Optional, Union
+from typing import Dict, Tuple
 
 import numpy as np
-from huggingface_hub import create_repo, hf_hub_download, upload_folder
 import torch
+from huggingface_hub import create_repo, hf_hub_download, upload_folder
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
+from .trainer_utils import MetricsManager, write_to_tensorboard
 from ..configs import LRSchedulerConfig, OptimizerConfig, TrainConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -22,8 +23,6 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_logger
-from .trainer_utils import MetricsManager, write_to_tensorboard
-
 
 logger = get_logger(__name__)
 
@@ -55,7 +54,7 @@ class Trainer:
         eval_dataset (Dataset): Evaluation dataset
         data_collator: Collate function, usually included in the dataset object itself
         optimizer (optim.Optimizer): Model optimizer
-        lr_scheduler: Optional scheduler
+        lr_scheduler: Optional learning-rate scheduler
 
     """
 
@@ -64,14 +63,14 @@ class Trainer:
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
 
     def __init__(
-        self,
-        model: Model = None,
-        config: TrainConfig = None,
-        train_dataset: Dataset = None,
-        eval_dataset: Dataset = None,
-        data_collator=None,
-        optimizer: torch.optim.Optimizer = None,
-        lr_scheduler=None,
+            self,
+            model: Model = None,
+            config: TrainConfig = None,
+            train_dataset: Dataset = None,
+            eval_dataset: Dataset = None,
+            data_collator=None,
+            optimizer: torch.optim.Optimizer = None,
+            lr_scheduler=None,
     ):
         self.config = config
 
@@ -94,18 +93,24 @@ class Trainer:
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
-    def _prepare_device_and_type(self):
+    def _prepare_device_and_type(self) -> Tuple[str, str]:
         device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
         device_type = "cuda" if "cuda" in device else "cpu"
         return device, device_type
 
     @staticmethod
-    def _set_seed(seed):
+    def _set_seed(seed) -> None:
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
 
-    def _prepare_model(self, model: Model):
+    def _prepare_model(self, model: Model) -> Model:
+        """
+        Download the model from HuggingFace Hub if `init_weights_from` is given in the config. Load the model to the
+        device and return it.
+        :param model:
+        :return:
+        """
         if model is None:
             raise ValueError("`model` must be given to the Trainer!")
         hub_path = self.config.init_weights_from
@@ -258,11 +263,11 @@ class Trainer:
         self.metrics_manager.reset()
         self.model.train()
         with tqdm(
-            self.train_dataloader,
-            unit="batch",
-            desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
-            bar_format=TQDM_BAR_FORMAT,
-            ascii=" #",
+                self.train_dataloader,
+                unit="batch",
+                desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
+                bar_format=TQDM_BAR_FORMAT,
+                ascii=" #",
         ) as iterator:
             for input_batch in iterator:
                 results = self.training_step(input_batch)
@@ -280,11 +285,11 @@ class Trainer:
         self.metrics_manager.reset()
         self.model.eval()
         with tqdm(
-            self.eval_dataloader,
-            unit="batch",
-            desc="Evaluating... ",
-            bar_format=TQDM_BAR_FORMAT,
-            ascii=" #",
+                self.eval_dataloader,
+                unit="batch",
+                desc="Evaluating... ",
+                bar_format=TQDM_BAR_FORMAT,
+                ascii=" #",
         ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
@@ -313,13 +318,13 @@ class Trainer:
                 self.save(ckpt_save_path)
 
     def save(
-        self,
-        path: str,
-        config_filename=None,
-        model_filename=None,
-        model_config_filename=None,
-        subfolder=None,
-        dataset_config_file=None,
+            self,
+            path: str,
+            config_filename=None,
+            model_filename=None,
+            model_config_filename=None,
+            subfolder=None,
+            dataset_config_file=None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -345,15 +350,15 @@ class Trainer:
             self.train_dataset.tokenizer.save(path)
 
     def push_to_hub(
-        self,
-        repo_id: str,
-        config_filename: str = None,
-        model_filename: str = None,
-        model_config_filename: str = None,
-        subfolder: str = None,
-        dataset_config_filename: str = None,
-        commit_message: str = None,
-        private: bool = False,
+            self,
+            repo_id: str,
+            config_filename: str = None,
+            model_filename: str = None,
+            model_config_filename: str = None,
+            subfolder: str = None,
+            dataset_config_filename: str = None,
+            commit_message: str = None,
+            private: bool = False,
     ):
         """
         Push everything to the Hub
