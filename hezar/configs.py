@@ -29,7 +29,7 @@ __all__ = [
     "Config",
     "ModelConfig",
     "PreprocessorConfig",
-    "TrainConfig",
+    "TrainerConfig",
     "DatasetConfig",
     "EmbeddingConfig",
     "CriterionConfig",
@@ -297,7 +297,7 @@ class OptimizerConfig(Config):
 
 
 @dataclass
-class TrainConfig(Config):
+class TrainerConfig(Config):
     """
     Base dataclass for all trainer configs
     """

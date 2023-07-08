@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
-from ..configs import LRSchedulerConfig, OptimizerConfig, TrainConfig
+from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
@@ -50,7 +50,7 @@ class Trainer:
 
     Args:
         model ([`Model`] or `torch.nn.Module`): The main model to train and evaluate
-        config (TrainConfig): Training configuration and parameters
+        config (TrainerConfig): Training configuration and parameters
         train_dataset (Dataset): Train dataset
         eval_dataset (Dataset): Evaluation dataset
         data_collator: Collate function, usually included in the dataset object itself
@@ -66,7 +66,7 @@ class Trainer:
     def __init__(
         self,
         model: Model = None,
-        config: TrainConfig = None,
+        config: TrainerConfig = None,
         train_dataset: Dataset = None,
         eval_dataset: Dataset = None,
         data_collator=None,
