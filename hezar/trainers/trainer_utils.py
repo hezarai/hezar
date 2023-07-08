@@ -1,3 +1,5 @@
+from typing import Callable, Dict, Any
+
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -31,15 +33,15 @@ class AverageMeter(object):
 
 
 class MetricsManager:
-    def __init__(self, metrics_dict):
+    def __init__(self, metrics_dict: Dict[str, Callable]):
         self.metrics_dict = metrics_dict
         self.trackers = {m: AverageMeter(m) for m in self.metrics_dict.keys()}
 
-    def compute(self, preds, labels):
+    def compute(self, preds, labels) -> Dict[str, Any]:
         results = {}
-        for metric_name, metric in self.metrics_dict.items():
-            if metric is not None:
-                results[metric_name] = metric(preds, labels).item()
+        for metric_name, metric_fn in self.metrics_dict.items():
+            if metric_fn is not None:
+                results[metric_name] = metric_fn(preds, labels).item()
 
         return results
 

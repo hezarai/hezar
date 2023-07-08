@@ -25,7 +25,7 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 """
 
 from dataclasses import dataclass
-from typing import Dict, Type
+from typing import Dict, Type, Optional
 
 from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainerConfig
 from .utils import get_logger
@@ -45,7 +45,7 @@ logger = get_logger(__name__)
 class Registry:
     module_class: type
     config_class: type
-    doc: str = None
+    doc: Optional[str] = None
 
 
 models_registry: Dict[str, Registry] = {}
