@@ -302,7 +302,7 @@ class TrainerConfig(Config):
     Base dataclass for all trainer configs
     """
     name: str = field(default=None, metadata={"help": "The trainer's key in the trainers_registry"})
-    config_type: str = "train"
+    config_type: str = "trainer"
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
