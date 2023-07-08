@@ -54,7 +54,7 @@ class Config:
         config_type: A mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
     """
     name: str = field(metadata={"help": "The key in the registry of that module"})
-    config_type: str = ConfigType.BASE
+    config_type: Union[str, ConfigType] = ConfigType.BASE
 
     def __getitem__(self, item):
         try:
@@ -229,7 +229,7 @@ class ModelConfig(Config):
     Base dataclass for all model configs
     """
     name: str = field(default=None, metadata={"help": "The model's key in the models_registry"})
-    config_type: str = ConfigType.MODEL
+    config_type: Union[str, ConfigType] = ConfigType.MODEL
 
 
 @dataclass
@@ -238,7 +238,7 @@ class PreprocessorConfig(Config):
     Base dataclass for all preprocessor configs
     """
     name: str = field(default=None, metadata={"help": "The preprocessor's key in the preprocessor_registry"})
-    config_type: str = ConfigType.PREPROCESSOR
+    config_type: Union[str, ConfigType] = ConfigType.PREPROCESSOR
 
 
 @dataclass
@@ -247,7 +247,7 @@ class DatasetConfig(Config):
     Base dataclass for all dataset configs
     """
     name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
-    config_type: str = ConfigType.DATASET
+    config_type: ConfigType = ConfigType.DATASET
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
@@ -259,7 +259,7 @@ class EmbeddingConfig(Config):
     Base dataclass for all embedding configs
     """
     name: str = field(default=None, metadata={"help": "The embedding's key in the embeddings_registry"})
-    config_type: str = ConfigType.EMBEDDING
+    config_type: Union[str, ConfigType] = ConfigType.EMBEDDING
 
 
 @dataclass
@@ -268,7 +268,7 @@ class CriterionConfig(Config):
     Base dataclass for all criterion configs
     """
     name: str = field(default=None, metadata={"help": "The criterion's key in the criterions_registry"})
-    config_type: str = ConfigType.CRITERION
+    config_type: Union[str, ConfigType] = ConfigType.CRITERION
     weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
@@ -280,7 +280,7 @@ class LRSchedulerConfig(Config):
     Base dataclass for all scheduler configs
     """
     name: str = field(default=None, metadata={"help": "The LR scheduler's key in the schedulers_registry"})
-    config_type: str = ConfigType.LR_SCHEDULER
+    config_type: Union[str, ConfigType] = ConfigType.LR_SCHEDULER
     verbose: bool = True
 
 
@@ -290,7 +290,7 @@ class OptimizerConfig(Config):
     Base dataclass for all optimizer configs
     """
     name: str = field(default=None, metadata={"help": "The optimizer's key in the optimizers_registry"})
-    config_type: str = ConfigType.OPTIMIZER
+    config_type: Union[str, ConfigType] = ConfigType.OPTIMIZER
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
@@ -302,7 +302,7 @@ class TrainerConfig(Config):
     Base dataclass for all trainer configs
     """
     name: str = field(default=None, metadata={"help": "The trainer's key in the trainers_registry"})
-    config_type: str = "trainer"
+    config_type: Union[str, ConfigType] = ConfigType.TRAINER
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
