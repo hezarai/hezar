@@ -24,7 +24,7 @@ DEFAULT_EMBEDDING_SUBFOLDER = "embedding"
 TQDM_BAR_FORMAT = "{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}"
 
 
-class TaskType(Enum):
+class TaskType(str, Enum):
     AUDIO_CLASSIFICATION = "audio_classification"
     IMAGE2TEXT = "image2text"
     LANGUAGE_MODELING = "language_modeling"
@@ -35,7 +35,7 @@ class TaskType(Enum):
     SEQ2SEQ = "seq2seq"
 
 
-class ConfigType(Enum):
+class ConfigType(str, Enum):
     BASE = "base"
     MODEL = "model"
     DATASET = "dataset"
@@ -47,7 +47,7 @@ class ConfigType(Enum):
     LR_SCHEDULER = "lr_scheduler"
 
 
-class SplitType(Enum):
+class SplitType(str, Enum):
     TRAIN = "train"
     EVAL = "eval"
     VALID = "validation"
