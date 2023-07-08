@@ -36,6 +36,8 @@ __all__ = [
     "register_preprocessor",
     "register_dataset",
     "register_embedding",
+    "register_metric",
+    "register_trainer",
 ]
 
 logger = get_logger(__name__)
@@ -44,7 +46,7 @@ logger = get_logger(__name__)
 @dataclass
 class Registry:
     module_class: type
-    config_class: type
+    config_class: type = None
     doc: Optional[str] = None
 
 
@@ -52,6 +54,7 @@ models_registry: Dict[str, Registry] = {}
 preprocessors_registry: Dict[str, Registry] = {}
 datasets_registry: Dict[str, Registry] = {}
 embeddings_registry: Dict[str, Registry] = {}
+metrics_registry: Dict[str, Registry] = {}
 trainers_registry: Dict[str, Registry] = {}
 
 
@@ -209,6 +212,27 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
             config_class=config_class,
             doc=cls.__doc__
         )
+
+        return cls
+
+    return register
+
+
+def register_metric(metric_name: str):
+    """
+    A class decorator that adds the metric class and the config class to the `metrics_registry`
+
+    Args:
+        metric_name: Trainer's registry name e.g, `f1`
+
+    Returns:
+         The class itself
+    """
+    def register(cls):
+        if metric_name in metrics_registry:
+            logger.warning(f"Metric `{metric_name}` is already registered. Overwriting...")
+
+        metrics_registry[metric_name] = Registry(module_class=cls)
 
         return cls
 
