@@ -37,7 +37,7 @@ class WordPieceConfig(TokenizerConfig):
     special_tokens: List[str] = field(default_factory=lambda: ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"])
     unk_token: str = "[UNK]"
     wordpieces_prefix: str = "##"
-    train_config: WordPieceTrainConfig = field(default_factory=WordPieceTrainConfig)
+    train_config: WordPieceTrainConfig = None
 
 
 @register_preprocessor("wordpiece_tokenizer", config_class=WordPieceConfig)
@@ -82,32 +82,36 @@ class WordPieceTokenizer(Tokenizer):
 
         return tokenizer
 
-    def train(self, files: List[str], config: WordPieceTrainConfig):
+    def train(self, files: List[str], **train_kwargs):
         """Train the model using the given files"""
+        train_config = self.config.train_config or WordPieceTrainConfig()
+        train_config.update(train_kwargs)
 
         trainer = trainers.WordPieceTrainer(
-            vocab_size=config.vocab_size,
-            min_frequency=config.min_frequency,
-            limit_alphabet=config.limit_alphabet,
-            initial_alphabet=config.initial_alphabet,
+            vocab_size=train_config.vocab_size,
+            min_frequency=train_config.min_frequency,
+            limit_alphabet=train_config.limit_alphabet,
+            initial_alphabet=train_config.initial_alphabet,
             special_tokens=self.config.special_tokens,
-            show_progress=config.show_progress,
+            show_progress=train_config.show_progress,
             continuing_subword_prefix=self.config.wordpieces_prefix,
         )
         if isinstance(files, str):
             files = [files]
         self._tokenizer.train(files, trainer=trainer)
 
-    def train_from_iterator(self, dataset: List[str], config: WordPieceTrainConfig):
+    def train_from_iterator(self, dataset: List[str], **train_kwargs):
         """Train the model using the given files"""
+        train_config = self.config.train_config or WordPieceTrainConfig()
+        train_config.update(train_kwargs)
 
         trainer = trainers.WordPieceTrainer(
-            vocab_size=config.vocab_size,
-            min_frequency=config.min_frequency,
-            limit_alphabet=config.limit_alphabet,
-            initial_alphabet=config.initial_alphabet,
+            vocab_size=train_config.vocab_size,
+            min_frequency=train_config.min_frequency,
+            limit_alphabet=train_config.limit_alphabet,
+            initial_alphabet=train_config.initial_alphabet,
             special_tokens=self.config.special_tokens,
-            show_progress=config.show_progress,
+            show_progress=train_config.show_progress,
             continuing_subword_prefix=self.config.wordpieces_prefix,
         )
         self._tokenizer.train_from_iterator(dataset, trainer=trainer, length=len(dataset))

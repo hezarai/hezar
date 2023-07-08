@@ -27,7 +27,7 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 from dataclasses import dataclass
 from typing import Dict, Type
 
-from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainConfig
+from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainerConfig
 from .utils import get_logger
 
 
@@ -183,7 +183,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
     return register
 
 
-def register_trainer(trainer_name: str, config_class: Type[TrainConfig]):
+def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
     """
     A class decorator that adds the Trainer class and the config class to the `trainers_registry`
 

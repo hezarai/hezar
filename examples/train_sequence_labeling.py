@@ -1,5 +1,5 @@
 from hezar import (
-    TrainConfig,
+    TrainerConfig,
     Trainer,
     Dataset,
     build_model,
@@ -12,7 +12,7 @@ eval_dataset = Dataset.load("hezarai/lscp-500k", split="test", tokenizer_path="h
 
 model = build_model(name, id2label=train_dataset.id2label)
 
-train_config = TrainConfig(
+train_config = TrainerConfig(
     name=name,
     device="cuda",
     optimizer={"name": "adam", "lr": 2e-5, "scheduler": {"name": "reduce_on_plateau"}},
