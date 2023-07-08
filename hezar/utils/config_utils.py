@@ -8,7 +8,6 @@ from omegaconf import DictConfig
 from ..constants import ConfigType
 from .logging import get_logger
 
-
 __all__ = [
     "flatten_dict",
     "load_yaml_config",
@@ -106,7 +105,7 @@ def get_module_config_class(name: str, config_type: str):
     return config_cls
 
 
-def get_module_class(name: str, module_type: str):
+def get_module_class(name: str, module_type: str) -> type:
     """
     Get module class based on registry name
 
