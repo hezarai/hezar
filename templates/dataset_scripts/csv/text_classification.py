@@ -105,7 +105,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         OR EACH ROW YIELD A TUPLE OF (ID, {"text": ..., "label": ..., ...})
         EACH CALL TO THIS METHOD YIELDS AN OUTPUT LIKE BELOW:
         ```
-        (123, {"tokens": "I liked it", "label": "positive"})
+        (123, {"text": "I liked it", "label": "positive"})
         ```
         """
         label2id = self.info.features[self.info.task_templates[0].label_column].str2int
