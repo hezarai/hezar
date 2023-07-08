@@ -56,7 +56,7 @@ class SentencePieceBPEConfig(TokenizerConfig):
     add_prefix_space: bool = True
     end_of_word_suffix: str = ""
     fuse_unk: bool = False
-    train_config: SentencePieceBPETrainConfig = field(default_factory=SentencePieceBPETrainConfig)
+    train_config: SentencePieceBPETrainConfig = None
 
 
 @register_preprocessor("sentencepiece_bpe_tokenizer", config_class=SentencePieceBPEConfig)
@@ -115,13 +115,15 @@ class SentencePieceBPETokenizer(Tokenizer):
 
         return tokenizer
 
-    def train(self, files: List[str], config: SentencePieceBPEConfig):
+    def train(self, files: List[str], **train_kwargs):
         """Train the model using the given files"""
+        train_config = self.config.train_config or SentencePieceBPETrainConfig()
+        train_config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=config.vocab_size,  # noqa
-            min_frequency=config.min_frequency,  # noqa
-            show_progress=config.show_progress,  # noqa
+            vocab_size=train_config.vocab_size,  # noqa
+            min_frequency=train_config.min_frequency,  # noqa
+            show_progress=train_config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
             initial_alphabet=self.config.initial_alphabet,  # noqa
         )
@@ -129,14 +131,16 @@ class SentencePieceBPETokenizer(Tokenizer):
             files = [files]
         self._tokenizer.train(files, trainer=trainer)
 
-    def train_from_iterator(self, dataset: List[str], config: SentencePieceBPETrainConfig):
+    def train_from_iterator(self, dataset: List[str], **train_kwargs):
         """Train the model using the given files"""
+        train_config = self.config.train_config or SentencePieceBPETrainConfig()
+        train_config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=config.vocab_size,  # noqa
-            min_frequency=config.min_frequency,  # noqa
-            show_progress=config.show_progress,  # noqa
+            vocab_size=train_config.vocab_size,  # noqa
+            min_frequency=train_config.min_frequency,  # noqa
+            show_progress=train_config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
-            initial_alphabet=config.initial_alphabet,  # noqa
+            initial_alphabet=train_config.initial_alphabet,  # noqa
         )
         self._tokenizer.train_from_iterator(dataset, trainer=trainer, length=len(dataset))

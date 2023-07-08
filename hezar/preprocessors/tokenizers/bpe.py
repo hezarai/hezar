@@ -54,7 +54,7 @@ class BPEConfig(TokenizerConfig):
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""
     fuse_unk: bool = False
-    train_config: BPETrainConfig = field(default_factory=BPETrainConfig)
+    train_config: BPETrainConfig = None
 
 
 @register_preprocessor("bpe_tokenizer", config_class=BPEConfig)
@@ -107,8 +107,10 @@ class BPETokenizer(Tokenizer):
 
         return tokenizer
 
-    def train(self, files: List[str], config: BPETrainConfig):
+    def train(self, files: List[str], **train_kwargs):
         """Train the model using the given files"""
+        train_config = self.config.train_config or BPETrainConfig()
+        train_config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
             vocab_size=config.vocab_size,  # noqa
@@ -121,13 +123,15 @@ class BPETokenizer(Tokenizer):
             files = [files]
         self._tokenizer.train(files, trainer=trainer)
 
-    def train_from_iterator(self, dataset: List[str], config: BPETrainConfig):
+    def train_from_iterator(self, dataset: List[str], **train_kwargs):
         """Train the model using the given files"""
+        train_config = self.config.train_config or BPETrainConfig()
+        train_config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=config.vocab_size,  # noqa
-            min_frequency=config.min_frequency,  # noqa
-            show_progress=config.show_progress,  # noqa
+            vocab_size=train_config.vocab_size,  # noqa
+            min_frequency=train_config.min_frequency,  # noqa
+            show_progress=train_config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
             initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),  # noqa
         )
