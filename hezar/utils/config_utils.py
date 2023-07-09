@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Dict, Union
-
+from re import sub
 import omegaconf
 from omegaconf import DictConfig
 
@@ -15,6 +15,7 @@ __all__ = [
     "hezar_config_to_hf_config",
     "get_module_config_class",
     "get_module_class",
+    "snake_case",
 ]
 
 logger = get_logger(__name__)
@@ -105,6 +106,13 @@ def get_module_config_class(name: str, config_type: str):
     return config_cls
 
 
+def snake_case(s):
+    return '_'.join(
+        sub('([A-Z][a-z]+)', r' \1',
+            sub('([A-Z]+)', r' \1',
+                s.replace('-', ' '))).split()).lower()
+
+
 def get_module_class(name: str, module_type: str) -> type:
     """
     Get module class based on registry name
@@ -131,9 +139,12 @@ def get_module_class(name: str, module_type: str) -> type:
     elif module_type == ConfigType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
+    elif module_type == ConfigType.METRIC:
+        from ..registry import metrics_registry  # noqa
+        registry = metrics_registry
 
     else:
         raise ValueError(f"Invalid `module_type`: {module_type}!")
-
+    name = snake_case(name)
     module_cls = registry[name].module_class
     return module_cls

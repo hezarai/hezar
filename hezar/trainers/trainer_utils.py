@@ -37,13 +37,13 @@ class MetricsManager:
         self.metrics_dict = metrics_dict
         self.trackers = {m: AverageMeter(m) for m in self.metrics_dict.keys()}
 
-    def compute(self, preds, labels) -> Dict[str, Any]:
-        results = {}
-        for metric_name, metric_fn in self.metrics_dict.items():
-            if metric_fn is not None:
-                results[metric_name] = metric_fn(preds, labels).item()
-
-        return results
+    # def compute(self, preds, labels) -> Dict[str, Any]:
+    #     results = {}
+    #     for metric_name, metric_fn in self.metrics_dict.items():
+    #         if metric_fn is not None:
+    #             results[metric_name] = metric_fn(preds, labels).item()
+    #
+    #     return results
 
     def update(self, results):
         for metric_name, metric in self.trackers.items():

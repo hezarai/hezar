@@ -12,20 +12,20 @@ Examples:
 """
 from typing import Optional
 
-from .constants import SplitType
 from .configs import (
     DatasetConfig,
     EmbeddingConfig,
     ModelConfig,
     PreprocessorConfig,
 )
+from .constants import SplitType
 from .registry import (  # noqa
     datasets_registry,  # noqa
     embeddings_registry,  # noqa
     models_registry,  # noqa
-    preprocessors_registry,  # noqa
+    preprocessors_registry, metrics_registry,  # noqa
 )
-
+from .utils.config_utils import snake_case
 
 __all__ = [
     "build_model",
@@ -119,3 +119,24 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
     config = config or embeddings_registry[name].config_class()
     embedding = embeddings_registry[name].module_class(config, **kwargs)
     return embedding
+
+
+def build_metric(name: str, **kwargs):
+    """
+    Build the metric using its registry name. If config is None then the metric is built using the
+    default config.
+
+    Args:
+        name (str): Name of the metric in the metrics' registry
+        config (EmbeddingConfig): An EmbeddingConfig instance
+        **kwargs: Extra config parameters that are loaded to the metric
+
+    Returns:
+        A Dataset instance
+    """
+    if name not in metrics_registry:
+        raise ValueError(f"Unknown metric name: `{name}`!\n"
+                         f"Available metric names: {list(metrics_registry.keys())}")
+    name = snake_case(name)
+    metric = metrics_registry[name].module_class(**kwargs)
+    return metric

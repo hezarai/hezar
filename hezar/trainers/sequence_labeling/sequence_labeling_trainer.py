@@ -1,8 +1,7 @@
 import os
 import random
 import tempfile
-from abc import abstractmethod
-from typing import Dict, Tuple, Iterable, Union, Callable
+from typing import Dict, Tuple
 
 import numpy as np
 import torch
@@ -12,27 +11,27 @@ from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
-from .trainer_utils import MetricsManager, write_to_tensorboard
-from .. import Metric
-from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
-from ..constants import (
+from ..trainer import Trainer
+from ..trainer_utils import MetricsManager, write_to_tensorboard
+from ...configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
+from ...constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_SUBFOLDER,
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
 )
-from ..data.datasets import Dataset
-from ..models import Model
-from ..utils import get_logger
+from ...data.datasets import Dataset
+from ...models import Model
+from ...utils import get_logger
 
 logger = get_logger(__name__)
 
-# METRICS_MAP = {
-#     "accuracy": Accuracy,
-#     "f1": F1Score,
-#     "precision": Precision,
-# }
+METRICS_MAP = {
+    "accuracy": Accuracy,
+    "f1": F1Score,
+    "precision": Precision,
+}
 
 optimizers = {
     "adam": torch.optim.Adam,
@@ -45,7 +44,7 @@ lr_schedulers = {
 }
 
 
-class Trainer:
+class SequenceLabelingTrainer(Trainer):
     """
     A general but fully featured model trainer/evaluator for Hezar models.
 
@@ -74,7 +73,6 @@ class Trainer:
             optimizer: torch.optim.Optimizer = None,
             lr_scheduler=None,
     ):
-
         self.config = config
 
         self.device, self.device_type = self._prepare_device_and_type()
@@ -186,17 +184,72 @@ class Trainer:
                 lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_config)
         return optimizer, lr_scheduler
 
-    @abstractmethod
-    def _setup_metrics_manager(self, metrics: Iterable[Union[str, Callable, Metric]]) -> MetricsManager:
-        raise NotImplementedError("You must implement `_setup_metrics_manager` method!")
+    def _setup_metrics_manager(self, metrics: Dict[str, Dict]) -> MetricsManager:
+        """
+        Set up metrics manager to track and update metrics like loss, accuracy, f1, etc.
 
-    @abstractmethod
+        Args:
+            metrics: A dict of metrics names and their kwargs {metric_name: **kwargs}
+
+        Returns:
+             A MetricsManager instance
+        """
+        metrics_dict = {"loss": None}
+        for name, kwargs in metrics.items():
+            metrics_dict[name] = METRICS_MAP[name](num_classes=self.train_dataset.config.num_labels, **kwargs)
+        metrics_manager = MetricsManager(metrics_dict)
+        return metrics_manager
+
     def training_step(self, input_batch: Dict[str, torch.Tensor]):
-        raise NotImplementedError("You must implement `training_step` method!")
+        """
+        Train one batch of data and return metrics outputs
 
-    @abstractmethod
+        Args:
+            input_batch: A batch of inputs to train
+
+        Returns:
+            The metrics results
+        """
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+
+        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
+            outputs = self.model(input_batch)
+            if "loss" not in outputs:
+                raise ValueError("Model outputs must contain `loss`!")
+            loss: torch.Tensor = outputs["loss"]
+
+        self.scaler.scale(loss).backward()
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        self.optimizer.zero_grad()
+
+        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
+        results["loss"] = loss.item()
+
+        return results
+
     def evaluation_step(self, input_batch: Dict[str, torch.Tensor]):
-        raise NotImplementedError("You must implement `evaluation_step` method!")
+        """
+        Evaluate one batch of data and return metrics outputs
+
+        Args:
+            input_batch: A batch of inputs to train
+
+        Returns:
+            The metrics results
+        """
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+
+        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
+            outputs = self.model(input_batch)
+            if "loss" not in outputs:
+                raise ValueError("Model outputs must contain `loss`!")
+            loss: torch.Tensor = outputs["loss"]
+
+        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
+        results["loss"] = loss.item()
+
+        return results
 
     def inner_training_loop(self, epoch_num: int):
         """

@@ -289,7 +289,7 @@ class OptimizerConfig(Config):
     """
     Base dataclass for all optimizer configs
     """
-    name: str = field(default=None, metadata={"help": "The optimizer's key in the optimizers_registry"})
+    name: str = field(default=None, metadata={"help": "The key of the optimizer in the optimizers_registry"})
     config_type: Union[str, ConfigType] = ConfigType.OPTIMIZER
     lr: float = None
     weight_decay: float = .0

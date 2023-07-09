@@ -3,7 +3,10 @@ from hezar import (
     Trainer,
     Dataset,
     build_model,
+    OptimizerConfig,
+    LRSchedulerConfig
 )
+
 
 name = "distilbert_text_classification"
 dataset_path = "hezarai/sentiment_digikala_snappfood"
@@ -13,11 +16,11 @@ train_dataset = Dataset.load(dataset_path, split="train", tokenizer_path=lm_path
 eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=lm_path)
 
 model = build_model(name, id2label=train_dataset.id2label)
-
+optim_config = OptimizerConfig(name="adam", lr=2e-5, scheduler=LRSchedulerConfig(name="reduce_on_plateau"))
 train_config = TrainerConfig(
     name=name,
     device="cuda",
-    optimizer={"name": "adam", "lr": 2e-5, "scheduler": {"name": "reduce_on_plateau"}},
+    optimizer=optim_config,
     init_weights_from=lm_path,
     batch_size=8,
     num_epochs=5,

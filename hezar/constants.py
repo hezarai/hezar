@@ -5,7 +5,6 @@ Home to all constant variables in Hezar
 import os
 from enum import Enum
 
-
 HEZAR_HUB_ID = "hezarai"
 HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.hezar')
 
@@ -45,6 +44,7 @@ class ConfigType(str, Enum):
     OPTIMIZER = "optimizer"
     CRITERION = "criterion"
     LR_SCHEDULER = "lr_scheduler"
+    METRIC = "metric"
 
 
 class SplitType(str, Enum):
@@ -52,3 +52,11 @@ class SplitType(str, Enum):
     EVAL = "eval"
     VALID = "validation"
     TEST = "test"
+
+
+class MetricType(str, Enum):
+    F1 = "f1"
+    RECALL = "recall"
+
+
+print(isinstance(MetricType.F1, str))

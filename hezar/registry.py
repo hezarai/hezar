@@ -30,7 +30,6 @@ from typing import Dict, Type, Optional
 from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainerConfig
 from .utils import get_logger
 
-
 __all__ = [
     "register_model",
     "register_preprocessor",
@@ -70,6 +69,7 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
     Returns:
          The class itself
     """
+
     def register(cls):
         if model_name in models_registry:
             logger.warning(f"Model `{model_name}` is already registered. Overwriting...")
@@ -102,6 +102,7 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
     Returns:
          The class itself
     """
+
     def register(cls):
         if dataset_name in datasets_registry:
             logger.warning(f"Dataset `{dataset_name}` is already registered. Overwriting...")
@@ -134,6 +135,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
     Returns:
          The class itself
     """
+
     def register(cls):
         if preprocessor_name in preprocessors_registry:
             logger.warning(f"Preprocessor `{preprocessor_name}` is already registered. Overwriting...")
@@ -166,6 +168,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
     Returns:
          The class itself
     """
+
     def register(cls):
         if embedding_name in embeddings_registry:
             logger.warning(f"Embedding `{embedding_name}` is already registered. Overwriting...")
@@ -198,6 +201,7 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
     Returns:
          The class itself
     """
+
     def register(cls):
         if trainer_name in trainers_registry:
             logger.warning(f"Trainer `{trainer_name}` is already registered. Overwriting...")
@@ -228,6 +232,7 @@ def register_metric(metric_name: str):
     Returns:
          The class itself
     """
+
     def register(cls):
         if metric_name in metrics_registry:
             logger.warning(f"Metric `{metric_name}` is already registered. Overwriting...")
