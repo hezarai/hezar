@@ -22,10 +22,12 @@ from .constants import SplitType
 from .registry import (  # noqa
     datasets_registry,  # noqa
     embeddings_registry,  # noqa
+    metrics_registry,  # noqa
     models_registry,  # noqa
-    preprocessors_registry, metrics_registry,  # noqa
+    preprocessors_registry,  # noqa
 )
 from .utils.config_utils import snake_case
+
 
 __all__ = [
     "build_model",

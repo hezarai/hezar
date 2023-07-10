@@ -6,9 +6,9 @@ from typing import Dict
 from torch import nn
 from transformers import BertConfig, BertModel
 
-from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 from ....models import Model
 from ....registry import register_model
+from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
 
 @register_model("bert_sequence_labeling", BertSequenceLabelingConfig)

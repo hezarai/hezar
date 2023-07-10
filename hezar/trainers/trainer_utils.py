@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Any
+from typing import Callable, Dict
 
 from torch.utils.tensorboard import SummaryWriter
 

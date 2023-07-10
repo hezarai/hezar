@@ -1,8 +1,7 @@
-from enum import Enum
-from typing import Iterator, Iterable, Dict, Any, Callable
+from typing import Any, Callable, Dict
 
-from ..constants import MetricType
 from .. import Recall
+from ..constants import MetricType
 
 
 # class TextClassificationMetrics(str, Enum):
@@ -23,23 +22,4 @@ class TextClassificationEvaluator:
                 results[metric_name] = metric_fn(preds, labels).item()
 
         return results
-    # def _preprocessing(self, preds, labels):
-    #     pass
 
-#
-#
-#
-# # def a(b: Iterable[str | int]):
-# #     pass
-# #
-# #
-# # a([1, 2, 3])
-#
-
-
-class TextClassificationMetrics(str, Enum):
-    RECALL = "recall"
-
-
-if __name__ == '__main__':
-    print(TextClassificationMetrics.RECALL)

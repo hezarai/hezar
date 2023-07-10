@@ -25,10 +25,11 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 """
 
 from dataclasses import dataclass
-from typing import Dict, Type, Optional
+from typing import Dict, Optional, Type
 
 from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainerConfig
 from .utils import get_logger
+
 
 __all__ = [
     "register_model",

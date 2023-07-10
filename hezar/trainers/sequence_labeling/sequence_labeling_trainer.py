@@ -11,8 +11,6 @@ from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
-from ..trainer import Trainer
-from ..trainer_utils import MetricsManager, write_to_tensorboard
 from ...configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
 from ...constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -24,6 +22,9 @@ from ...constants import (
 from ...data.datasets import Dataset
 from ...models import Model
 from ...utils import get_logger
+from ..trainer import Trainer
+from ..trainer_utils import MetricsManager, write_to_tensorboard
+
 
 logger = get_logger(__name__)
 

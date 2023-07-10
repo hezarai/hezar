@@ -1,10 +1,9 @@
-from typing import Dict, Iterable, Callable, Union
+from typing import Callable, Dict, Iterable, Union
 
 import torch
-from hezar.constants import ConfigType, MetricType
 
-from ..trainer import Trainer
-from ..trainer_utils import MetricsManager
+from hezar.constants import MetricType
+
 from ... import Metric, snake_case
 from ...builders import build_metric
 from ...configs import TrainerConfig
@@ -15,7 +14,10 @@ from ...constants import (
 )
 from ...data.datasets import Dataset
 from ...models import Model
-from ...utils import get_logger, get_module_class
+from ...utils import get_logger
+from ..trainer import Trainer
+from ..trainer_utils import MetricsManager
+
 
 logger = get_logger(__name__)
 

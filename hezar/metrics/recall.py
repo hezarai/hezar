@@ -2,8 +2,8 @@ from typing import Any, Dict
 
 from sklearn.metrics import recall_score
 
-from .metric import Metric
 from ..registry import register_metric
+from .metric import Metric
 
 
 @register_metric("recall")

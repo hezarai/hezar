@@ -1,12 +1,14 @@
 import json
 import os
-from typing import Dict, Union
 from re import sub
+from typing import Dict, Union
+
 import omegaconf
 from omegaconf import DictConfig
 
 from ..constants import ConfigType
 from .logging import get_logger
+
 
 __all__ = [
     "flatten_dict",
