@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from .. import Metric
+from ..metrics import Metric
 from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -27,11 +27,6 @@ from .trainer_utils import MetricsManager
 
 logger = get_logger(__name__)
 
-# METRICS_MAP = {
-#     "accuracy": Accuracy,
-#     "f1": F1Score,
-#     "precision": Precision,
-# }
 
 optimizers = {
     "adam": torch.optim.Adam,
@@ -233,6 +228,7 @@ class Trainer:
         Args:
             logits: Logits from model outputs
             labels: Ground truth labels
+
         Returns:
             The loss tensor
         """

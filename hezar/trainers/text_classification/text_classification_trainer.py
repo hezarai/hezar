@@ -57,7 +57,8 @@ class TextClassificationTrainer(Trainer):
             eval_dataset=eval_dataset,
             data_collator=data_collator,
             optimizer=optimizer,
-            lr_scheduler=lr_scheduler)
+            lr_scheduler=lr_scheduler,
+        )
         self.criterion = torch.nn.CrossEntropyLoss()
 
     def _setup_metrics_manager(self, metrics: Iterable[Union[str, Callable, Metric, MetricType]]) -> MetricsManager:
