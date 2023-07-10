@@ -31,7 +31,7 @@ class BertSequenceLabeling(Model):
         return bert_config
 
     def forward(self, inputs, **kwargs) -> Dict:
-        input_ids = inputs.get("input_ids")
+        input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
         token_type_ids = inputs.get("token_type_ids", None)
         position_ids = inputs.get("position_ids", None)
