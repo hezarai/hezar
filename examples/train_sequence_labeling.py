@@ -1,6 +1,6 @@
 from hezar import (
     TrainerConfig,
-    Trainer,
+    SequenceLabelingTrainer,
     Dataset,
     build_model,
 )
@@ -23,7 +23,7 @@ train_config = TrainerConfig(
     metrics={"f1": {"task": "multiclass"}},
 )
 
-trainer = Trainer(
+trainer = SequenceLabelingTrainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,

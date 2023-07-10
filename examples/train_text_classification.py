@@ -1,6 +1,6 @@
 from hezar import (
     TrainerConfig,
-    Trainer,
+    TextClassificationTrainer,
     Dataset,
     build_model,
     OptimizerConfig,
@@ -28,7 +28,7 @@ train_config = TrainerConfig(
     metrics={"f1": {"task": "multiclass"}},
 )
 
-trainer = Trainer(
+trainer = TextClassificationTrainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,
