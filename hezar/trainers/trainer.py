@@ -2,7 +2,7 @@ import os
 import random
 import tempfile
 from abc import abstractmethod
-from typing import Callable, Dict, Iterable, Tuple, Union
+from typing import Callable, Dict, Iterable, Tuple, Union, Any
 
 import numpy as np
 import torch
@@ -22,8 +22,8 @@ from ..constants import (
 )
 from ..data.datasets import Dataset
 from ..models import Model
-from ..utils import get_logger
-from .trainer_utils import MetricsManager, write_to_tensorboard
+from ..utils import get_logger, permute_dict_list
+from .trainer_utils import MetricsManager
 
 logger = get_logger(__name__)
 
@@ -90,8 +90,6 @@ class Trainer:
         self.train_dataloader, self.eval_dataloader = self._prepare_dataloaders()
 
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
-
-        self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
@@ -189,13 +187,97 @@ class Trainer:
     def _setup_metrics_manager(self, metrics: Iterable[Union[str, Callable, Metric]]) -> MetricsManager:
         raise NotImplementedError("You must implement `_setup_metrics_manager` method!")
 
-    @abstractmethod
-    def training_step(self, input_batch: Dict[str, torch.Tensor]):
-        raise NotImplementedError("You must implement `training_step` method!")
+    def prepare_input_batch(self, input_batch):
+        """
+        Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
+        Args:
+            input_batch: Raw input batch from the dataloader
 
-    @abstractmethod
-    def evaluation_step(self, input_batch: Dict[str, torch.Tensor]):
-        raise NotImplementedError("You must implement `evaluation_step` method!")
+        Returns:
+            The proper input batch required by model forward
+        """
+        # cast to device
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+        return input_batch
+
+    def amp_context_manager(self):
+        """
+        A smart context manager for mixed precision.
+
+        Returns:
+            A torch autocast context manager
+        """
+        return torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp)
+
+    def forward(self, input_batch):
+        """
+        Perform model forward on the input batch
+
+        In special cases, one can override this method in their desired trainer.
+
+        Args:
+            input_batch: Input batch
+
+        Returns:
+            Model outputs
+        """
+        outputs = self.model(input_batch)
+        return outputs
+
+    def compute_loss(self, logits, labels, **kwargs) -> torch.Tensor:
+        """
+        Perform model forward and compute loss.
+
+        This method must be implemented in other trainers.
+
+        Args:
+            logits: Logits from model outputs
+            labels: Ground truth labels
+        Returns:
+            The loss tensor
+        """
+        raise NotImplementedError
+
+    def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
+        """
+        Train one batch of data and return loss and model outputs
+
+        Args:
+            input_batch: A batch of inputs to train
+
+        Returns:
+            Train step outputs including loss, logits, etc.
+        """
+        with self.amp_context_manager():
+            outputs = self.forward(input_batch)
+            loss = self.compute_loss(outputs["logits"], input_batch["labels"])
+
+        self.scaler.scale(loss).backward()
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        self.optimizer.zero_grad()
+
+        outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
+
+        return outputs
+
+    def evaluation_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
+        """
+        Evaluate one batch of data and return loss and model outputs
+
+        Args:
+            input_batch: A batch of inputs to evaluate
+
+        Returns:
+            Evaluation step outputs including loss, logits, etc.
+        """
+        with self.amp_context_manager():
+            outputs = self.forward(input_batch)
+            loss = self.compute_loss(outputs["logits"], input_batch["labels"])
+
+        outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
+
+        return outputs
 
     def inner_training_loop(self, epoch_num: int):
         """
@@ -207,7 +289,7 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        self.metrics_manager.reset()
+        training_results = []
         self.model.train()
         with tqdm(
             self.train_dataloader,
@@ -216,20 +298,22 @@ class Trainer:
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
         ) as iterator:
-            for input_batch in iterator:
-                results = self.training_step(input_batch)
-                self.metrics_manager.update(results)
-                iterator.set_postfix(**self.metrics_manager.avg())
-        return self.metrics_manager.avg()
+            for step, input_batch in enumerate(iterator):
+                input_batch = self.prepare_input_batch(input_batch)
+                outputs = self.training_step(input_batch)
+                training_results.append(outputs)
+                iterator.set_postfix(loss=outputs["loss"])
+        training_results = permute_dict_list(training_results)
+        return training_results
 
     def evaluate(self):
         """
         Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
 
         Returns:
-            Metrics averages through the full iteration
+            Evaluation results
         """
-        self.metrics_manager.reset()
+        evaluation_results = []
         self.model.eval()
         with tqdm(
             self.eval_dataloader,
@@ -240,10 +324,12 @@ class Trainer:
         ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
-                    results = self.evaluation_step(input_batch)
-                    self.metrics_manager.update(results)
-                    iterator.set_postfix(**self.metrics_manager.avg())
-        return self.metrics_manager.avg()
+                    input_batch = self.prepare_input_batch(input_batch)
+                    outputs = self.evaluation_step(input_batch)
+                    evaluation_results.append(outputs)
+                    iterator.set_postfix(loss=outputs["loss"])
+        evaluation_results = permute_dict_list(evaluation_results)
+        return evaluation_results
 
     def train(self):
         """
@@ -251,13 +337,9 @@ class Trainer:
         """
         for epoch in range(1, self.config.num_epochs + 1):
             print()
-            train_results = self.inner_training_loop(epoch)
-            eval_results = self.evaluate()
-            self.lr_scheduler.step(eval_results["loss"])
-
-            # tensorboard
-            write_to_tensorboard(self.tensorboard, train_results, "train", epoch)
-            write_to_tensorboard(self.tensorboard, eval_results, "val", epoch)
+            training_results = self.inner_training_loop(epoch)
+            evaluation_results = self.evaluate()
+            self.lr_scheduler.step(evaluation_results["loss"])
 
             # maybe save checkpoint
             if epoch % self.config.save_freq == 0:

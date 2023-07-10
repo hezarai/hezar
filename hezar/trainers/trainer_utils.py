@@ -3,8 +3,8 @@ from typing import Callable, Dict
 from torch.utils.tensorboard import SummaryWriter
 
 
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
+class AverageMeter:
+    """Compute and store the average and current value"""
 
     def __init__(self, name, fmt=":f"):
         self.name = name
