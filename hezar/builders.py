@@ -34,6 +34,7 @@ __all__ = [
     "build_dataset",
     "build_preprocessor",
     "build_embedding",
+    "build_metric"
 ]
 
 

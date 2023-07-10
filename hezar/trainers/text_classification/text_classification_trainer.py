@@ -18,7 +18,6 @@ from ...utils import get_logger
 from ..trainer import Trainer
 from ..trainer_utils import MetricsManager
 
-
 logger = get_logger(__name__)
 
 
@@ -42,14 +41,14 @@ class TextClassificationTrainer(Trainer):
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
 
     def __init__(
-            self,
-            model: Model = None,
-            config: TrainerConfig = None,
-            train_dataset: Dataset = None,
-            eval_dataset: Dataset = None,
-            data_collator=None,
-            optimizer: torch.optim.Optimizer = None,
-            lr_scheduler=None,
+        self,
+        model: Model = None,
+        config: TrainerConfig = None,
+        train_dataset: Dataset = None,
+        eval_dataset: Dataset = None,
+        data_collator=None,
+        optimizer: torch.optim.Optimizer = None,
+        lr_scheduler=None,
     ):
         super().__init__(
             model=model,

@@ -25,7 +25,6 @@ from ..models import Model
 from ..utils import get_logger
 from .trainer_utils import MetricsManager, write_to_tensorboard
 
-
 logger = get_logger(__name__)
 
 # METRICS_MAP = {
@@ -65,14 +64,14 @@ class Trainer:
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
 
     def __init__(
-            self,
-            model: Model = None,
-            config: TrainerConfig = None,
-            train_dataset: Dataset = None,
-            eval_dataset: Dataset = None,
-            data_collator=None,
-            optimizer: torch.optim.Optimizer = None,
-            lr_scheduler=None,
+        self,
+        model: Model = None,
+        config: TrainerConfig = None,
+        train_dataset: Dataset = None,
+        eval_dataset: Dataset = None,
+        data_collator=None,
+        optimizer: torch.optim.Optimizer = None,
+        lr_scheduler=None,
     ):
 
         self.config = config
@@ -211,11 +210,11 @@ class Trainer:
         self.metrics_manager.reset()
         self.model.train()
         with tqdm(
-                self.train_dataloader,
-                unit="batch",
-                desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
-                bar_format=TQDM_BAR_FORMAT,
-                ascii=" #",
+            self.train_dataloader,
+            unit="batch",
+            desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
+            bar_format=TQDM_BAR_FORMAT,
+            ascii=" #",
         ) as iterator:
             for input_batch in iterator:
                 results = self.training_step(input_batch)
@@ -233,11 +232,11 @@ class Trainer:
         self.metrics_manager.reset()
         self.model.eval()
         with tqdm(
-                self.eval_dataloader,
-                unit="batch",
-                desc="Evaluating... ",
-                bar_format=TQDM_BAR_FORMAT,
-                ascii=" #",
+            self.eval_dataloader,
+            unit="batch",
+            desc="Evaluating... ",
+            bar_format=TQDM_BAR_FORMAT,
+            ascii=" #",
         ) as iterator:
             with torch.inference_mode():
                 for input_batch in iterator:
@@ -266,13 +265,13 @@ class Trainer:
                 self.save(ckpt_save_path)
 
     def save(
-            self,
-            path: str,
-            config_filename=None,
-            model_filename=None,
-            model_config_filename=None,
-            subfolder=None,
-            dataset_config_file=None,
+        self,
+        path: str,
+        config_filename=None,
+        model_filename=None,
+        model_config_filename=None,
+        subfolder=None,
+        dataset_config_file=None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -298,15 +297,15 @@ class Trainer:
             self.train_dataset.tokenizer.save(path)
 
     def push_to_hub(
-            self,
-            repo_id: str,
-            config_filename: str = None,
-            model_filename: str = None,
-            model_config_filename: str = None,
-            subfolder: str = None,
-            dataset_config_filename: str = None,
-            commit_message: str = None,
-            private: bool = False,
+        self,
+        repo_id: str,
+        config_filename: str = None,
+        model_filename: str = None,
+        model_config_filename: str = None,
+        subfolder: str = None,
+        dataset_config_filename: str = None,
+        commit_message: str = None,
+        private: bool = False,
     ):
         """
         Push everything to the Hub
