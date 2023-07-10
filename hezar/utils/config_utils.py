@@ -1,6 +1,5 @@
 import json
 import os
-from re import sub
 from typing import Dict, Union
 
 import omegaconf
@@ -8,6 +7,7 @@ from omegaconf import DictConfig
 
 from ..constants import ConfigType
 from .logging import get_logger
+from .common_utils import snake_case
 
 
 __all__ = [
@@ -17,7 +17,6 @@ __all__ = [
     "hezar_config_to_hf_config",
     "get_module_config_class",
     "get_module_class",
-    "snake_case",
 ]
 
 logger = get_logger(__name__)
@@ -106,13 +105,6 @@ def get_module_config_class(name: str, config_type: str):
 
     config_cls = registry[name].config_class
     return config_cls
-
-
-def snake_case(s):
-    return '_'.join(
-        sub('([A-Z][a-z]+)', r' \1',
-            sub('([A-Z]+)', r' \1',
-                s.replace('-', ' '))).split()).lower()
 
 
 def get_module_class(name: str, module_type: str) -> type:
