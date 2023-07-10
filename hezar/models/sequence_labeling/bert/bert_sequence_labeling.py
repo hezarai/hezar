@@ -31,22 +31,32 @@ class BertSequenceLabeling(Model):
         return bert_config
 
     def forward(self, inputs, **kwargs) -> Dict:
-        input_ids = inputs.get("token_ids")
-        labels = inputs.get("labels")
+        input_ids = inputs["token_ids"]
+        attention_mask = inputs["attention_mask"]
+        token_type_ids = inputs["token_type_ids"]
+        position_ids = inputs["position_ids"]
+        head_mask = inputs["head_mask"]
+        inputs_embeds = inputs["inputs_embeds"]
+        output_attentions = inputs["output_attentions"]
+        output_hidden_states = inputs["output_hidden_states"]
 
-        lm_outputs = self.bert(input_ids=input_ids, **kwargs)
+        lm_outputs = self.bert(
+            input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            position_ids=position_ids,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            **kwargs,
+        )
         sequence_output = lm_outputs[0]
 
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)
 
-        loss = None
-        if labels is not None:
-            criterion = nn.CrossEntropyLoss()
-            loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
-
         outputs = {
-            "loss": loss,
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
