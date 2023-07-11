@@ -125,7 +125,7 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
     return embedding
 
 
-def build_metric(name: str, config: Optional[MetricConfig], **kwargs):
+def build_metric(name: str, config: Optional[MetricConfig] = None, **kwargs):
     """
     Build the metric using its registry name. If config is None then the metric is built using the
     default config.
