@@ -1,5 +1,7 @@
 from typing import Any, Dict
 
+from ..configs import MetricConfig
+
 
 class Metric:
     """
@@ -9,6 +11,9 @@ class Metric:
     not to reinvent the wheel. If a metric is already implemented by some package, use it! The only reason to implement
     such a module, is to make sure the metrics are treated the same all over the framework.
     """
+
+    def __init__(self, config: MetricConfig, **kwargs):
+        self.config = config.update(kwargs)
 
     def compute(self, predictions=None, targets=None, **kwargs) -> Dict[str, Any]:
         """

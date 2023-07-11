@@ -27,7 +27,7 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
 
-from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainerConfig
+from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, MetricConfig, TrainerConfig
 from .utils import get_logger
 
 
@@ -223,12 +223,13 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
     return register
 
 
-def register_metric(metric_name: str):
+def register_metric(metric_name: str, config_class: Type[MetricConfig], **kwargs):
     """
     A class decorator that adds the metric class and the config class to the `metrics_registry`
 
     Args:
-        metric_name: Trainer's registry name e.g, `f1`
+        metric_name: Metric registry name e.g, `f1`
+        config_class: Metric config class
 
     Returns:
          The class itself
@@ -237,8 +238,16 @@ def register_metric(metric_name: str):
     def register(cls):
         if metric_name in metrics_registry:
             logger.warning(f"Metric `{metric_name}` is already registered. Overwriting...")
+        if config_class.name != metric_name:
+            raise ValueError(f"`metric_name` and `config.name` are not compatible for `{cls.__name__}`\n"
+                             f"metric_name: {metric_name}\n"
+                             f"{config_class.__name__}.name: {config_class.name}")
 
-        metrics_registry[metric_name] = Registry(module_class=cls)
+        metrics_registry[metric_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
 
         return cls
 

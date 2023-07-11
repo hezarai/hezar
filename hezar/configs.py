@@ -35,6 +35,7 @@ __all__ = [
     "CriterionConfig",
     "OptimizerConfig",
     "LRSchedulerConfig",
+    "MetricConfig",
 ]
 
 logger = get_logger(__name__)
@@ -294,6 +295,15 @@ class OptimizerConfig(Config):
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
+
+
+@dataclass
+class MetricConfig(Config):
+    """
+    Base dataclass config for all metric configs
+    """
+    name: str = None
+    config_type = ConfigType.METRIC
 
 
 @dataclass

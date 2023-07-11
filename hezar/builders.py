@@ -17,6 +17,7 @@ from .configs import (
     EmbeddingConfig,
     ModelConfig,
     PreprocessorConfig,
+    MetricConfig,
 )
 from .constants import SplitType
 from .registry import (  # noqa
@@ -124,14 +125,14 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
     return embedding
 
 
-def build_metric(name: str, **kwargs):
+def build_metric(name: str, config: Optional[MetricConfig], **kwargs):
     """
     Build the metric using its registry name. If config is None then the metric is built using the
     default config.
 
     Args:
         name (str): Name of the metric in the metrics' registry
-        config (EmbeddingConfig): An EmbeddingConfig instance
+        config (MetricConfig): A MetricConfig instance
         **kwargs: Extra config parameters that are loaded to the metric
 
     Returns:
@@ -141,5 +142,6 @@ def build_metric(name: str, **kwargs):
         raise ValueError(f"Unknown metric name: `{name}`!\n"
                          f"Available metric names: {list(metrics_registry.keys())}")
     name = snake_case(name)
-    metric = metrics_registry[name].module_class(**kwargs)
+    config = config or embeddings_registry[name].config_class()
+    metric = metrics_registry[name].module_class(config, **kwargs)
     return metric
