@@ -223,7 +223,7 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
     return register
 
 
-def register_metric(metric_name: str, config_class: Type[MetricConfig], **kwargs):
+def register_metric(metric_name: str, config_class: Type[MetricConfig]):
     """
     A class decorator that adds the metric class and the config class to the `metrics_registry`
 

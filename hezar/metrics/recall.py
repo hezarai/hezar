@@ -1,4 +1,5 @@
 from typing import Any, Dict, Iterable
+from dataclasses import dataclass
 
 from sklearn.metrics import recall_score
 
@@ -8,11 +9,12 @@ from ..constants import MetricType
 from .metric import Metric
 
 
+@dataclass
 class RecallConfig(MetricConfig):
     name: str = MetricType.RECALL
     pos_label: int = None
     average: str = "binary"
-    sample_weight: Iterable[float]
+    sample_weight: Iterable[float] = None
 
 
 @register_metric("recall", config_class=RecallConfig)

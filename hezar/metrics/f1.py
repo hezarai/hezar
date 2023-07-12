@@ -1,4 +1,5 @@
 from typing import Any, Dict, Iterable
+from dataclasses import dataclass
 
 from sklearn.metrics import f1_score
 
@@ -8,11 +9,12 @@ from ..constants import MetricType
 from .metric import Metric
 
 
+@dataclass
 class F1Config(MetricConfig):
     name: str = MetricType.F1
     pos_label: int = None
-    average: str = "binary"
-    sample_weight: Iterable[float]
+    average: str = None
+    sample_weight: Iterable[float] = None
 
 
 @register_metric("f1", config_class=F1Config)
