@@ -38,11 +38,6 @@ class TokenizerConfig(PreprocessorConfig):
     unk_token: str = None
 
 
-@dataclass
-class TokenizerTrainConfig(Config):
-    config_type: str = "preprocessor"
-
-
 class Tokenizer(Preprocessor):
     """
     Base tokenizer class. Mostly copied from :class: ~tokenizers.implementations.BaseTokenizer
