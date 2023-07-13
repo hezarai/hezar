@@ -247,7 +247,7 @@ class DatasetConfig(Config):
     Base dataclass for all dataset configs
     """
     name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
-    config_type: ConfigType = ConfigType.DATASET
+    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.DATASET
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
@@ -302,7 +302,7 @@ class MetricConfig(Config):
     Base dataclass config for all metric configs
     """
     name: str = None
-    config_type = ConfigType.METRIC
+    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.METRIC
 
 
 @dataclass
