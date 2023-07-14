@@ -7,6 +7,7 @@ from .metric import Metric
 from ..configs import MetricConfig
 from ..constants import MetricType
 from ..registry import register_metric
+from ..constants import MetricType
 
 
 @dataclass
