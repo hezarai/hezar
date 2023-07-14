@@ -185,11 +185,12 @@ class Trainer:
         for metric in self.config.metrics:
             if isinstance(metric, str):
                 if metric not in self.AVAILABLE_METRICS:
-                    logger.warning(f"The requested metric `{metric}` is not available for {self.__class__.__name__}!\n"
-                                   f"Available metrics for this trainer: {self.AVAILABLE_METRICS}")
+                    raise ValueError(f"Invalid metric `{metric}`! Available metrics: {self.AVAILABLE_METRICS}")
                 metrics_dict[metric] = build_metric(metric)
-            if isinstance(metric, MetricConfig):
+            elif isinstance(metric, MetricConfig):
                 metrics_dict[metric] = build_metric(metric.name, config=metric)
+            else:
+                raise ValueError(f"Invalid metric type `{type(metric)}`!")
         return metrics_dict
 
     def prepare_input_batch(self, input_batch):
