@@ -13,7 +13,7 @@ from .metric import Metric
 class RecallConfig(MetricConfig):
     name: str = MetricType.RECALL
     pos_label: int = None
-    average: str = "binary"
+    average: str = "macro"
     sample_weight: Iterable[float] = None
 
 
@@ -27,8 +27,8 @@ class Recall(Metric):
         predictions=None,
         targets=None,
         labels=None,
-        pos_label=1,
-        average="binary",
+        pos_label=None,
+        average=None,
         sample_weight=None,
         zero_division="warn",
     ) -> Dict[str, Any]:

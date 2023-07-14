@@ -5,13 +5,15 @@ from sklearn.metrics import f1_score
 
 from .metric import Metric
 from ..configs import MetricConfig
+from ..constants import MetricType
 from ..registry import register_metric
 
 
 @dataclass
 class F1Config(MetricConfig):
+    name: str = MetricType.F1
     pos_label: int = None
-    average: str = None
+    average: str = "macro"
     sample_weight: Iterable[float] = None
 
 
@@ -21,13 +23,13 @@ class F1(Metric):
         super().__init__(config, **kwargs)
 
     def compute(
-            self,
-            predictions=None,
-            targets=None,
-            labels=None,
-            pos_label=1,
-            average="binary",
-            sample_weight=None
+        self,
+        predictions=None,
+        targets=None,
+        labels=None,
+        pos_label=1,
+        average=None,
+        sample_weight=None
     ) -> Dict[str, Any]:
         pos_label = pos_label or self.config.pos_label
         average = average or self.config.average
