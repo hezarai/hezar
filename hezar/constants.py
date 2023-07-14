@@ -56,5 +56,7 @@ class SplitType(str, Enum):
 
 
 class MetricType(str, Enum):
+    ACCURACY = "accuracy"
     F1 = "f1"
     RECALL = "recall"
+    PRECISION = "precision"
