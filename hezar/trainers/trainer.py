@@ -1,6 +1,7 @@
 import os
 import random
 import tempfile
+import time
 from typing import Callable, Dict, Iterable, Tuple, Union, Any
 
 import numpy as np
@@ -130,6 +131,7 @@ class Trainer:
                 batch_size=self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
+                drop_last=True,
                 shuffle=True,
             )
         else:
@@ -140,6 +142,7 @@ class Trainer:
                 batch_size=self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
+                drop_last=True,
                 shuffle=True,
             )
         else:
@@ -328,12 +331,12 @@ class Trainer:
                 all_predictions.append(outputs["logits"].detach().cpu().numpy())
                 all_labels.append(input_batch["labels"].detach().cpu().numpy())
                 all_losses.append(outputs["loss"])
-                avg_loss = sum(all_losses)/len(all_losses)
+                avg_loss = sum(all_losses) / len(all_losses)
+                # Compute metrics
+                training_results = self.compute_metrics(all_predictions, all_labels)
+                training_results["loss"] = avg_loss
+                iterator.set_postfix(**training_results)
 
-                iterator.set_postfix(loss=avg_loss)
-
-        training_results = self.compute_metrics(all_predictions, all_labels)
-        training_results["loss"] = avg_loss
         return training_results
 
     def evaluate(self):
@@ -355,7 +358,7 @@ class Trainer:
             ascii=" #",
         ) as iterator:
             with torch.inference_mode():
-                for input_batch in iterator:
+                for step, input_batch in enumerate(iterator):
                     input_batch = self.prepare_input_batch(input_batch)
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
@@ -363,12 +366,12 @@ class Trainer:
                     all_predictions.append(outputs["logits"].detach().cpu().numpy())
                     all_labels.append(input_batch["labels"].detach().cpu().numpy())
                     all_losses.append(outputs["loss"])
-                    avg_loss = sum(all_losses)/len(all_losses)
+                    avg_loss = sum(all_losses) / len(all_losses)
+                    # Compute metrics
+                    evaluation_results = self.compute_metrics(all_predictions, all_labels)
+                    evaluation_results["loss"] = avg_loss
+                    iterator.set_postfix(**evaluation_results)
 
-                    iterator.set_postfix(loss=avg_loss)
-
-        evaluation_results = self.compute_metrics(all_predictions, all_labels)
-        evaluation_results["loss"] = avg_loss
         return evaluation_results
 
     def train(self):
@@ -379,8 +382,6 @@ class Trainer:
             print()
             training_results = self.inner_training_loop(epoch)
             evaluation_results = self.evaluate()
-            print(f"Train: {training_results}")
-            print(f"Evaluation: {evaluation_results}")
             self.lr_scheduler.step(evaluation_results["loss"])
 
             # maybe save checkpoint
