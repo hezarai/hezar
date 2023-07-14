@@ -18,7 +18,6 @@ eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=lm_path)
 model = build_model(name, id2label=train_dataset.id2label)
 optim_config = OptimizerConfig(name="adam", lr=2e-5, scheduler=LRSchedulerConfig(name="reduce_on_plateau"))
 train_config = TrainerConfig(
-    name=name,
     device="cuda",
     optimizer=optim_config,
     init_weights_from=lm_path,

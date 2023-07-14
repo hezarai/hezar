@@ -63,35 +63,8 @@ class Config:
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
 
     """
-    @property
-    def name(self) -> str:
-        """
-        if name is empty, then the base Config class is called. Otherwise, the name of the class is returned in snake
-        case.
-        """
-        name = snake_case(self.__class__.__name__.replace("Config", ""))
-        name = name or "base"
-        return name
-
-    @property
-    def config_type(self) -> ConfigType:
-        """
-        Every config must have a `config_type` attribute that specifies config type e.g, model, dataset, etc.
-
-        Returns:
-            A ConfigType type or a string for a custom config
-        """
-        parent_class = self.__class__.__mro__[1].__name__
-        config_type = CONFIG_TYPES_MAPPING[parent_class]
-        if config_type == ConfigType.BASE and self.__class__.__name__ not in CONFIG_TYPES_MAPPING:
-            config_type = self.__class__.__name__.replace("Config", "").lower()
-            logger.warning(f"You are attempting to create a config class from the base class `Config` which is "
-                           f"not recommended!\n"
-                           f"Your config class is {self.__class__.__name__} "
-                           f"and the `config_type` will be `{config_type}`")
-        else:
-            config_type = CONFIG_TYPES_MAPPING[self.__class__.__name__].replace("Config", "").lower()
-        return config_type
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.BASE)
 
     def __getitem__(self, item):
         try:
@@ -194,7 +167,7 @@ class Config:
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
-        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})  # noqa
+        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k) and k != "config_type"})  # noqa
 
         return config
 
@@ -265,6 +238,8 @@ class ModelConfig(Config):
     """
     Base dataclass for all model configs
     """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.MODEL)
 
 
 @dataclass
@@ -272,6 +247,8 @@ class PreprocessorConfig(Config):
     """
     Base dataclass for all preprocessor configs
     """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.PREPROCESSOR)
 
 
 @dataclass
@@ -279,6 +256,8 @@ class DatasetConfig(Config):
     """
     Base dataclass for all dataset configs
     """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.DATASET)
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
@@ -289,6 +268,8 @@ class EmbeddingConfig(Config):
     """
     Base dataclass for all embedding configs
     """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.EMBEDDING)
 
 
 @dataclass
@@ -296,6 +277,8 @@ class CriterionConfig(Config):
     """
     Base dataclass for all criterion configs
     """
+    name: str = field(default=None)
+    config_type: str = field(init=False, default=ConfigType.CRITERION)
     weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
@@ -306,6 +289,8 @@ class LRSchedulerConfig(Config):
     """
     Base dataclass for all scheduler configs
     """
+    name: str = field(default=None)
+    config_type: str = field(init=False, default=ConfigType.LR_SCHEDULER)
     verbose: bool = True
 
 
@@ -314,6 +299,8 @@ class OptimizerConfig(Config):
     """
     Base dataclass for all optimizer configs
     """
+    name: str = field(default=None)
+    config_type: str = field(init=False, default=ConfigType.OPTIMIZER)
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
@@ -324,6 +311,8 @@ class MetricConfig(Config):
     """
     Base dataclass config for all metric configs
     """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.METRIC)
 
 
 @dataclass
@@ -331,6 +320,8 @@ class TrainerConfig(Config):
     """
     Base dataclass for all trainer configs
     """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.TRAINER)
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
