@@ -190,7 +190,7 @@ class Trainer:
             elif isinstance(metric, MetricConfig):
                 metrics_dict[metric] = build_metric(metric.name, config=metric)
             else:
-                raise ValueError(f"Invalid metric type `{type(metric)}`!")
+                raise ValueError(f"Invalid metric type `{type(metric)}`! Available metrics: {self.AVAILABLE_METRICS}")
         return metrics_dict
 
     def prepare_input_batch(self, input_batch):
