@@ -15,7 +15,7 @@ Examples:
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Union, ClassVar, get_origin
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -51,10 +51,12 @@ class Config:
     Args:
         name: A mandatory attribute that specifies a unique and pre-defined name for that config that is also used in
             the registries.
-        config_type: A mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
     """
     name: str = field(metadata={"help": "The key in the registry of that module"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.BASE
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.BASE
 
     def __getitem__(self, item):
         try:
@@ -104,12 +106,12 @@ class Config:
 
     @classmethod
     def load(
-        cls,
-        hub_or_local_path: Union[str, os.PathLike],
-        filename: Optional[str] = None,
-        subfolder: Optional[str] = None,
-        repo_type=None,
-        **kwargs,
+            cls,
+            hub_or_local_path: Union[str, os.PathLike],
+            filename: Optional[str] = None,
+            subfolder: Optional[str] = None,
+            repo_type=None,
+            **kwargs,
     ):
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
@@ -181,13 +183,13 @@ class Config:
         return save_path
 
     def push_to_hub(
-        self,
-        repo_id: str,
-        filename: str,
-        subfolder: Optional[str] = None,
-        repo_type: Optional[str] = "model",
-        private: Optional[bool] = False,
-        commit_message: Optional[str] = None,
+            self,
+            repo_id: str,
+            filename: str,
+            subfolder: Optional[str] = None,
+            repo_type: Optional[str] = "model",
+            private: Optional[bool] = False,
+            commit_message: Optional[str] = None,
     ):
         """
         Push the config file to the hub
@@ -229,7 +231,10 @@ class ModelConfig(Config):
     Base dataclass for all model configs
     """
     name: str = field(default=None, metadata={"help": "The model's key in the models_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.MODEL
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.MODEL
 
 
 @dataclass
@@ -238,7 +243,10 @@ class PreprocessorConfig(Config):
     Base dataclass for all preprocessor configs
     """
     name: str = field(default=None, metadata={"help": "The preprocessor's key in the preprocessor_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.PREPROCESSOR
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.PREPROCESSOR
 
 
 @dataclass
@@ -247,10 +255,13 @@ class DatasetConfig(Config):
     Base dataclass for all dataset configs
     """
     name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.DATASET
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.DATASET
 
 
 @dataclass
@@ -259,7 +270,10 @@ class EmbeddingConfig(Config):
     Base dataclass for all embedding configs
     """
     name: str = field(default=None, metadata={"help": "The embedding's key in the embeddings_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.EMBEDDING
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.EMBEDDING
 
 
 @dataclass
@@ -268,10 +282,13 @@ class CriterionConfig(Config):
     Base dataclass for all criterion configs
     """
     name: str = field(default=None, metadata={"help": "The criterion's key in the criterions_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.CRITERION
     weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.CRITERION
 
 
 @dataclass
@@ -280,8 +297,11 @@ class LRSchedulerConfig(Config):
     Base dataclass for all scheduler configs
     """
     name: str = field(default=None, metadata={"help": "The LR scheduler's key in the schedulers_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.LR_SCHEDULER
     verbose: bool = True
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.LR_SCHEDULER
 
 
 @dataclass
@@ -290,10 +310,13 @@ class OptimizerConfig(Config):
     Base dataclass for all optimizer configs
     """
     name: str = field(default=None, metadata={"help": "The key of the optimizer in the optimizers_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.OPTIMIZER
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.OPTIMIZER
 
 
 @dataclass
@@ -302,7 +325,10 @@ class MetricConfig(Config):
     Base dataclass config for all metric configs
     """
     name: str = None
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.METRIC
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.METRIC
 
 
 @dataclass
@@ -311,7 +337,6 @@ class TrainerConfig(Config):
     Base dataclass for all trainer configs
     """
     name: str = field(default=None, metadata={"help": "The trainer's key in the trainers_registry"})
-    config_type: ClassVar[Union[str, ConfigType]] = ConfigType.TRAINER
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
@@ -321,8 +346,12 @@ class TrainerConfig(Config):
     optimizer: Union[Dict[str, Any], OptimizerConfig] = None
     batch_size: int = None
     use_amp: bool = False
-    metrics: Union[List[str], Dict[str, Dict]] = None
+    metrics: Union[List[str], Dict[str, MetricConfig]] = None
     num_epochs: int = None
     save_freq: int = 1
     checkpoints_dir: str = None
     log_dir: str = None
+
+    @property
+    def config_type(self) -> ConfigType:
+        return ConfigType.TRAINER
