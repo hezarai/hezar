@@ -159,7 +159,7 @@ class Config:
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
-        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})
+        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k) and k != "config_type"})
 
         return config
 
