@@ -1,22 +1,17 @@
-from typing import Callable, Dict, Iterable, Union, Tuple
+from typing import List
 
+import numpy as np
 import torch
 
 from hezar.constants import MetricType
 
 from ...builders import build_metric
-from ...configs import TrainerConfig
-from ...constants import (
-    DEFAULT_DATASET_CONFIG_FILE,
-    DEFAULT_TRAINER_CONFIG_FILE,
-    DEFAULT_TRAINER_SUBFOLDER,
-)
+from ...configs import TrainerConfig, MetricConfig
 from ...data.datasets import Dataset
 from ...models import Model
 from ...metrics import Metric
-from ...utils import get_logger, snake_case
+from ...utils import get_logger
 from ..trainer import Trainer
-from ..trainer_utils import MetricsManager
 
 logger = get_logger(__name__)
 
@@ -35,10 +30,12 @@ class TextClassificationTrainer(Trainer):
         lr_scheduler: Optional learning-rate scheduler
 
     """
-
-    trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
-    trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
-    dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
+    AVAILABLE_METRICS = [
+        MetricType.ACCURACY,
+        MetricType.RECALL,
+        MetricType.PRECISION,
+        MetricType.F1,
+    ]
 
     def __init__(
         self,
@@ -59,25 +56,29 @@ class TextClassificationTrainer(Trainer):
             optimizer=optimizer,
             lr_scheduler=lr_scheduler,
         )
-        self.criterion = torch.nn.CrossEntropyLoss()
+        self.criterion = torch.nn.CrossEntropyLoss(ignore_index=-100)
 
-    def _setup_metrics_manager(self, metrics: Iterable[Union[str, Callable, Metric, MetricType]]) -> MetricsManager:
-        metrics_dict = {"loss": None}
-        for metric in metrics:
+    def setup_metrics(self):
+        metrics_dict = {}
+        for metric in self.config.metrics:
             if isinstance(metric, str):
+                if metric not in self.AVAILABLE_METRICS:
+                    logger.warning(f"The requested metric `{metric}` is not available for {self.__class__.__name__}!\n"
+                                   f"Available metrics for this trainer: {self.AVAILABLE_METRICS}")
                 metrics_dict[metric] = build_metric(metric)
-            elif isinstance(metric, Metric):
-                metrics_dict[metric] = metric.compute
-            elif callable(metric):
-                if hasattr(metric, "compute"):
-                    metrics_dict[snake_case(metric.__name__)] = metric.compute
-                else:
-                    metrics_dict[snake_case(metric.__name__)] = metric
-            else:
-                raise ValueError(f"Metric {metric} is not a valid metric!")
-        metrics_manager = MetricsManager(metrics_dict)
-        return metrics_manager
+            if isinstance(metric, MetricConfig):
+                metrics_dict[metric] = build_metric(metric.name, config=metric)
+        return metrics_dict
 
     def compute_loss(self, logits, labels, **kwargs) -> torch.Tensor:
         loss = self.criterion(logits, labels)
         return loss
+
+    def compute_metrics(self, predictions: List[np.ndarray], labels: List[np.ndarray], **kwargs):
+        predictions = np.array(predictions[:-1]).argmax(2).flatten()
+        labels = np.array(labels[:-1]).flatten()
+        results = {}
+        for metric_name, metric in self.metrics.items():
+            results[metric_name] = metric.compute(predictions, labels)
+        return results
+

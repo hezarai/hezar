@@ -1,7 +1,6 @@
 import os
 import random
 import tempfile
-from abc import abstractmethod
 from typing import Callable, Dict, Iterable, Tuple, Union, Any
 
 import numpy as np
@@ -22,8 +21,7 @@ from ..constants import (
 )
 from ..data.datasets import Dataset
 from ..models import Model
-from ..utils import get_logger, permute_dict_list
-from .trainer_utils import MetricsManager
+from ..utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -67,6 +65,7 @@ class Trainer:
         data_collator=None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
+        compute_metrics=None,
     ):
 
         self.config = config
@@ -85,6 +84,8 @@ class Trainer:
         self.train_dataloader, self.eval_dataloader = self._prepare_dataloaders()
 
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
+
+        self.metrics = self.setup_metrics()
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
@@ -178,9 +179,8 @@ class Trainer:
                 lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_config)
         return optimizer, lr_scheduler
 
-    @abstractmethod
-    def _setup_metrics_manager(self, metrics: Iterable[Union[str, Callable, Metric]]) -> MetricsManager:
-        raise NotImplementedError("You must implement `_setup_metrics_manager` method!")
+    def setup_metrics(self) -> Dict[str, Metric]:
+        raise NotImplementedError
 
     def prepare_input_batch(self, input_batch):
         """
@@ -219,7 +219,7 @@ class Trainer:
         outputs = self.model(input_batch)
         return outputs
 
-    def compute_loss(self, logits, labels, **kwargs) -> torch.Tensor:
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs) -> torch.Tensor:
         """
         Perform model forward and compute loss.
 
@@ -231,6 +231,19 @@ class Trainer:
 
         Returns:
             The loss tensor
+        """
+        raise NotImplementedError
+
+    def compute_metrics(self, predictions, labels, **kwargs):
+        """
+        Compute metric values on the predictions and labels
+
+        Args:
+            predictions: A list of all predictions
+            labels: A list of all labels
+
+        Returns:
+            A dictionary of the results for every metric specified by the trainer
         """
         raise NotImplementedError
 
@@ -285,7 +298,9 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        training_results = []
+        all_predictions = []
+        all_labels = []
+        all_losses = []
         self.model.train()
         with tqdm(
             self.train_dataloader,
@@ -296,10 +311,18 @@ class Trainer:
         ) as iterator:
             for step, input_batch in enumerate(iterator):
                 input_batch = self.prepare_input_batch(input_batch)
+                # Training on one batch
                 outputs = self.training_step(input_batch)
-                training_results.append(outputs)
-                iterator.set_postfix(loss=outputs["loss"])
-        training_results = permute_dict_list(training_results)
+                # Gather outputs for metrics
+                all_predictions.append(outputs["logits"].detach().cpu().numpy())
+                all_labels.append(input_batch["labels"].detach().cpu().numpy())
+                all_losses.append(outputs["loss"])
+                avg_loss = sum(all_losses)/len(all_losses)
+
+                iterator.set_postfix(loss=avg_loss)
+
+        training_results = self.compute_metrics(all_predictions, all_labels)
+        training_results["loss"] = avg_loss
         return training_results
 
     def evaluate(self):
@@ -309,7 +332,9 @@ class Trainer:
         Returns:
             Evaluation results
         """
-        evaluation_results = []
+        all_predictions = []
+        all_labels = []
+        all_losses = []
         self.model.eval()
         with tqdm(
             self.eval_dataloader,
@@ -321,10 +346,18 @@ class Trainer:
             with torch.inference_mode():
                 for input_batch in iterator:
                     input_batch = self.prepare_input_batch(input_batch)
+                    # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
-                    evaluation_results.append(outputs)
-                    iterator.set_postfix(loss=outputs["loss"])
-        evaluation_results = permute_dict_list(evaluation_results)
+                    # Gather outputs for metrics
+                    all_predictions.append(outputs["logits"].detach().cpu().numpy())
+                    all_labels.append(input_batch["labels"].detach().cpu().numpy())
+                    all_losses.append(outputs["loss"])
+                    avg_loss = sum(all_losses)/len(all_losses)
+
+                    iterator.set_postfix(loss=avg_loss)
+
+        evaluation_results = self.compute_metrics(all_predictions, all_labels)
+        evaluation_results["loss"] = avg_loss
         return evaluation_results
 
     def train(self):
@@ -335,6 +368,8 @@ class Trainer:
             print()
             training_results = self.inner_training_loop(epoch)
             evaluation_results = self.evaluate()
+            print(f"Train: {training_results}")
+            print(f"Evaluation: {evaluation_results}")
             self.lr_scheduler.step(evaluation_results["loss"])
 
             # maybe save checkpoint
