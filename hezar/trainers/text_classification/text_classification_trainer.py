@@ -5,11 +5,9 @@ import torch
 
 from hezar.constants import MetricType
 
-from ...builders import build_metric
-from ...configs import TrainerConfig, MetricConfig
+from ...configs import TrainerConfig
 from ...data.datasets import Dataset
 from ...models import Model
-from ...metrics import Metric
 from ...utils import get_logger
 from ..trainer import Trainer
 
@@ -63,8 +61,8 @@ class TextClassificationTrainer(Trainer):
         return loss
 
     def compute_metrics(self, predictions: List[np.ndarray], labels: List[np.ndarray], **kwargs):
-        predictions = np.array(predictions[:-1]).argmax(2).flatten()
-        labels = np.array(labels[:-1]).flatten()
+        predictions = np.array(predictions).argmax(2).flatten()
+        labels = np.array(labels).flatten()
         results = {}
         for metric_name, metric in self.metrics.items():
             results[metric_name] = metric.compute(predictions, labels)
