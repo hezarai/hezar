@@ -24,6 +24,7 @@ def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
     Returns:
 
     """
-    assert len(dict_list), "Cannot perform "
+    if not len(dict_list):
+        return {}
     d = {key: [x[key] for x in dict_list] for key in dict_list[0]}
     return d
