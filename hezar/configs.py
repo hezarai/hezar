@@ -21,7 +21,7 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from . import snake_case
+from .utils.common_utils import snake_case
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
 from .utils import get_logger, get_module_config_class
 
@@ -51,15 +51,16 @@ class Config:
 
     """
 
+    @classmethod
     @property
-    def name(self) -> str:
+    def name(cls) -> str:  # noqa
         """
         if name is empty, then the base Config class is called. Otherwise, the name of the class is returned in snake
         case.
         :return:
         """
-        name = snake_case(self.__class__.__name__.replace("Config", ""))
-        name = name if name else "base"
+        name = snake_case(cls.__name__.replace("Config", ""))
+        name = name or "base"
         return name
 
     @property
@@ -238,6 +239,7 @@ class ModelConfig(Config):
     """
     Base dataclass for all model configs
     """
+
     @property
     def config_type(self) -> ConfigType:
         return ConfigType.MODEL
@@ -248,6 +250,7 @@ class PreprocessorConfig(Config):
     """
     Base dataclass for all preprocessor configs
     """
+
     @property
     def config_type(self) -> ConfigType:
         return ConfigType.PREPROCESSOR
@@ -272,6 +275,7 @@ class EmbeddingConfig(Config):
     """
     Base dataclass for all embedding configs
     """
+
     @property
     def config_type(self) -> ConfigType:
         return ConfigType.EMBEDDING
