@@ -142,6 +142,6 @@ def build_metric(name: str, config: Optional[MetricConfig] = None, **kwargs):
         raise ValueError(f"Unknown metric name: `{name}`!\n"
                          f"Available metric names: {list(metrics_registry.keys())}")
     name = snake_case(name)
-    config = config or embeddings_registry[name].config_class()
+    config = config or metrics_registry[name].config_class()
     metric = metrics_registry[name].module_class(config, **kwargs)
     return metric
