@@ -5,7 +5,6 @@ from sklearn.metrics import f1_score
 
 from .metric import Metric
 from ..configs import MetricConfig
-from ..constants import MetricType
 from ..registry import register_metric
 from ..constants import MetricType
 
@@ -45,4 +44,4 @@ class F1(Metric):
             sample_weight=sample_weight,
         )
 
-        return {"f1": float(score) if score.size == 1 else score}
+        return float(score) if score.size == 1 else score

@@ -47,4 +47,4 @@ class Recall(Metric):
             zero_division=zero_division,
         )
 
-        return {"recall": float(score) if score.size == 1 else score}
+        return float(score) if score.size == 1 else score
