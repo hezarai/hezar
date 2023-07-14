@@ -58,18 +58,6 @@ class TextClassificationTrainer(Trainer):
         )
         self.criterion = torch.nn.CrossEntropyLoss(ignore_index=-100)
 
-    def setup_metrics(self):
-        metrics_dict = {}
-        for metric in self.config.metrics:
-            if isinstance(metric, str):
-                if metric not in self.AVAILABLE_METRICS:
-                    logger.warning(f"The requested metric `{metric}` is not available for {self.__class__.__name__}!\n"
-                                   f"Available metrics for this trainer: {self.AVAILABLE_METRICS}")
-                metrics_dict[metric] = build_metric(metric)
-            if isinstance(metric, MetricConfig):
-                metrics_dict[metric] = build_metric(metric.name, config=metric)
-        return metrics_dict
-
     def compute_loss(self, logits, labels, **kwargs) -> torch.Tensor:
         loss = self.criterion(logits, labels)
         return loss

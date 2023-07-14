@@ -10,8 +10,8 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from ..metrics import Metric
-from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
+from ..builders import build_metric
+from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig, MetricConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
@@ -55,6 +55,7 @@ class Trainer:
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
+    AVAILABLE_METRICS = []
 
     def __init__(
         self,
@@ -179,8 +180,17 @@ class Trainer:
                 lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_config)
         return optimizer, lr_scheduler
 
-    def setup_metrics(self) -> Dict[str, Metric]:
-        raise NotImplementedError
+    def setup_metrics(self):
+        metrics_dict = {}
+        for metric in self.config.metrics:
+            if isinstance(metric, str):
+                if metric not in self.AVAILABLE_METRICS:
+                    logger.warning(f"The requested metric `{metric}` is not available for {self.__class__.__name__}!\n"
+                                   f"Available metrics for this trainer: {self.AVAILABLE_METRICS}")
+                metrics_dict[metric] = build_metric(metric)
+            if isinstance(metric, MetricConfig):
+                metrics_dict[metric] = build_metric(metric.name, config=metric)
+        return metrics_dict
 
     def prepare_input_batch(self, input_batch):
         """
