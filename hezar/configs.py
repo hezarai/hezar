@@ -21,6 +21,7 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
+from . import snake_case
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
 from .utils import get_logger, get_module_config_class
 
@@ -48,11 +49,18 @@ class Config:
     All configs are simple dataclasses that have some customized functionalities to manage their attributes. There are
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
 
-    Args:
-        name: A mandatory attribute that specifies a unique and pre-defined name for that config that is also used in
-            the registries.
     """
-    name: str = field(metadata={"help": "The key in the registry of that module"})
+
+    @property
+    def name(self) -> str:
+        """
+        if name is empty, then the base Config class is called. Otherwise, the name of the class is returned in snake
+        case.
+        :return:
+        """
+        name = snake_case(self.__class__.__name__.replace("Config", ""))
+        name = name if name else "base"
+        return name
 
     @property
     def config_type(self) -> ConfigType:
@@ -230,8 +238,6 @@ class ModelConfig(Config):
     """
     Base dataclass for all model configs
     """
-    name: str = field(default=None, metadata={"help": "The model's key in the models_registry"})
-
     @property
     def config_type(self) -> ConfigType:
         return ConfigType.MODEL
@@ -242,8 +248,6 @@ class PreprocessorConfig(Config):
     """
     Base dataclass for all preprocessor configs
     """
-    name: str = field(default=None, metadata={"help": "The preprocessor's key in the preprocessor_registry"})
-
     @property
     def config_type(self) -> ConfigType:
         return ConfigType.PREPROCESSOR
@@ -254,7 +258,6 @@ class DatasetConfig(Config):
     """
     Base dataclass for all dataset configs
     """
-    name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
@@ -269,8 +272,6 @@ class EmbeddingConfig(Config):
     """
     Base dataclass for all embedding configs
     """
-    name: str = field(default=None, metadata={"help": "The embedding's key in the embeddings_registry"})
-
     @property
     def config_type(self) -> ConfigType:
         return ConfigType.EMBEDDING
@@ -281,7 +282,6 @@ class CriterionConfig(Config):
     """
     Base dataclass for all criterion configs
     """
-    name: str = field(default=None, metadata={"help": "The criterion's key in the criterions_registry"})
     weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
@@ -296,7 +296,6 @@ class LRSchedulerConfig(Config):
     """
     Base dataclass for all scheduler configs
     """
-    name: str = field(default=None, metadata={"help": "The LR scheduler's key in the schedulers_registry"})
     verbose: bool = True
 
     @property
@@ -309,7 +308,6 @@ class OptimizerConfig(Config):
     """
     Base dataclass for all optimizer configs
     """
-    name: str = field(default=None, metadata={"help": "The key of the optimizer in the optimizers_registry"})
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
@@ -324,7 +322,6 @@ class MetricConfig(Config):
     """
     Base dataclass config for all metric configs
     """
-    name: str = None
 
     @property
     def config_type(self) -> ConfigType:
@@ -336,7 +333,6 @@ class TrainerConfig(Config):
     """
     Base dataclass for all trainer configs
     """
-    name: str = field(default=None, metadata={"help": "The trainer's key in the trainers_registry"})
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
