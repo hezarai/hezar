@@ -331,7 +331,7 @@ class TrainerConfig(Config):
     optimizer: Union[Dict[str, Any], OptimizerConfig] = None
     batch_size: int = None
     use_amp: bool = False
-    metrics: Union[List[str], Dict[str, MetricConfig]] = None
+    metrics: List[Union[str, MetricConfig]] = None
     num_epochs: int = None
     save_freq: int = 1
     checkpoints_dir: str = None
