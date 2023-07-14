@@ -40,6 +40,19 @@ __all__ = [
 
 logger = get_logger(__name__)
 
+CONFIG_TYPES_MAPPING = {
+    "Config": ConfigType.BASE,
+    "ModelConfig": ConfigType.MODEL,
+    "PreprocessorConfig": ConfigType.PREPROCESSOR,
+    "TrainerConfig": ConfigType.TRAINER,
+    "DatasetConfig": ConfigType.DATASET,
+    "EmbeddingConfig": ConfigType.EMBEDDING,
+    "CriterionConfig": ConfigType.CRITERION,
+    "OptimizerConfig": ConfigType.OPTIMIZER,
+    "LRSchedulerConfig": ConfigType.LR_SCHEDULER,
+    "MetricConfig": ConfigType.METRIC,
+}
+
 
 @dataclass
 class Config:
@@ -50,22 +63,35 @@ class Config:
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
 
     """
-
-    @classmethod
     @property
-    def name(cls) -> str:  # noqa
+    def name(self) -> str:
         """
         if name is empty, then the base Config class is called. Otherwise, the name of the class is returned in snake
         case.
-        :return:
         """
-        name = snake_case(cls.__name__.replace("Config", ""))
+        name = snake_case(self.__class__.__name__.replace("Config", ""))
         name = name or "base"
         return name
 
     @property
     def config_type(self) -> ConfigType:
-        return ConfigType.BASE
+        """
+        Every config must have a `config_type` attribute that specifies config type e.g, model, dataset, etc.
+
+        Returns:
+            A ConfigType type or a string for a custom config
+        """
+        parent_class = self.__class__.__mro__[1].__name__
+        config_type = CONFIG_TYPES_MAPPING[parent_class]
+        if config_type == ConfigType.BASE and self.__class__.__name__ not in CONFIG_TYPES_MAPPING:
+            config_type = self.__class__.__name__.replace("Config", "").lower()
+            logger.warning(f"You are attempting to create a config class from the base class `Config` which is "
+                           f"not recommended!\n"
+                           f"Your config class is {self.__class__.__name__} "
+                           f"and the `config_type` will be `{config_type}`")
+        else:
+            config_type = CONFIG_TYPES_MAPPING[self.__class__.__name__].replace("Config", "").lower()
+        return config_type
 
     def __getitem__(self, item):
         try:
@@ -115,12 +141,12 @@ class Config:
 
     @classmethod
     def load(
-            cls,
-            hub_or_local_path: Union[str, os.PathLike],
-            filename: Optional[str] = None,
-            subfolder: Optional[str] = None,
-            repo_type=None,
-            **kwargs,
+        cls,
+        hub_or_local_path: Union[str, os.PathLike],
+        filename: Optional[str] = None,
+        subfolder: Optional[str] = None,
+        repo_type=None,
+        **kwargs,
     ):
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
@@ -168,7 +194,7 @@ class Config:
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
-        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k) and k != "config_type"})
+        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})  # noqa
 
         return config
 
@@ -192,13 +218,13 @@ class Config:
         return save_path
 
     def push_to_hub(
-            self,
-            repo_id: str,
-            filename: str,
-            subfolder: Optional[str] = None,
-            repo_type: Optional[str] = "model",
-            private: Optional[bool] = False,
-            commit_message: Optional[str] = None,
+        self,
+        repo_id: str,
+        filename: str,
+        subfolder: Optional[str] = None,
+        repo_type: Optional[str] = "model",
+        private: Optional[bool] = False,
+        commit_message: Optional[str] = None,
     ):
         """
         Push the config file to the hub
@@ -240,20 +266,12 @@ class ModelConfig(Config):
     Base dataclass for all model configs
     """
 
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.MODEL
-
 
 @dataclass
 class PreprocessorConfig(Config):
     """
     Base dataclass for all preprocessor configs
     """
-
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.PREPROCESSOR
 
 
 @dataclass
@@ -265,20 +283,12 @@ class DatasetConfig(Config):
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
 
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.DATASET
-
 
 @dataclass
 class EmbeddingConfig(Config):
     """
     Base dataclass for all embedding configs
     """
-
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.EMBEDDING
 
 
 @dataclass
@@ -290,10 +300,6 @@ class CriterionConfig(Config):
     reduce: str = None
     ignore_index: int = -100
 
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.CRITERION
-
 
 @dataclass
 class LRSchedulerConfig(Config):
@@ -301,10 +307,6 @@ class LRSchedulerConfig(Config):
     Base dataclass for all scheduler configs
     """
     verbose: bool = True
-
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.LR_SCHEDULER
 
 
 @dataclass
@@ -316,20 +318,12 @@ class OptimizerConfig(Config):
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
 
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.OPTIMIZER
-
 
 @dataclass
 class MetricConfig(Config):
     """
     Base dataclass config for all metric configs
     """
-
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.METRIC
 
 
 @dataclass
@@ -351,7 +345,3 @@ class TrainerConfig(Config):
     save_freq: int = 1
     checkpoints_dir: str = None
     log_dir: str = None
-
-    @property
-    def config_type(self) -> ConfigType:
-        return ConfigType.TRAINER

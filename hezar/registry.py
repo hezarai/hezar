@@ -75,11 +75,6 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
         if model_name in models_registry:
             logger.warning(f"Model `{model_name}` is already registered. Overwriting...")
 
-        if config_class.name != model_name:
-            raise ValueError(f"`model_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                             f"model_name: {model_name}\n"
-                             f"{config_class.__name__}.name: {config_class.name}")
-
         models_registry[model_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -107,11 +102,6 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
     def register(cls):
         if dataset_name in datasets_registry:
             logger.warning(f"Dataset `{dataset_name}` is already registered. Overwriting...")
-
-        if config_class.name != dataset_name:
-            raise ValueError(f"`dataset_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                             f"dataset_name: {dataset_name}\n"
-                             f"{config_class.__name__}.name: {config_class.name}")
 
         datasets_registry[dataset_name] = Registry(
             module_class=cls,
@@ -141,11 +131,6 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
         if preprocessor_name in preprocessors_registry:
             logger.warning(f"Preprocessor `{preprocessor_name}` is already registered. Overwriting...")
 
-        if config_class.name != preprocessor_name:
-            raise ValueError(f"`preprocessor_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                             f"preprocessor_name: {preprocessor_name}\n"
-                             f"{config_class.__name__}.name: {config_class.name}")
-
         preprocessors_registry[preprocessor_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -173,11 +158,6 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
     def register(cls):
         if embedding_name in embeddings_registry:
             logger.warning(f"Embedding `{embedding_name}` is already registered. Overwriting...")
-
-        if config_class.name != embedding_name:
-            raise ValueError(f"`embedding_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                             f"embedding_name: {embedding_name}\n"
-                             f"{config_class.__name__}.name: {config_class.name}")
 
         embeddings_registry[embedding_name] = Registry(
             module_class=cls,
@@ -207,11 +187,6 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
         if trainer_name in trainers_registry:
             logger.warning(f"Trainer `{trainer_name}` is already registered. Overwriting...")
 
-        if config_class.name != trainer_name:
-            raise ValueError(f"`trainer_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                             f"trainer_name: {trainer_name}\n"
-                             f"{config_class.__name__}.name: {config_class.name}")
-
         trainers_registry[trainer_name] = Registry(
             module_class=cls,
             config_class=config_class,
@@ -238,10 +213,6 @@ def register_metric(metric_name: str, config_class: Type[MetricConfig]):
     def register(cls):
         if metric_name in metrics_registry:
             logger.warning(f"Metric `{metric_name}` is already registered. Overwriting...")
-        if config_class.name != metric_name:
-            raise ValueError(f"`metric_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                             f"metric_name: {metric_name}\n"
-                             f"{config_class.__name__}.name: {config_class.name}")
 
         metrics_registry[metric_name] = Registry(
             module_class=cls,
