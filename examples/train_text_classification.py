@@ -24,7 +24,7 @@ train_config = TrainerConfig(
     batch_size=8,
     num_epochs=5,
     checkpoints_dir="checkpoints/",
-    metrics={"f1": {"task": "multiclass"}},
+    metrics=["f1"]
 )
 
 trainer = TextClassificationTrainer(
