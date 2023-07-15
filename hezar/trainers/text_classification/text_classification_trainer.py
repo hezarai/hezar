@@ -61,10 +61,10 @@ class TextClassificationTrainer(Trainer):
         return loss
 
     def compute_metrics(self, predictions: List[np.ndarray], labels: List[np.ndarray], **kwargs):
-        predictions = np.array(predictions).argmax(2).flatten()
+        predictions = np.array(predictions).argmax(1).flatten()
         labels = np.array(labels).flatten()
         results = {}
         for metric_name, metric in self.metrics.items():
-            results[metric_name] = metric.compute(predictions, labels)
+            results[metric_name] = metric.compute(predictions, labels, average="macro")
         return results
 
