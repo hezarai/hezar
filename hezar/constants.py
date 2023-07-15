@@ -59,6 +59,7 @@ class MetricType(str, Enum):
     F1 = "f1"
     RECALL = "recall"
     PRECISION = "precision"
+    SEQEVAL = "seqeval"
 
 
 class RepoType(str, Enum):
