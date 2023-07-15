@@ -1,6 +1,8 @@
 import torch
+import numpy as np
 
 from ...configs import TrainerConfig
+from ...constants import MetricType
 from ...data.datasets import Dataset
 from ...models import Model
 from ...utils import get_logger
@@ -23,7 +25,7 @@ class SequenceLabelingTrainer(Trainer):
         lr_scheduler: Optional learning-rate scheduler
 
     """
-    AVAILABLE_METRICS = []
+    AVAILABLE_METRICS = [MetricType.SEQEVAL]
 
     def __init__(
         self,
@@ -51,4 +53,22 @@ class SequenceLabelingTrainer(Trainer):
         return loss
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        raise NotImplementedError
+        predictions = np.array(predictions).argmax(3).squeeze()
+        labels = np.array(labels).squeeze()
+
+        # Remove ignored index (special tokens) and append `B-` in the beginning for seqeval
+        true_predictions = [
+            [f"B-{self.model.config.id2label[p]}" for (p, l) in zip(prediction, label) if l != -100]
+            for prediction, label in zip(predictions, labels)
+        ]
+        true_labels = [
+            [f"B-{self.model.config.id2label[l]}" for (p, l) in zip(prediction, label) if l != -100]
+            for prediction, label in zip(predictions, labels)
+        ]
+
+        results = {}
+        for metric_name, metric in self.metrics.items():
+            results[metric_name] = metric.compute(true_predictions, true_labels)
+
+        return results
+
