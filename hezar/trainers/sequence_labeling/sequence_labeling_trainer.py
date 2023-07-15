@@ -53,7 +53,7 @@ class SequenceLabelingTrainer(Trainer):
         return loss
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predictions = np.array(predictions).argmax(3).squeeze()
+        predictions = np.array(predictions).argmax(2).squeeze()
         labels = np.array(labels).squeeze()
 
         # Remove ignored index (special tokens) and append `B-` in the beginning for seqeval
@@ -68,7 +68,6 @@ class SequenceLabelingTrainer(Trainer):
 
         results = {}
         for metric_name, metric in self.metrics.items():
-            results[metric_name] = metric.compute(true_predictions, true_labels)
-
+            results[metric_name] = metric.compute(true_predictions, true_labels)["f1"]
         return results
 
