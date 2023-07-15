@@ -1,7 +1,6 @@
 import os
 import random
 import tempfile
-import time
 from typing import Callable, Dict, Iterable, Tuple, Union, Any
 
 import numpy as np
@@ -23,6 +22,8 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_logger
+from .trainer_utils import MetricsTracker
+
 
 logger = get_logger(__name__)
 
@@ -68,6 +69,7 @@ class Trainer:
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
         compute_metrics=None,
+        **kwargs,
     ):
 
         self.config = config
@@ -88,6 +90,7 @@ class Trainer:
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
 
         self.metrics = self.setup_metrics()
+        self.metrics_tracker = MetricsTracker(list(self.metrics.keys()))
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
@@ -259,7 +262,7 @@ class Trainer:
         Returns:
             A dictionary of the results for every metric specified by the trainer
         """
-        raise NotImplementedError
+        return {}
 
     def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
         """
@@ -312,9 +315,7 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        all_predictions = []
-        all_labels = []
-        all_losses = []
+        self.metrics_tracker.reset()
         self.model.train()
         with tqdm(
             self.train_dataloader,
@@ -327,17 +328,17 @@ class Trainer:
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
                 outputs = self.training_step(input_batch)
-                # Gather outputs for metrics
-                all_predictions.append(outputs["logits"].detach().cpu().numpy())
-                all_labels.append(input_batch["labels"].detach().cpu().numpy())
-                all_losses.append(outputs["loss"])
-                avg_loss = sum(all_losses) / len(all_losses)
                 # Compute metrics
-                training_results = self.compute_metrics(all_predictions, all_labels)
-                training_results["loss"] = avg_loss
-                iterator.set_postfix(**training_results)
+                training_results = self.compute_metrics(
+                    outputs["logits"].detach().cpu().numpy(),
+                    input_batch["labels"].detach().cpu().numpy(),
+                )
+                training_results["loss"] = outputs["loss"]
+                # Gather outputs for metrics
+                self.metrics_tracker.update(training_results)
+                iterator.set_postfix(**self.metrics_tracker.avg())
 
-        return training_results
+        return self.metrics_tracker.avg()
 
     def evaluate(self):
         """
@@ -346,9 +347,7 @@ class Trainer:
         Returns:
             Evaluation results
         """
-        all_predictions = []
-        all_labels = []
-        all_losses = []
+        self.metrics_tracker.reset()
         self.model.eval()
         with tqdm(
             self.eval_dataloader,
@@ -362,17 +361,17 @@ class Trainer:
                     input_batch = self.prepare_input_batch(input_batch)
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
-                    # Gather outputs for metrics
-                    all_predictions.append(outputs["logits"].detach().cpu().numpy())
-                    all_labels.append(input_batch["labels"].detach().cpu().numpy())
-                    all_losses.append(outputs["loss"])
-                    avg_loss = sum(all_losses) / len(all_losses)
                     # Compute metrics
-                    evaluation_results = self.compute_metrics(all_predictions, all_labels)
-                    evaluation_results["loss"] = avg_loss
-                    iterator.set_postfix(**evaluation_results)
+                    evaluation_results = self.compute_metrics(
+                        outputs["logits"].detach().cpu().numpy(),
+                        input_batch["labels"].detach().cpu().numpy(),
+                )
+                    evaluation_results["loss"] = outputs["loss"]
+                    # Gather outputs for metrics
+                    self.metrics_tracker.update(evaluation_results)
+                    iterator.set_postfix(**self.metrics_tracker.avg())
 
-        return evaluation_results
+        return self.metrics_tracker.avg()
 
     def train(self):
         """

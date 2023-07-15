@@ -1,4 +1,4 @@
-from typing import Callable, Dict
+from typing import List
 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -32,31 +32,25 @@ class AverageMeter:
         return fmtstr.format(**self.__dict__)
 
 
-class MetricsManager:
-    def __init__(self, metrics_dict: Dict[str, Callable]):
-        self.metrics_dict = metrics_dict
-        self.trackers = {m: AverageMeter(m) for m in self.metrics_dict.keys()}
-
-    # def compute(self, preds, labels) -> Dict[str, Any]:
-    #     results = {}
-    #     for metric_name, metric_fn in self.metrics_dict.items():
-    #         if metric_fn is not None:
-    #             results[metric_name] = metric_fn(preds, labels).item()
-    #
-    #     return results
+class MetricsTracker:
+    def __init__(self, metrics: List[str]):
+        self.metrics = metrics
+        self.trackers = {m: AverageMeter(m) for m in self.metrics}
+        if "loss" not in self.trackers:
+            self.trackers["loss"] = AverageMeter("loss")
 
     def update(self, results):
-        for metric_name, metric in self.trackers.items():
-            metric.update(results[metric_name])
+        for metric_name, tracker in self.trackers.items():
+            tracker.update(results[metric_name])
 
     def reset(self):
-        for metric in self.trackers.values():
-            metric.reset()
+        for tracker in self.trackers.values():
+            tracker.reset()
 
     def avg(self):
         avg_results = {}
-        for metric_name, metric in self.trackers.items():
-            avg_results[metric_name] = metric.avg
+        for metric_name, tracker in self.trackers.items():
+            avg_results[metric_name] = tracker.avg
 
         return avg_results
 
