@@ -31,7 +31,7 @@ class Recall(Metric):
         average=None,
         sample_weight=None,
         zero_division="warn",
-    ) -> Dict[str, Any]:
+    ):
 
         pos_label = pos_label or self.config.pos_label
         average = average or self.config.average

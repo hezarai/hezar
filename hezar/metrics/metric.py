@@ -15,7 +15,7 @@ class Metric:
     def __init__(self, config: MetricConfig, **kwargs):
         self.config = config.update(kwargs)
 
-    def compute(self, predictions=None, targets=None, **kwargs) -> Dict[str, Any]:
+    def compute(self, predictions=None, targets=None, **kwargs):
         """
         Compute metric value for the given predictions against the targets
         Args:

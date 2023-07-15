@@ -13,7 +13,7 @@ from ..constants import MetricType
 class F1Config(MetricConfig):
     name: str = MetricType.F1
     pos_label: int = None
-    average: str = "macro"
+    average: str = None
     sample_weight: Iterable[float] = None
 
 
@@ -30,7 +30,7 @@ class F1(Metric):
         pos_label=1,
         average=None,
         sample_weight=None
-    ) -> Dict[str, Any]:
+    ):
         pos_label = pos_label or self.config.pos_label
         average = average or self.config.average
         sample_weight = sample_weight or self.config.sample_weight
