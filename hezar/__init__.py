@@ -10,4 +10,4 @@ from .trainers import *
 from .utils import *
 
 
-__version__ = "0.14.3"
+__version__ = "0.15.0"
