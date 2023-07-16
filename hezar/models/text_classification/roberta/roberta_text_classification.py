@@ -26,14 +26,25 @@ class RobertaTextClassification(Model):
 
     def forward(self, inputs, **kwargs):
         input_ids = inputs.get("token_ids")
-        labels = inputs.get("labels")
+        attention_mask = inputs.get("attention_mask", None)
+        head_mask = inputs.get("head_mask", None)
+        inputs_embeds = inputs.get("inputs_embeds", None)
+        output_attentions = inputs.get("output_attentions", None)
+        output_hidden_states = inputs.get("output_hidden_states", None)
 
-        lm_outputs = self.roberta(input_ids=input_ids, **kwargs)
+        lm_outputs = self.roberta(
+            input_ids,
+            attention_mask=attention_mask,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            **kwargs,
+        )
         sequence_output = lm_outputs[0]
         logits = self.classifier(sequence_output)
-        loss = nn.CrossEntropyLoss()(logits, labels) if labels is not None else None
+
         outputs = {
-            "loss": loss,
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,

@@ -45,6 +45,7 @@ class ConfigType(str, Enum):
     OPTIMIZER = "optimizer"
     CRITERION = "criterion"
     LR_SCHEDULER = "lr_scheduler"
+    METRIC = "metric"
 
 
 class SplitType(str, Enum):
@@ -52,3 +53,16 @@ class SplitType(str, Enum):
     EVAL = "eval"
     VALID = "validation"
     TEST = "test"
+
+
+class MetricType(str, Enum):
+    ACCURACY = "accuracy"
+    F1 = "f1"
+    RECALL = "recall"
+    PRECISION = "precision"
+    SEQEVAL = "seqeval"
+
+
+class RepoType(str, Enum):
+    DATASET = "dataset"
+    MODEL = "model"

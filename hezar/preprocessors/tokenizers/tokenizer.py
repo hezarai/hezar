@@ -11,7 +11,7 @@ from tokenizers.decoders import Decoder
 from tokenizers.models import Model
 
 from ...builders import build_preprocessor
-from ...configs import Config, PreprocessorConfig
+from ...configs import PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
 from ...data.utils import convert_batch_dict_dtype
 from ...utils import get_logger
@@ -36,11 +36,6 @@ class TokenizerConfig(PreprocessorConfig):
     pad_token: str = None
     pad_token_type_id: int = None
     unk_token: str = None
-
-
-@dataclass
-class TokenizerTrainConfig(Config):
-    config_type: str = "preprocessor"
 
 
 class Tokenizer(Preprocessor):

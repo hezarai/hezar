@@ -8,17 +8,7 @@ from tokenizers import decoders, models, pre_tokenizers, trainers
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor
-from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
-
-
-@dataclass
-class BPETrainConfig(TokenizerTrainConfig):
-    name: str = "bpe_tokenizer"
-    vocab_size: int = 30000
-    min_frequency: int = 2
-    limit_alphabet: int = 1000
-    initial_alphabet: list = field(default_factory=list)
-    show_progress: bool = True
+from .tokenizer import Tokenizer, TokenizerConfig
 
 
 @dataclass
@@ -54,7 +44,11 @@ class BPEConfig(TokenizerConfig):
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""
     fuse_unk: bool = False
-    train_config: BPETrainConfig = None
+    vocab_size: int = 30000
+    min_frequency: int = 2
+    limit_alphabet: int = 1000
+    initial_alphabet: list = field(default_factory=list)
+    show_progress: bool = True
 
 
 @register_preprocessor("bpe_tokenizer", config_class=BPEConfig)
@@ -109,13 +103,12 @@ class BPETokenizer(Tokenizer):
 
     def train(self, files: List[str], **train_kwargs):
         """Train the model using the given files"""
-        train_config = self.config.train_config or BPETrainConfig()
-        train_config.update(train_kwargs)
+        self.config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=config.vocab_size,  # noqa
-            min_frequency=config.min_frequency,  # noqa
-            show_progress=config.show_progress,  # noqa
+            vocab_size=self.config.vocab_size,  # noqa
+            min_frequency=self.config.min_frequency,  # noqa
+            show_progress=self.config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
             initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),  # noqa
         )
@@ -125,13 +118,12 @@ class BPETokenizer(Tokenizer):
 
     def train_from_iterator(self, dataset: List[str], **train_kwargs):
         """Train the model using the given files"""
-        train_config = self.config.train_config or BPETrainConfig()
-        train_config.update(train_kwargs)
+        self.config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=train_config.vocab_size,  # noqa
-            min_frequency=train_config.min_frequency,  # noqa
-            show_progress=train_config.show_progress,  # noqa
+            vocab_size=self.config.vocab_size,  # noqa
+            min_frequency=self.config.min_frequency,  # noqa
+            show_progress=self.config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
             initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),  # noqa
         )

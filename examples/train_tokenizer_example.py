@@ -1,10 +1,8 @@
 from hezar.preprocessors.tokenizers import (
     BPEConfig,
     BPETokenizer,
-    BPETrainConfig,
     WordPieceConfig,
     WordPieceTokenizer,
-    WordPieceTrainConfig,
     SentencePieceBPEConfig,
     SentencePieceBPETokenizer,
 )
@@ -24,7 +22,7 @@ data = [
 
 tokenizer_config = WordPieceConfig()
 tokenizer = WordPieceTokenizer(tokenizer_config)
-tokenizer.train_from_iterator(dataset=data, config=tokenizer_config.train_config)
+tokenizer.train_from_iterator(dataset=data)
 x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
 print(x)
 y = tokenizer.decode(x["token_ids"].numpy().tolist())
@@ -40,7 +38,7 @@ print(y)
 
 tokenizer_config = SentencePieceBPEConfig()
 tokenizer = SentencePieceBPETokenizer(tokenizer_config)
-tokenizer.train_from_iterator(dataset=data, config=tokenizer_config.train_config)
+tokenizer.train_from_iterator(dataset=data)
 x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
 print(x)
 y = tokenizer.decode(x["token_ids"].numpy().tolist())

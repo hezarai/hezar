@@ -1,6 +1,6 @@
 from hezar import (
     TrainerConfig,
-    Trainer,
+    SequenceLabelingTrainer,
     Dataset,
     build_model,
 )
@@ -13,17 +13,16 @@ eval_dataset = Dataset.load("hezarai/lscp-500k", split="test", tokenizer_path="h
 model = build_model(name, id2label=train_dataset.id2label)
 
 train_config = TrainerConfig(
-    name=name,
     device="cuda",
     optimizer={"name": "adam", "lr": 2e-5, "scheduler": {"name": "reduce_on_plateau"}},
     init_weights_from="hezarai/bert-base-fa",
     batch_size=8,
     num_epochs=5,
     checkpoints_dir="checkpoints/",
-    metrics={"f1": {"task": "multiclass"}},
+    metrics=["seqeval"],
 )
 
-trainer = Trainer(
+trainer = SequenceLabelingTrainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,

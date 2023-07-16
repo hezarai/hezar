@@ -21,7 +21,7 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, TaskType, ConfigType
+from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
 from .utils import get_logger, get_module_config_class
 
 
@@ -35,9 +35,23 @@ __all__ = [
     "CriterionConfig",
     "OptimizerConfig",
     "LRSchedulerConfig",
+    "MetricConfig",
 ]
 
 logger = get_logger(__name__)
+
+CONFIG_TYPES_MAPPING = {
+    "Config": ConfigType.BASE,
+    "ModelConfig": ConfigType.MODEL,
+    "PreprocessorConfig": ConfigType.PREPROCESSOR,
+    "TrainerConfig": ConfigType.TRAINER,
+    "DatasetConfig": ConfigType.DATASET,
+    "EmbeddingConfig": ConfigType.EMBEDDING,
+    "CriterionConfig": ConfigType.CRITERION,
+    "OptimizerConfig": ConfigType.OPTIMIZER,
+    "LRSchedulerConfig": ConfigType.LR_SCHEDULER,
+    "MetricConfig": ConfigType.METRIC,
+}
 
 
 @dataclass
@@ -48,13 +62,9 @@ class Config:
     All configs are simple dataclasses that have some customized functionalities to manage their attributes. There are
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
 
-    Args:
-        name: A mandatory attribute that specifies a unique and pre-defined name for that config that is also used in
-            the registries.
-        config_type: A mandatory attribute that specifies the type of the config e.g. model, dataset, preprocessor, etc.
     """
-    name: str = field(metadata={"help": "The key in the registry of that module"})
-    config_type: Union[str, ConfigType] = ConfigType.BASE
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.BASE)
 
     def __getitem__(self, item):
         try:
@@ -157,7 +167,7 @@ class Config:
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
 
-        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})
+        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k) and k != "config_type"})  # noqa
 
         return config
 
@@ -228,8 +238,8 @@ class ModelConfig(Config):
     """
     Base dataclass for all model configs
     """
-    name: str = field(default=None, metadata={"help": "The model's key in the models_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.MODEL
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.MODEL)
 
 
 @dataclass
@@ -237,8 +247,8 @@ class PreprocessorConfig(Config):
     """
     Base dataclass for all preprocessor configs
     """
-    name: str = field(default=None, metadata={"help": "The preprocessor's key in the preprocessor_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.PREPROCESSOR
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.PREPROCESSOR)
 
 
 @dataclass
@@ -246,8 +256,8 @@ class DatasetConfig(Config):
     """
     Base dataclass for all dataset configs
     """
-    name: str = field(default=None, metadata={"help": "The dataset's key in the datasets_registry"})
-    config_type: ConfigType = ConfigType.DATASET
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.DATASET)
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
@@ -258,8 +268,8 @@ class EmbeddingConfig(Config):
     """
     Base dataclass for all embedding configs
     """
-    name: str = field(default=None, metadata={"help": "The embedding's key in the embeddings_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.EMBEDDING
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.EMBEDDING)
 
 
 @dataclass
@@ -267,8 +277,8 @@ class CriterionConfig(Config):
     """
     Base dataclass for all criterion configs
     """
-    name: str = field(default=None, metadata={"help": "The criterion's key in the criterions_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.CRITERION
+    name: str = field(default=None)
+    config_type: str = field(init=False, default=ConfigType.CRITERION)
     weight: Optional[torch.Tensor] = None
     reduce: str = None
     ignore_index: int = -100
@@ -279,8 +289,8 @@ class LRSchedulerConfig(Config):
     """
     Base dataclass for all scheduler configs
     """
-    name: str = field(default=None, metadata={"help": "The LR scheduler's key in the schedulers_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.LR_SCHEDULER
+    name: str = field(default=None)
+    config_type: str = field(init=False, default=ConfigType.LR_SCHEDULER)
     verbose: bool = True
 
 
@@ -289,11 +299,20 @@ class OptimizerConfig(Config):
     """
     Base dataclass for all optimizer configs
     """
-    name: str = field(default=None, metadata={"help": "The optimizer's key in the optimizers_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.OPTIMIZER
+    name: str = field(default=None)
+    config_type: str = field(init=False, default=ConfigType.OPTIMIZER)
     lr: float = None
     weight_decay: float = .0
     scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
+
+
+@dataclass
+class MetricConfig(Config):
+    """
+    Base dataclass config for all metric configs
+    """
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.METRIC)
 
 
 @dataclass
@@ -301,8 +320,8 @@ class TrainerConfig(Config):
     """
     Base dataclass for all trainer configs
     """
-    name: str = field(default=None, metadata={"help": "The trainer's key in the trainers_registry"})
-    config_type: Union[str, ConfigType] = ConfigType.TRAINER
+    name: str = field(init=False, default=None)
+    config_type: str = field(init=False, default=ConfigType.TRAINER)
     task: TaskType = None
     device: str = "cuda"
     init_weights_from: str = None
@@ -312,7 +331,7 @@ class TrainerConfig(Config):
     optimizer: Union[Dict[str, Any], OptimizerConfig] = None
     batch_size: int = None
     use_amp: bool = False
-    metrics: Dict[str, Dict] = field(default_factory=dict)
+    metrics: List[Union[str, MetricConfig]] = None
     num_epochs: int = None
     save_freq: int = 1
     checkpoints_dir: str = None

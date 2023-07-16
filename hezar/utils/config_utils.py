@@ -6,7 +6,9 @@ import omegaconf
 from omegaconf import DictConfig
 
 from ..constants import ConfigType
+from .common_utils import snake_case
 from .logging import get_logger
+
 
 __all__ = [
     "flatten_dict",
@@ -131,9 +133,12 @@ def get_module_class(name: str, module_type: str) -> type:
     elif module_type == ConfigType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
+    elif module_type == ConfigType.METRIC:
+        from ..registry import metrics_registry  # noqa
+        registry = metrics_registry
 
     else:
         raise ValueError(f"Invalid `module_type`: {module_type}!")
-
+    name = snake_case(name)
     module_cls = registry[name].module_class
     return module_cls

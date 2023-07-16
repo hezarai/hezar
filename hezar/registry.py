@@ -25,9 +25,9 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 """
 
 from dataclasses import dataclass
-from typing import Dict, Type, Optional
+from typing import Dict, Optional, Type
 
-from .configs import DatasetConfig, EmbeddingConfig, ModelConfig, PreprocessorConfig, TrainerConfig
+from .configs import DatasetConfig, EmbeddingConfig, MetricConfig, ModelConfig, PreprocessorConfig, TrainerConfig
 from .utils import get_logger
 
 
@@ -36,6 +36,8 @@ __all__ = [
     "register_preprocessor",
     "register_dataset",
     "register_embedding",
+    "register_metric",
+    "register_trainer",
 ]
 
 logger = get_logger(__name__)
@@ -44,7 +46,7 @@ logger = get_logger(__name__)
 @dataclass
 class Registry:
     module_class: type
-    config_class: type
+    config_class: type = None
     doc: Optional[str] = None
 
 
@@ -52,6 +54,7 @@ models_registry: Dict[str, Registry] = {}
 preprocessors_registry: Dict[str, Registry] = {}
 datasets_registry: Dict[str, Registry] = {}
 embeddings_registry: Dict[str, Registry] = {}
+metrics_registry: Dict[str, Registry] = {}
 trainers_registry: Dict[str, Registry] = {}
 
 
@@ -67,6 +70,7 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
     Returns:
          The class itself
     """
+
     def register(cls):
         if model_name in models_registry:
             logger.warning(f"Model `{model_name}` is already registered. Overwriting...")
@@ -99,6 +103,7 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
     Returns:
          The class itself
     """
+
     def register(cls):
         if dataset_name in datasets_registry:
             logger.warning(f"Dataset `{dataset_name}` is already registered. Overwriting...")
@@ -131,6 +136,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
     Returns:
          The class itself
     """
+
     def register(cls):
         if preprocessor_name in preprocessors_registry:
             logger.warning(f"Preprocessor `{preprocessor_name}` is already registered. Overwriting...")
@@ -163,6 +169,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
     Returns:
          The class itself
     """
+
     def register(cls):
         if embedding_name in embeddings_registry:
             logger.warning(f"Embedding `{embedding_name}` is already registered. Overwriting...")
@@ -195,6 +202,7 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
     Returns:
          The class itself
     """
+
     def register(cls):
         if trainer_name in trainers_registry:
             logger.warning(f"Trainer `{trainer_name}` is already registered. Overwriting...")
@@ -213,3 +221,35 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
         return cls
 
     return register
+
+
+def register_metric(metric_name: str, config_class: Type[MetricConfig]):
+    """
+    A class decorator that adds the metric class and the config class to the `metrics_registry`
+
+    Args:
+        metric_name: Metric registry name e.g, `f1`
+        config_class: Metric config class
+
+    Returns:
+         The class itself
+    """
+
+    def register(cls):
+        if metric_name in metrics_registry:
+            logger.warning(f"Metric `{metric_name}` is already registered. Overwriting...")
+        if config_class.name != metric_name:
+            raise ValueError(f"`metric_name` and `config.name` are not compatible for `{cls.__name__}`\n"
+                             f"metric_name: {metric_name}\n"
+                             f"{config_class.__name__}.name: {config_class.name}")
+
+        metrics_registry[metric_name] = Registry(
+            module_class=cls,
+            config_class=config_class,
+            doc=cls.__doc__
+        )
+
+        return cls
+
+    return register
+

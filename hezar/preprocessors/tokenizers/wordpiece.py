@@ -8,17 +8,7 @@ from tokenizers import decoders, models, trainers
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor
-from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
-
-
-@dataclass
-class WordPieceTrainConfig(TokenizerTrainConfig):
-    name: str = "wordpiece_tokenizer"
-    vocab_size: int = 30000
-    min_frequency: int = 2
-    limit_alphabet: int = 1000
-    initial_alphabet: list = field(default_factory=list)
-    show_progress: bool = True
+from .tokenizer import Tokenizer, TokenizerConfig
 
 
 @dataclass
@@ -37,7 +27,11 @@ class WordPieceConfig(TokenizerConfig):
     special_tokens: List[str] = field(default_factory=lambda: ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"])
     unk_token: str = "[UNK]"
     wordpieces_prefix: str = "##"
-    train_config: WordPieceTrainConfig = None
+    vocab_size: int = 30000
+    min_frequency: int = 2
+    limit_alphabet: int = 1000
+    initial_alphabet: list = field(default_factory=list)
+    show_progress: bool = True
 
 
 @register_preprocessor("wordpiece_tokenizer", config_class=WordPieceConfig)
@@ -84,16 +78,15 @@ class WordPieceTokenizer(Tokenizer):
 
     def train(self, files: List[str], **train_kwargs):
         """Train the model using the given files"""
-        train_config = self.config.train_config or WordPieceTrainConfig()
-        train_config.update(train_kwargs)
+        self.config.update(train_kwargs)
 
         trainer = trainers.WordPieceTrainer(
-            vocab_size=train_config.vocab_size,
-            min_frequency=train_config.min_frequency,
-            limit_alphabet=train_config.limit_alphabet,
-            initial_alphabet=train_config.initial_alphabet,
+            vocab_size=self.config.vocab_size,
+            min_frequency=self.config.min_frequency,
+            limit_alphabet=self.config.limit_alphabet,
+            initial_alphabet=self.config.initial_alphabet,
             special_tokens=self.config.special_tokens,
-            show_progress=train_config.show_progress,
+            show_progress=self.config.show_progress,
             continuing_subword_prefix=self.config.wordpieces_prefix,
         )
         if isinstance(files, str):
@@ -102,16 +95,15 @@ class WordPieceTokenizer(Tokenizer):
 
     def train_from_iterator(self, dataset: List[str], **train_kwargs):
         """Train the model using the given files"""
-        train_config = self.config.train_config or WordPieceTrainConfig()
-        train_config.update(train_kwargs)
+        self.config.update(train_kwargs)
 
         trainer = trainers.WordPieceTrainer(
-            vocab_size=train_config.vocab_size,
-            min_frequency=train_config.min_frequency,
-            limit_alphabet=train_config.limit_alphabet,
-            initial_alphabet=train_config.initial_alphabet,
+            vocab_size=self.config.vocab_size,
+            min_frequency=self.config.min_frequency,
+            limit_alphabet=self.config.limit_alphabet,
+            initial_alphabet=self.config.initial_alphabet,
             special_tokens=self.config.special_tokens,
-            show_progress=train_config.show_progress,
+            show_progress=self.config.show_progress,
             continuing_subword_prefix=self.config.wordpieces_prefix,
         )
         self._tokenizer.train_from_iterator(dataset, trainer=trainer, length=len(dataset))

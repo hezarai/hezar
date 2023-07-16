@@ -8,17 +8,7 @@ from tokenizers import decoders, models, normalizers, pre_tokenizers, trainers
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor
-from .tokenizer import Tokenizer, TokenizerConfig, TokenizerTrainConfig
-
-
-@dataclass
-class SentencePieceBPETrainConfig(TokenizerTrainConfig):
-    name: str = "sentencepiece_bpe_tokenizer"
-    vocab_size: int = 30000
-    min_frequency: int = 2
-    limit_alphabet: int = 1000
-    initial_alphabet: list = field(default_factory=list)
-    show_progress: bool = True
+from .tokenizer import Tokenizer, TokenizerConfig
 
 
 @dataclass
@@ -56,7 +46,11 @@ class SentencePieceBPEConfig(TokenizerConfig):
     add_prefix_space: bool = True
     end_of_word_suffix: str = ""
     fuse_unk: bool = False
-    train_config: SentencePieceBPETrainConfig = None
+    vocab_size: int = 30000
+    min_frequency: int = 2
+    limit_alphabet: int = 1000
+    initial_alphabet: list = field(default_factory=list)
+    show_progress: bool = True
 
 
 @register_preprocessor("sentencepiece_bpe_tokenizer", config_class=SentencePieceBPEConfig)
@@ -117,13 +111,12 @@ class SentencePieceBPETokenizer(Tokenizer):
 
     def train(self, files: List[str], **train_kwargs):
         """Train the model using the given files"""
-        train_config = self.config.train_config or SentencePieceBPETrainConfig()
-        train_config.update(train_kwargs)
+        self.config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=train_config.vocab_size,  # noqa
-            min_frequency=train_config.min_frequency,  # noqa
-            show_progress=train_config.show_progress,  # noqa
+            vocab_size=self.config.vocab_size,  # noqa
+            min_frequency=self.config.min_frequency,  # noqa
+            show_progress=self.config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
             initial_alphabet=self.config.initial_alphabet,  # noqa
         )
@@ -133,14 +126,13 @@ class SentencePieceBPETokenizer(Tokenizer):
 
     def train_from_iterator(self, dataset: List[str], **train_kwargs):
         """Train the model using the given files"""
-        train_config = self.config.train_config or SentencePieceBPETrainConfig()
-        train_config.update(train_kwargs)
+        self.config.update(train_kwargs)
 
         trainer = trainers.BpeTrainer(
-            vocab_size=train_config.vocab_size,  # noqa
-            min_frequency=train_config.min_frequency,  # noqa
-            show_progress=train_config.show_progress,  # noqa
+            vocab_size=self.config.vocab_size,  # noqa
+            min_frequency=self.config.min_frequency,  # noqa
+            show_progress=self.config.show_progress,  # noqa
             special_tokens=self.config.special_tokens,  # noqa
-            initial_alphabet=train_config.initial_alphabet,  # noqa
+            initial_alphabet=self.config.initial_alphabet,  # noqa
         )
         self._tokenizer.train_from_iterator(dataset, trainer=trainer, length=len(dataset))

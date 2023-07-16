@@ -6,9 +6,9 @@ from typing import Dict
 from torch import nn
 from transformers import BertConfig, BertModel
 
-from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 from ....models import Model
 from ....registry import register_model
+from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
 
 @register_model("bert_sequence_labeling", BertSequenceLabelingConfig)
@@ -32,21 +32,31 @@ class BertSequenceLabeling(Model):
 
     def forward(self, inputs, **kwargs) -> Dict:
         input_ids = inputs.get("token_ids")
-        labels = inputs.get("labels")
+        attention_mask = inputs.get("attention_mask", None)
+        token_type_ids = inputs.get("token_type_ids", None)
+        position_ids = inputs.get("position_ids", None)
+        head_mask = inputs.get("head_mask", None)
+        inputs_embeds = inputs.get("inputs_embeds", None)
+        output_attentions = inputs.get("output_attentions", None)
+        output_hidden_states = inputs.get("output_hidden_states", None)
 
-        lm_outputs = self.bert(input_ids=input_ids, **kwargs)
+        lm_outputs = self.bert(
+            input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            position_ids=position_ids,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            **kwargs,
+        )
         sequence_output = lm_outputs[0]
 
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)
 
-        loss = None
-        if labels is not None:
-            criterion = nn.CrossEntropyLoss()
-            loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
-
         outputs = {
-            "loss": loss,
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,

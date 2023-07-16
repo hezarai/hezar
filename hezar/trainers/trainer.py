@@ -1,19 +1,17 @@
 import os
 import random
 import tempfile
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_folder
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from torchmetrics import Accuracy, F1Score, Precision
 from tqdm import tqdm
 
-from .trainer_utils import MetricsManager, write_to_tensorboard
-from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig
-
+from ..builders import build_metric
+from ..configs import LRSchedulerConfig, MetricConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
@@ -24,14 +22,11 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_logger
+from .trainer_utils import MetricsTracker
+
 
 logger = get_logger(__name__)
 
-METRICS_MAP = {
-    "accuracy": Accuracy,
-    "f1": F1Score,
-    "precision": Precision,
-}
 
 optimizers = {
     "adam": torch.optim.Adam,
@@ -62,6 +57,7 @@ class Trainer:
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
+    AVAILABLE_METRICS = []
 
     def __init__(
         self,
@@ -72,7 +68,10 @@ class Trainer:
         data_collator=None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
+        compute_metrics=None,
+        **kwargs,
     ):
+
         self.config = config
 
         self.device, self.device_type = self._prepare_device_and_type()
@@ -90,7 +89,8 @@ class Trainer:
 
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
 
-        self.metrics_manager = self._setup_metrics_manager(self.config.metrics)
+        self.metrics = self.setup_metrics()
+        self.metrics_tracker = MetricsTracker(list(self.metrics.keys()))
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 
@@ -134,6 +134,7 @@ class Trainer:
                 batch_size=self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
+                drop_last=True,
                 shuffle=True,
             )
         else:
@@ -144,6 +145,7 @@ class Trainer:
                 batch_size=self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
+                drop_last=True,
                 shuffle=True,
             )
         else:
@@ -184,72 +186,124 @@ class Trainer:
                 lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_config)
         return optimizer, lr_scheduler
 
-    def _setup_metrics_manager(self, metrics: Dict[str, Dict]) -> MetricsManager:
-        """
-        Set up metrics manager to track and update metrics like loss, accuracy, f1, etc.
+    def setup_metrics(self):
+        metrics_dict = {}
+        for metric in self.config.metrics:
+            if isinstance(metric, str):
+                if metric not in self.AVAILABLE_METRICS:
+                    raise ValueError(f"Invalid metric `{metric}`! Available metrics: {self.AVAILABLE_METRICS}")
+                metrics_dict[metric] = build_metric(metric)
+            elif isinstance(metric, MetricConfig):
+                metrics_dict[metric] = build_metric(metric.name, config=metric)
+            else:
+                raise ValueError(f"Invalid metric type `{type(metric)}`! Available metrics: {self.AVAILABLE_METRICS}")
+        return metrics_dict
 
+    def prepare_input_batch(self, input_batch):
+        """
+        Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
         Args:
-            metrics: A dict of metrics names and their kwargs {metric_name: **kwargs}
+            input_batch: Raw input batch from the dataloader
 
         Returns:
-             A MetricsManager instance
+            The proper input batch required by model forward
         """
-        metrics_dict = {"loss": None}
-        for name, kwargs in metrics.items():
-            metrics_dict[name] = METRICS_MAP[name](num_classes=self.train_dataset.config.num_labels, **kwargs)
-        metrics_manager = MetricsManager(metrics_dict)
-        return metrics_manager
+        # cast to device
+        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+        return input_batch
 
-    def training_step(self, input_batch: Dict[str, torch.Tensor]):
+    def amp_context_manager(self):
         """
-        Train one batch of data and return metrics outputs
+        A smart context manager for mixed precision.
+
+        Returns:
+            A torch autocast context manager
+        """
+        return torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp)
+
+    def forward(self, input_batch):
+        """
+        Perform model forward on the input batch
+
+        In special cases, one can override this method in their desired trainer.
+
+        Args:
+            input_batch: Input batch
+
+        Returns:
+            Model outputs
+        """
+        outputs = self.model(input_batch)
+        return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs) -> torch.Tensor:
+        """
+        Perform model forward and compute loss.
+
+        This method must be implemented in other trainers.
+
+        Args:
+            logits: Logits from model outputs
+            labels: Ground truth labels
+
+        Returns:
+            The loss tensor
+        """
+        raise NotImplementedError
+
+    def compute_metrics(self, predictions, labels, **kwargs):
+        """
+        Compute metric values on the predictions and labels
+
+        Args:
+            predictions: A list of all predictions
+            labels: A list of all labels
+
+        Returns:
+            A dictionary of the results for every metric specified by the trainer
+        """
+        return {}
+
+    def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
+        """
+        Train one batch of data and return loss and model outputs
 
         Args:
             input_batch: A batch of inputs to train
 
         Returns:
-            The metrics results
+            Train step outputs including loss, logits, etc.
         """
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
-
-        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
-            outputs = self.model(input_batch)
-            if "loss" not in outputs:
-                raise ValueError("Model outputs must contain `loss`!")
-            loss: torch.Tensor = outputs["loss"]
+        with self.amp_context_manager():
+            outputs = self.forward(input_batch)
+            loss = self.compute_loss(outputs["logits"], input_batch["labels"])
 
         self.scaler.scale(loss).backward()
         self.scaler.step(self.optimizer)
         self.scaler.update()
         self.optimizer.zero_grad()
 
-        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
-        results["loss"] = loss.item()
+        outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 
-        return results
+        return outputs
 
-    def evaluation_step(self, input_batch: Dict[str, torch.Tensor]):
+    def evaluation_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
         """
-        Evaluate one batch of data and return metrics outputs
+        Evaluate one batch of data and return loss and model outputs
 
         Args:
-            input_batch: A batch of inputs to train
+            input_batch: A batch of inputs to evaluate
 
         Returns:
-            The metrics results
+            Evaluation step outputs including loss, logits, etc.
         """
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+        with self.amp_context_manager():
+            outputs = self.forward(input_batch)
+            loss = self.compute_loss(outputs["logits"], input_batch["labels"])
 
-        with torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp):
-            outputs = self.model(input_batch)
-            if "loss" not in outputs:
-                raise ValueError("Model outputs must contain `loss`!")
-            loss: torch.Tensor = outputs["loss"]
+        outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 
-        results = self.metrics_manager.compute(outputs["logits"].detach().cpu(), input_batch["labels"].detach().cpu())
-        results["loss"] = loss.item()
-
-        return results
+        return outputs
 
     def inner_training_loop(self, epoch_num: int):
         """
@@ -261,43 +315,63 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        self.metrics_manager.reset()
+        self.metrics_tracker.reset()
         self.model.train()
         with tqdm(
-                self.train_dataloader,
-                unit="batch",
-                desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
-                bar_format=TQDM_BAR_FORMAT,
-                ascii=" #",
+            self.train_dataloader,
+            unit="batch",
+            desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
+            bar_format=TQDM_BAR_FORMAT,
+            ascii=" #",
         ) as iterator:
-            for input_batch in iterator:
-                results = self.training_step(input_batch)
-                self.metrics_manager.update(results)
-                iterator.set_postfix(**self.metrics_manager.avg())
-        return self.metrics_manager.avg()
+            for step, input_batch in enumerate(iterator):
+                input_batch = self.prepare_input_batch(input_batch)
+                # Training on one batch
+                outputs = self.training_step(input_batch)
+                # Compute metrics
+                training_results = self.compute_metrics(
+                    outputs["logits"].detach().cpu().numpy(),
+                    input_batch["labels"].detach().cpu().numpy(),
+                )
+                training_results["loss"] = outputs["loss"]
+                # Gather outputs for metrics
+                self.metrics_tracker.update(training_results)
+                iterator.set_postfix(**self.metrics_tracker.avg())
+
+        return self.metrics_tracker.avg()
 
     def evaluate(self):
         """
         Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
 
         Returns:
-            Metrics averages through the full iteration
+            Evaluation results
         """
-        self.metrics_manager.reset()
+        self.metrics_tracker.reset()
         self.model.eval()
         with tqdm(
-                self.eval_dataloader,
-                unit="batch",
-                desc="Evaluating... ",
-                bar_format=TQDM_BAR_FORMAT,
-                ascii=" #",
+            self.eval_dataloader,
+            unit="batch",
+            desc="Evaluating... ",
+            bar_format=TQDM_BAR_FORMAT,
+            ascii=" #",
         ) as iterator:
             with torch.inference_mode():
-                for input_batch in iterator:
-                    results = self.evaluation_step(input_batch)
-                    self.metrics_manager.update(results)
-                    iterator.set_postfix(**self.metrics_manager.avg())
-        return self.metrics_manager.avg()
+                for step, input_batch in enumerate(iterator):
+                    input_batch = self.prepare_input_batch(input_batch)
+                    # Evaluation on one batch
+                    outputs = self.evaluation_step(input_batch)
+                    # Compute metrics
+                    evaluation_results = self.compute_metrics(
+                        outputs["logits"].detach().cpu().numpy(),
+                        input_batch["labels"].detach().cpu().numpy(),
+                )
+                    evaluation_results["loss"] = outputs["loss"]
+                    # Gather outputs for metrics
+                    self.metrics_tracker.update(evaluation_results)
+                    iterator.set_postfix(**self.metrics_tracker.avg())
+
+        return self.metrics_tracker.avg()
 
     def train(self):
         """
@@ -305,13 +379,9 @@ class Trainer:
         """
         for epoch in range(1, self.config.num_epochs + 1):
             print()
-            train_results = self.inner_training_loop(epoch)
-            eval_results = self.evaluate()
-            self.lr_scheduler.step(eval_results["loss"])
-
-            # tensorboard
-            write_to_tensorboard(self.tensorboard, train_results, "train", epoch)
-            write_to_tensorboard(self.tensorboard, eval_results, "val", epoch)
+            self.inner_training_loop(epoch)
+            evaluation_results = self.evaluate()
+            self.lr_scheduler.step(evaluation_results["loss"])
 
             # maybe save checkpoint
             if epoch % self.config.save_freq == 0:
@@ -319,13 +389,13 @@ class Trainer:
                 self.save(ckpt_save_path)
 
     def save(
-            self,
-            path: str,
-            config_filename=None,
-            model_filename=None,
-            model_config_filename=None,
-            subfolder=None,
-            dataset_config_file=None,
+        self,
+        path: str,
+        config_filename=None,
+        model_filename=None,
+        model_config_filename=None,
+        subfolder=None,
+        dataset_config_file=None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -351,15 +421,15 @@ class Trainer:
             self.train_dataset.tokenizer.save(path)
 
     def push_to_hub(
-            self,
-            repo_id: str,
-            config_filename: str = None,
-            model_filename: str = None,
-            model_config_filename: str = None,
-            subfolder: str = None,
-            dataset_config_filename: str = None,
-            commit_message: str = None,
-            private: bool = False,
+        self,
+        repo_id: str,
+        config_filename: str = None,
+        model_filename: str = None,
+        model_config_filename: str = None,
+        subfolder: str = None,
+        dataset_config_filename: str = None,
+        commit_message: str = None,
+        private: bool = False,
     ):
         """
         Push everything to the Hub
