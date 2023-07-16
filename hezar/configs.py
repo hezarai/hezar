@@ -229,7 +229,7 @@ class Config:
             commit_message=commit_message,
         )
         logger.info(
-            f"Uploaded:`{self.__class__.__name__}(name={self.name})` --> `{os.path.join(repo_id, subfolder, filename)}`"
+            f"Uploaded:`{self.__class__.__name__}(name={self.name})` --> `{os.path.join(repo_id, path_in_repo)}`"
         )
 
 
