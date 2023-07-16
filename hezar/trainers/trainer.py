@@ -1,7 +1,7 @@
 import os
 import random
 import tempfile
-from typing import Callable, Dict, Iterable, Tuple, Union, Any
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from ..builders import build_metric
-from ..configs import LRSchedulerConfig, OptimizerConfig, TrainerConfig, MetricConfig
+from ..configs import LRSchedulerConfig, MetricConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
@@ -379,7 +379,7 @@ class Trainer:
         """
         for epoch in range(1, self.config.num_epochs + 1):
             print()
-            training_results = self.inner_training_loop(epoch)
+            self.inner_training_loop(epoch)
             evaluation_results = self.evaluate()
             self.lr_scheduler.step(evaluation_results["loss"])
 

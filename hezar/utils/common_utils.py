@@ -1,5 +1,6 @@
-from typing import Dict, List
 from re import sub
+from typing import Dict, List
+
 
 __all__ = [
     "snake_case",

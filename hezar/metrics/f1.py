@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable
+from typing import Iterable
 
 from sklearn.metrics import f1_score
 
-from .metric import Metric
 from ..configs import MetricConfig
-from ..registry import register_metric
 from ..constants import MetricType
+from ..registry import register_metric
+from .metric import Metric
 
 
 @dataclass

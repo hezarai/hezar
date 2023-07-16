@@ -1,13 +1,14 @@
 from dataclasses import dataclass
-from typing import Union, Optional, List, Dict
+from typing import List, Optional, Union
 
 from seqeval.metrics import accuracy_score, classification_report
 
-from .metric import Metric
 from ..configs import MetricConfig
 from ..constants import MetricType
 from ..registry import register_metric
 from ..utils import get_logger
+from .metric import Metric
+
 
 logger = get_logger(__name__)
 

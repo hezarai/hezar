@@ -1,5 +1,5 @@
-import torch
 import numpy as np
+import torch
 
 from ...configs import TrainerConfig
 from ...constants import MetricType
@@ -7,6 +7,7 @@ from ...data.datasets import Dataset
 from ...models import Model
 from ...utils import get_logger
 from ..trainer import Trainer
+
 
 logger = get_logger(__name__)
 

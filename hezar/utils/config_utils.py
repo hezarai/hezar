@@ -6,8 +6,8 @@ import omegaconf
 from omegaconf import DictConfig
 
 from ..constants import ConfigType
-from .logging import get_logger
 from .common_utils import snake_case
+from .logging import get_logger
 
 
 __all__ = [

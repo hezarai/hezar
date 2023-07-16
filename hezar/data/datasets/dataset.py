@@ -4,7 +4,7 @@ from typing import Optional, Union
 from torch.utils.data import Dataset as TorchDataset
 
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE, ConfigType, SplitType, RepoType
+from ...constants import DEFAULT_DATASET_CONFIG_FILE, ConfigType, RepoType, SplitType
 from ...utils import get_module_class
 
 

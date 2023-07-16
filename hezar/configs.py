@@ -21,9 +21,9 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .utils.common_utils import snake_case
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
 from .utils import get_logger, get_module_config_class
+
 
 __all__ = [
     "Config",

@@ -11,6 +11,7 @@ from ...models import Model
 from ...utils import get_logger
 from ..trainer import Trainer
 
+
 logger = get_logger(__name__)
 
 

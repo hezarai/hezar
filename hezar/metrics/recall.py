@@ -1,11 +1,11 @@
-from typing import Any, Dict, Iterable
 from dataclasses import dataclass
+from typing import Iterable
 
 from sklearn.metrics import recall_score
 
-from ..registry import register_metric
 from ..configs import MetricConfig
 from ..constants import MetricType
+from ..registry import register_metric
 from .metric import Metric
 
 

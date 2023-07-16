@@ -15,9 +15,9 @@ from typing import Optional
 from .configs import (
     DatasetConfig,
     EmbeddingConfig,
+    MetricConfig,
     ModelConfig,
     PreprocessorConfig,
-    MetricConfig,
 )
 from .constants import SplitType
 from .registry import (  # noqa
