@@ -1,7 +1,8 @@
 from typing import Dict, List, Tuple, Union
 
 from ..builders import build_preprocessor
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, DEFAULT_PREPROCESSORS_CONFIG, RepoType
+from ..configs import Config, PreprocessorConfig
 
 
 class Preprocessor:
@@ -17,7 +18,7 @@ class Preprocessor:
     def __init__(self, config, **kwargs):
         self.config = config.update(kwargs)
 
-    def __call__(self, inputs, *args, **kwargs):
+    def __call__(self, inputs, **kwargs):
         """
         An abstract call method for a preprocessor. All preprocessors must implement this.
 
@@ -39,7 +40,7 @@ class Sequential:
     """
     A sequence of preprocessors
     """
-    def __init__(self, preprocessors: Union[List[Preprocessor], List[Tuple[str, Dict]]]):
+    def __init__(self, preprocessors: Union[List[Preprocessor], List[PreprocessorConfig]]):
         self._processors = self._prepare_processors(preprocessors)
 
     def __str__(self):
@@ -49,18 +50,17 @@ class Sequential:
     def _prepare_processors(preprocessors):
         processors = []
         if isinstance(preprocessors, list) and len(preprocessors):
-            for p in preprocessors:
-                if isinstance(p, tuple):
-                    name, kwargs = p
-                    processors.append(build_preprocessor(name, **kwargs))
-                elif isinstance(p, Preprocessor):
-                    processors.append(p)
+            for preprocessor in preprocessors:
+                if isinstance(preprocessor, PreprocessorConfig):
+                    processors.append(build_preprocessor(preprocessor.name, config=preprocessor))
+                elif isinstance(preprocessor, Preprocessor):
+                    processors.append(preprocessor)
                 else:
-                    raise ValueError(f"Items in the preprocessors parameter must be either a `Preprocessor` or a tuple "
-                                     f"of `(preprocessor_name, preprocessor_kwargs)`! Got `{type(p)}`!")
+                    raise ValueError(f"Items in the preprocessors parameter must be either a `Preprocessor` or a list "
+                                     f"of `PreprocessorConfig`. Got `{type(preprocessor)}`!")
             return processors
 
-    def __call__(self, inputs, *args, **kwargs):
+    def __call__(self, inputs, **kwargs):
         for processor in self._processors:
             inputs = processor(inputs, **kwargs)
         return inputs
