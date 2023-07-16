@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple, Union
 
 from ..builders import build_preprocessor
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, DEFAULT_PREPROCESSORS_CONFIG, RepoType
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, RepoType
 from ..configs import Config, PreprocessorConfig
 
 
