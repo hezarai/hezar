@@ -73,12 +73,12 @@ def hezar_config_to_hf_config(config):
     return hf_config
 
 
-def get_module_config_class(name: str, config_type: str):
+def get_module_config_class(name: str, config_type: str = None):
     """
     Get the config class for a given module based on its registry name.
 
     Args:
-        name (str): Model's registry name
+        name (str): Module's registry name
         config_type (str): Registry type
 
     Returns:
@@ -100,6 +100,8 @@ def get_module_config_class(name: str, config_type: str):
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
 
+    elif config_type is None:
+        return None
     else:
         raise ValueError(f"Invalid `config_type`: {config_type}!")
 

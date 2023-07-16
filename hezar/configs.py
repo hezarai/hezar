@@ -152,10 +152,12 @@ class Config:
                 cache_dir=HEZAR_CACHE_DIR,
                 repo_type=repo_type,
             )
-
+        # Load config file and convert to dictionary
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
-        config_cls = get_module_config_class(config["name"], config_type=config["config_type"])
+        config_cls = get_module_config_class(config["name"], config_type=config.get("config_type", None))
+        if config_cls is None:
+            config_cls = Config
         config = config_cls.from_dict(config, strict=False, **kwargs)
         return config
 
