@@ -2,7 +2,7 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Union
+from typing import Dict, List, Mapping, Optional, Union, Literal
 
 import torch
 from huggingface_hub import create_repo, upload_file
@@ -74,11 +74,24 @@ class Tokenizer(Preprocessor):
     def pad_encoded_batch(
         self,
         inputs,
-        padding: Union[bool, str] = None,
+        padding: Literal["longest", "max_length"] = None,
         max_length: Optional[int] = None,
         return_tensors: Optional[str] = None,
         skip_keys: list = None,
     ):
+        """
+        Given a batch of encoded inputs, add padding to all of them so that the inputs are of the same length.
+
+        Args:
+            inputs: Input batch of encoded tokens
+            padding: Padding type, could be one of ["longest", "max_length"]
+            max_length: Max input length (only if padding is set to "max_length")
+            return_tensors: The type of tensors to return
+            skip_keys: A list of keys to skip padding
+
+        Returns:
+
+        """
 
         if isinstance(inputs, (list, tuple)) and isinstance(inputs[0], Mapping):
             inputs = {key: [example[key] for example in inputs] for key in inputs[0].keys()}
@@ -109,7 +122,8 @@ class Tokenizer(Preprocessor):
             else:
                 # TODO implement truncation if possible and remove this condition
                 if max_length <= inputs_max_length:
-                    logger.warning(f"Setting max_length to {max_length} while max input length is {inputs_max_length}!"
+                    logger.warning(f"Cannot set max_length to {max_length} "
+                                   f"while max input length is {inputs_max_length}!"
                                    f"Falling back to padding='longest' "
                                    f"since truncation is not available yet in Hezar :(")
                     inputs_length = inputs_max_length
