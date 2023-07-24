@@ -5,7 +5,7 @@ from typing import Dict, Union
 import omegaconf
 from omegaconf import DictConfig
 
-from ..constants import ConfigType
+from ..constants import ConfigType, RegistryType
 from .common_utils import snake_case
 from .logging import get_logger
 
@@ -17,6 +17,7 @@ __all__ = [
     "hezar_config_to_hf_config",
     "get_module_config_class",
     "get_module_class",
+    "get_registry_point",
 ]
 
 logger = get_logger(__name__)
@@ -71,6 +72,44 @@ def hezar_config_to_hf_config(config):
 
     hf_config = PretrainedConfig(**config)
     return hf_config
+
+
+def get_registry_point(registry_key: str, registry_type: RegistryType) -> Registry:
+    """
+    Get the registry item by registry key name in a specific registry
+
+    Args:
+        registry_key: Module's name in the registry
+        registry_type: Module's registry container type
+
+    Returns:
+        A Registry object
+    """
+    if registry_type == RegistryType.MODEL:
+        from ..registry import models_registry  # noqa
+
+        registry = models_registry
+    elif registry_type == RegistryType.PREPROCESSOR:
+        from ..registry import preprocessors_registry  # noqa
+
+        registry = preprocessors_registry
+    elif registry_type == RegistryType.DATASET:
+        from ..registry import datasets_registry  # noqa
+        registry = datasets_registry
+    elif registry_type == RegistryType.EMBEDDING:
+        from ..registry import embeddings_registry  # noqa
+        registry = embeddings_registry
+    elif registry_type == RegistryType.TRAINER:
+        from ..registry import trainers_registry  # noqa
+        registry = trainers_registry
+    elif registry_type == RegistryType.METRIC:
+        from ..registry import metrics_registry  # noqa
+        registry = metrics_registry
+    else:
+        raise ValueError(f"Invalid `registry_type`: {registry_type}!")
+
+    registry = registry[registry_key]
+    return registry
 
 
 def get_module_config_class(name: str, config_type: str = None):
