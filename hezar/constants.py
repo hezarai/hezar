@@ -48,6 +48,18 @@ class ConfigType(str, Enum):
     METRIC = "metric"
 
 
+class RegistryType(str, Enum):
+    MODEL = "model"
+    DATASET = "dataset"
+    PREPROCESSOR = "preprocessor"
+    EMBEDDING = "embedding"
+    TRAINER = "trainer"
+    OPTIMIZER = "optimizer"
+    CRITERION = "criterion"
+    LR_SCHEDULER = "lr_scheduler"
+    METRIC = "metric"
+
+
 class SplitType(str, Enum):
     TRAIN = "train"
     EVAL = "eval"

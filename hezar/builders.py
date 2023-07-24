@@ -27,7 +27,7 @@ from .registry import (  # noqa
     models_registry,  # noqa
     preprocessors_registry,  # noqa
 )
-from .utils.config_utils import snake_case
+from .utils import snake_case
 
 
 __all__ = [
