@@ -67,9 +67,6 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
         model_name: Model's registry name e.g, `bert_sequence_labeling`
         config_class: Model's config class e.g, `BertSequenceLabelingConfig`. This parameter must be the config class
             itself not a config instance!
-
-    Returns:
-         The class itself
     """
 
     def register(cls):
@@ -100,9 +97,6 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
         dataset_name: Dataset's registry name e.g, `text_classification`.
         config_class: Dataset's config class e.g, `TextClassificationDatasetConfig`. This parameter must be the config
             class itself not a config instance!
-
-    Returns:
-         The class itself
     """
 
     def register(cls):
@@ -133,9 +127,6 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
         preprocessor_name: Preprocessor's registry name e.g, `bpe_tokenizer`.
         config_class: Preprocessor's config class e.g, BPEConfig. This parameter must be the config
             class itself not a config instance!
-
-    Returns:
-         The class itself
     """
 
     def register(cls):
@@ -166,9 +157,6 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
         embedding_name: Embedding's registry name e.g, `word2vec_cbow`.
         config_class: Embedding's config class e.g, Word2VecCBOWConfig. This parameter must be the config
             class itself not a config instance!
-
-    Returns:
-         The class itself
     """
 
     def register(cls):
@@ -199,9 +187,6 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
         trainer_name: Trainer's registry name e.g, `text_classification_trainer`
         config_class: Trainer's config class e.g, `TextClassificationTrainerConfig`.
             This parameter must be the config class itself not a config instance!
-
-    Returns:
-         The class itself
     """
 
     def register(cls):
@@ -231,9 +216,6 @@ def register_metric(metric_name: str, config_class: Type[MetricConfig]):
     Args:
         metric_name: Metric registry name e.g, `f1`
         config_class: Metric config class
-
-    Returns:
-         The class itself
     """
 
     def register(cls):

@@ -115,7 +115,7 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
         **kwargs: Extra config parameters that are loaded to the embedding
 
     Returns:
-        A Dataset instance
+        A Embedding instance
     """
     if name not in embeddings_registry:
         raise ValueError(f"Unknown embedding name: `{name}`!\n"
@@ -136,7 +136,7 @@ def build_metric(name: str, config: Optional[MetricConfig] = None, **kwargs):
         **kwargs: Extra config parameters that are loaded to the metric
 
     Returns:
-        A Dataset instance
+        A Metric instance
     """
     if name not in metrics_registry:
         raise ValueError(f"Unknown metric name: `{name}`!\n"
