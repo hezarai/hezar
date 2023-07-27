@@ -38,6 +38,7 @@ __all__ = [
     "register_embedding",
     "register_metric",
     "register_trainer",
+    "Registry",
 ]
 
 logger = get_logger(__name__)
