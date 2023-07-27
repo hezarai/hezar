@@ -15,6 +15,7 @@ Examples:
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 import torch
@@ -157,7 +158,7 @@ class Config:
         config = OmegaConf.to_container(dict_config)
         config_cls = get_module_config_class(config["name"], config_type=config.get("config_type", None))
         if config_cls is None:
-            config_cls = Config
+            config_cls = cls
         config = config_cls.from_dict(config, strict=False, **kwargs)
         return config
 
@@ -168,8 +169,10 @@ class Config:
         """
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
+        dict_config.pop("name", None)
+        dict_config.pop("config_type", None)
 
-        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k) and k != "config_type"})  # noqa
+        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})  # noqa
 
         return config
 
@@ -186,6 +189,8 @@ class Config:
         config = self.dict()
         # exclude None items
         config = {k: v for k, v in config.items() if v is not None}
+        # convert enums to value
+        config = {k: v.value if isinstance(v, Enum) else v for k, v in config.items()}
         # make and save to directory
         os.makedirs(os.path.join(save_dir, subfolder), exist_ok=True)
         save_path = os.path.join(save_dir, subfolder, filename)
