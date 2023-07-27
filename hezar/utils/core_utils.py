@@ -87,24 +87,28 @@ def get_registry_point(registry_key: str, registry_type: RegistryType):
     """
     if registry_type == RegistryType.MODEL:
         from ..registry import models_registry  # noqa
-
         registry = models_registry
+
     elif registry_type == RegistryType.PREPROCESSOR:
         from ..registry import preprocessors_registry  # noqa
-
         registry = preprocessors_registry
+
     elif registry_type == RegistryType.DATASET:
         from ..registry import datasets_registry  # noqa
         registry = datasets_registry
+
     elif registry_type == RegistryType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
+
     elif registry_type == RegistryType.TRAINER:
         from ..registry import trainers_registry  # noqa
         registry = trainers_registry
+
     elif registry_type == RegistryType.METRIC:
         from ..registry import metrics_registry  # noqa
         registry = metrics_registry
+
     else:
         raise ValueError(f"Invalid `registry_type`: {registry_type}!")
 
@@ -125,19 +129,27 @@ def get_module_config_class(name: str, config_type: str = None):
     """
     if config_type == ConfigType.MODEL:
         from ..registry import models_registry  # noqa
-
         registry = models_registry
+
     elif config_type == ConfigType.PREPROCESSOR:
         from ..registry import preprocessors_registry  # noqa
-
         registry = preprocessors_registry
+
     elif config_type == ConfigType.DATASET:
         from ..registry import datasets_registry  # noqa
-
         registry = datasets_registry
+
     elif config_type == ConfigType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
+
+    elif config_type == ConfigType.METRIC:
+        from ..registry import metrics_registry  # noqa
+        registry = metrics_registry
+
+    elif config_type == ConfigType.TRAINER:
+        from ..registry import trainers_registry  # noqa
+        registry = trainers_registry
 
     elif config_type is None:
         return None
@@ -161,22 +173,27 @@ def get_module_class(name: str, module_type: str) -> type:
     """
     if module_type == ConfigType.MODEL:
         from ..registry import models_registry  # noqa
-
         registry = models_registry
+
     elif module_type == ConfigType.PREPROCESSOR:
         from ..registry import preprocessors_registry  # noqa
-
         registry = preprocessors_registry
+
     elif module_type == ConfigType.DATASET:
         from ..registry import datasets_registry  # noqa
-
         registry = datasets_registry
+
     elif module_type == ConfigType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
         registry = embeddings_registry
+
     elif module_type == ConfigType.METRIC:
         from ..registry import metrics_registry  # noqa
         registry = metrics_registry
+
+    elif module_type == ConfigType.TRAINER:
+        from ..registry import trainers_registry  # noqa
+        registry = trainers_registry
 
     else:
         raise ValueError(f"Invalid `module_type`: {module_type}!")
