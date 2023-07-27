@@ -2,7 +2,7 @@ import os.path
 
 from huggingface_hub import HfApi, Repository
 
-from ..constants import HEZAR_CACHE_DIR, HEZAR_HUB_ID
+from ..constants import HEZAR_CACHE_DIR, HEZAR_HUB_ID, RepoType
 from ..utils.logging import get_logger
 
 
@@ -12,6 +12,7 @@ __all__ = [
     "exists_in_cache",
     "exists_on_hub",
     "clone_repo",
+    "list_repo_files",
 ]
 
 logger = get_logger(__name__)
@@ -96,3 +97,25 @@ def clone_repo(repo_id: str, save_path: str, **kwargs):
     """
     repo = Repository(local_dir=save_path, clone_from=repo_id, **kwargs)
     return repo.local_dir
+
+
+def list_repo_files(hub_or_local_path: str, subfolder: str = None):
+    """
+    List all files in a Hub or local model repo
+
+    Args:
+        hub_or_local_path: Path to hub or local repo
+        subfolder: Optional subfolder path
+
+    Returns:
+        A list of all file names
+    """
+    if os.path.isdir(hub_or_local_path):
+        files = os.listdir(hub_or_local_path)
+    else:
+        files = HfApi().list_repo_files(hub_or_local_path, repo_type=RepoType.MODEL)
+
+    if subfolder is not None:
+        files = [x.replace(f"{subfolder}/", "") for x in files if subfolder in x]
+
+    return files

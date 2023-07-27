@@ -160,7 +160,7 @@ def get_module_config_class(name: str, config_type: str = None):
     return config_cls
 
 
-def get_module_class(name: str, module_type: str) -> type:
+def get_module_class(name: str, module_type: str):
     """
     Get module class based on registry name
 
