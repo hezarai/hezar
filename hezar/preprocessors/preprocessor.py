@@ -1,8 +1,10 @@
-from typing import Dict, List, Tuple, Union
+from collections import OrderedDict
 
-from ..builders import build_preprocessor
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, RepoType
-from ..configs import Config, PreprocessorConfig
+from huggingface_hub import hf_hub_download
+from omegaconf import OmegaConf
+
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, RegistryType, RepoType
+from ..utils import get_module_class, list_repo_files
 
 
 class Preprocessor:
@@ -24,43 +26,59 @@ class Preprocessor:
 
         Args:
             inputs: Raw inputs to process. Usually a list or a dict
-            args: Extra arguments depending on the preprocessor
             **kwargs: Extra keyword arguments depending on the preprocessor
         """
         raise NotImplementedError
 
-    def save(self, path):
+    def save(self, path, **kwargs):
         raise NotImplementedError
 
     def push_to_hub(self, hub_path):
         raise NotImplementedError
 
+    @classmethod
+    def load(
+        cls,
+        hub_or_local_path,
+        subfolder=None,
+        **kwargs
+    ):
+        """
+        Load a preprocessor or a pipeline of preprocessors from a local or Hub path. This method automatically detects
+        any preprocessor in the path. If there's only one preprocessor, returns it and if there are more, returns a
+        dictionary of preprocessors.
 
-class Sequential:
-    """
-    A sequence of preprocessors
-    """
-    def __init__(self, preprocessors: Union[List[Preprocessor], List[PreprocessorConfig]]):
-        self._processors = self._prepare_processors(preprocessors)
+        This method must also be overriden by subclasses as it internally calls this method for every possible
+        preprocessor found in the repo.
 
-    def __str__(self):
-        return f"{self.__class__.__name__}({[p.config.name for p in self._processors] if self._processors else []})"
+        Args:
+            hub_or_local_path: Path to hub or local repo
+            subfolder: Subfolder for the preprocessor.
+            **kwargs: Extra kwargs
 
-    @staticmethod
-    def _prepare_processors(preprocessors):
-        processors = []
-        if isinstance(preprocessors, list) and len(preprocessors):
-            for preprocessor in preprocessors:
-                if isinstance(preprocessor, PreprocessorConfig):
-                    processors.append(build_preprocessor(preprocessor.name, config=preprocessor))
-                elif isinstance(preprocessor, Preprocessor):
-                    processors.append(preprocessor)
+        Returns:
+            A Preprocessor subclass or a dict of Preprocessor subclass instances
+        """
+        subfolder = subfolder or cls.preprocessor_subfolder
+        preprocessor_files = list_repo_files(hub_or_local_path, subfolder=subfolder)
+        preprocessors = OrderedDict()
+        for f in preprocessor_files:
+            if f.endswith(".yaml"):
+                config_file = hf_hub_download(
+                    hub_or_local_path,
+                    filename=f,
+                    subfolder=subfolder,
+                    repo_type=RepoType.MODEL
+                )
+                config = OmegaConf.load(config_file)
+                name = config.get("name", None)
+                if name:
+                    preprocessor_cls = get_module_class(name, module_type=RegistryType.PREPROCESSOR)
+                    preprocessor = preprocessor_cls.load(hub_or_local_path, subfolder=subfolder)
+                    preprocessors[name] = preprocessor
                 else:
-                    raise ValueError(f"Items in the preprocessors parameter must be either a `Preprocessor` or a list "
-                                     f"of `PreprocessorConfig`. Got `{type(preprocessor)}`!")
-            return processors
+                    raise ValueError(f"The config file `{config_file}` does not have the property `name`!")
+        if len(preprocessors) == 1:
+            return list(preprocessors.values())[0]
 
-    def __call__(self, inputs, **kwargs):
-        for processor in self._processors:
-            inputs = processor(inputs, **kwargs)
-        return inputs
+        return preprocessors
