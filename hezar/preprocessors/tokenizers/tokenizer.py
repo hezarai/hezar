@@ -2,7 +2,7 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Union, Literal
+from typing import Dict, List, Literal, Mapping, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, upload_file
@@ -133,17 +133,17 @@ class Tokenizer(Preprocessor):
         inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=skip_keys)
 
         skip_keys = skip_keys or []
-        for field, batch in inputs.items():
-            if field in skip_keys:
+        for key, batch in inputs.items():
+            if key in skip_keys:
                 continue
-            padding_id = 0 if field == "attention_mask" else self.config.pad_token_id
+            padding_id = 0 if key == "attention_mask" else self.config.pad_token_id
             padded_batch = []
             for x in batch:
                 difference = inputs_length - len(x)
                 paddings = [padding_id] * difference
                 padded_x = x + paddings if self.config.padding_direction == "right" else paddings + x
                 padded_batch.append(padded_x)
-            inputs[field] = padded_batch
+            inputs[key] = padded_batch
 
         inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors)
 
