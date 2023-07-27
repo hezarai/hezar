@@ -74,7 +74,7 @@ def hezar_config_to_hf_config(config):
     return hf_config
 
 
-def get_registry_point(registry_key: str, registry_type: RegistryType) -> Registry:
+def get_registry_point(registry_key: str, registry_type: RegistryType):
     """
     Get the registry item by registry key name in a specific registry
 
