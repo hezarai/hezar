@@ -6,7 +6,7 @@ from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import TaskType
-from ...preprocessors import Sequential, Tokenizer
+from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import get_logger
 from ..data_collators import TextPaddingDataCollator
@@ -45,7 +45,6 @@ class TextClassificationDataset(Dataset):
         self.dataset = self._load(split)
         self._extract_labels()
         self.tokenizer = self._build_tokenizer()
-        self.normalizer = Sequential(self.config.normalizers)
         self.data_collator = TextPaddingDataCollator(
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,

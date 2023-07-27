@@ -5,7 +5,7 @@ from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import TaskType
-from ...preprocessors import Sequential, Tokenizer
+from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import get_logger
 from ..data_collators import SequenceLabelingDataCollator
@@ -46,7 +46,6 @@ class SequenceLabelingDataset(Dataset):
         self.dataset = self._load(split)
         self._extract_labels()
         self.tokenizer = self._build_tokenizer()
-        self.normalizer = Sequential(self.config.normalizers)
         if self.tokenizer:
             self.data_collator = SequenceLabelingDataCollator(self.tokenizer)
 
