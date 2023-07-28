@@ -1,7 +1,7 @@
 """
 A BERT model for sequence labeling built using HuggingFace Transformers
 """
-from typing import Dict
+from typing import Dict, List, Union
 
 from torch import nn
 from transformers import BertConfig, BertModel
@@ -63,6 +63,24 @@ class BertSequenceLabeling(Model):
             **inputs
         }
         return outputs
+
+    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+        if isinstance(inputs, str):
+            inputs = [inputs]
+        if "normalizer" in self.preprocessor:
+            normalizer = self.preprocessor["normalizer"]
+            inputs = normalizer(inputs)
+        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        inputs = tokenizer(
+            inputs,
+            return_word_ids=True,
+            return_tokens=True,
+            padding=True,
+            truncation=True,
+            return_tensors="pt",
+            device=self.device,
+        )
+        return inputs
 
     def post_process(self, inputs, **kwargs):
         # TODO sequence labeling outputs should consider rejoining split words into single words with proper tag

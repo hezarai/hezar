@@ -1,6 +1,8 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
+from typing import List, Union
+
 from transformers import RobertaConfig, RobertaModel
 
 from ....models import Model
@@ -23,6 +25,16 @@ class RobertaLM(Model):
             **kwargs,
         )
         return outputs
+
+    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+        if isinstance(inputs, str):
+            inputs = [inputs]
+        if "normalizer" in self.preprocessor:
+            normalizer = self.preprocessor["normalizer"]
+            inputs = normalizer(inputs)
+        tokenizer = self.preprocessor["bpe_tokenizer"]
+        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
+        return inputs
 
     def post_process(self, inputs, **kwargs):
         hidden_states = inputs.get("hidden_states", None)
