@@ -1,7 +1,7 @@
 """
 A BERT model for text classification built using HuggingFace Transformers
 """
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 from torch import nn
 from transformers import BertConfig, BertModel
