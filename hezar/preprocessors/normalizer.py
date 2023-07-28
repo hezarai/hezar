@@ -39,14 +39,19 @@ class Normalizer(Preprocessor):
         self,
         inputs: Union[str, List[str]],
         replace_pattern: str = None,
+        nfkd: bool = None,
+        nfkc: bool = None,
         **kwargs,
     ):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        if self.config.nfkd:
+        nfkd = nfkd or self.config.nfkd
+        nfkc = nfkc or self.config.nfkc
+
+        if nfkd:
             inputs = [normalizers.NFKD().normalize_str(x) for x in inputs]
-        if self.config.nfkc:
+        if nfkc:
             inputs = [normalizers.NFKC().normalize_str(x) for x in inputs]
 
         # TODO add support for other normalizations
