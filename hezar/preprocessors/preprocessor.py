@@ -40,7 +40,8 @@ class Preprocessor:
     def load(
         cls,
         hub_or_local_path,
-        subfolder=None,
+        subfolder: str = None,
+        force_return_dict: bool = False,
         **kwargs
     ):
         """
@@ -54,6 +55,7 @@ class Preprocessor:
         Args:
             hub_or_local_path: Path to hub or local repo
             subfolder: Subfolder for the preprocessor.
+            force_return_dict: Whether to return a dict even if there's only one preprocessor available on the repo
             **kwargs: Extra kwargs
 
         Returns:
@@ -78,7 +80,7 @@ class Preprocessor:
                     preprocessors[name] = preprocessor
                 else:
                     raise ValueError(f"The config file `{config_file}` does not have the property `name`!")
-        if len(preprocessors) == 1:
+        if len(preprocessors) == 1 and not force_return_dict:
             return list(preprocessors.values())[0]
 
         return preprocessors

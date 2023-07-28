@@ -20,6 +20,7 @@ from torch import nn
 from ..builders import build_model
 from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
+from ..preprocessors import Preprocessor
 from ..utils import get_logger
 
 
@@ -45,12 +46,14 @@ class Model(nn.Module):
     def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
         self.config = config.update(kwargs)
+        self._preprocessor = None
 
     @classmethod
     def load(
         cls,
         hub_or_local_path: Union[str, os.PathLike],
         load_locally: Optional[bool] = False,
+        load_preprocessor: Optional[bool] = True,
         model_filename: Optional[str] = None,
         config_filename: Optional[str] = None,
         save_path: Optional[Union[str, os.PathLike]] = None,
@@ -65,9 +68,10 @@ class Model(nn.Module):
 
         Args:
             hub_or_local_path: Path to the model living on the Hub or local disk.
+            load_locally: Force loading from local path
+            load_preprocessor: Whether to load the preprocessor(s) or not
             model_filename: Optional model filename.
             config_filename: Optional config filename
-            load_locally: Force loading from local path
             save_path: Save model to this path after loading
 
         Returns:
@@ -106,6 +110,10 @@ class Model(nn.Module):
             model.to(device)
         if save_path:
             model.save(save_path)
+        # Load the preprocessor(s)
+        if load_preprocessor:
+            preprocessor = Preprocessor.load(hub_or_local_path, force_return_dict=True)
+            model.preprocessor = preprocessor
         return model
 
     def load_state_dict(self, state_dict: Mapping[str, Any], **kwargs):
@@ -234,6 +242,19 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
+    def preprocess(self, inputs, **kwargs):
+        """
+        Given raw inputs, preprocess the inputs and prepare them for model forward.
+
+        Args:
+            inputs: Raw model inputs
+            **kwargs: Extra kw arguments
+
+        Returns:
+            A dict of inputs for model forward
+        """
+        return inputs
+
     def post_process(self, inputs, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
@@ -248,21 +269,43 @@ class Model(nn.Module):
         return inputs
 
     @torch.inference_mode()
-    def predict(self, inputs, post_process=True, **kwargs) -> Dict:
+    def predict(self, inputs, **kwargs) -> Dict:
         """
         Perform an end-to-end prediction on raw inputs.
 
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
-            post_process: Whether to do post-processing step
 
         Returns:
             Output dict of results
         """
+        # Put model in eval mode
         self.eval()
+        # Preprocessing step
+        if self.preprocessor is not None:
+            inputs = self.preprocess(inputs, **kwargs)
+        # Model forward
         model_outputs = self(inputs, **kwargs)
-        if post_process:
-            processed_outputs = self.post_process(model_outputs, **kwargs)
-            return processed_outputs
+        # Post-processing step
+        processed_outputs = self.post_process(model_outputs, **kwargs)
+        return processed_outputs
 
-        return model_outputs
+    @property
+    def device(self):
+        return next(self.parameters()).device
+
+    @property
+    def preprocessor(self):
+        return self._preprocessor
+
+    @preprocessor.setter
+    def preprocessor(self, value):
+        if isinstance(value, Preprocessor):
+            preprocessor = OrderedDict()
+            preprocessor[value.config.name] = value
+        elif isinstance(value, (dict, OrderedDict)):
+            preprocessor = OrderedDict(**value)
+        else:
+            raise ValueError(f"Preprocessor value must be a `Preprocessor` or a dict of `Preprocessor` objects "
+                             f"not `{type(value)}`!")
+        self._preprocessor = preprocessor
