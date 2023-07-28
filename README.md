@@ -37,14 +37,12 @@ from hezar import Model, Tokenizer
 
 # this is our Hub repo
 model_path = "hezarai/bert-fa-sentiment-digikala-snappfood"
-# load model and tokenizer
+# load model
 model = Model.load(model_path)
-tokenizer = Tokenizer.load(model_path)
-# tokenize inputs
+
 example = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
-inputs = tokenizer(example, return_tensors="pt")
 # inference
-outputs = model.predict(inputs)
+outputs = model.predict(example)
 # print outputs
 print(outputs)
 ```

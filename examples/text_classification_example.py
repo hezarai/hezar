@@ -1,4 +1,4 @@
-from hezar import build_model, Model, Tokenizer
+from hezar import Model
 
 hub_path = "hezarai/distilbert-fa-sentiment-digikala-snappfood"
 model = Model.load(hub_path, device="cpu")
