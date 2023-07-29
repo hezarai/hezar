@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict
 
 from huggingface_hub import hf_hub_download
@@ -66,12 +67,15 @@ class Preprocessor:
         preprocessors = OrderedDict()
         for f in preprocessor_files:
             if f.endswith(".yaml"):
-                config_file = hf_hub_download(
-                    hub_or_local_path,
-                    filename=f,
-                    subfolder=subfolder,
-                    repo_type=RepoType.MODEL
-                )
+                if os.path.isdir(hub_or_local_path):
+                    config_file = os.path.join(hub_or_local_path, subfolder, f)
+                else:
+                    config_file = hf_hub_download(
+                        hub_or_local_path,
+                        filename=f,
+                        subfolder=subfolder,
+                        repo_type=RepoType.MODEL
+                    )
                 config = OmegaConf.load(config_file)
                 name = config.get("name", None)
                 if name:
