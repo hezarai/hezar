@@ -24,9 +24,7 @@ from ..models import Model
 from ..utils import get_logger
 from .trainer_utils import MetricsTracker
 
-
 logger = get_logger(__name__)
-
 
 optimizers = {
     "adam": torch.optim.Adam,
@@ -365,7 +363,7 @@ class Trainer:
                     evaluation_results = self.compute_metrics(
                         outputs["logits"].detach().cpu().numpy(),
                         input_batch["labels"].detach().cpu().numpy(),
-                )
+                    )
                     evaluation_results["loss"] = outputs["loss"]
                     # Gather outputs for metrics
                     self.metrics_tracker.update(evaluation_results)
