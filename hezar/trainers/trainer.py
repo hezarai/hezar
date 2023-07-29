@@ -194,7 +194,7 @@ class Trainer:
                     raise ValueError(f"Invalid metric `{metric}`! Available metrics: {self.AVAILABLE_METRICS}")
                 metrics_dict[metric] = build_metric(metric)
             elif isinstance(metric, MetricConfig):
-                metrics_dict[metric] = build_metric(metric.name, config=metric)
+                metrics_dict[metric.name] = build_metric(metric.name, config=metric)
             else:
                 raise ValueError(f"Invalid metric type `{type(metric)}`! Available metrics: {self.AVAILABLE_METRICS}")
         return metrics_dict
