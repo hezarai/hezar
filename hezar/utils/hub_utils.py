@@ -111,7 +111,14 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
         A list of all file names
     """
     if os.path.isdir(hub_or_local_path):
-        files = os.listdir(hub_or_local_path)
+        files_itr = os.walk(hub_or_local_path)
+        files = []
+        for r, d, f in files_itr:
+            if r == hub_or_local_path:
+                files.append(f)
+            else:
+                for x in f:
+                    files.append(f"{r.replace(f'{hub_or_local_path}/', '')}/{x}")
     else:
         files = HfApi().list_repo_files(hub_or_local_path, repo_type=RepoType.MODEL)
 
