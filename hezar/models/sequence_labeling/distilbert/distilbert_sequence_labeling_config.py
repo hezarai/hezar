@@ -14,7 +14,6 @@ class DistilBertSequenceLabelingConfig(ModelConfig):
     attention_dropout: float = 0.1
     dim: int = 768
     dropout: float = 0.1
-    hidden_dim: int = 3072
     initializer_range: float = 0.02
     max_position_embeddings: int = 512
     n_heads: int = 12
