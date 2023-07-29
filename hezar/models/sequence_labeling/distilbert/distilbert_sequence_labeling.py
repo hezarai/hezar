@@ -38,8 +38,6 @@ class DistilBertSequenceLabeling(Model):
     def forward(self, inputs, **kwargs) -> Dict:
         input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
-        # token_type_ids = inputs.get("token_type_ids", None)
-        # position_ids = inputs.get("position_ids", None)
         head_mask = inputs.get("head_mask", None)
         inputs_embeds = inputs.get("inputs_embeds", None)
         output_attentions = inputs.get("output_attentions", None)
@@ -48,7 +46,6 @@ class DistilBertSequenceLabeling(Model):
         lm_outputs = self.distilbert(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            # position_ids=position_ids,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
