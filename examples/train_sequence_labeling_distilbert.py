@@ -7,7 +7,7 @@ from hezar import (
     build_model,
 )
 
-name = "bert_sequence_labeling"
+name = "distilbert_sequence_labeling"
 
 train_dataset = Dataset.load("hezarai/lscp-500k", split="train", tokenizer_path="hezarai/bert-base-fa")
 eval_dataset = Dataset.load("hezarai/lscp-500k", split="test", tokenizer_path="hezarai/bert-base-fa")
@@ -18,8 +18,8 @@ train_config = TrainerConfig(
     device="cuda",
     optimizer=optimizer_config,
     init_weights_from="hezarai/distilbert-base-fa",
-    batch_size=8,
-    num_epochs=5,
+    batch_size=64,
+    num_epochs=3,
     checkpoints_dir="checkpoints/",
     metrics=["seqeval"],
 )
@@ -32,3 +32,4 @@ trainer = SequenceLabelingTrainer(
     data_collator=train_dataset.data_collator,
 )
 trainer.train()
+trainer.push_to_hub("distilbert-fa-pos-lscp-500k")
