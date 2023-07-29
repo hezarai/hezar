@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Union, Callable
 
 import numpy as np
 import torch
@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from .trainer_utils import MetricsTracker
 from ..builders import build_metric
 from ..configs import LRSchedulerConfig, MetricConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
@@ -21,8 +22,6 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_logger
-from .trainer_utils import MetricsTracker
-
 
 logger = get_logger(__name__)
 
@@ -58,16 +57,16 @@ class Trainer:
     AVAILABLE_METRICS = []
 
     def __init__(
-        self,
-        model: Model = None,
-        config: TrainerConfig = None,
-        train_dataset: Dataset = None,
-        eval_dataset: Dataset = None,
-        data_collator=None,
-        optimizer: torch.optim.Optimizer = None,
-        lr_scheduler=None,
-        compute_metrics=None,
-        **kwargs,
+            self,
+            model: Model = None,
+            config: TrainerConfig = None,
+            train_dataset: Dataset = None,
+            eval_dataset: Dataset = None,
+            data_collator: Callable = None,
+            optimizer: torch.optim.Optimizer = None,
+            lr_scheduler=None,
+            compute_metrics=None,
+            **kwargs,
     ):
 
         self.config = config
@@ -119,24 +118,22 @@ class Trainer:
         model.to(self.device)
         return model
 
-    def _prepare_dataloaders(self):
+    def _prepare_dataloaders(self) -> Tuple[DataLoader, Union[DataLoader, None]]:
         """
         Set up data loaders (train/eval) and return them.
 
         Returns:
              A tuple of train and eval dataloaders
         """
-        if self.train_dataset is not None:
-            train_dataloader = DataLoader(
-                dataset=self.train_dataset,
-                batch_size=self.config.batch_size,
-                collate_fn=self.data_collator,
-                num_workers=self.config.num_dataloader_workers,
-                drop_last=True,
-                shuffle=True,
-            )
-        else:
-            raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
+        assert self.train_dataset is not None, "Cannot create train dataloader because `train_dataset` is not given!"
+        train_dataloader = DataLoader(
+            dataset=self.train_dataset,
+            batch_size=self.config.batch_size,
+            collate_fn=self.data_collator,
+            num_workers=self.config.num_dataloader_workers,
+            drop_last=True,
+            shuffle=True,
+        )
         if self.eval_dataset is not None:
             eval_dataloader = DataLoader(
                 dataset=self.eval_dataset,
@@ -147,7 +144,8 @@ class Trainer:
                 shuffle=True,
             )
         else:
-            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer!")
+            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
+                           "Setting eval_dataloader to None...")
             eval_dataloader = None
 
         return train_dataloader, eval_dataloader
@@ -197,7 +195,7 @@ class Trainer:
                 raise ValueError(f"Invalid metric type `{type(metric)}`! Available metrics: {self.AVAILABLE_METRICS}")
         return metrics_dict
 
-    def prepare_input_batch(self, input_batch):
+    def prepare_input_batch(self, input_batch) -> Dict[str, torch.Tensor]:
         """
         Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
         Args:
@@ -249,7 +247,7 @@ class Trainer:
         """
         raise NotImplementedError
 
-    def compute_metrics(self, predictions, labels, **kwargs):
+    def compute_metrics(self, predictions, labels, **kwargs) -> Dict[str, float]:
         """
         Compute metric values on the predictions and labels
 
@@ -316,11 +314,11 @@ class Trainer:
         self.metrics_tracker.reset()
         self.model.train()
         with tqdm(
-            self.train_dataloader,
-            unit="batch",
-            desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
-            bar_format=TQDM_BAR_FORMAT,
-            ascii=" #",
+                self.train_dataloader,
+                unit="batch",
+                desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
+                bar_format=TQDM_BAR_FORMAT,
+                ascii=" #",
         ) as iterator:
             for step, input_batch in enumerate(iterator):
                 input_batch = self.prepare_input_batch(input_batch)
@@ -348,11 +346,11 @@ class Trainer:
         self.metrics_tracker.reset()
         self.model.eval()
         with tqdm(
-            self.eval_dataloader,
-            unit="batch",
-            desc="Evaluating... ",
-            bar_format=TQDM_BAR_FORMAT,
-            ascii=" #",
+                self.eval_dataloader,
+                unit="batch",
+                desc="Evaluating... ",
+                bar_format=TQDM_BAR_FORMAT,
+                ascii=" #",
         ) as iterator:
             with torch.inference_mode():
                 for step, input_batch in enumerate(iterator):
@@ -387,13 +385,13 @@ class Trainer:
                 self.save(ckpt_save_path)
 
     def save(
-        self,
-        path: str,
-        config_filename=None,
-        model_filename=None,
-        model_config_filename=None,
-        subfolder=None,
-        dataset_config_file=None,
+            self,
+            path: str,
+            config_filename=None,
+            model_filename=None,
+            model_config_filename=None,
+            subfolder=None,
+            dataset_config_file=None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -417,16 +415,16 @@ class Trainer:
         self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
 
     def push_to_hub(
-        self,
-        repo_id: str,
-        config_filename: str = None,
-        push_model: bool = True,
-        model_filename: str = None,
-        model_config_filename: str = None,
-        subfolder: str = None,
-        dataset_config_filename: str = None,
-        commit_message: str = None,
-        private: bool = False,
+            self,
+            repo_id: str,
+            config_filename: str = None,
+            push_model: bool = True,
+            model_filename: str = None,
+            model_config_filename: str = None,
+            subfolder: str = None,
+            dataset_config_filename: str = None,
+            commit_message: str = None,
+            private: bool = False,
     ):
         """
         Push everything to the Hub
