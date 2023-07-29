@@ -415,13 +415,12 @@ class Trainer:
         self.config.save(path, filename=config_filename, subfolder=subfolder)
         self.model.save(path, filename=model_filename, config_filename=model_config_filename, save_config=True)
         self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
-        if hasattr(self.train_dataset, "tokenizer"):
-            self.train_dataset.tokenizer.save(path)
 
     def push_to_hub(
         self,
         repo_id: str,
         config_filename: str = None,
+        push_model: bool = True,
         model_filename: str = None,
         model_config_filename: str = None,
         subfolder: str = None,
@@ -435,6 +434,7 @@ class Trainer:
         Args:
             repo_id: Path to hub
             config_filename: Trainer config file name
+            push_model: Whether to push the model or not
             model_filename: Model file name
             model_config_filename: Model config file name
             subfolder: Path to Trainer files
@@ -448,24 +448,32 @@ class Trainer:
 
         # create remote repo
         create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
-        # save to tmp and prepare for push
-        cache_path = tempfile.mkdtemp()
-
-        self.save(
-            cache_path,
-            config_filename=config_filename,
-            model_filename=model_filename,
-            model_config_filename=model_config_filename,
-            subfolder=subfolder,
-            dataset_config_file=dataset_config_file,
-        )
 
         if not commit_message:
             commit_message = "Hezar: Upload training files"
 
-        upload_folder(
-            repo_id=repo_id,
-            folder_path=cache_path,
-            repo_type="model",
+        # upload train files
+        self.config.push_to_hub(
+            repo_id,
+            filename=config_filename,
+            subfolder=subfolder,
+            private=private,
             commit_message=commit_message,
         )
+        self.train_dataset.config.push_to_hub(
+            repo_id,
+            filename=dataset_config_file,
+            subfolder=subfolder,
+            private=private,
+            commit_message=commit_message
+        )
+
+        # upload model
+        if push_model:
+            self.model.push_to_hub(
+                repo_id,
+                filename=model_filename,
+                config_filename=model_config_filename,
+                commit_message=commit_message,
+                private=private,
+            )
