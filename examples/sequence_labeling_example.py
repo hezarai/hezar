@@ -1,10 +1,8 @@
-from hezar import build_model, Tokenizer
+from hezar import Model
 
-hub_path = "hezarai/bert-base-fa"
-tokenizer = Tokenizer.load(hub_path)
-# dummy model just to test
-model = build_model("bert_sequence_labeling", id2label={0: "NOUN", 1: "VERB", 2: "ADJ", 3: "ADV", 4: "DET"})
-model.preprocessor = tokenizer
+hub_path = "hezarai/bert-fa-pos-lscp-500k"
+model = Model.load(hub_path)
 inputs = ["سلام بر فارسی زبانان شریف"]
 x = model.predict(inputs)
+model.push_to_hub("hezarai/bert-fa-pos-lscp-500k")
 print(x)
