@@ -46,7 +46,7 @@ class DistilBertSequenceLabeling(Model):
         output_hidden_states = inputs.get("output_hidden_states", None)
 
         lm_outputs = self.distilbert(
-            input_ids,
+            input_ids=input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
