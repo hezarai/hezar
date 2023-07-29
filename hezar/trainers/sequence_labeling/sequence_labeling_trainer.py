@@ -1,13 +1,14 @@
+from typing import Callable
+
 import numpy as np
 import torch
 
+from ..trainer import Trainer
 from ...configs import TrainerConfig
 from ...constants import MetricType
 from ...data.datasets import Dataset
 from ...models import Model
 from ...utils import get_logger
-from ..trainer import Trainer
-
 
 logger = get_logger(__name__)
 
@@ -29,14 +30,14 @@ class SequenceLabelingTrainer(Trainer):
     AVAILABLE_METRICS = [MetricType.SEQEVAL]
 
     def __init__(
-        self,
-        model: Model = None,
-        config: TrainerConfig = None,
-        train_dataset: Dataset = None,
-        eval_dataset: Dataset = None,
-        data_collator=None,
-        optimizer: torch.optim.Optimizer = None,
-        lr_scheduler=None,
+            self,
+            model: Model = None,
+            config: TrainerConfig = None,
+            train_dataset: Dataset = None,
+            eval_dataset: Dataset = None,
+            data_collator: Callable = None,
+            optimizer: torch.optim.Optimizer = None,
+            lr_scheduler=None,
     ):
         super().__init__(
             model=model,
@@ -71,4 +72,3 @@ class SequenceLabelingTrainer(Trainer):
         for metric_name, metric in self.metrics.items():
             results[metric_name] = metric.compute(true_predictions, true_labels)["f1"]
         return results
-
