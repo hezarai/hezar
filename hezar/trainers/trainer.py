@@ -1,11 +1,10 @@
 import os
 import random
-import tempfile
 from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
-from huggingface_hub import create_repo, hf_hub_download, upload_folder
+from huggingface_hub import create_repo, hf_hub_download
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -23,6 +22,7 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_logger
 from .trainer_utils import MetricsTracker
+
 
 logger = get_logger(__name__)
 
