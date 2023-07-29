@@ -20,7 +20,7 @@ class DistilBertSequenceLabeling(Model):
             config.classifier_dropout if config.classifier_dropout is not None else config.hidden_dropout_prob
         )
         self.dropout = nn.Dropout(classifier_dropout)
-        self.classifier = nn.Linear(config.hidden_dim, config.num_labels)
+        self.classifier = nn.Linear(config.dim, config.num_labels)
 
     def _build_inner_config(self):
         """
@@ -38,8 +38,8 @@ class DistilBertSequenceLabeling(Model):
     def forward(self, inputs, **kwargs) -> Dict:
         input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
-        token_type_ids = inputs.get("token_type_ids", None)
-        position_ids = inputs.get("position_ids", None)
+        # token_type_ids = inputs.get("token_type_ids", None)
+        # position_ids = inputs.get("position_ids", None)
         head_mask = inputs.get("head_mask", None)
         inputs_embeds = inputs.get("inputs_embeds", None)
         output_attentions = inputs.get("output_attentions", None)
@@ -48,8 +48,7 @@ class DistilBertSequenceLabeling(Model):
         lm_outputs = self.distilbert(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
+            # position_ids=position_ids,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
