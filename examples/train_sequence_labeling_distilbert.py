@@ -18,8 +18,8 @@ train_config = TrainerConfig(
     device="cuda",
     optimizer=optimizer_config,
     init_weights_from="hezarai/distilbert-base-fa",
-    num_dataloader_workers=8,
-    batch_size=128,
+    num_dataloader_workers=4,
+    batch_size=64,
     num_epochs=3,
     checkpoints_dir="checkpoints/",
     metrics=["seqeval"],
@@ -33,4 +33,4 @@ trainer = SequenceLabelingTrainer(
     data_collator=train_dataset.data_collator,
 )
 trainer.train()
-trainer.push_to_hub("distilbert-fa-pos-lscp-500k")
+trainer.push_to_hub("hezarai/distilbert-fa-pos-lscp-500k")
