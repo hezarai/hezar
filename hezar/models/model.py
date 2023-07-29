@@ -151,6 +151,7 @@ class Model(nn.Module):
         path: Union[str, os.PathLike],
         filename: Optional[str] = None,
         save_config: Optional[bool] = True,
+        save_preprocessor: Optional[bool] = True,
         config_filename: Optional[str] = None,
     ):
         """
@@ -159,6 +160,7 @@ class Model(nn.Module):
         Args:
             path: A local directory to save model, config, etc.
             save_config: Whether to save config along with the model or not.
+            save_preprocessor: Whether to save preprocessor(s) along with the model or not
             config_filename: Model config filename,
             filename: Model weights filename
 
@@ -173,6 +175,10 @@ class Model(nn.Module):
         torch.save(self.state_dict(), model_save_path)
         if save_config:
             self.config.save(save_dir=path, filename=config_filename)
+        if save_preprocessor:
+            if self.preprocessor is not None:
+                for p in self.preprocessor.values():
+                    p.save(path)
         return model_save_path
 
     def push_to_hub(
@@ -180,6 +186,7 @@ class Model(nn.Module):
         repo_id: str,
         filename: Optional[str] = None,
         config_filename: Optional[str] = None,
+        push_preprocessor: Optional[bool] = True,
         commit_message: Optional[str] = None,
         private: Optional[bool] = False,
     ):
@@ -190,6 +197,7 @@ class Model(nn.Module):
             repo_id: The path (id or repo name) on the hub
             filename: Model file name
             config_filename: Config file name
+            push_preprocessor: Whether to push preprocessor(s) or not
             commit_message (str): Commit message for this push
             private (bool): Whether to create a private repo or not
         """
@@ -215,6 +223,11 @@ class Model(nn.Module):
             repo_type="model",
             commit_message=commit_message,
         )
+        # upload preprocessor(s)
+        if push_preprocessor:
+            if self.preprocessor is not None:
+                for p in self.preprocessor.values():
+                    p.push_to_hub(repo_id)
         # upload model file
         upload_file(
             path_or_fileobj=model_save_path,
