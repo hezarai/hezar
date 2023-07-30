@@ -317,6 +317,8 @@ class Model(nn.Module):
             preprocessor[value.config.name] = value
         elif isinstance(value, Mapping):
             preprocessor = PreprocessorsContainer(**value)
+        elif value is None:
+            preprocessor = None
         else:
             raise ValueError(f"Preprocessor value must be a `Preprocessor` or a mapping of `Preprocessor` objects "
                              f"not `{type(value)}`!")
