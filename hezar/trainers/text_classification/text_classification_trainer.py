@@ -43,6 +43,7 @@ class TextClassificationTrainer(Trainer):
         train_dataset: Dataset = None,
         eval_dataset: Dataset = None,
         data_collator=None,
+        preprocessor=None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
     ):
@@ -52,6 +53,7 @@ class TextClassificationTrainer(Trainer):
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
             data_collator=data_collator,
+            preprocessor=preprocessor,
             optimizer=optimizer,
             lr_scheduler=lr_scheduler,
         )

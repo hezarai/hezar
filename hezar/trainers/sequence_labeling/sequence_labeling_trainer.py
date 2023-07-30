@@ -30,14 +30,15 @@ class SequenceLabelingTrainer(Trainer):
     AVAILABLE_METRICS = [MetricType.SEQEVAL]
 
     def __init__(
-            self,
-            model: Model = None,
-            config: TrainerConfig = None,
-            train_dataset: Dataset = None,
-            eval_dataset: Dataset = None,
-            data_collator: Callable = None,
-            optimizer: torch.optim.Optimizer = None,
-            lr_scheduler=None,
+        self,
+        model: Model = None,
+        config: TrainerConfig = None,
+        train_dataset: Dataset = None,
+        eval_dataset: Dataset = None,
+        data_collator: Callable = None,
+        preprocessor=None,
+        optimizer: torch.optim.Optimizer = None,
+        lr_scheduler=None,
     ):
         super().__init__(
             model=model,
@@ -45,6 +46,7 @@ class SequenceLabelingTrainer(Trainer):
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
             data_collator=data_collator,
+            preprocessor=preprocessor,
             optimizer=optimizer,
             lr_scheduler=lr_scheduler,
         )

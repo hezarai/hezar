@@ -3,6 +3,7 @@ from hezar import (
     TextClassificationTrainer,
     Dataset,
     build_model,
+    Preprocessor,
     OptimizerConfig,
     LRSchedulerConfig
 )
@@ -16,6 +17,7 @@ train_dataset = Dataset.load(dataset_path, split="train", tokenizer_path=lm_path
 eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=lm_path)
 
 model = build_model(name, id2label=train_dataset.id2label)
+preprocessor = Preprocessor.load(lm_path)
 optim_config = OptimizerConfig(name="adam", lr=2e-5, scheduler=LRSchedulerConfig(name="reduce_on_plateau"))
 train_config = TrainerConfig(
     device="cuda",
@@ -33,5 +35,6 @@ trainer = TextClassificationTrainer(
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,
     data_collator=train_dataset.data_collator,
+    preprocessor=preprocessor,
 )
 trainer.train()

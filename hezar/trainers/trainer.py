@@ -21,6 +21,7 @@ from ..constants import (
 )
 from ..data.datasets import Dataset
 from ..models import Model
+from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import get_logger
 
 logger = get_logger(__name__)
@@ -46,6 +47,7 @@ class Trainer:
         train_dataset (Dataset): Train dataset
         eval_dataset (Dataset): Evaluation dataset
         data_collator: Collate function, usually included in the dataset object itself
+        preprocessor: Preprocessor object(s)
         optimizer (optim.Optimizer): Model optimizer
         lr_scheduler: Optional learning-rate scheduler
 
@@ -63,9 +65,9 @@ class Trainer:
         train_dataset: Dataset = None,
         eval_dataset: Dataset = None,
         data_collator: Callable = None,
+        preprocessor: Union[Preprocessor, PreprocessorsContainer] = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
-        compute_metrics=None,
         **kwargs,
     ):
 
@@ -78,6 +80,7 @@ class Trainer:
         self._set_seed(self.config.seed)
 
         self.model = self._prepare_model(model)
+        self.model.preprocessor = preprocessor
 
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
