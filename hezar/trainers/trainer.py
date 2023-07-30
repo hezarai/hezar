@@ -125,15 +125,17 @@ class Trainer:
         Returns:
              A tuple of train and eval dataloaders
         """
-        assert self.train_dataset is not None, "Cannot create train dataloader because `train_dataset` is not given!"
-        train_dataloader = DataLoader(
-            dataset=self.train_dataset,
-            batch_size=self.config.batch_size,
-            collate_fn=self.data_collator,
-            num_workers=self.config.num_dataloader_workers,
-            drop_last=True,
-            shuffle=True,
-        )
+        if self.train_dataset is not None:
+            train_dataloader = DataLoader(
+                dataset=self.train_dataset,
+                batch_size=self.config.batch_size,
+                collate_fn=self.data_collator,
+                num_workers=self.config.num_dataloader_workers,
+                drop_last=True,
+                shuffle=True,
+            )
+        else:
+            raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
         if self.eval_dataset is not None:
             eval_dataloader = DataLoader(
                 dataset=self.eval_dataset,
