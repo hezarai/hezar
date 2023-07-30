@@ -57,16 +57,16 @@ class Trainer:
     AVAILABLE_METRICS = []
 
     def __init__(
-            self,
-            model: Model = None,
-            config: TrainerConfig = None,
-            train_dataset: Dataset = None,
-            eval_dataset: Dataset = None,
-            data_collator: Callable = None,
-            optimizer: torch.optim.Optimizer = None,
-            lr_scheduler=None,
-            compute_metrics=None,
-            **kwargs,
+        self,
+        model: Model = None,
+        config: TrainerConfig = None,
+        train_dataset: Dataset = None,
+        eval_dataset: Dataset = None,
+        data_collator: Callable = None,
+        optimizer: torch.optim.Optimizer = None,
+        lr_scheduler=None,
+        compute_metrics=None,
+        **kwargs,
     ):
 
         self.config = config
@@ -314,11 +314,11 @@ class Trainer:
         self.metrics_tracker.reset()
         self.model.train()
         with tqdm(
-                self.train_dataloader,
-                unit="batch",
-                desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
-                bar_format=TQDM_BAR_FORMAT,
-                ascii=" #",
+            self.train_dataloader,
+            unit="batch",
+            desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
+            bar_format=TQDM_BAR_FORMAT,
+            ascii=" #",
         ) as iterator:
             for step, input_batch in enumerate(iterator):
                 input_batch = self.prepare_input_batch(input_batch)
@@ -346,11 +346,11 @@ class Trainer:
         self.metrics_tracker.reset()
         self.model.eval()
         with tqdm(
-                self.eval_dataloader,
-                unit="batch",
-                desc="Evaluating... ",
-                bar_format=TQDM_BAR_FORMAT,
-                ascii=" #",
+            self.eval_dataloader,
+            unit="batch",
+            desc="Evaluating... ",
+            bar_format=TQDM_BAR_FORMAT,
+            ascii=" #",
         ) as iterator:
             with torch.inference_mode():
                 for step, input_batch in enumerate(iterator):
@@ -385,13 +385,13 @@ class Trainer:
                 self.save(ckpt_save_path)
 
     def save(
-            self,
-            path: str,
-            config_filename=None,
-            model_filename=None,
-            model_config_filename=None,
-            subfolder=None,
-            dataset_config_file=None,
+        self,
+        path: str,
+        config_filename=None,
+        model_filename=None,
+        model_config_filename=None,
+        subfolder=None,
+        dataset_config_file=None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -415,16 +415,16 @@ class Trainer:
         self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
 
     def push_to_hub(
-            self,
-            repo_id: str,
-            config_filename: str = None,
-            push_model: bool = True,
-            model_filename: str = None,
-            model_config_filename: str = None,
-            subfolder: str = None,
-            dataset_config_filename: str = None,
-            commit_message: str = None,
-            private: bool = False,
+        self,
+        repo_id: str,
+        config_filename: str = None,
+        push_model: bool = True,
+        model_filename: str = None,
+        model_config_filename: str = None,
+        subfolder: str = None,
+        dataset_config_filename: str = None,
+        commit_message: str = None,
+        private: bool = False,
     ):
         """
         Push everything to the Hub
