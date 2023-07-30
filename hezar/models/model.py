@@ -20,7 +20,7 @@ from torch import nn
 from ..builders import build_model
 from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
-from ..preprocessors import Preprocessor
+from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import get_logger
 
 
@@ -226,8 +226,7 @@ class Model(nn.Module):
         # upload preprocessor(s)
         if push_preprocessor:
             if self.preprocessor is not None:
-                for p in self.preprocessor.values():
-                    p.push_to_hub(repo_id)
+                self.preprocessor.push_to_hub(repo_id, commit_message=commit_message, private=private)
         # upload model file
         upload_file(
             path_or_fileobj=model_save_path,
@@ -314,11 +313,11 @@ class Model(nn.Module):
     @preprocessor.setter
     def preprocessor(self, value):
         if isinstance(value, Preprocessor):
-            preprocessor = OrderedDict()
+            preprocessor = PreprocessorsContainer()
             preprocessor[value.config.name] = value
-        elif isinstance(value, (dict, OrderedDict)):
-            preprocessor = OrderedDict(**value)
+        elif isinstance(value, Mapping):
+            preprocessor = PreprocessorsContainer(**value)
         else:
-            raise ValueError(f"Preprocessor value must be a `Preprocessor` or a dict of `Preprocessor` objects "
+            raise ValueError(f"Preprocessor value must be a `Preprocessor` or a mapping of `Preprocessor` objects "
                              f"not `{type(value)}`!")
         self._preprocessor = preprocessor

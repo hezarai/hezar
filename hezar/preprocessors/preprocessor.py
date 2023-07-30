@@ -34,7 +34,13 @@ class Preprocessor:
     def save(self, path, **kwargs):
         raise NotImplementedError
 
-    def push_to_hub(self, hub_path):
+    def push_to_hub(
+        self,
+        repo_id,
+        subfolder=None,
+        commit_message=None,
+        private=None,
+    ):
         raise NotImplementedError
 
     @classmethod
@@ -64,7 +70,7 @@ class Preprocessor:
         """
         subfolder = subfolder or cls.preprocessor_subfolder
         preprocessor_files = list_repo_files(hub_or_local_path, subfolder=subfolder)
-        preprocessors = OrderedDict()
+        preprocessors = PreprocessorsContainer()
         for f in preprocessor_files:
             if f.endswith(".yaml"):
                 if os.path.isdir(hub_or_local_path):
@@ -88,3 +94,19 @@ class Preprocessor:
             return list(preprocessors.values())[0]
 
         return preprocessors
+
+
+class PreprocessorsContainer(OrderedDict):
+    """
+    A class to hold the preprocessors by their name
+    """
+
+    def push_to_hub(
+        self,
+        repo_id,
+        subfolder=None,
+        commit_message=None,
+        private=None,
+    ):
+        for name, preprocessor in self.items():
+            preprocessor.push_to_hub(repo_id, subfolder=subfolder, commit_message=commit_message, private=private)
