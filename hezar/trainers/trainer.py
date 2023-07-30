@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Union, Callable
 
 import numpy as np
 import torch
@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from .trainer_utils import MetricsTracker
 from ..builders import build_metric
 from ..configs import LRSchedulerConfig, MetricConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
@@ -21,8 +22,6 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..utils import get_logger
-from .trainer_utils import MetricsTracker
-
 
 logger = get_logger(__name__)
 
@@ -63,7 +62,7 @@ class Trainer:
         config: TrainerConfig = None,
         train_dataset: Dataset = None,
         eval_dataset: Dataset = None,
-        data_collator=None,
+        data_collator: Callable = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
         compute_metrics=None,
@@ -119,7 +118,7 @@ class Trainer:
         model.to(self.device)
         return model
 
-    def _prepare_dataloaders(self):
+    def _prepare_dataloaders(self) -> Tuple[DataLoader, Union[DataLoader, None]]:
         """
         Set up data loaders (train/eval) and return them.
 
@@ -147,7 +146,8 @@ class Trainer:
                 shuffle=True,
             )
         else:
-            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer!")
+            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
+                           "Setting eval_dataloader to None...")
             eval_dataloader = None
 
         return train_dataloader, eval_dataloader
@@ -197,7 +197,7 @@ class Trainer:
                 raise ValueError(f"Invalid metric type `{type(metric)}`! Available metrics: {self.AVAILABLE_METRICS}")
         return metrics_dict
 
-    def prepare_input_batch(self, input_batch):
+    def prepare_input_batch(self, input_batch) -> Dict[str, torch.Tensor]:
         """
         Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
         Args:
@@ -249,7 +249,7 @@ class Trainer:
         """
         raise NotImplementedError
 
-    def compute_metrics(self, predictions, labels, **kwargs):
+    def compute_metrics(self, predictions, labels, **kwargs) -> Dict[str, float]:
         """
         Compute metric values on the predictions and labels
 

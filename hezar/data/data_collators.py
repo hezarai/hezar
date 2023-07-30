@@ -5,7 +5,6 @@ from ..data.utils import convert_batch_dict_dtype
 from ..preprocessors import Tokenizer
 from ..utils import get_logger
 
-
 __all__ = [
     "TextPaddingDataCollator",
     "SequenceLabelingDataCollator",
@@ -32,12 +31,12 @@ class TextPaddingDataCollator:
     """
 
     def __init__(
-        self,
-        tokenizer: Tokenizer,
-        padding_type: str = "longest",
-        padding_side: str = "right",
-        max_length: int = None,
-        return_tensors: str = "pt",
+            self,
+            tokenizer: Tokenizer,
+            padding_type: str = "longest",
+            padding_side: str = "right",
+            max_length: int = None,
+            return_tensors: str = "pt",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type
@@ -144,7 +143,7 @@ class SequenceLabelingDataCollator:
         self.tokenizer.config.padding_direction = self.padding_side
         batch = self.tokenizer.pad_encoded_batch(
             encoded_batch,
-            padding=self.padding_type,
+            padding=self.padding_type,  # noqa
             max_length=self.max_length,
             # Conversion to tensors will fail if we have labels as they are not of the same length yet.
             return_tensors="pt" if labels is None else None,
