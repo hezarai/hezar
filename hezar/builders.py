@@ -20,12 +20,12 @@ from .configs import (
     PreprocessorConfig,
 )
 from .constants import SplitType
-from .registry import (  # noqa
-    datasets_registry,  # noqa
-    embeddings_registry,  # noqa
-    metrics_registry,  # noqa
-    models_registry,  # noqa
-    preprocessors_registry,  # noqa
+from .registry import (
+    datasets_registry,
+    embeddings_registry,
+    metrics_registry,
+    models_registry,
+    preprocessors_registry,
 )
 from .utils import snake_case
 

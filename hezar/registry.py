@@ -39,6 +39,12 @@ __all__ = [
     "register_metric",
     "register_trainer",
     "Registry",
+    "models_registry",
+    "preprocessors_registry",
+    "datasets_registry",
+    "embeddings_registry",
+    "metrics_registry",
+    "trainers_registry",
 ]
 
 logger = get_logger(__name__)
