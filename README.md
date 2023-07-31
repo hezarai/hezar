@@ -8,7 +8,7 @@ _<p align="center"> A seamless AI library for Persian</p>_
 Hezar is a library that:
 - brings together all the best works in AI for Persian
 - makes using AI models as easy as a couple of lines of code
-- seamlessly integrates with HuggingFace Hub for all of its models
+- seamlessly integrates with Hugging Face Hub for all of its models
 - has a highly developer-friendly interface
 - has a task-based model interface which is more convenient for general users.
 - is packed with additional tools like word embeddings, tokenizers, feature extractors, etc.
@@ -33,38 +33,17 @@ There's a bunch of ready-to-use trained models for different tasks on the Hub. S
 
 For example, you can grab a BERT-based model for sentiment analysis like so: 
 ```python
-from hezar import Model, Tokenizer
-
-# this is our Hub repo
-model_path = "hezarai/bert-fa-sentiment-digikala-snappfood"
-# load model
-model = Model.load(model_path)
+from hezar import Model
 
 example = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
-# inference
+model = Model.load("hezarai/bert-fa-sentiment-digikala-snappfood")
 outputs = model.predict(example)
-# print outputs
 print(outputs)
 ```
 ```commandline
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-### Build models from scratch
-Wanna use models without any pretrained weights? Easy!
 
-Build a raw BERT-based model for text classification with a single line of code!
-```python
-from hezar import build_model
-
-model = build_model("bert_text_classification", id2label={0: "negative", 1: "positive"})
-print(model)
-```
-You can also import model directly:
-```python
-from hezar import BertTextClassification, BertTextClassificationConfig
-
-bert_tc = BertTextClassification(BertTextClassificationConfig(num_labels=2))
-```
 ### Write your own model
 It's fairly easy to extend this library or add your own model. Hezar has its own `Model` base class that is simply a normal PyTorch `nn.Module` but with some extra features!
 
