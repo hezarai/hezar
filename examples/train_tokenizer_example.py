@@ -5,6 +5,8 @@ from hezar.preprocessors.tokenizers import (
     WordPieceTokenizer,
     SentencePieceBPEConfig,
     SentencePieceBPETokenizer,
+    SentencePieceUnigramConfig,
+    SentencePieceUnigramTokenizer,
 )
 
 
@@ -38,6 +40,14 @@ print(y)
 
 tokenizer_config = SentencePieceBPEConfig()
 tokenizer = SentencePieceBPETokenizer(tokenizer_config)
+tokenizer.train_from_iterator(dataset=data)
+x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
+print(x)
+y = tokenizer.decode(x["token_ids"].numpy().tolist())
+print(y)
+
+tokenizer_config = SentencePieceUnigramConfig()
+tokenizer = SentencePieceUnigramTokenizer(tokenizer_config)
 tokenizer.train_from_iterator(dataset=data)
 x = tokenizer(["This is a test"], return_tokens=True, return_tensors="pt")
 print(x)

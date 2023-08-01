@@ -414,6 +414,7 @@ class Tokenizer(Preprocessor):
         os.makedirs(path, exist_ok=True)
         # save config
         if save_config:
+            self.config.vocab_size = self.get_vocab_size(with_added_tokens=True)
             self.config.save(path, filename=self.tokenizer_config_filename, subfolder=self.preprocessor_subfolder)
         # save tokenizer.json
         save_path = os.path.join(path, self.preprocessor_subfolder, self.tokenizer_filename)
@@ -449,8 +450,7 @@ class Tokenizer(Preprocessor):
         cache_path = tempfile.mkdtemp()
         # save tokenizer.json
         tokenizer_save_path = os.path.join(cache_path, subfolder, tokenizer_filename)
-        os.makedirs(os.path.join(cache_path, subfolder), exist_ok=True)
-        self._tokenizer.save(tokenizer_save_path, pretty=True)
+        self.save(cache_path, pretty=True)
 
         if commit_message is None:
             commit_message = "Hezar: Upload tokenizer and config"
