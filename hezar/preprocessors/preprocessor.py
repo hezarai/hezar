@@ -101,6 +101,13 @@ class PreprocessorsContainer(OrderedDict):
     A class to hold the preprocessors by their name
     """
 
+    def save(self, path):
+        """
+        Save every preprocessor item in the container
+        """
+        for name, preprocessor in self.items():
+            preprocessor.save(path)
+
     def push_to_hub(
         self,
         repo_id,
@@ -108,5 +115,8 @@ class PreprocessorsContainer(OrderedDict):
         commit_message=None,
         private=None,
     ):
+        """
+        Push every preprocessor item in the container
+        """
         for name, preprocessor in self.items():
             preprocessor.push_to_hub(repo_id, subfolder=subfolder, commit_message=commit_message, private=private)

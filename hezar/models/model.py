@@ -177,8 +177,7 @@ class Model(nn.Module):
             self.config.save(save_dir=path, filename=config_filename)
         if save_preprocessor:
             if self.preprocessor is not None:
-                for p in self.preprocessor.values():
-                    p.save(path)
+                self.preprocessor.save(path)
         return model_save_path
 
     def push_to_hub(
