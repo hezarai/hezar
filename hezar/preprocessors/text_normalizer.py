@@ -17,22 +17,22 @@ logger = get_logger(__name__)
 
 
 @dataclass
-class NormalizerConfig(PreprocessorConfig):
-    name: str = field(default="normalizer")
+class TextNormalizerConfig(PreprocessorConfig):
+    name: str = field(default="text_normalizer")
     replace_pattern: str = None
     nfkd: bool = True
     nfkc: bool = True
 
 
-@register_preprocessor("normalizer", config_class=NormalizerConfig)
-class Normalizer(Preprocessor):
+@register_preprocessor("text_normalizer", config_class=TextNormalizerConfig)
+class TextNormalizer(Preprocessor):
     """
     A simple configurable text normalizer
     """
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
     normalizer_config_file = DEFAULT_NORMALIZER_CONFIG_FILE
 
-    def __init__(self, config: NormalizerConfig, **kwargs):
+    def __init__(self, config: TextNormalizerConfig, **kwargs):
         super().__init__(config, **kwargs)
 
     def __call__(
@@ -68,7 +68,7 @@ class Normalizer(Preprocessor):
     ):
         config_filename = config_filename or cls.normalizer_config_file
         subfolder = subfolder or cls.preprocessor_subfolder
-        config = NormalizerConfig.load(
+        config = TextNormalizerConfig.load(
             hub_or_local_path,
             filename=config_filename,
             subfolder=subfolder,

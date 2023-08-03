@@ -1,3 +1,3 @@
 from .preprocessor import Preprocessor, PreprocessorsContainer
-from .normalizer import Normalizer, NormalizerConfig
+from .text_normalizer import TextNormalizer, TextNormalizerConfig
 from .tokenizers import *

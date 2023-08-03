@@ -56,8 +56,8 @@ class RobertaTextClassification(Model):
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
-        if "normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["normalizer"]
+        if "text_normalizer" in self.preprocessor:
+            normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
         tokenizer = self.preprocessor["bpe_tokenizer"]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
