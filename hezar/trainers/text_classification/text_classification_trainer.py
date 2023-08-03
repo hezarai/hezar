@@ -25,6 +25,7 @@ class TextClassificationTrainer(Trainer):
         train_dataset (Dataset): Train dataset
         eval_dataset (Dataset): Evaluation dataset
         data_collator: Collate function, usually included in the dataset object itself
+        preprocessor: Preprocessor object
         optimizer (optim.Optimizer): Model optimizer
         lr_scheduler: Optional learning-rate scheduler
 

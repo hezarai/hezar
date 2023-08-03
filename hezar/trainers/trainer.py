@@ -40,7 +40,8 @@ lr_schedulers = {
 
 class Trainer:
     """
-    A general but fully featured model trainer/evaluator for Hezar models.
+    Base trainer class for training all Hezar models. This class is inherited by other task-specific trainers which
+    implement their own customized functionalities  (`compute_loss()` and `compute_metrics()` in most cases).
 
     Args:
         model ([`Model`] or `torch.nn.Module`): The main model to train and evaluate
@@ -110,8 +111,6 @@ class Trainer:
         """
         Download the model from HuggingFace Hub if `init_weights_from` is given in the config. Load the model to the
         device and return it.
-        :param model:
-        :return:
         """
         if model is None:
             raise ValueError("`model` must be given to the Trainer!")
@@ -255,7 +254,9 @@ class Trainer:
 
     def compute_metrics(self, predictions, labels, **kwargs) -> Dict[str, float]:
         """
-        Compute metric values on the predictions and labels
+        Compute metric values on the predictions and labels. This method must be implemented in derived classes but in
+        case a trainer does not support any metric, this method will output an empty dict so that the training works
+        fine.
 
         Args:
             predictions: A list of all predictions
