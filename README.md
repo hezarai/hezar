@@ -31,7 +31,7 @@ pip install ./hezar
 ### Ready-to-use models from Hub
 There's a bunch of ready-to-use trained models for different tasks on the Hub. See them [here](https://huggingface.co/hezarai)!
 
-For example, you can grab a BERT-based model for sentiment analysis like so: 
+#### Text classification (sentiment analysis) 
 ```python
 from hezar import Model
 
@@ -43,7 +43,19 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
+#### Sequence labeling (part-of-speech tagging)
+```python
+from hezar import Model
 
+hub_path = "hezarai/bert-fa-pos-lscp-500k"
+model = Model.load(hub_path)
+inputs = ["سلام بر فارسی زبانان شریف"]
+outputs = model.predict(inputs)
+print(outputs)
+```
+```commandline
+[[{'token': 'سلام', 'tag': 'N'}, {'token': 'بر', 'tag': 'P'}, {'token': 'فارسی', 'tag': 'Ne'}, {'token': 'زبانان', 'tag': 'Ne'}, {'token': 'شریف', 'tag': 'AJ'}]]
+```
 ### Write your own model
 It's fairly easy to extend this library or add your own model. Hezar has its own `Model` base class that is simply a normal PyTorch `nn.Module` but with some extra features!
 
