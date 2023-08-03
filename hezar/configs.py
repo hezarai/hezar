@@ -176,7 +176,13 @@ class Config:
 
         return config
 
-    def save(self, save_dir: Union[str, os.PathLike], filename: str, subfolder: Optional[str] = None):
+    def save(
+        self,
+        save_dir: Union[str, os.PathLike],
+        filename: str,
+        subfolder: Optional[str] = None,
+        skip_none_fields: Optional[bool] = True,
+    ):
         """
         Save the *config.yaml file to a local path
 
@@ -184,17 +190,23 @@ class Config:
              save_dir: Save directory path
              filename: Config file name
              subfolder: Subfolder to save the config file
+             skip_none_fields (bool): Whether to skip saving None values or not
         """
         subfolder = subfolder or ""
         config = self.dict()
-        # exclude None items
-        config = {k: v for k, v in config.items() if v is not None}
+
+        if skip_none_fields:
+            # exclude None items
+            config = {k: v for k, v in config.items() if v is not None}
+
         # convert enums to value
         config = {k: v.value if isinstance(v, Enum) else v for k, v in config.items()}
+
         # make and save to directory
         os.makedirs(os.path.join(save_dir, subfolder), exist_ok=True)
         save_path = os.path.join(save_dir, subfolder, filename)
         OmegaConf.save(config, save_path)
+
         return save_path
 
     def push_to_hub(
@@ -203,6 +215,7 @@ class Config:
         filename: str,
         subfolder: Optional[str] = None,
         repo_type: Optional[str] = "model",
+        skip_none_fields: Optional[bool] = True,
         private: Optional[bool] = False,
         commit_message: Optional[str] = None,
     ):
@@ -214,6 +227,7 @@ class Config:
             filename (str): config file name
             subfolder (str): subfolder to save the config
             repo_type (str): Type of the repo e.g, model, dataset, space
+            skip_none_fields (bool): Whether to skip saving None values or not
             private (bool): Whether the repo type should be private or not (ignored if the repo exists)
             commit_message (str): Push commit message
         """
@@ -224,7 +238,7 @@ class Config:
         create_repo(repo_id, repo_type=repo_type, private=private, exist_ok=True)
         # save to tmp and prepare for push
         cache_path = tempfile.mkdtemp()
-        config_path = self.save(cache_path, filename=filename, subfolder=subfolder)
+        config_path = self.save(cache_path, filename=filename, subfolder=subfolder, skip_none_fields=skip_none_fields)
         # push to hub
         if commit_message is None:
             commit_message = f"Hezar: Upload {filename}"
