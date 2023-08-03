@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 from typing import List
 
 from huggingface_hub import hf_hub_download
+from tokenizers import Regex, decoders, models, normalizers, pre_tokenizers, trainers
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers import decoders, models, normalizers, pre_tokenizers, trainers, Regex
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor

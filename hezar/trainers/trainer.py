@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any, Dict, Tuple, Union, Callable
+from typing import Any, Callable, Dict, Tuple, Union
 
 import numpy as np
 import torch
@@ -9,7 +9,6 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from .trainer_utils import MetricsTracker
 from ..builders import build_metric
 from ..configs import LRSchedulerConfig, MetricConfig, OptimizerConfig, TrainerConfig
 from ..constants import (
@@ -23,6 +22,8 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import get_logger
+from .trainer_utils import MetricsTracker
+
 
 logger = get_logger(__name__)
 

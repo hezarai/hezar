@@ -5,6 +5,7 @@ from ..data.utils import convert_batch_dict_dtype
 from ..preprocessors import Tokenizer
 from ..utils import get_logger
 
+
 __all__ = [
     "TextPaddingDataCollator",
     "SequenceLabelingDataCollator",

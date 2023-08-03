@@ -1,8 +1,7 @@
-import copy
 from typing import Dict, List, Union
 
 import torch
-from transformers import T5ForConditionalGeneration, T5Config
+from transformers import T5Config, T5ForConditionalGeneration
 
 from ....models import Model
 from ....registry import register_model
@@ -79,7 +78,7 @@ class T5Text2Text(Model):
             if isinstance(output_ids, torch.Tensor):
                 output_ids = output_ids.numpy().tolist()
             record = {
-                f"output_text": tokenizer.decode(
+                "output_text": tokenizer.decode(
                     output_ids,
                     skip_special_tokens=True,
                 )
