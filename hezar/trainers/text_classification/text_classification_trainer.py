@@ -3,8 +3,8 @@ from typing import List
 import numpy as np
 import torch
 
-from hezar.constants import MetricType
 
+from ...constants import MetricType
 from ...configs import TrainerConfig
 from ...data.datasets import Dataset
 from ...models import Model
