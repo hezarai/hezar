@@ -22,7 +22,7 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import get_logger
-from .trainer_utils import MetricsTracker
+from .trainer_utils import MetricsTracker, write_to_tensorboard
 
 
 logger = get_logger(__name__)
@@ -382,9 +382,13 @@ class Trainer:
         """
         for epoch in range(1, self.config.num_epochs + 1):
             print()
-            self.inner_training_loop(epoch)
+            training_results = self.inner_training_loop(epoch)
             evaluation_results = self.evaluate()
             self.lr_scheduler.step(evaluation_results["loss"])
+
+            # tensorboard
+            write_to_tensorboard(self.tensorboard, training_results, "train", epoch)
+            write_to_tensorboard(self.tensorboard, evaluation_results, "eval", epoch)
 
             # maybe save checkpoint
             if epoch % self.config.save_freq == 0:
