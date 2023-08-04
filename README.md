@@ -47,7 +47,7 @@ print(outputs)
 ```python
 from hezar import Model
 
-hub_path = "hezarai/bert-fa-pos-lscp-500k"
+hub_path = "hezarai/distilbert-fa-pos-lscp-500k"
 model = Model.load(hub_path)
 inputs = ["سلام بر فارسی زبانان شریف"]
 outputs = model.predict(inputs)
@@ -55,6 +55,19 @@ print(outputs)
 ```
 ```commandline
 [[{'token': 'سلام', 'tag': 'N'}, {'token': 'بر', 'tag': 'P'}, {'token': 'فارسی', 'tag': 'Ne'}, {'token': 'زبانان', 'tag': 'Ne'}, {'token': 'شریف', 'tag': 'AJ'}]]
+```
+#### Sequence labeling (named entity recognition)
+```python
+from hezar import Model
+
+hub_path = "hezarai/bert-fa-ner-arman"
+model = Model.load(hub_path)
+inputs = ["سلام بر فارسی زبانان شریف"]
+outputs = model.predict(inputs)
+print(outputs)
+```
+```commandline
+[[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
 ### Write your own model
 It's fairly easy to extend this library or add your own model. Hezar has its own `Model` base class that is simply a normal PyTorch `nn.Module` but with some extra features!
