@@ -198,6 +198,9 @@ class Tokenizer(Preprocessor):
             A dictionary of encoded inputs like
                 {"token_ids": [batch_size x input_len], "attention_mask": [batch_size x input_len], ...}
         """
+        if isinstance(inputs, list) and not len(inputs):
+            raise ValueError("Tokenizer cannot process an empty list!")
+
         if isinstance(inputs, str):
             inputs = [inputs]
 
