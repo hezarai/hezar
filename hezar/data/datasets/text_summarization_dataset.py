@@ -60,7 +60,7 @@ class TextSummarizationDataset(Dataset):
             The whole dataset
         """
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
-        dataset = load_dataset(self.config.path, split=split)
+        dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
 
     def _build_tokenizer(self):

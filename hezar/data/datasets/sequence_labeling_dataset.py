@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 from datasets import load_dataset
 
 from ...configs import DatasetConfig
-from ...constants import TaskType
+from ...constants import TaskType, HEZAR_CACHE_DIR
 from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import get_logger
@@ -60,7 +60,7 @@ class SequenceLabelingDataset(Dataset):
             The whole dataset
         """
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
-        dataset = load_dataset(self.config.path, split=split)
+        dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
 
     def _build_tokenizer(self):

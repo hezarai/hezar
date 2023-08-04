@@ -4,7 +4,7 @@ from typing import Optional, Union
 from torch.utils.data import Dataset as TorchDataset
 
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE, ConfigType, RepoType, SplitType
+from ...constants import DEFAULT_DATASET_CONFIG_FILE, ConfigType, RepoType, SplitType, HEZAR_CACHE_DIR
 from ...utils import get_module_class
 
 
@@ -17,6 +17,7 @@ class Dataset(TorchDataset):
         **kwargs:
     """
     config_filename = DEFAULT_DATASET_CONFIG_FILE
+    cache_dir = HEZAR_CACHE_DIR
 
     def __init__(self, config: DatasetConfig, **kwargs):
         self.config = config.update(kwargs)
