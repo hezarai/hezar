@@ -19,6 +19,7 @@ class BertTextClassification(TextClassificationModel):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+
     def __init__(self, config: BertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.bert = BertModel(self._build_inner_config())
@@ -28,6 +29,8 @@ class BertTextClassification(TextClassificationModel):
         )
         self.dropout = nn.Dropout(classifier_dropout)
         self.classifier = nn.Linear(self.config.hidden_size, self.config.num_labels)
+
+        self._tokenizer_name = "wordpiece_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:
@@ -70,6 +73,6 @@ class BertTextClassification(TextClassificationModel):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        tokenizer = self.preprocessor[self._tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs

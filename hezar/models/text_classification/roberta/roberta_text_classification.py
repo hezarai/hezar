@@ -17,6 +17,7 @@ class RobertaTextClassification(TextClassificationModel):
         super().__init__(config=config, **kwargs)
         self.roberta = RobertaModel(self._build_inner_config(), add_pooling_layer=False)
         self.classifier = RobertaClassificationHead(self.config)
+        self._tokenizer_name = "bpe_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:
@@ -59,7 +60,7 @@ class RobertaTextClassification(TextClassificationModel):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["bpe_tokenizer"]
+        tokenizer = self.preprocessor[self._tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 

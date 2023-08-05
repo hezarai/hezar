@@ -26,6 +26,7 @@ class DistilBertTextClassification(TextClassificationModel):
         self.pre_classifier = nn.Linear(self.config.dim, self.config.dim)
         self.classifier = nn.Linear(self.config.dim, self.config.num_labels)
         self.dropout = nn.Dropout(self.config.seq_classif_dropout)
+        self._tokenizer_name = "wordpiece_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:
@@ -72,6 +73,6 @@ class DistilBertTextClassification(TextClassificationModel):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        tokenizer = self.preprocessor[self._tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
