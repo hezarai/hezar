@@ -30,6 +30,8 @@ class Word2VecConfig(EmbeddingConfig):
 
 @register_embedding("word2vec", config_class=Word2VecConfig)
 class Word2Vec(Embedding):
+    vectors_filename = f"{Embedding.filename}.wv.vectors.npy"
+
     def __init__(self, config: Word2VecConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.model = self.build()

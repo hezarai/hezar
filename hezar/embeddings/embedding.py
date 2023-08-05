@@ -21,6 +21,7 @@ class Embedding:
     Base class for all embeddings.
     """
     filename = DEFAULT_EMBEDDING_FILE
+    vectors_filename = None
     config_filename = DEFAULT_EMBEDDING_CONFIG_FILE
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
@@ -84,11 +85,13 @@ class Embedding:
         commit_message=None,
         subfolder=None,
         filename=None,
+        vectors_filename=None,
         config_filename=None,
         private=False,
     ):
         subfolder = subfolder or self.subfolder
         filename = filename or self.filename
+        vectors_filename = vectors_filename or self.vectors_filename
         config_filename = config_filename or self.config_filename
 
         api = HfApi()
@@ -121,11 +124,23 @@ class Embedding:
             path_in_repo=f"{subfolder}/{filename}",
             commit_message=commit_message,
         )
-
         logger.info(
             f"Uploaded: {self.__class__.__name__}(name={self.config.name})`"
             f" --> "
             f"{os.path.join(repo_id, subfolder, filename)}"
+        )
+
+        api.upload_file(
+            repo_id=repo_id,
+            path_or_fileobj=os.path.join(embedding_save_dir, vectors_filename),
+            repo_type="model",
+            path_in_repo=f"{subfolder}/{vectors_filename}",
+            commit_message=commit_message,
+        )
+        logger.info(
+            f"Uploaded: {self.__class__.__name__}(name={self.config.name})`"
+            f" --> "
+            f"{os.path.join(repo_id, subfolder, vectors_filename)}"
         )
 
     def torch_embedding(self):

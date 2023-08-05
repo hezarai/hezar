@@ -30,7 +30,7 @@ class FastTextConfig(EmbeddingConfig):
 @register_embedding("fasttext", config_class=FastTextConfig)
 class FastText(Embedding):
     filename = "embedding.model"
-    array_filename = "embedding.model.wv.vectors_ngrams.npy"
+    vectors_filename = "embedding.model.wv.vectors_ngrams.npy"
 
     def __init__(self, config: FastTextConfig, **kwargs):
         super().__init__(config, **kwargs)
