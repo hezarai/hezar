@@ -23,7 +23,6 @@ from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CAC
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import get_logger
 
-
 __all__ = [
     "Model",
     "ModelConfig",
@@ -58,7 +57,7 @@ class Model(nn.Module):
         config_filename: Optional[str] = None,
         save_path: Optional[Union[str, os.PathLike]] = None,
         **kwargs,
-    ):
+    ) -> "Model":
         """
         Load the model from local path or hub.
 
