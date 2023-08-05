@@ -62,12 +62,12 @@ from hezar import Model
 
 hub_path = "hezarai/bert-fa-ner-arman"
 model = Model.load(hub_path)
-inputs = ["سلام بر فارسی زبانان شریف"]
+inputs = ["شرکت هوش مصنوعی هزار برترین در نوع خود"]
 outputs = model.predict(inputs)
 print(outputs)
 ```
 ```commandline
-[[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
+[[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'O'}, {'token': 'برترین', 'tag': 'O'}, {'token': 'در', 'tag': 'O'}, {'token': 'نوع', 'tag': 'O'}, {'token': 'خود', 'tag': 'O'}]]
 ```
 ### Write your own model
 It's fairly easy to extend this library or add your own model. Hezar has its own `Model` base class that is simply a normal PyTorch `nn.Module` but with some extra features!
