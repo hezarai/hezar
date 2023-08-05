@@ -6,13 +6,13 @@ from typing import Dict, List, Union
 from torch import nn
 from transformers import BertConfig, BertModel
 
-from ....models import Model
+from ..text_classification import TextClassificationModel
 from ....registry import register_model
 from .bert_text_classification_config import BertTextClassificationConfig
 
 
 @register_model(model_name="bert_text_classification", config_class=BertTextClassificationConfig)
-class BertTextClassification(Model):
+class BertTextClassification(TextClassificationModel):
     """
     A standard 🤗Transformers Bert model for text classification
 
@@ -73,14 +73,3 @@ class BertTextClassification(Model):
         tokenizer = self.preprocessor["wordpiece_tokenizer"]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
-
-    def post_process(self, inputs, **kwargs) -> Dict:
-        logits = inputs["logits"]
-        predictions = logits.argmax(1)
-        predictions_probs = logits.softmax(1).max(1)
-        outputs = {"labels": [], "probs": []}
-        for prediction, prob in zip(predictions, predictions_probs):
-            label = self.config.id2label[prediction.item()]
-            outputs["labels"].append(label)
-            outputs["probs"].append(prob.item())
-        return outputs

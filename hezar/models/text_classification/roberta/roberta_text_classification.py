@@ -6,13 +6,13 @@ from typing import List, Union
 from torch import nn, tanh
 from transformers import RobertaConfig, RobertaModel
 
-from ....models import Model
+from ..text_classification import TextClassificationModel
 from ....registry import register_model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
 
 
 @register_model("roberta_text_classification", config_class=RobertaTextClassificationConfig)
-class RobertaTextClassification(Model):
+class RobertaTextClassification(TextClassificationModel):
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
         self.roberta = RobertaModel(self._build_inner_config(), add_pooling_layer=False)
@@ -62,17 +62,6 @@ class RobertaTextClassification(Model):
         tokenizer = self.preprocessor["bpe_tokenizer"]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
-
-    def post_process(self, inputs, **kwargs):
-        logits = inputs["logits"]
-        predictions = logits.argmax(1)
-        predictions_probs = logits.softmax(1).max(1)
-        outputs = {"labels": [], "probs": []}
-        for prediction, prob in zip(predictions, predictions_probs):
-            label = self.config.id2label[prediction.item()]
-            outputs["labels"].append(label)
-            outputs["probs"].append(prob.item())
-        return outputs
 
 
 class RobertaClassificationHead(nn.Module):
