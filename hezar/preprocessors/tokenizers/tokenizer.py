@@ -10,13 +10,12 @@ from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.decoders import Decoder
 from tokenizers.models import Model
 
+from ..preprocessor import Preprocessor
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
 from ...data.utils import convert_batch_dict_dtype
 from ...utils import get_logger
-from ..preprocessor import Preprocessor
-
 
 logger = get_logger(__name__)
 
@@ -401,7 +400,7 @@ class Tokenizer(Preprocessor):
         config_filename=None,
         subfolder=None,
         **kwargs,
-    ):
+    ) -> "Tokenizer":
         config_filename = config_filename or cls.tokenizer_config_filename
         subfolder = subfolder or cls.preprocessor_subfolder
         config = TokenizerConfig.load(
