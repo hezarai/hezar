@@ -1,5 +1,5 @@
 """
-A BERT model for text classification built using HuggingFace Transformers
+A Base class for text classification models built using HuggingFace Transformers
 """
 from typing import Dict, Union, List
 
