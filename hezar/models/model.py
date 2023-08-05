@@ -9,7 +9,6 @@ Examples:
 """
 import os
 import tempfile
-from abc import abstractmethod
 from collections import OrderedDict
 from typing import Any, Dict, Mapping, Optional, Union
 
@@ -239,7 +238,6 @@ class Model(nn.Module):
             f"`{os.path.join(repo_id, filename)}`"
         )
 
-    @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:
         """
         Forward inputs through the model and return logits, etc.

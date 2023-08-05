@@ -1,25 +1,12 @@
 """
 A BERT model for text classification built using HuggingFace Transformers
 """
-from abc import abstractmethod
 from typing import Dict
 
 from ...models import Model
 
 
 class TextClassificationModel(Model):
-    @abstractmethod
-    def forward(self, inputs, **kwargs) -> Dict:
-        """
-        Forward inputs through the model and return logits, etc.
-
-        Args:
-            inputs: The required inputs for the model forward
-
-        Returns:
-            A dict of outputs like logits, loss, etc.
-        """
-        raise NotImplementedError
 
     def post_process(self, inputs, **kwargs) -> Dict:
         return_all_scores = kwargs.get("return_all_scores", False)
