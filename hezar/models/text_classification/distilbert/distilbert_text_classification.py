@@ -1,14 +1,14 @@
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
-from typing import Dict, List, Union
+from typing import Dict
 
 from torch import nn
 from transformers import DistilBertConfig, DistilBertModel
 
+from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 from ..text_classification import TextClassificationModel
 from ....registry import register_model
-from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name="distilbert_text_classification", config_class=DistilBertTextClassificationConfig)
@@ -66,13 +66,3 @@ class DistilBertTextClassification(TextClassificationModel):
             "attentions": lm_outputs.attentions,
         }
         return outputs
-
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
-        if isinstance(inputs, str):
-            inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
-        tokenizer = self.preprocessor[self._tokenizer_name]
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
-        return inputs

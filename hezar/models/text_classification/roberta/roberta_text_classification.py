@@ -1,14 +1,13 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from typing import List, Union
 
 from torch import nn, tanh
 from transformers import RobertaConfig, RobertaModel
 
+from .roberta_text_classification_config import RobertaTextClassificationConfig
 from ..text_classification import TextClassificationModel
 from ....registry import register_model
-from .roberta_text_classification_config import RobertaTextClassificationConfig
 
 
 @register_model("roberta_text_classification", config_class=RobertaTextClassificationConfig)
@@ -53,16 +52,6 @@ class RobertaTextClassification(TextClassificationModel):
             "attentions": lm_outputs.attentions,
         }
         return outputs
-
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
-        if isinstance(inputs, str):
-            inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
-        tokenizer = self.preprocessor[self._tokenizer_name]
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
-        return inputs
 
 
 class RobertaClassificationHead(nn.Module):
