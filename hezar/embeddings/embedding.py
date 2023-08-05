@@ -13,7 +13,6 @@ from ..constants import (
 )
 from ..utils import get_logger
 
-
 logger = get_logger(__name__)
 
 
@@ -59,7 +58,7 @@ class Embedding:
         config_filename=None,
         subfolder=None,
         **kwargs,
-    ):
+    ) -> "Embedding":
         config_filename = config_filename or cls.config_filename
         subfolder = subfolder or cls.subfolder
 
