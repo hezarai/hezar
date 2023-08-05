@@ -37,7 +37,7 @@ class Dataset(TorchDataset):
         config_filename: Optional[str] = None,
         split: Optional[Union[str, SplitType]] = None,
         **kwargs,
-    ):
+    ) -> "Dataset":
         """
         Load the dataset from hub.
 
