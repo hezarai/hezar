@@ -48,11 +48,11 @@ jobs:
       - name: Check if versions match
         run: |
           if [[ ${{ env.pyproject_version }} != "${{ env.GIT_TAG }}" ]]; then
-            echo "[Error]: Version Miss Match!"
+            echo "[Error]: Version Missmatch!"
             exit 1
           fi    
           if [[ ${{ env.GIT_TAG }} != "${{ env.init_git_version }}" ]]; then
-            echo "[Error]: Version Miss Match!"
+            echo "[Error]: Version Missmatch!"
             exit 1
           fi
 
