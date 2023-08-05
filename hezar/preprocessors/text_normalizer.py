@@ -5,13 +5,12 @@ from typing import List, Union
 from huggingface_hub import create_repo
 from tokenizers import normalizers
 
+from .preprocessor import Preprocessor
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
 from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER
 from ..registry import register_preprocessor
 from ..utils import get_logger
-from .preprocessor import Preprocessor
-
 
 logger = get_logger(__name__)
 
@@ -65,7 +64,7 @@ class TextNormalizer(Preprocessor):
         subfolder=None,
         config_filename=None,
         **kwargs
-    ):
+    ) -> "TextNormalizer":
         config_filename = config_filename or cls.normalizer_config_file
         subfolder = subfolder or cls.preprocessor_subfolder
         config = TextNormalizerConfig.load(
