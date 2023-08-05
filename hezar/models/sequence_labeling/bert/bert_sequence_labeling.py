@@ -13,6 +13,11 @@ from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
 @register_model("bert_sequence_labeling", BertSequenceLabelingConfig)
 class BertSequenceLabeling(Model):
+    """
+    BERT model for sequence labeling
+    """
+    tokenizer_name = "wordpiece_tokenizer"
+
     def __init__(self, config: BertSequenceLabelingConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.bert = BertModel(self._build_inner_config())
@@ -70,7 +75,7 @@ class BertSequenceLabeling(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(
             inputs,
             return_word_ids=True,

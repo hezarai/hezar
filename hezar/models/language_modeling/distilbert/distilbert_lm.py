@@ -12,6 +12,8 @@ from .distilbert_lm_config import DistilBertLMConfig
 
 @register_model("distilbert_lm", config_class=DistilBertLMConfig)
 class DistilBertLM(Model):
+    tokenizer_name = "wordpiece_tokenizer"
+
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
         self.distilbert = DistilBertModel(DistilBertConfig(**self.config))
@@ -32,7 +34,7 @@ class DistilBertLM(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 

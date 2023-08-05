@@ -12,11 +12,18 @@ from ....registry import register_model
 
 @register_model("roberta_text_classification", config_class=RobertaTextClassificationConfig)
 class RobertaTextClassification(TextClassificationModel):
+    """
+    A standard 🤗Transformers RoBERTa model for text classification
+
+    Args:
+        config: The whole model config including arguments needed for the inner 🤗Transformers model.
+    """
+    tokenizer_name = "bpe_tokenizer"
+
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
         self.roberta = RobertaModel(self._build_inner_config(), add_pooling_layer=False)
         self.classifier = RobertaClassificationHead(self.config)
-        self._tokenizer_name = "bpe_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:

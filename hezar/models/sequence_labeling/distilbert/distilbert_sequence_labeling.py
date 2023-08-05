@@ -13,6 +13,8 @@ from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfi
 
 @register_model("distilbert_sequence_labeling", DistilBertSequenceLabelingConfig)
 class DistilBertSequenceLabeling(Model):
+    tokenizer_name = "wordpiece_tokenizer"
+
     def __init__(self, config: DistilBertSequenceLabelingConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.distilbert = DistilBertModel(self._build_inner_config())
@@ -71,7 +73,7 @@ class DistilBertSequenceLabeling(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(
             inputs,
             return_word_ids=True,

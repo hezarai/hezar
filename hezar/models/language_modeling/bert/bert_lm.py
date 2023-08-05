@@ -12,6 +12,8 @@ from .bert_lm_config import BertLMConfig
 
 @register_model("bert_lm", config_class=BertLMConfig)
 class BertLM(Model):
+    tokenizer_name = "wordpiece_tokenizer"
+
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
         self.bert = BertModel(BertConfig(**self.config))
@@ -32,7 +34,7 @@ class BertLM(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 

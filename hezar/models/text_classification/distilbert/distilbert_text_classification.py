@@ -19,6 +19,7 @@ class DistilBertTextClassification(TextClassificationModel):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+    tokenizer_name = "wordpiece_tokenizer"
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -26,7 +27,6 @@ class DistilBertTextClassification(TextClassificationModel):
         self.pre_classifier = nn.Linear(self.config.dim, self.config.dim)
         self.classifier = nn.Linear(self.config.dim, self.config.num_labels)
         self.dropout = nn.Dropout(self.config.seq_classif_dropout)
-        self._tokenizer_name = "wordpiece_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:

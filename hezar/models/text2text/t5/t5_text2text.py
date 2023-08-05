@@ -10,6 +10,11 @@ from .t5_text2text_config import T5Text2TextConfig
 
 @register_model("t5_text2text", config_class=T5Text2TextConfig)
 class T5Text2Text(Model):
+    """
+    T5 for text to text generation
+    """
+    tokenizer_name = "sentencepiece_unigram_tokenizer"
+
     def __init__(self, config: T5Text2TextConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
@@ -67,7 +72,7 @@ class T5Text2Text(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["sentencepiece_unigram_tokenizer"]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
