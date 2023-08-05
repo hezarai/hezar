@@ -9,9 +9,8 @@ Examples:
 """
 import os
 import tempfile
-from abc import abstractmethod
 from collections import OrderedDict
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Union, List
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -239,7 +238,6 @@ class Model(nn.Module):
             f"`{os.path.join(repo_id, filename)}`"
         )
 
-    @abstractmethod
     def forward(self, inputs, **kwargs) -> Dict:
         """
         Forward inputs through the model and return logits, etc.
@@ -279,7 +277,7 @@ class Model(nn.Module):
         return inputs
 
     @torch.inference_mode()
-    def predict(self, inputs, **kwargs) -> Dict:
+    def predict(self, inputs, **kwargs) -> Union[Dict, List[Dict]]:
         """
         Perform an end-to-end prediction on raw inputs.
 

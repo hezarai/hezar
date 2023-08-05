@@ -1,18 +1,18 @@
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
-from typing import Dict, List, Union
+from typing import Dict
 
 from torch import nn
 from transformers import DistilBertConfig, DistilBertModel
 
-from ....models import Model
-from ....registry import register_model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
+from ..text_classification import TextClassificationModel
+from ....registry import register_model
 
 
 @register_model(model_name="distilbert_text_classification", config_class=DistilBertTextClassificationConfig)
-class DistilBertTextClassification(Model):
+class DistilBertTextClassification(TextClassificationModel):
     """
     A standard 🤗Transformers DistilBert model for text classification
 
@@ -26,6 +26,7 @@ class DistilBertTextClassification(Model):
         self.pre_classifier = nn.Linear(self.config.dim, self.config.dim)
         self.classifier = nn.Linear(self.config.dim, self.config.num_labels)
         self.dropout = nn.Dropout(self.config.seq_classif_dropout)
+        self._tokenizer_name = "wordpiece_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:
@@ -64,25 +65,4 @@ class DistilBertTextClassification(Model):
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
         }
-        return outputs
-
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
-        if isinstance(inputs, str):
-            inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["wordpiece_tokenizer"]
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
-        return inputs
-
-    def post_process(self, inputs, **kwargs) -> Dict:
-        logits = inputs["logits"]
-        predictions = logits.argmax(1)
-        predictions_probs = logits.softmax(1).max(1)
-        outputs = {"labels": [], "probs": []}
-        for prediction, prob in zip(predictions, predictions_probs):
-            label = self.config.id2label[prediction.item()]
-            outputs["labels"].append(label)
-            outputs["probs"].append(prob.item())
         return outputs

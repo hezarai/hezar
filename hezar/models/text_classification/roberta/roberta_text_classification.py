@@ -1,22 +1,22 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from typing import List, Union
 
 from torch import nn, tanh
 from transformers import RobertaConfig, RobertaModel
 
-from ....models import Model
-from ....registry import register_model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
+from ..text_classification import TextClassificationModel
+from ....registry import register_model
 
 
 @register_model("roberta_text_classification", config_class=RobertaTextClassificationConfig)
-class RobertaTextClassification(Model):
+class RobertaTextClassification(TextClassificationModel):
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
         self.roberta = RobertaModel(self._build_inner_config(), add_pooling_layer=False)
         self.classifier = RobertaClassificationHead(self.config)
+        self._tokenizer_name = "bpe_tokenizer"
 
     def _build_inner_config(self):
         if self.config.num_labels is None and self.config.id2label is None:
@@ -51,27 +51,6 @@ class RobertaTextClassification(Model):
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
         }
-        return outputs
-
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
-        if isinstance(inputs, str):
-            inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["bpe_tokenizer"]
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
-        return inputs
-
-    def post_process(self, inputs, **kwargs):
-        logits = inputs["logits"]
-        predictions = logits.argmax(1)
-        predictions_probs = logits.softmax(1).max(1)
-        outputs = {"labels": [], "probs": []}
-        for prediction, prob in zip(predictions, predictions_probs):
-            label = self.config.id2label[prediction.item()]
-            outputs["labels"].append(label)
-            outputs["probs"].append(prob.item())
         return outputs
 
 
