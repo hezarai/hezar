@@ -31,17 +31,29 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
+      # Make sure the version of setup is the same as the version in tag
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          pyproject_version=$(python -c "import re; version = re.search(r'version = \"(.+?)\"', open('pyproject.toml').read()).group(1); print(version)")
+          echo "pyproject_version=$pyproject_version" >> $GITHUB_ENV
+
+      - name: Extract Git tag
+        run: |
+          GIT_TAG=${GITHUB_REF##*/}
+          echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
+
+      - name: Check if versions match
+        run: |
+          if [[ ${{ env.pyproject_version }} != "${{ env.GIT_TAG }}" ]]; then
+            echo "[Error]: Version Miss Match!"
+            exit 1
+          fi    
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine poetry
-#      - name: Build and publish
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-#        run: |
-#          python setup.py sdist bdist_wheel
-#          python -m twine upload dist/*
       - name: Publish package to PYPI
         run: |
             poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}" 
