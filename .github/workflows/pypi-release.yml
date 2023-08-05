@@ -37,6 +37,8 @@ jobs:
         run: |
           pyproject_version=$(python -c "import re; version = re.search(r'version = \"(.+?)\"', open('pyproject.toml').read()).group(1); print(version)")
           echo "pyproject_version=$pyproject_version" >> $GITHUB_ENV
+          init_git_version=$(python -c "import re; version = re.search(r'__version__ = \"(.+?)\"', open('hezar/__init__.py').read()).group(1); print(version)")
+          echo "init_git_version=$init_git_version" >> $GITHUB_ENV
 
       - name: Extract Git tag
         run: |
@@ -49,6 +51,10 @@ jobs:
             echo "[Error]: Version Miss Match!"
             exit 1
           fi    
+          if [[ ${{ env.GIT_TAG }} != "${{ env.init_git_version }}" ]]; then
+            echo "[Error]: Version Miss Match!"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: |
