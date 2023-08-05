@@ -54,6 +54,8 @@ CONFIG_TYPES_MAPPING = {
     "MetricConfig": ConfigType.METRIC,
 }
 
+CONFIG_CLASS_VARS = ["name", "config_type"]
+
 
 @dataclass
 class Config:
@@ -169,8 +171,8 @@ class Config:
         """
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
-        dict_config.pop("name", None)
-        dict_config.pop("config_type", None)
+        # Remove class vars to avoid TypeError (unexpected argument)
+        [dict_config.pop(k) for k in CONFIG_CLASS_VARS]
 
         config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})  # noqa
 

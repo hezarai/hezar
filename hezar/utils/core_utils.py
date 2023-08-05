@@ -154,7 +154,7 @@ def get_module_config_class(name: str, config_type: str = None):
     elif config_type is None:
         return None
     else:
-        raise ValueError(f"Invalid `config_type`: {config_type}!")
+        raise ValueError(f"Invalid `config_type`: `{config_type}`")
 
     config_cls = registry[name].config_class
     return config_cls
