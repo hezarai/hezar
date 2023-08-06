@@ -27,9 +27,9 @@ class TextClassificationModel(Model):
             outputs = []
             for sample_index in range(predictions.shape[0]):
                 sample_outputs = []
-                for prediction, prob in zip(predictions[sample_index], predictions_probs[sample_index]):
-                    label = self.config.id2label[prediction.item()]
-                    sample_outputs.append({"label": label, "score": prob.item()})
+                for label_index, score in enumerate(predictions_probs[sample_index]):
+                    label = self.config.id2label[label_index]
+                    sample_outputs.append({"label": label, "score": score.item()})
                 outputs.append(sample_outputs)
         else:
             predictions = logits.argmax(1)
