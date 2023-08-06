@@ -14,7 +14,7 @@ class TextClassificationModel(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor[self._tokenizer_name]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
@@ -27,9 +27,9 @@ class TextClassificationModel(Model):
             outputs = []
             for sample_index in range(predictions.shape[0]):
                 sample_outputs = []
-                for prediction, prob in zip(predictions[sample_index], predictions_probs[sample_index]):
-                    label = self.config.id2label[prediction.item()]
-                    sample_outputs.append({"label": label, "score": prob.item()})
+                for label_index, score in enumerate(predictions_probs[sample_index]):
+                    label = self.config.id2label[label_index]
+                    sample_outputs.append({"label": label, "score": score.item()})
                 outputs.append(sample_outputs)
         else:
             predictions = logits.argmax(1)
