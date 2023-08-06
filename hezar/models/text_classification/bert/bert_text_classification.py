@@ -42,19 +42,32 @@ class BertTextClassification(TextClassificationModel):
     def forward(self, inputs, **kwargs) -> Dict:
         input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
+        token_types_ids = inputs.get("token_type_ids", None) or kwargs.get("token_type_ids", None)
+        position_ids = inputs.get("position_ids", None) or kwargs.get("position_ids", None)
         head_mask = inputs.get("head_mask", None)
         inputs_embeds = inputs.get("inputs_embeds", None)
+        encoder_hidden_states = inputs.get("encoder_hidden_states", None) or kwargs.get("encoder_hidden_states", None)
+        encoder_attention_mask = inputs.get("encoder_attention_mask", None) or kwargs.get("encoder_attention_mask", None)
+        past_key_values = inputs.get("past_key_values", None) or kwargs.get("past_key_values", None)
+        use_cache = inputs.get("use_cache", None) or kwargs.get("use_cache", None)
         output_attentions = inputs.get("output_attentions", None)
         output_hidden_states = inputs.get("output_hidden_states", None)
+        return_dict = inputs.get("return_dict", None) or kwargs.get("return_dict", None)
 
         lm_outputs = self.bert(
             input_ids,
             attention_mask=attention_mask,
+            token_type_ids=token_types_ids,
+            position_ids=position_ids,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
+            encoder_hidden_states=encoder_hidden_states,
+            encoder_attention_mask=encoder_attention_mask,
+            past_key_values=past_key_values,
+            use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            **kwargs,
+            return_dict=return_dict,
         )
         pooled_output = lm_outputs[1]
         pooled_output = self.dropout(pooled_output)
