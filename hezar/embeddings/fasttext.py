@@ -84,16 +84,19 @@ class FastText(Embedding):
         self,
         path: Union[str, os.PathLike],
         filename: str = None,
+        subfolder: str = None,
         save_config: bool = True,
         config_filename: str = None,
     ):
         filename = filename or self.filename
         config_filename = config_filename or self.config_filename
+        subfolder = subfolder or self.subfolder
 
-        os.makedirs(path, exist_ok=True)
-        self.config.save(path, config_filename)
+        save_dir = os.path.join(path, subfolder)
+        os.makedirs(save_dir, exist_ok=True)
+        self.config.save(path, config_filename, subfolder=subfolder)
 
-        self.model.save(os.path.join(path, filename))
+        self.model.save(os.path.join(save_dir, filename))
 
     @property
     def word_vectors(self):
