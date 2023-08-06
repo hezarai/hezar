@@ -12,6 +12,8 @@ from .roberta_lm_config import RobertaLMConfig
 
 @register_model("roberta_lm", config_class=RobertaLMConfig)
 class RobertaLM(Model):
+    tokenizer_name = "bpe_tokenizer"
+
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
         self.roberta = RobertaModel(RobertaConfig(**self.config))
@@ -32,7 +34,7 @@ class RobertaLM(Model):
         if "text_normalizer" in self.preprocessor:
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
-        tokenizer = self.preprocessor["bpe_tokenizer"]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
