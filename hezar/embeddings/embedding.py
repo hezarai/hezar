@@ -74,6 +74,7 @@ class Embedding:
         self,
         path: Union[str, os.PathLike],
         filename: str = None,
+        subfolder: str = None,
         save_config: bool = True,
         config_filename: str = None,
     ):
@@ -100,13 +101,13 @@ class Embedding:
         # save to tmp and prepare for push
         cache_path = tempfile.mkdtemp()
         # save embedding model file
-        embedding_save_dir = os.path.join(cache_path, subfolder)
+        embedding_save_dir = os.path.join(cache_path)
         os.makedirs(embedding_save_dir, exist_ok=True)
 
         if commit_message is None:
             commit_message = "Hezar: Upload embedding and config"
 
-        self.save(embedding_save_dir, filename, save_config=False)
+        self.save(embedding_save_dir, filename, subfolder=subfolder, save_config=False)
 
         self.config.push_to_hub(
             repo_id,
@@ -119,7 +120,7 @@ class Embedding:
 
         api.upload_file(
             repo_id=repo_id,
-            path_or_fileobj=os.path.join(embedding_save_dir, filename),
+            path_or_fileobj=os.path.join(embedding_save_dir, subfolder, filename),
             repo_type="model",
             path_in_repo=f"{subfolder}/{filename}",
             commit_message=commit_message,
@@ -132,7 +133,7 @@ class Embedding:
 
         api.upload_file(
             repo_id=repo_id,
-            path_or_fileobj=os.path.join(embedding_save_dir, vectors_filename),
+            path_or_fileobj=os.path.join(embedding_save_dir, subfolder, vectors_filename),
             repo_type="model",
             path_in_repo=f"{subfolder}/{vectors_filename}",
             commit_message=commit_message,
