@@ -303,11 +303,11 @@ class Model(nn.Module):
         return next(self.parameters()).device
 
     @property
-    def preprocessor(self):
+    def preprocessor(self) -> PreprocessorsContainer:
         return self._preprocessor
 
     @preprocessor.setter
-    def preprocessor(self, value):
+    def preprocessor(self, value: Union[Preprocessor, PreprocessorsContainer]):
         if isinstance(value, Preprocessor):
             preprocessor = PreprocessorsContainer()
             preprocessor[value.config.name] = value
