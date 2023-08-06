@@ -6,13 +6,12 @@ from typing import Dict, List, Union
 from torch import nn
 from transformers import BertConfig, BertModel
 
-from ....models import Model
 from ....registry import register_model
+from ..sequence_labeling import SequenceLabelingModel
 from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
-
 @register_model("bert_sequence_labeling", BertSequenceLabelingConfig)
-class BertSequenceLabeling(Model):
+class BertSequenceLabeling(SequenceLabelingModel):
     """
     BERT model for sequence labeling
     """
