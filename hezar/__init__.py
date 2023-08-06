@@ -9,4 +9,4 @@ from .preprocessors import *
 from .trainers import *
 from .utils import *
 
-__version__ = "0.21.0"
+__version__ = "0.21.1"
