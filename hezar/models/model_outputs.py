@@ -11,6 +11,8 @@ import torch
 class ModelOutputs:
     """
     Base class for all model outputs (named based on tasks)
+
+    The helper functions in the class enable it to be treated as a mapping or a dict object.
     """
 
     def dict(self):
