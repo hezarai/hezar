@@ -43,16 +43,15 @@ class DistilBertTextClassification(TextClassificationModel):
         inputs_embeds = inputs.get("inputs_embeds", None)
         output_attentions = inputs.get("output_attentions", None)
         output_hidden_states = inputs.get("output_hidden_states", None)
-        return_dict = inputs.get("return_dict", None) or kwargs.get("return_dict", None)
 
         lm_outputs = self.distilbert(
-            input_ids,
+            input_ids=input_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            return_dict=return_dict,
+            return_dict=True,
         )
         hidden_state = lm_outputs[0]
         pooled_output = hidden_state[:, 0]

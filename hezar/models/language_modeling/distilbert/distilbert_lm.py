@@ -21,10 +21,19 @@ class DistilBertLM(Model):
     def forward(self, inputs, **kwargs):
         input_ids = inputs.get("token_ids")
         attention_mask = inputs.get("attention_mask", None)
+        head_mask = inputs.get("head_mask", None)
+        inputs_embeds = inputs.get("inputs_embeds", None)
+        output_attentions = inputs.get("output_attentions", None)
+        output_hidden_states = inputs.get("output_hidden_states", None)
+
         outputs = self.distilbert(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            **kwargs,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=True,
         )
         return outputs
 

@@ -54,7 +54,6 @@ class BertSequenceLabeling(Model):
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            **kwargs,
         )
         sequence_output = lm_outputs[0]
 
