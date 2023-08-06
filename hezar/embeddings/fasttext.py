@@ -29,8 +29,8 @@ class FastTextConfig(EmbeddingConfig):
 
 @register_embedding("fasttext", config_class=FastTextConfig)
 class FastText(Embedding):
-    filename = "embedding.model"
-    vectors_filename = "embedding.model.wv.vectors_ngrams.npy"
+    filename = "embedding.bin"
+    vectors_filename = "embedding.bin.wv.vectors.npy"
 
     def __init__(self, config: FastTextConfig, **kwargs):
         super().__init__(config, **kwargs)
