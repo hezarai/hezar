@@ -100,6 +100,18 @@ class PreprocessorsContainer(OrderedDict):
     """
     A class to hold the preprocessors by their name
     """
+    def __getattr__(self, item):
+        """
+        Override this method to be able to access preprocessors as attributes
+
+        Examples:
+            >>> preprocessor["text_normalizer"] is preprocessor.text_normalizer  # noqa
+            ... True
+        """
+        if item in self:
+            return self[item]
+        else:
+            super().__getattribute__(item)
 
     def save(self, path):
         """
