@@ -152,10 +152,11 @@ without reinventing the wheel, but by being built on top of
 🤗[Tokenizers](https://github.com/huggingface/tokenizers), 
 🤗[Datasets](https://github.com/huggingface/datasets), 
 [Scikit-learn](https://github.com/scikit-learn/scikit-learn), 
-[Gensim](https://github.com/RaRe-Technologies/gensim), 
-etc.** and integrated with the **🤗[Hugging Face Hub](https://github.com/huggingface/huggingface_hub)** (to ease the loading/saving processes for any module e.g, models, datasets, preprocessors, trainers, etc.)
+[Gensim](https://github.com/RaRe-Technologies/gensim),** etc. 
+Besides, it's deeply integrated with the **🤗[Hugging Face Hub](https://github.com/huggingface/huggingface_hub)** and 
+almost any module e.g, models, datasets, preprocessors, trainers, etc. can be uploaded to or downloaded from the Hub!
 
-More specifically:
+More specifically, here's a simple summary of the core modules in Hezar:
 - **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc. ([Learn more]())
 - **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
 - **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
