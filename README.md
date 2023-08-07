@@ -166,7 +166,7 @@ More specifically:
 - **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc. ([Learn more]())
 - **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
 - **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
-- **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in 2 just lines of code!
+- **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in just 2 lines of code!
 - **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
 - **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
 
