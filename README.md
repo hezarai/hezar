@@ -107,7 +107,7 @@ lscp_dataset = Dataset.load("hezarai/lscp-500k")
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")
 ...
 ```
-## Training
+### Training
 Hezar makes it super easy to train models using out-of-the-box models and datasets provided in the library.
 ```python
 from hezar import (
