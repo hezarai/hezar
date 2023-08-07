@@ -167,7 +167,14 @@ class Trainer:
             Optimizer and scheduler
         """
         if optimizer is None:
-            optimizer_config = self.config.optimizer
+            if self.config.optimizer is None:
+                optimizer_config = OptimizerConfig(
+                    name="adamw",
+                    lr=2e-5,
+                    scheduler=LRSchedulerConfig(name="reduce_on_plateau")
+                )
+            else:
+                optimizer_config = self.config.optimizer
 
             # convert to dict so that we can pop some values
             if isinstance(optimizer_config, OptimizerConfig):
