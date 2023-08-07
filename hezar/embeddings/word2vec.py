@@ -111,6 +111,27 @@ class Word2Vec(Embedding):
 
         self.model.save(os.path.join(save_dir, filename))
 
+    def similarity(self, word1: str, word2: str):
+        if not isinstance(word1, str) or not isinstance(word2, str):
+            raise ValueError(f"`Embedding.similarity()` takes two string objects!\n"
+                             f"`word1`: {type(word1)}, `word2`: {type(word2)}")
+        similarity = self.word_vectors.similarity(word1, word2)
+        return similarity
+
+    def doesnt_match(self, words: List[str]):
+        doesnt_match = self.word_vectors.doesnt_match(words)
+        return doesnt_match
+
+    def most_similar(self, word: str, top_n: int = 5):
+        if not isinstance(word, str):
+            raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
+        most_similar = self.word_vectors.most_similar(word, topn=top_n)
+        return most_similar
+
+    def get_normed_vectors(self):
+        normed_vectors = self.word_vectors.get_normed_vectors()
+        return normed_vectors
+
     @property
     def word_vectors(self):
         return self.model.wv

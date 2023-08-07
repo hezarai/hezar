@@ -52,6 +52,18 @@ class Embedding:
         keyed_vocab = {v: k for v, k in self.vocab.items()}
         return keyed_vocab[index]
 
+    def similarity(self, word1: str, word2: str):
+        raise NotImplementedError
+
+    def doesnt_match(self, words: List[str]):
+        raise NotImplementedError
+
+    def most_similar(self, word: str, top_n: int = 5):
+        raise NotImplementedError
+
+    def get_normed_vectors(self):
+        raise NotImplementedError
+
     @classmethod
     def load(
         cls,
