@@ -43,29 +43,21 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-- Sequence labeling (part-of-speech tagging)
+- Sequence labeling
 ```python
 from hezar import Model
 
-model = Model.load("hezarai/distilbert-fa-pos-lscp-500k")
-inputs = ["سلام بر فارسی زبانان شریف"]
-outputs = model.predict(inputs)
-print(outputs)
+pos_model = Model.load("hezarai/bert-fa-pos-lscp-500k")  # Part-of-speech
+ner_model = Model.load("hezarai/bert-fa-ner-arman")  # Named entity recognition
+inputs = ["شرکت هوش مصنوعی هزار"]
+pos_outputs = pos_model.predict(inputs)
+ner_outputs = ner_model.predict(inputs)
+print(f"POS: {pos_outputs}")
+print(f"NER: {ner_outputs}")
 ```
 ```commandline
-[[{'token': 'سلام', 'tag': 'N'}, {'token': 'بر', 'tag': 'P'}, {'token': 'فارسی', 'tag': 'Ne'}, {'token': 'زبانان', 'tag': 'Ne'}, {'token': 'شریف', 'tag': 'AJ'}]]
-```
-- Sequence labeling (named entity recognition)
-```python
-from hezar import Model
-
-model = Model.load("hezarai/bert-fa-ner-arman")
-inputs = ["شرکت هوش مصنوعی هزار برترین در نوع خود"]
-outputs = model.predict(inputs)
-print(outputs)
-```
-```commandline
-[[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'O'}, {'token': 'برترین', 'tag': 'O'}, {'token': 'در', 'tag': 'O'}, {'token': 'نوع', 'tag': 'O'}, {'token': 'خود', 'tag': 'O'}]]
+POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
+NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
 ### Word Embeddings
 - FastText
