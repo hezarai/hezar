@@ -31,7 +31,7 @@ pip install ./hezar
 ### Models
 There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
 
-- Text classification (sentiment analysis) 
+- Text classification (sentiment analysis, categorization, etc) 
 ```python
 from hezar import Model
 
@@ -43,7 +43,7 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-- Sequence labeling
+- Sequence labeling (POS, NER, etc.)
 ```python
 from hezar import Model
 
@@ -93,10 +93,11 @@ print(most_similar)
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
 ```python
-from hezar import Dataset
+from hezar import Dataset 
 
-lscp_dataset = Dataset.load("hezarai/lscp-500k")
-xlsum_dataset = Dataset.load("hezarai/xlsum-fa")
+sentiment_dataset = Dataset.load("hezarai/sentiment-digikala-snappfood")  # A TextClassificationDataset instance
+lscp_dataset = Dataset.load("hezarai/lscp-500k")  # A SequenceLabelingDataset instance
+xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
 ...
 ```
 ### Training
@@ -145,7 +146,7 @@ You can actually go way deeper with the trainers. Refer to the [notebooks](noteb
 
 ## Going Deeper
 Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks 
-without reinventing the wheel, hence being built on top of 
+without reinventing the wheel, but by being built on top of 
 **[PyTorch](https://github.com/pytorch/pytorch), 
 🤗[Transformers](https://github.com/huggingface/transformers),
 🤗[Tokenizers](https://github.com/huggingface/tokenizers), 
