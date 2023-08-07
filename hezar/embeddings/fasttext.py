@@ -46,13 +46,26 @@ class FastText(Embedding):
                     subfolder=self.subfolder,
                     cache_dir=HEZAR_CACHE_DIR,
                 )
-
+                vectors_path = hf_hub_download(
+                    pretrained_path,
+                    filename=self.vectors_filename,
+                    subfolder=self.subfolder,
+                    cache_dir=HEZAR_CACHE_DIR,
+                )
             else:
                 embedding_path = os.path.join(
                     pretrained_path,
                     self.subfolder,
                     self.filename,
                 )
+                vectors_path = os.path.join(
+                    pretrained_path,
+                    self.subfolder,
+                    self.vectors_filename,
+                )
+            if not os.path.isfile(vectors_path):
+                raise ValueError(f"Could not load or find vectors file at `{vectors_path}`! "
+                                 f"Please make sure it's been downloaded properly!")
             embedding_model = fasttext.FastText.load(embedding_path)
         else:
             embedding_model = fasttext.FastText(
