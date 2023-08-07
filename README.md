@@ -28,10 +28,10 @@ pip install ./hezar
 ```
 
 ## Quick Tour
-### Ready-to-use models from Hub
-There's a bunch of ready-to-use trained models for different tasks on the Hub. See them [here](https://huggingface.co/hezarai)!
+### Models
+There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
 
-#### Text classification (sentiment analysis) 
+- Text classification (sentiment analysis) 
 ```python
 from hezar import Model
 
@@ -43,12 +43,11 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-#### Sequence labeling (part-of-speech tagging)
+- Sequence labeling (part-of-speech tagging)
 ```python
 from hezar import Model
 
-hub_path = "hezarai/distilbert-fa-pos-lscp-500k"
-model = Model.load(hub_path)
+model = Model.load("hezarai/distilbert-fa-pos-lscp-500k")
 inputs = ["سلام بر فارسی زبانان شریف"]
 outputs = model.predict(inputs)
 print(outputs)
@@ -56,12 +55,11 @@ print(outputs)
 ```commandline
 [[{'token': 'سلام', 'tag': 'N'}, {'token': 'بر', 'tag': 'P'}, {'token': 'فارسی', 'tag': 'Ne'}, {'token': 'زبانان', 'tag': 'Ne'}, {'token': 'شریف', 'tag': 'AJ'}]]
 ```
-#### Sequence labeling (named entity recognition)
+- Sequence labeling (named entity recognition)
 ```python
 from hezar import Model
 
-hub_path = "hezarai/bert-fa-ner-arman"
-model = Model.load(hub_path)
+model = Model.load("hezarai/bert-fa-ner-arman")
 inputs = ["شرکت هوش مصنوعی هزار برترین در نوع خود"]
 outputs = model.predict(inputs)
 print(outputs)
@@ -69,64 +67,107 @@ print(outputs)
 ```commandline
 [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'O'}, {'token': 'برترین', 'tag': 'O'}, {'token': 'در', 'tag': 'O'}, {'token': 'نوع', 'tag': 'O'}, {'token': 'خود', 'tag': 'O'}]]
 ```
-### Write your own model
-It's fairly easy to extend this library or add your own model. Hezar has its own `Model` base class that is simply a normal PyTorch `nn.Module` but with some extra features!
-
-Here's a simple example:
+### Word Embeddings
+- FastText
 ```python
-from dataclasses import dataclass
+from hezar import Embedding
 
-from torch import Tensor, nn
-
-from hezar import Model, ModelConfig
-
-
-@dataclass
-class PerceptronConfig(ModelConfig):
-    name: str = "perceptron"
-    input_shape: int = 4
-    output_shape: int = 2
-
-
-class Perceptron(Model):
-    """
-    A simple single layer network
-    """
-
-    def __init__(self, config, **kwargs):
-        super().__init__(config, **kwargs)
-        self.nn = nn.Linear(
-            in_features=self.config.input_shape,
-            out_features=self.config.output_shape,
-        )
-
-    def forward(self, inputs: list, **kwargs):
-        inputs = Tensor(inputs).reshape(1, -1)
-        x = self.nn(inputs)
-        return x
-
-    def post_process(self, inputs, **kwargs):
-        # post-process forward outputs (optional method)
-        return inputs.numpy()  # convert torch tensor to numpy array
-
-
-model = Perceptron(PerceptronConfig())
-inputs = [1, 2, 3, 4]
-outputs = model.predict(inputs)
-print(outputs)
+fasttext = Embedding.load("hezarai/fasttext-fa-300")
+most_similar = fasttext.most_similar("هزار")
+print(most_similar)
 ```
+```commandline
+[('میلیون', 0.757952094078064),
+ ('21هزار', 0.6943519115447998),
+ ('میلیارد', 0.6861927509307861),
+ ('26هزار', 0.6825816035270691),
+ ('٣هزار', 0.6803856492042542)]
 ```
-[[-0.13248837  0.7039478 ]]
-```
-As you can see, defining a new model is just like a typical PyTorch module, but comes with some amazing functionalities out-of-the-box like pushing to the Hub!
+- Word2Vec
 ```python
-hub_repo = "<your_hf_username>/my-awesome-perceptron"
-model.push_to_hub(hub_repo)
+from hezar import Embedding
+
+word2vec = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")
+most_similar = word2vec.most_similar("هزار")
+print(most_similar)
 ```
+```commandline
+[('چهارهزار', 0.7885120511054993),
+ ('۱۰هزار', 0.7788997292518616),
+ ('دویست', 0.7727702260017395),
+ ('میلیون', 0.7679607272148132),
+ ('پانصد', 0.7602390050888062)]
 ```
-INFO: Uploaded:`PerceptronConfig(name=preceptron)` --> `your_hf_username/my-awesome-perceptron/model_config.yaml`
-INFO: Uploaded: `Perceptron(name=preceptron)` --> `your_hf_username/my-awesome-perceptron/model.pt`
+### Datasets
+You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
+```python
+from hezar import Dataset
+
+lscp_dataset = Dataset.load("hezarai/lscp-500k")
+xlsum_dataset = Dataset.load("hezarai/xlsum-fa")
+...
 ```
+## Training
+Hezar makes it super easy to train models using out-of-the-box models and datasets provided in the library.
+```python
+from hezar import (
+    BertSequenceLabeling,
+    BertSequenceLabelingConfig,
+    TrainerConfig,
+    SequenceLabelingTrainer,
+    Dataset,
+    Preprocessor,
+)
+
+base_model_path = "hezarai/bert-base-fa"
+
+train_dataset = Dataset.load("hezarai/lscp-500k", split="train", tokenizer_path="hezarai/bert-base-fa")
+eval_dataset = Dataset.load("hezarai/lscp-500k", split="test", tokenizer_path="hezarai/bert-base-fa")
+
+model = BertSequenceLabeling(BertSequenceLabelingConfig(id2label=train_dataset.config.id2label))
+preprocessor = Preprocessor.load(base_model_path)
+
+train_config = TrainerConfig(
+    device="cuda",
+    init_weights_from=base_model_path,
+    batch_size=8,
+    num_epochs=5,
+    checkpoints_dir="checkpoints/",
+    metrics=["seqeval"],
+)
+
+trainer = SequenceLabelingTrainer(
+    config=train_config,
+    model=model,
+    train_dataset=train_dataset,
+    eval_dataset=eval_dataset,
+    data_collator=train_dataset.data_collator,
+    preprocessor=preprocessor,
+)
+trainer.train()
+
+trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor, trainer files and configs
+```
+You can actually go way deeper with the trainers. Refer to the [notebooks](notebooks) to see the examples!
+
+## Going Deeper
+Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks 
+without reinventing the wheel, hence being built on top of 
+**[PyTorch](https://github.com/pytorch/pytorch), 
+🤗[Transformers](https://github.com/huggingface/transformers),
+🤗[Tokenizers](https://github.com/huggingface/tokenizers), 
+🤗[Datasets](https://github.com/huggingface/datasets), 
+[Scikit-learn](https://github.com/scikit-learn/scikit-learn), 
+[Gensim](https://github.com/RaRe-Technologies/gensim), 
+etc.** and integrated with the **🤗[Hugging Face Hub](https://github.com/huggingface/huggingface_hub)** (to ease the loading/saving processes for any module e.g, models, datasets, preprocessors, trainers, etc.)
+
+More specifically:
+- **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc. ([Learn more]())
+- **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
+- **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
+- **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in 2 just lines of code!
+- **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
+- **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
 
 ## Documentation
 Refer to the [docs](docs) for a full documentation.
