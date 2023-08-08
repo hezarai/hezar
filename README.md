@@ -36,7 +36,7 @@ There's a bunch of ready to use trained models for different tasks on the Hub. T
 from hezar import Model
 
 example = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
-model = Model.load("hezarai/bert-fa-sentiment-digikala-snappfood")
+model = Model.load("hezarai/bert-fa-sentiment-dksf")
 outputs = model.predict(example)
 print(outputs)
 ```
@@ -95,7 +95,7 @@ You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) li
 ```python
 from hezar import Dataset 
 
-sentiment_dataset = Dataset.load("hezarai/sentiment-digikala-snappfood")  # A TextClassificationDataset instance
+sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-500k")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
 ...
