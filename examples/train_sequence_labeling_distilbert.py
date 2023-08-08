@@ -11,8 +11,8 @@ from hezar import (
 name = "distilbert_sequence_labeling"
 lm_path = "hezarai/bert-base-fa"
 
-train_dataset = Dataset.load("hezarai/lscp-500k", split="train", tokenizer_path="hezarai/bert-base-fa")
-eval_dataset = Dataset.load("hezarai/lscp-500k", split="test", tokenizer_path="hezarai/bert-base-fa")
+train_dataset = Dataset.load("hezarai/lscrp-pos-500k", split="train", tokenizer_path="hezarai/bert-base-fa")
+eval_dataset = Dataset.load("hezarai/lscrp-pos-500k", split="test", tokenizer_path="hezarai/bert-base-fa")
 
 model = build_model(name, id2label=train_dataset.id2label)
 preprocessor = Preprocessor.load(lm_path)
@@ -37,4 +37,4 @@ trainer = SequenceLabelingTrainer(
     preprocessor=preprocessor,
 )
 trainer.train()
-trainer.push_to_hub("hezarai/distilbert-fa-pos-lscp-500k")
+trainer.push_to_hub("hezarai/distilbert-fa-pos-lscrp-pos-500k")

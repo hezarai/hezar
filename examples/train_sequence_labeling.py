@@ -9,8 +9,8 @@ from hezar import (
 
 base_model_path = "hezarai/bert-base-fa"
 
-train_dataset = Dataset.load("hezarai/lscp-500k", split="train", tokenizer_path=base_model_path)
-eval_dataset = Dataset.load("hezarai/lscp-500k", split="test", tokenizer_path=base_model_path)
+train_dataset = Dataset.load("hezarai/lscrp-pos-500k", split="train", tokenizer_path=base_model_path)
+eval_dataset = Dataset.load("hezarai/lscrp-pos-500k", split="test", tokenizer_path=base_model_path)
 
 model = BertSequenceLabeling(BertSequenceLabelingConfig(id2label=train_dataset.config.id2label))
 preprocessor = Preprocessor.load(base_model_path)
