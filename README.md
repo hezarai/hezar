@@ -47,7 +47,7 @@ print(outputs)
 ```python
 from hezar import Model
 
-pos_model = Model.load("hezarai/bert-fa-pos-lscrp-pos-500k")  # Part-of-speech
+pos_model = Model.load("hezarai/bert-fa-pos-lscp-500k")  # Part-of-speech
 ner_model = Model.load("hezarai/bert-fa-ner-arman")  # Named entity recognition
 inputs = ["شرکت هوش مصنوعی هزار"]
 pos_outputs = pos_model.predict(inputs)
@@ -111,7 +111,7 @@ You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) li
 from hezar import Dataset 
 
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
-lscp_dataset = Dataset.load("hezarai/lscrp-pos-500k")  # A SequenceLabelingDataset instance
+lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
 ...
 ```
@@ -128,7 +128,7 @@ from hezar import (
 )
 
 base_model_path = "hezarai/bert-base-fa"
-dataset_path = "hezarai/lscrp-pos-500k"
+dataset_path = "hezarai/lscp-pos-500k"
 
 train_dataset = Dataset.load(dataset_path, split="train", tokenizer_path=base_model_path)
 eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=base_model_path)
@@ -155,7 +155,7 @@ trainer = SequenceLabelingTrainer(
 )
 trainer.train()
 
-trainer.push_to_hub("bert-fa-pos-lscrp-pos-500k")  # push model, config, preprocessor, trainer files and configs
+trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor, trainer files and configs
 ```
 You can actually go way deeper with the trainers. Refer to the [notebooks](notebooks) to see the examples!
 
