@@ -75,7 +75,7 @@ print(most_similar)
  ('26هزار', 0.6825816035270691),
  ('٣هزار', 0.6803856492042542)]
 ```
-- Word2Vec
+- Word2Vec (Skip-gram)
 ```python
 from hezar import Embedding
 
@@ -89,6 +89,21 @@ print(most_similar)
  ('دویست', 0.7727702260017395),
  ('میلیون', 0.7679607272148132),
  ('پانصد', 0.7602390050888062)]
+```
+- Word2Vec (CBOW)
+```python
+from hezar import Embedding
+
+word2vec = Embedding.load("hezarai/word2vec-cbow-fa-wikipedia")
+most_similar = word2vec.most_similar("هزار")
+print(most_similar)
+```
+```commandline
+[('دویست', 0.7407122850418091), 
+('میلیون', 0.7400990724563599)
+, ('صد', 0.7326022982597351)
+, ('پانصد', 0.7276917099952698)
+, ('سیصد', 0.7011004090309143)]
 ```
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
