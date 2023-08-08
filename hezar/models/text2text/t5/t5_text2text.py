@@ -1,14 +1,14 @@
-from typing import Dict
+from typing import Dict, Union, List
 
 from transformers import T5Config, T5ForConditionalGeneration
 
 from ....registry import register_model
-from ..text2text import Text2TextModel
+from ...model import Model
 from .t5_text2text_config import T5Text2TextConfig
 
 
 @register_model("t5_text2text", config_class=T5Text2TextConfig)
-class T5Text2Text(Text2TextModel):
+class T5Text2Text(Model):
     """
     T5 for text to text generation
     """
@@ -64,3 +64,28 @@ class T5Text2Text(Text2TextModel):
             outputs = {"output_ids": output_ids}
 
         return outputs
+
+    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+        if isinstance(inputs, str):
+            inputs = [inputs]
+        if "text_normalizer" in self.preprocessor:
+            normalizer = self.preprocessor["text_normalizer"]
+            inputs = normalizer(inputs)
+        tokenizer = self.preprocessor[self.tokenizer_name]
+        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
+        return inputs
+
+    def post_process(self, inputs, **kwargs):
+        records = []
+        tokenizer = self.preprocessor["sentencepiece_unigram_tokenizer"]
+        for output_ids in inputs["output_ids"][0]:
+            if isinstance(output_ids, torch.Tensor):
+                output_ids = output_ids.numpy().tolist()
+            record = {
+                "output_text": tokenizer.decode(
+                    output_ids,
+                    skip_special_tokens=True,
+                )
+            }
+            records.append(record)
+        return records

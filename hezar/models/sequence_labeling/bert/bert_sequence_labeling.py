@@ -7,11 +7,12 @@ from torch import nn
 from transformers import BertConfig, BertModel
 
 from ....registry import register_model
-from ..sequence_labeling import SequenceLabelingModel
+from ...model import Model
 from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
+
 @register_model("bert_sequence_labeling", BertSequenceLabelingConfig)
-class BertSequenceLabeling(SequenceLabelingModel):
+class BertSequenceLabeling(Model):
     """
     BERT model for sequence labeling
     """
