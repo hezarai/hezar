@@ -1,7 +1,7 @@
 
 ![](hezar.png)
 
-_<p align="center"> A seamless multi-task AI library for Persian</p>_
+_<p align="center"> The all-in-one AI library for Persian</p>_
 
 **Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
 
