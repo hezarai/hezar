@@ -40,6 +40,7 @@ huggingface_hub = ">=0.12.0"
 gensim = ">=4.1.0"
 tensorboard = ">=2.10.0"
 seqeval = ">=1.2.0"
+soundfile = ">=0.12.0"
 
 pillow = "*"
 black = "*"
