@@ -1,3 +1,4 @@
+from .audio_utils import *
 from .common_utils import *
 from .core_utils import *
 from .context_managers import *
