@@ -14,8 +14,7 @@ from ..preprocessor import Preprocessor
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
-from ...data.utils import convert_batch_dict_dtype
-from ...utils import get_logger
+from ...utils import get_logger, convert_batch_dict_dtype
 
 logger = get_logger(__name__)
 

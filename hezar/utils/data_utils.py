@@ -1,12 +1,16 @@
 from typing import Any, Dict
 
+from .logging import get_logger
 
 __all__ = [
     "convert_batch_dict_dtype",
     "get_non_numeric_keys",
 ]
 
+logger = get_logger(__name__)
 
+
+# TODO: This code might be able to be written in a cleaner way, but be careful, any change might break a lot of things!
 def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip_keys: list = None):
     """
     Convert data dtypes of the values in a batch dict
@@ -35,17 +39,21 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
 
     if dtype in ["np", "numpy"]:
         caster = np.ndarray
+        cast_type = np.ndarray
     elif dtype in ["pt", "torch", "pytorch"]:
         caster = torch.tensor
+        cast_type = torch.Tensor
     else:
         raise ValueError(f"Invalid `dtype`: {dtype}")
 
     for k, v in batch_dict.items():
         if k not in skip_keys:
             try:
-                batch_dict[k] = caster(v)
+                if not isinstance(v, cast_type):
+                    batch_dict[k] = caster(v)
             except Exception as e:  # noqa
-                continue
+                logger.warning(f"Could not convert values of `{k}` to type `{dtype}`\n"
+                               f"Error: {e}")
     return batch_dict
 
 
