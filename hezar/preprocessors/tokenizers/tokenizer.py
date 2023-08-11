@@ -2,8 +2,9 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Literal, Mapping, Optional, Union
+from typing import Dict, List, Literal, Mapping, Optional, Union, Tuple
 
+import numpy as np
 import torch
 from huggingface_hub import create_repo, upload_file
 from tokenizers import Tokenizer as HFTokenizer
@@ -34,6 +35,7 @@ class TokenizerConfig(PreprocessorConfig):
     pad_token: str = None
     pad_token_type_id: int = None
     unk_token: str = None
+    special_tokens: list = None
 
 
 class Tokenizer(Preprocessor):
@@ -48,6 +50,16 @@ class Tokenizer(Preprocessor):
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
     token_ids_name = "token_ids"
+    SPECIAL_TOKENS = [
+        "bos_token",
+        "eos_token",
+        "unk_token",
+        "sep_token",
+        "pad_token",
+        "cls_token",
+        "mask_token",
+        "additional_special_tokens",
+    ]
 
     def __init__(self, config: TokenizerConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -56,7 +68,7 @@ class Tokenizer(Preprocessor):
     def build(self) -> HFTokenizer:
         raise NotImplementedError
 
-    def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True):
+    def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True, **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         elif isinstance(inputs, list) and is_pretokenized:
@@ -64,10 +76,14 @@ class Tokenizer(Preprocessor):
                 inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
-    def decode(self, ids: List[int], skip_special_tokens: bool = True) -> str:
-        if isinstance(ids[0], list):
-            return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
-        return self._tokenizer.decode(ids, skip_special_tokens=skip_special_tokens)
+    def decode(self, ids: List[int], skip_special_tokens: bool = True, **kwargs):
+        if isinstance(ids[0], int):
+            ids = [ids]
+        if isinstance(ids, torch.Tensor):
+            ids = ids.numpy().tolist()
+        if isinstance(ids, np.ndarray):
+            ids = ids.tolist()
+        return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
 
     def pad_encoded_batch(
         self,
@@ -149,7 +165,7 @@ class Tokenizer(Preprocessor):
 
     def __call__(
         self,
-        inputs: List[str],
+        inputs: Union[List[str], List[Tuple[str, str]]],
         device: Union[str, torch.device] = None,
         add_special_tokens: bool = True,
         padding_strategy=None,
@@ -344,6 +360,23 @@ class Tokenizer(Preprocessor):
 
         return encoding_dict
 
+    def convert_tokens_to_ids(self, tokens: Union[str, List[str]]) -> Union[int, List[int]]:
+        if isinstance(tokens, str):
+            tokens = [tokens]
+
+        return [self._tokenizer.token_to_id(token) for token in tokens]
+
+    def convert_ids_to_tokens(self, ids: Union[int, List[int]], skip_special_tokens: bool = False):
+        if isinstance(ids, int):
+            ids = [ids]
+        tokens = []
+        for index in ids:
+            index = int(index)
+            if skip_special_tokens and index in self.special_ids:
+                continue
+            tokens.append(self._tokenizer.id_to_token(index))
+        return tokens
+
     def num_special_tokens_to_add(self, is_pair: bool) -> int:
         return self._tokenizer.num_special_tokens_to_add(is_pair)
 
@@ -391,6 +424,24 @@ class Tokenizer(Preprocessor):
 
     def id_to_token(self, id: int) -> str:
         return self._tokenizer.id_to_token(id)
+
+    def get_added_vocab(self) -> Dict[str, int]:
+        """
+        Returns the added tokens in the vocabulary as a dictionary of token to index.
+
+        Returns:
+            `Dict[str, int]`: The added tokens.
+        """
+        base_vocab = self._tokenizer.get_vocab(with_added_tokens=False)
+        full_vocab = self._tokenizer.get_vocab(with_added_tokens=True)
+        added_vocab = {tok: index for tok, index in full_vocab.items() if tok not in base_vocab}
+        return added_vocab
+
+    def __len__(self) -> int:
+        """
+        Size of the full vocabulary with the added tokens.
+        """
+        return self._tokenizer.get_vocab_size(with_added_tokens=True)
 
     @classmethod
     def load(
@@ -500,3 +551,22 @@ class Tokenizer(Preprocessor):
     @property
     def truncation(self) -> dict:
         return self._tokenizer.truncation
+
+    @property
+    def vocab(self):
+        return self._tokenizer.get_vocab(with_added_tokens=True)
+
+    @property
+    def vocab_size(self) -> int:
+        """
+        `int`: Size of the base vocabulary (without the added tokens).
+        """
+        return self._tokenizer.get_vocab_size(with_added_tokens=False)
+
+    @property
+    def special_tokens(self):
+        return self.config.special_tokens
+
+    @property
+    def special_ids(self):
+        return [self.token_to_id(t) for t in self.special_tokens]
