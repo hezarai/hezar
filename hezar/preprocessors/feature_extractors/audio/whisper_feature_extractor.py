@@ -129,7 +129,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
             padded_inputs["attention_mask"] = padded_inputs["attention_mask"][:, :: self.config.hop_length]
 
         if return_tensors is not None:
-            padded_inputs = {k: np.array(v) for k, v in padded_inputs.items()}
+            padded_inputs = {k: np.asarray(v) for k, v in padded_inputs.items()}
             padded_inputs = convert_batch_dict_dtype(padded_inputs, dtype=return_tensors)
 
         return padded_inputs

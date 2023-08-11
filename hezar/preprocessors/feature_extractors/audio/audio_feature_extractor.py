@@ -59,7 +59,7 @@ class AudioFeatureExtractor(Preprocessor):
                 isinstance(processed_features[self.model_input_name][0], np.ndarray)
                 and isinstance(processed_features[self.model_input_name], list)
             ):
-                processed_features[self.model_input_name] = np.array(processed_features[self.model_input_name])
+                processed_features[self.model_input_name] = np.asarray(processed_features[self.model_input_name])
 
         if isinstance(processed_features, (list, tuple)) and isinstance(processed_features[0], Mapping):
             processed_features = {

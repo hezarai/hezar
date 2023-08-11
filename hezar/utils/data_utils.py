@@ -38,7 +38,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
         return batch_dict
 
     if dtype in ["np", "numpy"]:
-        caster = np.ndarray
+        caster = np.asarray
         cast_type = np.ndarray
     elif dtype in ["pt", "torch", "pytorch"]:
         caster = torch.tensor
