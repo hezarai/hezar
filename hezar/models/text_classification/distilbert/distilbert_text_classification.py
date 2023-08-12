@@ -54,7 +54,7 @@ class DistilBertTextClassification(Model):
             return_dict=True,
         )
         hidden_state = lm_outputs[0]
-        pooled_output = hidden_state[:, 0]
+        pooled_output = hidden_state[:, 0]  # classification output
         pooled_output = self.pre_classifier(pooled_output)
         pooled_output = nn.ReLU()(pooled_output)
         pooled_output = self.dropout(pooled_output)
