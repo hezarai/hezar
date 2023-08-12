@@ -107,7 +107,7 @@ class RobertaClassificationHead(nn.Module):
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
 
     def forward(self, inputs, **kwargs):
-        x = inputs  # take <s> token (equiv. to [CLS])
+        x = inputs  # Apply to all tokens
         x = self.dropout(x)
         x = self.dense(x)
         x = tanh(x)
