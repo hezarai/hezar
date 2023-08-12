@@ -96,11 +96,8 @@ class TextNormalizer(Preprocessor):
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.normalizer_config_file
 
-        # create remote repo
-        create_repo(repo_id, exist_ok=True, private=private)
-
         if commit_message is None:
-            commit_message = "Hezar: Upload tokenizer and config"
+            commit_message = "Hezar: Upload normalizer"
 
         # upload config
         self.config.push_to_hub(
