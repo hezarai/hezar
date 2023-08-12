@@ -243,3 +243,60 @@ class AudioFeatureExtractor(Preprocessor):
                 processed_features["attention_mask"] = processed_features["attention_mask"][:max_length]
 
         return processed_features
+
+    def save(
+        self,
+        path,
+        subfolder=None,
+        config_filename=None,
+    ):
+        subfolder = subfolder or self.preprocessor_subfolder
+        config_filename = config_filename or self.config_filename
+
+        self.config.save(path, filename=config_filename, subfolder=subfolder)
+
+    def push_to_hub(
+        self,
+        repo_id,
+        subfolder=None,
+        commit_message=None,
+        private=None,
+        config_filename=None,
+    ):
+        subfolder = subfolder or self.preprocessor_subfolder
+        config_filename = config_filename or self.config_filename
+
+        if commit_message is None:
+            commit_message = "Hezar: Upload feature extractor"
+
+        self.config.push_to_hub(
+            repo_id,
+            subfolder=subfolder,
+            filename=config_filename,
+            private=private,
+            commit_message=commit_message,
+        )
+
+    @classmethod
+    def load(
+        cls,
+        hub_or_local_path,
+        subfolder: str = None,
+        config_filename: str = None,
+        force_return_dict: bool = False,
+        **kwargs
+    ):
+        subfolder = subfolder or cls.preprocessor_subfolder
+        config_filename = config_filename or cls.config_filename
+
+        config = AudioFeatureExtractorConfig.load(
+            hub_or_local_path,
+            subfolder=subfolder,
+            filename=config_filename,
+        )
+
+        feature_extractor = build_preprocessor(config.name, config=config, **kwargs)
+
+        return feature_extractor
+
+
