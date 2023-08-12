@@ -24,6 +24,7 @@ from ..utils import get_logger
 
 __all__ = [
     "Model",
+    "GenerativeModel",
     "ModelConfig",
 ]
 
@@ -292,7 +293,7 @@ class Model(nn.Module):
         # Preprocessing step
         if self.preprocessor is not None:
             inputs = self.preprocess(inputs, **kwargs)
-        # Model forward
+        # Model forward step
         model_outputs = self(inputs, **kwargs)
         # Post-processing step
         processed_outputs = self.post_process(model_outputs, **kwargs)
@@ -319,3 +320,33 @@ class Model(nn.Module):
             raise ValueError(f"Preprocessor value must be a `Preprocessor` or a mapping of `Preprocessor` objects "
                              f"not `{type(value)}`!")
         self._preprocessor = preprocessor
+
+
+class GenerativeModel(Model):
+    def __init__(self, config: ModelConfig, **kwargs):
+        super().__init__(config=config, **kwargs)
+
+    def generate(self, inputs, **kwargs):
+        raise NotImplementedError("Generative models must implement the `generate()` method!")
+
+    @torch.inference_mode()
+    def predict(self, inputs, **kwargs):
+        """
+        Perform an end-to-end prediction on raw inputs designed for generative models.
+
+        Args:
+            inputs: Raw inputs e.g, a list of texts, path to images, etc.
+
+        Returns:
+            Output dict of results
+        """
+        # Put model in eval mode
+        self.eval()
+        # Preprocessing step
+        if self.preprocessor is not None:
+            inputs = self.preprocess(inputs, **kwargs)
+        # Model forward step
+        model_outputs = self.generate(inputs, **kwargs)
+        # Post-processing step
+        processed_outputs = self.post_process(model_outputs, **kwargs)
+        return processed_outputs
