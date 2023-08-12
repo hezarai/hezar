@@ -20,6 +20,7 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     decoder_layerdrop: float = 0.0
     decoder_start_token_id: int = 50257
     use_cache: bool = True
+    sampling_rate: int = 16000
     is_encoder_decoder: bool = True
     activation_function: str = "gelu"
     d_model: int = 256
@@ -45,4 +46,4 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     mask_feature_prob: float = 0.0
     mask_feature_length: int = 10
     mask_feature_min_masks: int = 0
-    max_length: int = 448
+    max_new_tokens: int = 448
