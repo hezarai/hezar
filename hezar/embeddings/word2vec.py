@@ -45,12 +45,14 @@ class Word2Vec(Embedding):
                     filename=self.filename,
                     subfolder=self.subfolder,
                     cache_dir=HEZAR_CACHE_DIR,
+                    resume_download=True,
                 )
                 vectors_path = hf_hub_download(
                     pretrained_path,
                     filename=self.vectors_filename,
                     subfolder=self.subfolder,
                     cache_dir=HEZAR_CACHE_DIR,
+                    resume_download=True,
                 )
             else:
                 embedding_path = os.path.join(

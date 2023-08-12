@@ -79,6 +79,7 @@ class SentencePieceUnigramTokenizer(Tokenizer):
                     filename=self.tokenizer_filename,
                     subfolder=self.preprocessor_subfolder,
                     cache_dir=HEZAR_CACHE_DIR,
+                    resume_download=True,
                 )
 
             else:
