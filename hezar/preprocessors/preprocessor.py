@@ -40,6 +40,7 @@ class Preprocessor:
         subfolder=None,
         commit_message=None,
         private=None,
+        **kwargs,
     ):
         raise NotImplementedError
 
