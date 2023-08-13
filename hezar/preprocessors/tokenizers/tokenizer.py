@@ -60,7 +60,6 @@ class Tokenizer(Preprocessor):
         "mask_token",
         "additional_special_tokens",
     ]
-    uncastable_keys = ["word_ids", "tokens", "offset_mapping"]
 
     def __init__(self, config: TokenizerConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -72,9 +71,14 @@ class Tokenizer(Preprocessor):
     def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True, **kwargs):
         """
         tokenize a list of inputs(could be raw or tokenized inputs)
-        : param inputs: a list of inputs
-        : param is_pretokenized: whether the inputs are already tokenized
-        : param add_special_tokens: whether to add special tokens
+        Args:
+            inputs:
+            is_pretokenized: Whether the inputs are already tokenized
+            add_special_tokens: Whether to add special tokens to the inputs. Defaults to True.
+            **kwargs:
+
+        Returns:
+
         """
         if isinstance(inputs, str):
             inputs = [inputs]
@@ -113,6 +117,7 @@ class Tokenizer(Preprocessor):
         Returns:
 
         """
+
         if isinstance(inputs, (list, tuple)) and isinstance(inputs[0], Mapping):
             inputs = {key: [example[key] for example in inputs] for key in inputs[0].keys()}
 
@@ -150,7 +155,6 @@ class Tokenizer(Preprocessor):
                 else:
                     inputs_length = max_length
 
-        skip_keys += self.uncastable_keys  # avoid possible errors
         inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=skip_keys)
 
         skip_keys = skip_keys or []
@@ -166,7 +170,7 @@ class Tokenizer(Preprocessor):
                 padded_batch.append(padded_x)
             inputs[key] = padded_batch
 
-        inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors, skip_keys=skip_keys)
+        inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors)
 
         return inputs
 
@@ -278,7 +282,7 @@ class Tokenizer(Preprocessor):
                 for key, value in sanitized_outputs.items()
             }
 
-        outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
+        outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors)
         if device and return_tensors == "pt":
             outputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in outputs.items()}
 
