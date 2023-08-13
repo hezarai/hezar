@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 from typing import List, Literal, Union
+import pprint
 
 from gensim.models import fasttext
 from huggingface_hub import hf_hub_download
@@ -127,7 +128,8 @@ class FastText(Embedding):
         if not isinstance(word, str):
             raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
         most_similar = self.word_vectors.most_similar(word, topn=top_n)
-        return most_similar
+        most_similar = [{"word": word, "score": score} for word, score in most_similar]
+        return pprint.pformat(most_similar)
 
     def get_normed_vectors(self):
         normed_vectors = self.word_vectors.get_normed_vectors()
