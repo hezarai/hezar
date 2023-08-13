@@ -4,7 +4,9 @@ from dataclasses import dataclass
 import numpy as np
 
 from ...preprocessor import Preprocessor
+from ....builders import build_preprocessor
 from ....configs import PreprocessorConfig
+from ....constants import DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE
 from ....utils import convert_batch_dict_dtype
 
 
@@ -21,7 +23,8 @@ class AudioFeatureExtractor(Preprocessor):
     """
     Base class for all audio feature extractors.
     """
-    model_input_name: str = "input_features"
+    model_input_name = "input_features"
+    config_filename = DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE
 
     def __init__(self, config: AudioFeatureExtractorConfig, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -54,13 +57,6 @@ class AudioFeatureExtractor(Preprocessor):
         """
         return_attention_mask = return_attention_mask or self.config.return_attention_mask
         padding = padding or self.config.padding
-        if isinstance(processed_features, Mapping):
-            if (
-                isinstance(processed_features[self.model_input_name][0], np.ndarray)
-                and isinstance(processed_features[self.model_input_name], list)
-            ):
-                processed_features[self.model_input_name] = np.asarray(processed_features[self.model_input_name])
-
         if isinstance(processed_features, (list, tuple)) and isinstance(processed_features[0], Mapping):
             processed_features = {
                 key: np.array([example[key] for example in processed_features]) for key in processed_features[0].keys()
@@ -85,7 +81,7 @@ class AudioFeatureExtractor(Preprocessor):
             if index < len(required_input):
                 first_element = required_input[index][0]
 
-        processed_features = convert_batch_dict_dtype(processed_features, dtype="np")
+        # processed_features = convert_batch_dict_dtype(processed_features, dtype="np")
         padding_strategy = self._get_padding_strategy(padding=padding, max_length=max_length)
 
         required_input = processed_features[self.model_input_name]
@@ -128,7 +124,7 @@ class AudioFeatureExtractor(Preprocessor):
                     value = value.astype(np.float32)
                 batch_outputs[key].append(value)
 
-            batch_outputs = {k: np.array(v) for k, v in batch_outputs.items()}
+        batch_outputs = {k: np.array(v) for k, v in batch_outputs.items()}
 
         padded_features = convert_batch_dict_dtype(batch_outputs, dtype=return_tensors)
 
@@ -247,3 +243,60 @@ class AudioFeatureExtractor(Preprocessor):
                 processed_features["attention_mask"] = processed_features["attention_mask"][:max_length]
 
         return processed_features
+
+    def save(
+        self,
+        path,
+        subfolder=None,
+        config_filename=None,
+    ):
+        subfolder = subfolder or self.preprocessor_subfolder
+        config_filename = config_filename or self.config_filename
+
+        self.config.save(path, filename=config_filename, subfolder=subfolder)
+
+    def push_to_hub(
+        self,
+        repo_id,
+        subfolder=None,
+        commit_message=None,
+        private=None,
+        config_filename=None,
+    ):
+        subfolder = subfolder or self.preprocessor_subfolder
+        config_filename = config_filename or self.config_filename
+
+        if commit_message is None:
+            commit_message = "Hezar: Upload feature extractor"
+
+        self.config.push_to_hub(
+            repo_id,
+            subfolder=subfolder,
+            filename=config_filename,
+            private=private,
+            commit_message=commit_message,
+        )
+
+    @classmethod
+    def load(
+        cls,
+        hub_or_local_path,
+        subfolder: str = None,
+        config_filename: str = None,
+        force_return_dict: bool = False,
+        **kwargs
+    ):
+        subfolder = subfolder or cls.preprocessor_subfolder
+        config_filename = config_filename or cls.config_filename
+
+        config = AudioFeatureExtractorConfig.load(
+            hub_or_local_path,
+            subfolder=subfolder,
+            filename=config_filename,
+        )
+
+        feature_extractor = build_preprocessor(config.name, config=config, **kwargs)
+
+        return feature_extractor
+
+

@@ -282,8 +282,8 @@ class WhisperBPETokenizer(BPETokenizer):
 
         prefix_token_ids = self.prefix_tokens
         prefixes = self.convert_ids_to_tokens(prefix_token_ids)
-        eos = self.eos_token
-        eos_token_id = self.eos_token_id
+        eos = self.config.eos_token
+        eos_token_id = self.config.eos_token_id
         prefix_template = " ".join([f"{token}:0" for token in prefixes])
         self._tokenizer.post_processor = processors.TemplateProcessing(
             single=f"{prefix_template} $A:0 {eos}:0",

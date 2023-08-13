@@ -116,7 +116,12 @@ class Trainer:
             raise ValueError("`model` must be given to the Trainer!")
         hub_path = self.config.init_weights_from
         if hub_path is not None:
-            local_path = hf_hub_download(hub_path, filename=model.model_filename, cache_dir=HEZAR_CACHE_DIR)
+            local_path = hf_hub_download(
+                hub_path,
+                filename=model.model_filename,
+                cache_dir=HEZAR_CACHE_DIR,
+                resume_download=True,
+            )
             model.load_state_dict(torch.load(local_path, map_location="cpu"))
         model.to(self.device)
         return model

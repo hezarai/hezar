@@ -4,7 +4,7 @@ from typing import List
 
 from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers import decoders, models, pre_tokenizers, trainers
+from tokenizers import decoders, models, pre_tokenizers, trainers, processors
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor
@@ -77,6 +77,7 @@ class BPETokenizer(Tokenizer):
                     filename=self.tokenizer_filename,
                     subfolder=self.preprocessor_subfolder,
                     cache_dir=HEZAR_CACHE_DIR,
+                    resume_download=True,
                 )
 
             else:
@@ -98,6 +99,9 @@ class BPETokenizer(Tokenizer):
             )
             tokenizer.add_special_tokens(self.config.special_tokens)
             tokenizer.decoder = decoders.ByteLevel()  # noqa
+            tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)  # noqa
+            tokenizer.decoder = decoders.ByteLevel()  # noqa
+            tokenizer.post_processor = processors.ByteLevel(trim_offsets=False)  # noqa
 
         return tokenizer
 

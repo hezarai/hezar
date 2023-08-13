@@ -1,13 +1,24 @@
+from typing import Union, List
+
+import numpy as np
 import torch
 from transformers import WhisperConfig, WhisperForConditionalGeneration
 
-from ...model import Model
+from ...model import GenerativeModel
 from ....registry import register_model
+from ....integrations import is_soundfile_available
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
 
 @register_model("whisper_speech_recognition", config_class=WhisperSpeechRecognitionConfig)
-class WhisperSpeechRecognition(Model):
+class WhisperSpeechRecognition(GenerativeModel):
+    """
+    Whisper model for automatic speech recognition
+    """
+    is_generation_model = True
+    feature_extractor_name = "whisper_feature_extractor"
+    tokenizer_name = "whisper_bpe_tokenizer"
+
     def __init__(self, config: WhisperSpeechRecognitionConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.whisper = WhisperForConditionalGeneration(WhisperConfig(**self.config))
@@ -47,33 +58,34 @@ class WhisperSpeechRecognition(Model):
 
         return outputs
 
-    def generate(
-        self,
-        inputs: torch.Tensor = None,
-        generation_config=None,
-        logits_processor=None,
-        stopping_criteria=None,
-        prefix_allowed_tokens_fn=None,
-        synced_gpus=False,
-        return_timestamps=None,
-        task=None,
-        language=None,
-        is_multilingual=None,
-        prompt_ids: torch.Tensor = None,
-        **kwargs,
-    ):
+    def generate(self, inputs, **kwargs):
+        inputs_tensor = inputs.pop("input_features")
+        forced_decoder_ids = inputs.pop("forced_decoder_ids", None)
+        generation_config = inputs.pop("generation_config", None)
+        logits_processor = inputs.pop("logits_processor", None)
+        stopping_criteria = inputs.pop("stopping_criteria", None)
+        prefix_allowed_tokens_fn = inputs.pop("prefix_allowed_tokens_fn", None)
+        synced_gpus = inputs.pop("synced_gpus", None)
+        return_timestamps = inputs.pop("return_timestamps", None)
+        task = inputs.pop("task", None)
+        language = inputs.pop("language", None)
+        is_multilingual = inputs.pop("is_multilingual", None)
+        prompt_ids = inputs.pop("prompt_ids", None)
+
         generation_outputs = self.whisper.generate(
-            inputs,
-            generation_config,
-            logits_processor,
-            stopping_criteria,
-            prefix_allowed_tokens_fn,
-            synced_gpus,
-            return_timestamps,
-            task,
-            language,
-            is_multilingual,
-            prompt_ids,
+            inputs=inputs_tensor,
+            generation_config=generation_config,
+            logits_processor=logits_processor,
+            stopping_criteria=stopping_criteria,
+            prefix_allowed_tokens_fn=prefix_allowed_tokens_fn,
+            synced_gpus=synced_gpus,
+            return_timestamps=return_timestamps,
+            task=task,
+            language=language,
+            is_multilingual=is_multilingual,
+            prompt_ids=prompt_ids,
+            forced_decoder_ids=forced_decoder_ids,
+            **inputs,
             **kwargs,
         )
         return generation_outputs
@@ -118,10 +130,25 @@ class WhisperSpeechRecognition(Model):
     def freeze_encoder(self):
         self.whisper.freeze_encoder()
 
-    def preprocess(self, inputs, **kwargs):
-        # TODO
+    def preprocess(self, inputs: Union[str, np.ndarray, List[np.ndarray], List[str]], **kwargs):
+        if isinstance(inputs, np.ndarray) and len(inputs.shape) > 1:
+            inputs = [inputs]
+        if isinstance(inputs, str) or (isinstance(inputs, List), isinstance(inputs[0], str)):
+            if isinstance(inputs, str):
+                inputs = [inputs]
+            if is_soundfile_available():
+                import soundfile
+                inputs = [soundfile.read(x) for x in inputs]
+
+        tokenizer = self.preprocessor[self.tokenizer_name]
+        feature_extractor = self.preprocessor[self.feature_extractor_name]
+
+        forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language="persian", task="transcribe")
+        inputs = feature_extractor(inputs, sampling_rate=self.config.sampling_rate, return_tensors="pt")
+        inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
 
     def post_process(self, inputs, **kwargs):
-        # TODO
-        return inputs
+        tokenizer = self.preprocessor[self.tokenizer_name]
+        transcription = tokenizer.decode(inputs, decode_with_timestamps=True)
+        return transcription
