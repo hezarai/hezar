@@ -69,11 +69,11 @@ most_similar = fasttext.most_similar("هزار")
 print(most_similar)
 ```
 ```commandline
-[{'score': 0.757952094078064, 'word': 'میلیون'},
- {'score': 0.6943519115447998, 'word': '21هزار'},
- {'score': 0.6861927509307861, 'word': 'میلیارد'},
- {'score': 0.6825816035270691, 'word': '26هزار'},
- {'score': 0.6803856492042542, 'word': '٣هزار'}]
+[{'score': 0.7579, 'word': 'میلیون'},
+ {'score': 0.6943, 'word': '21هزار'},
+ {'score': 0.6861, 'word': 'میلیارد'},
+ {'score': 0.6825, 'word': '26هزار'},
+ {'score': 0.6803, 'word': '٣هزار'}]
 ```
 - Word2Vec (Skip-gram)
 ```python
@@ -84,11 +84,11 @@ most_similar = word2vec.most_similar("هزار")
 print(most_similar)
 ```
 ```commandline
-[{'score': 0.7885120511054993, 'word': 'چهارهزار'},
- {'score': 0.7788997292518616, 'word': '۱۰هزار'},
- {'score': 0.7727702260017395, 'word': 'دویست'},
- {'score': 0.7679607272148132, 'word': 'میلیون'},
- {'score': 0.7602390050888062, 'word': 'پانصد'}]
+[{'score': 0.7885, 'word': 'چهارهزار'},
+ {'score': 0.7788, 'word': '۱۰هزار'},
+ {'score': 0.7727, 'word': 'دویست'},
+ {'score': 0.7679, 'word': 'میلیون'},
+ {'score': 0.7602, 'word': 'پانصد'}]
 ```
 - Word2Vec (CBOW)
 ```python
@@ -99,11 +99,11 @@ most_similar = word2vec.most_similar("هزار")
 print(most_similar)
 ```
 ```commandline
-[{'score': 0.7407122850418091, 'word': 'دویست'},
- {'score': 0.7400990724563599, 'word': 'میلیون'},
- {'score': 0.7326022982597351, 'word': 'صد'},
- {'score': 0.7276917099952698, 'word': 'پانصد'},
- {'score': 0.7011004090309143, 'word': 'سیصد'}]
+[{'score': 0.7407, 'word': 'دویست'},
+ {'score': 0.7400, 'word': 'میلیون'},
+ {'score': 0.7326, 'word': 'صد'},
+ {'score': 0.7276, 'word': 'پانصد'},
+ {'score': 0.7011, 'word': 'سیصد'}]
 ```
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:

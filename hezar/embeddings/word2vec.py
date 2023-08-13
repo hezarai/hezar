@@ -129,7 +129,7 @@ class Word2Vec(Embedding):
         if not isinstance(word, str):
             raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
         most_similar = self.word_vectors.most_similar(word, topn=top_n)
-        most_similar = [{"word": word, "score": score} for word, score in most_similar]
+        most_similar = [{"word": word, "score": f"{score:.4f}"} for word, score in most_similar]
         return pprint.pformat(most_similar)
 
     def get_normed_vectors(self):
