@@ -1,7 +1,7 @@
 import os
+import pprint
 from dataclasses import dataclass
 from typing import List, Literal, Union
-import pprint
 
 from gensim.models import word2vec
 from huggingface_hub import hf_hub_download

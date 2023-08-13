@@ -1,7 +1,7 @@
 import os
+import pprint
 from dataclasses import dataclass
 from typing import List, Literal, Union
-import pprint
 
 from gensim.models import fasttext
 from huggingface_hub import hf_hub_download

@@ -1,12 +1,12 @@
-from typing import Union, List
+from typing import List, Union
 
 import numpy as np
 import torch
 from transformers import WhisperConfig, WhisperForConditionalGeneration
 
-from ...model import GenerativeModel
-from ....registry import register_model
 from ....integrations import is_soundfile_available
+from ....registry import register_model
+from ...model import GenerativeModel
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
 

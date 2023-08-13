@@ -10,7 +10,7 @@ Examples:
 import os
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, Mapping, Optional, Union, List
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -21,6 +21,7 @@ from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import get_logger
+
 
 __all__ = [
     "Model",

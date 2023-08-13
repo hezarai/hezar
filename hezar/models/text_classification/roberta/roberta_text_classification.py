@@ -1,14 +1,14 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 from torch import nn, tanh
 from transformers import RobertaConfig, RobertaModel
 
-from .roberta_text_classification_config import RobertaTextClassificationConfig
-from ...model import Model
 from ....registry import register_model
+from ...model import Model
+from .roberta_text_classification_config import RobertaTextClassificationConfig
 
 
 @register_model("roberta_text_classification", config_class=RobertaTextClassificationConfig)

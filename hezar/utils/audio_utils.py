@@ -7,6 +7,7 @@ import numpy as np
 
 from .logging import get_logger
 
+
 __all__ = [
     "spectrogram",
     "amplitude_to_db",

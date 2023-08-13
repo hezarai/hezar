@@ -1,13 +1,13 @@
-from typing import Mapping
 from dataclasses import dataclass
+from typing import Mapping
 
 import numpy as np
 
-from ...preprocessor import Preprocessor
 from ....builders import build_preprocessor
 from ....configs import PreprocessorConfig
 from ....constants import DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE
 from ....utils import convert_batch_dict_dtype
+from ...preprocessor import Preprocessor
 
 
 @dataclass
@@ -200,7 +200,7 @@ class AudioFeatureExtractor(Preprocessor):
 
         elif padding == "max_length":
             if max_length is None:
-                raise ValueError(f"Setting `padding=max_length` but leaving `max_length` as `None` is invalid!")
+                raise ValueError("Setting `padding=max_length` but leaving `max_length` as `None` is invalid!")
             padding_strategy = "max_length"
 
         else:

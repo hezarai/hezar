@@ -1,7 +1,7 @@
 """
 Define all model outputs here
 """
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from typing import List, Optional
 
 import torch

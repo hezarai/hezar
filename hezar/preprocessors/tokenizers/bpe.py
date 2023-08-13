@@ -4,7 +4,7 @@ from typing import List
 
 from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
-from tokenizers import decoders, models, pre_tokenizers, trainers, processors
+from tokenizers import decoders, models, pre_tokenizers, processors, trainers
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
 from ...registry import register_preprocessor

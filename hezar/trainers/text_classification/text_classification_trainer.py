@@ -3,9 +3,8 @@ from typing import List
 import numpy as np
 import torch
 
-
-from ...constants import MetricType
 from ...configs import TrainerConfig
+from ...constants import MetricType
 from ...data.datasets import Dataset
 from ...models import Model
 from ...utils import get_logger

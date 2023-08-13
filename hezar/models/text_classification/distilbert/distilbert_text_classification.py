@@ -1,14 +1,14 @@
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 from torch import nn
 from transformers import DistilBertConfig, DistilBertModel
 
-from .distilbert_text_classification_config import DistilBertTextClassificationConfig
-from ...model import Model
 from ....registry import register_model
+from ...model import Model
+from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
 @register_model(model_name="distilbert_text_classification", config_class=DistilBertTextClassificationConfig)

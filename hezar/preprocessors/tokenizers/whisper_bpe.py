@@ -4,9 +4,10 @@ from typing import List
 import numpy as np
 from tokenizers import processors
 
-from .bpe import BPEConfig, BPETokenizer
 from ...registry import register_preprocessor
 from ...utils import get_logger
+from .bpe import BPEConfig, BPETokenizer
+
 
 logger = get_logger(__name__)
 

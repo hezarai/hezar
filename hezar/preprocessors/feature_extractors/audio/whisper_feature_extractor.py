@@ -1,11 +1,12 @@
 from dataclasses import dataclass, field
-from typing import Union, List
+from typing import List, Union
 
 import numpy as np
 
 from ....registry import register_preprocessor
-from ....utils import get_logger, convert_batch_dict_dtype, spectrogram, window_function, mel_filter_bank
+from ....utils import convert_batch_dict_dtype, get_logger, mel_filter_bank, spectrogram, window_function
 from .audio_feature_extractor import AudioFeatureExtractor, AudioFeatureExtractorConfig
+
 
 logger = get_logger(__name__)
 

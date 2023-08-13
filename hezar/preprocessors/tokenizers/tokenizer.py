@@ -2,7 +2,7 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Literal, Mapping, Optional, Union, Tuple
+from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -11,11 +11,12 @@ from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.decoders import Decoder
 from tokenizers.models import Model
 
-from ..preprocessor import Preprocessor
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
-from ...utils import get_logger, convert_batch_dict_dtype
+from ...utils import convert_batch_dict_dtype, get_logger
+from ..preprocessor import Preprocessor
+
 
 logger = get_logger(__name__)
 

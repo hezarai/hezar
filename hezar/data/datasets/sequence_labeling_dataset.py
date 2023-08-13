@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 from datasets import load_dataset
 
 from ...configs import DatasetConfig
-from ...constants import TaskType, HEZAR_CACHE_DIR
+from ...constants import TaskType
 from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import get_logger
