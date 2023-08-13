@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import List, Literal, Union
+from typing import List, Literal, Union, Optional
 import pprint
 
 from gensim.models import word2vec
@@ -125,11 +125,22 @@ class Word2Vec(Embedding):
         doesnt_match = self.word_vectors.doesnt_match(words)
         return doesnt_match
 
-    def most_similar(self, word: str, top_n: int = 5):
-        if not isinstance(word, str):
-            raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
+    def most_similar(self, word: str, top_n: int = 5, round_value: Optional[int] = 4):
+        """
+            Get the most similar words to the given word.
+            Args:
+                word:
+                top_n:
+                round_value:
+
+            Returns:
+
+        """
+        if not isinstance(word, str) or word == "":
+            raise ValueError(f"`word` must be a non empty `str`, got `{type(word)}` and `{word}`!")
         most_similar = self.word_vectors.most_similar(word, topn=top_n)
-        most_similar = [{"word": word, "score": score} for word, score in most_similar]
+        most_similar = [{"word": word, "score": round(score, round_value) if round_value is not None else score}
+                        for word, score in most_similar]
         return pprint.pformat(most_similar)
 
     def get_normed_vectors(self):
