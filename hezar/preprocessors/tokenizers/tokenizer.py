@@ -71,9 +71,14 @@ class Tokenizer(Preprocessor):
     def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True, **kwargs):
         """
         tokenize a list of inputs(could be raw or tokenized inputs)
-        : param inputs: a list of inputs
-        : param is_pretokenized: whether the inputs are already tokenized
-        : param add_special_tokens: whether to add special tokens
+        Args:
+            inputs:
+            is_pretokenized: Whether the inputs are already tokenized
+            add_special_tokens: Whether to add special tokens to the inputs. Defaults to True.
+            **kwargs:
+
+        Returns:
+
         """
         if isinstance(inputs, str):
             inputs = [inputs]
