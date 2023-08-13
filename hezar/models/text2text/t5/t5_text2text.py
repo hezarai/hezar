@@ -1,14 +1,15 @@
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
+import torch
 from transformers import T5Config, T5ForConditionalGeneration
 
 from ....registry import register_model
-from ...model import Model
+from ...model import GenerativeModel
 from .t5_text2text_config import T5Text2TextConfig
 
 
 @register_model("t5_text2text", config_class=T5Text2TextConfig)
-class T5Text2Text(Model):
+class T5Text2Text(GenerativeModel):
     """
     T5 for text to text generation
     """
@@ -36,33 +37,36 @@ class T5Text2Text(Model):
         output_attentions = inputs.get("output_attentions", None)
         output_hidden_states = inputs.get("output_hidden_states", None)
 
-        if labels is not None:
-            outputs = self.t5(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                decoder_input_ids=decoder_input_ids,
-                decoder_attention_mask=decoder_attention_mask,
-                head_mask=head_mask,
-                decoder_head_mask=decoder_head_mask,
-                cross_attn_head_mask=cross_attn_head_mask,
-                encoder_outputs=encoder_outputs,
-                past_key_values=past_key_values,
-                inputs_embeds=inputs_embeds,
-                decoder_inputs_embeds=decoder_inputs_embeds,
-                labels=labels,
-                use_cache=use_cache,
-                output_attentions=output_attentions,
-                output_hidden_states=output_hidden_states,
-            )
-        else:
-            input_bs, input_length = input_ids.shape
-            model_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
-            generation_kwargs = {"min_length": self.config.min_length, "max_length": self.config.max_length}
-            output_ids = self.t5.generate(**model_inputs, **generation_kwargs)
-            output_bs = output_ids.shape[0]
-            output_ids = output_ids.reshape(input_bs, output_bs // input_bs, *output_ids.shape[1:])
-            outputs = {"output_ids": output_ids}
+        outputs = self.t5(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            decoder_input_ids=decoder_input_ids,
+            decoder_attention_mask=decoder_attention_mask,
+            head_mask=head_mask,
+            decoder_head_mask=decoder_head_mask,
+            cross_attn_head_mask=cross_attn_head_mask,
+            encoder_outputs=encoder_outputs,
+            past_key_values=past_key_values,
+            inputs_embeds=inputs_embeds,
+            decoder_inputs_embeds=decoder_inputs_embeds,
+            labels=labels,
+            use_cache=use_cache,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+        )
 
+        return outputs
+
+    def generate(self, inputs, **kwargs):
+        input_ids = inputs.get("token_ids")
+        attention_mask = inputs.get("attention_mask", None)
+        input_bs, input_length = input_ids.shape
+        model_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
+        generation_kwargs = {"min_length": self.config.min_length, "max_length": self.config.max_length}
+        output_ids = self.t5.generate(**model_inputs, **generation_kwargs, **kwargs)
+        output_bs = output_ids.shape[0]
+        output_ids = output_ids.reshape(input_bs, output_bs // input_bs, *output_ids.shape[1:])
+        outputs = {"output_ids": output_ids}
         return outputs
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
