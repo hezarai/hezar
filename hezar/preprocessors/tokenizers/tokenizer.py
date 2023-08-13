@@ -70,6 +70,12 @@ class Tokenizer(Preprocessor):
         raise NotImplementedError
 
     def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True, **kwargs):
+        """
+        tokenize a list of inputs(could be raw or tokenized inputs)
+        : param inputs: a list of inputs
+        : param is_pretokenized: whether the inputs are already tokenized
+        : param add_special_tokens: whether to add special tokens
+        """
         if isinstance(inputs, str):
             inputs = [inputs]
         elif isinstance(inputs, list) and is_pretokenized:

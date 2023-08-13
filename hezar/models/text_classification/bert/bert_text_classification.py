@@ -6,9 +6,9 @@ from typing import Dict, List, Union
 from torch import nn
 from transformers import BertConfig, BertModel
 
+from .bert_text_classification_config import BertTextClassificationConfig
 from ...model import Model
 from ....registry import register_model
-from .bert_text_classification_config import BertTextClassificationConfig
 
 
 @register_model(model_name="bert_text_classification", config_class=BertTextClassificationConfig)
