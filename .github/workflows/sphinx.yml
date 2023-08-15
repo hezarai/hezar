@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-python@v3
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx_rtd_theme furo sphinx_copybutton
+          pip install sphinx sphinx_rtd_theme furo sphinx_copybutton sphinx_inline_tabs
       - name: Sphinx build
         run: |
           sphinx-build -b html docs/source/ docs/build/html
