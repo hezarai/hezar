@@ -1,4 +1,4 @@
-name: Build & Deploy Docs
+name: Deploy Sphinx docs
 on: [push, pull_request, workflow_dispatch]
 permissions:
     contents: write
