@@ -324,6 +324,9 @@ class Model(nn.Module):
 
 
 class GenerativeModel(Model):
+    """
+    A Model subclass specific to generative models
+    """
     def __init__(self, config: ModelConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
