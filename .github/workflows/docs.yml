@@ -1,14 +1,7 @@
-name: "Docs"
+name: "Sphinx: Render docs"
 
-on:
-  push:
-    paths:
-      - ".github/workflows/docs.yml"
-      - "docs/**"
-  pull_request:
-    paths:
-      - ".github/workflows/docs.yml"
-      - "docs/**"
+on: push
+
 jobs:
   build:
     runs-on: ubuntu-latest
