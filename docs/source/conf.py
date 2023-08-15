@@ -21,10 +21,6 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
-    "sphinx_copybutton",
-    "sphinx_inline_tabs",
-    "sphinx_removed_in",
-    "sphinxext.opengraph",
 ]
 
 templates_path = ['_templates']
