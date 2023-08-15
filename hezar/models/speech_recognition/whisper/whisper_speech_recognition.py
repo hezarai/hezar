@@ -7,6 +7,7 @@ from transformers import WhisperConfig, WhisperForConditionalGeneration
 from ....integrations import is_soundfile_available
 from ....registry import register_model
 from ...model import GenerativeModel
+from ...model_outputs import SpeechRecognitionOutputs
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
 
@@ -150,5 +151,5 @@ class WhisperSpeechRecognition(GenerativeModel):
 
     def post_process(self, inputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
-        transcription = tokenizer.decode(inputs, decode_with_timestamps=True)
-        return transcription
+        transcription = tokenizer.decode(inputs, decode_with_timestamps=True, skip_special_tokens=True)
+        return SpeechRecognitionOutputs(transcription=transcription).dict()
