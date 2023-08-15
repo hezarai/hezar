@@ -63,3 +63,8 @@ class SequenceLabelingOutputs(ModelOutputs):
 @dataclass
 class Text2TextOutputs(ModelOutputs):
     generated_texts: Optional[List[str]] = None
+
+
+@dataclass
+class SpeechRecognitionOutputs(ModelOutputs):
+    transcription: Optional[List[str]] = None
