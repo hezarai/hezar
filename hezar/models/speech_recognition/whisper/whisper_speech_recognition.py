@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from transformers import WhisperConfig, WhisperForConditionalGeneration
 
-from ....integrations import is_soundfile_available
+from ....integrations import is_librosa_available
 from ....registry import register_model
 from ...model import GenerativeModel
 from ...model_outputs import SpeechRecognitionOutputs
@@ -137,9 +137,9 @@ class WhisperSpeechRecognition(GenerativeModel):
         if isinstance(inputs, str) or (isinstance(inputs, List), isinstance(inputs[0], str)):
             if isinstance(inputs, str):
                 inputs = [inputs]
-            if is_soundfile_available():
-                import soundfile
-                inputs = [soundfile.read(x) for x in inputs]
+            if is_librosa_available():
+                import librosa
+                inputs = [librosa.load(x, sr=self.config.sampling_rate)[0] for x in inputs]
 
         tokenizer = self.preprocessor[self.tokenizer_name]
         feature_extractor = self.preprocessor[self.feature_extractor_name]
