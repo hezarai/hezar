@@ -59,6 +59,20 @@ print(f"NER: {ner_outputs}")
 POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
+- Speech Recognition
+```python
+from hezar import Model
+from datasets import load_dataset
+
+ds = load_dataset("mozilla-foundation/common_voice_11_0", "fa", split="test")
+sample = ds[1001]
+whisper = Model.load("hezarai/whisper-small-fa")
+transcript = whisper.predict(sample["path"])  # or pass `sample["audio"]["array"]` (with the right sample rate)
+print(transcript)
+```
+```commandline
+{'transcription': ['و این تنها محدود به محیط کار نیست']}
+```
 ### Word Embeddings
 - FastText
 ```python
