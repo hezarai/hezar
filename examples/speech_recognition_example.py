@@ -1,8 +1,8 @@
 from hezar import Model
-import numpy as np
+from datasets import load_dataset
 
-
-whisper = Model.load("hezarai/whisper-small")
-audio_array = np.load("sample_audio.npy")
-transcript = whisper.predict([audio_array])
+ds = load_dataset("mozilla-foundation/common_voice_11_0", "fa", split="test")
+sample = ds[1001]
+whisper = Model.load("hezarai/whisper-small-fa")
+transcript = whisper.predict(sample["path"])  # or pass `sample["audio"]["array"]` (with the right sample rate)
 print(transcript)
