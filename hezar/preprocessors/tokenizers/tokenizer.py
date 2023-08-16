@@ -363,7 +363,7 @@ class Tokenizer(Preprocessor):
             if return_special_tokens_mask:
                 encoding_dict["special_tokens_mask"].append(e.special_tokens_mask)
             if return_offsets_mapping:
-                encoding_dict["offset_mapping"].append(e.offsets)
+                encoding_dict["offsets_mapping"].append(e.offsets)
             if return_length:
                 encoding_dict["length"].append(len(e.ids))
             if return_tokens:
