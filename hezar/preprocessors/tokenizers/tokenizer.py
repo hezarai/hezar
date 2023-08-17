@@ -61,7 +61,7 @@ class Tokenizer(Preprocessor):
         "mask_token",
         "additional_special_tokens",
     ]
-    uncastable_keys = ["word_ids", "tokens", "offset_mapping"]
+    uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
     def __init__(self, config: TokenizerConfig, **kwargs):
         super().__init__(config, **kwargs)
