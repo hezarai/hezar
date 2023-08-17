@@ -367,7 +367,9 @@ class Tokenizer(Preprocessor):
             if return_length:
                 encoding_dict["length"].append(len(e.ids))
             if return_tokens:
-                encoding_dict["tokens"].append(e.tokens)
+                text = self._tokenizer.decode(e.ids)
+                tokens = self.get_tokens_from_offsets(text, e.ids, e.offsets)
+                encoding_dict["tokens"].append(tokens)
             if return_word_ids:
                 encoding_dict["word_ids"].append(e.word_ids)
 
@@ -455,6 +457,35 @@ class Tokenizer(Preprocessor):
         Size of the full vocabulary with the added tokens.
         """
         return self._tokenizer.get_vocab_size(with_added_tokens=True)
+
+    def get_tokens_from_offsets(
+        self,
+        text: Union[str, List[str]],
+        ids: List[int],
+        offsets_mapping: List[Tuple[int, int]],
+    ):
+        """
+        Extract human-readable tokens using the original text and offsets mapping
+        Args:
+            text: Raw string text
+            ids: Token ids
+            offsets_mapping: A list of tuples representing offsets
+
+        Returns:
+            A list of tokens
+        """
+        if not isinstance(text, str):
+            raise ValueError(f"Expected str type for `text`, got `{type(text)}({text})`")
+        if isinstance(offsets_mapping, list) and not isinstance(offsets_mapping[0], Tuple):
+            raise ValueError(f"Expected a list of tuples for `offsets_mapping`, got List[{type(offsets_mapping[0])}]")
+        tokens = []
+        for offset in offsets_mapping:
+            offset_start, offset_end = offset
+            tokens.append(text[offset_start: offset_end])
+        for i, token in enumerate(tokens):
+            if ids[i] in self.special_ids:
+                tokens[i] = self._tokenizer.id_to_token(ids[i])
+        return tokens
 
     @classmethod
     def load(
