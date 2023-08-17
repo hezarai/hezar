@@ -1,49 +1,24 @@
-name: Publish docs
-
-# build the documentation whenever there are new commits on main
-on:
-  push:
-    branches:
-      - main
-    # Alternative: only build for tags.
-    # tags:
-    #   - '*'
-
-# security: restrict permissions for CI jobs.
+name: Docs
+on: [push, pull_request, workflow_dispatch]
 permissions:
-  contents: read
-
+    contents: write
 jobs:
-  # Build the documentation and upload the static HTML files as an artifact.
-  build:
+  docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v3
+      - name: Install dependencies
+        run: |
+          pip install sphinx sphinx_rtd_theme
+      - name: Sphinx build
+        run: |
+          sphinx-build docs _build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
-          python-version: '3.9'
-
-      # ADJUST THIS: install all dependencies (including pdoc)
-      - run: pip install hezar pdoc
-      # ADJUST THIS: build your documentation into docs/.
-      # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: pdoc -o docs/source ./hezar
-
-      - uses: actions/upload-pages-artifact@v2
-        with:
-          path: docs/source
-
-  # Deploy the artifact to GitHub pages.
-  # This is a separate job so that only actions/deploy-pages has the necessary permissions.
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v2
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _build/
+          force_orphan: true
