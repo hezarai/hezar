@@ -13,7 +13,6 @@ jobs:
           pip install sphinx sphinx_rtd_theme furo myst-parser
       - name: Sphinx build
         run: |
-#          sphinx-apidoc -H Hezar -o docs/source hezar/
           sphinx-build docs _build
 
       - name: Deploy
