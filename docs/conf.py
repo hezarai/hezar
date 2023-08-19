@@ -47,3 +47,4 @@ html_theme = 'furo'
 html_static_path = ['_static']
 
 html_logo = "hezar_logo.svg"
+html_favicon = "hezar_logo.svg"
