@@ -8,7 +8,7 @@ import torch
 
 
 @dataclass
-class ModelOutputs:
+class ModelOutput:
     """
     Base class for all model outputs (named based on tasks)
 
@@ -41,30 +41,30 @@ class ModelOutputs:
 
 
 @dataclass
-class LanguageModelingOutputs(ModelOutputs):
+class LanguageModelingOutput(ModelOutput):
     last_hidden_state: Optional[torch.FloatTensor] = None
     hidden_state: Optional[torch.FloatTensor] = None
     attentions: Optional[torch.FloatTensor] = None
 
 
 @dataclass
-class TextClassificationOutputs(ModelOutputs):
+class TextClassificationOutput(ModelOutput):
     labels: Optional[List[str]] = None
     probs: Optional[List[float]] = None
 
 
 @dataclass
-class SequenceLabelingOutputs(ModelOutputs):
+class SequenceLabelingOutput(ModelOutput):
     tokens: Optional[List[List[str]]] = None
     tags: Optional[List[List[str]]] = None
     probs: Optional[List[List[float]]] = None
 
 
 @dataclass
-class Text2TextOutputs(ModelOutputs):
+class Text2TextOutput(ModelOutput):
     generated_texts: Optional[List[str]] = None
 
 
 @dataclass
-class SpeechRecognitionOutputs(ModelOutputs):
+class SpeechRecognitionOutput(ModelOutput):
     transcription: Optional[List[str]] = None
