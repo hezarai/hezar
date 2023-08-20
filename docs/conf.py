@@ -49,10 +49,15 @@ html_theme_options = {
     "source_branch": "main",
     "source_directory": "docs/",
     "light_css_variables": {
-        "color-foreground-primary": "#2C3E50"
+        "color-foreground-primary": "#2C3E50",
+        "color-background-border": "white",
+        "color-toc-background": "#F8F9FB"
     },
     "dark_css_variables": {
-        "color-foreground-primary": "#ceddeb"
+        "color-foreground-primary": "#CEDDEB",
+        "color-background-primary": "#1A1A1B",
+        "color-background-border": "#1A1B1C",
+        "color-toc-background": "#1A1C1E"
     }
 }
 
