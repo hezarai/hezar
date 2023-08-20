@@ -13,7 +13,7 @@ model = Model.load("hezarai/bert-fa-sentiment-dksf")
 outputs = model.predict(example)
 print(outputs)
 ```
-```bash
+```
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
 - **Sequence labeling (POS, NER, etc.)**
@@ -28,11 +28,11 @@ ner_outputs = ner_model.predict(inputs)
 print(f"POS: {pos_outputs}")
 print(f"NER: {ner_outputs}")
 ```
-```bash
+```
 POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
-- **Speech Recognition**
+- **Speech recognition**
 ```python
 from hezar import Model
 from datasets import load_dataset
@@ -43,7 +43,7 @@ whisper = Model.load("hezarai/whisper-small-fa")
 transcript = whisper.predict(sample["path"])  # or pass `sample["audio"]["array"]` (with the right sample rate)
 print(transcript)
 ```
-```bash
+```
 {'transcription': ['و این تنها محدود به محیط کار نیست']}
 ```
 
@@ -56,7 +56,7 @@ fasttext = Embedding.load("hezarai/fasttext-fa-300")
 most_similar = fasttext.most_similar("هزار")
 print(most_similar)
 ```
-```bash
+```
 [{'score': 0.7579, 'word': 'میلیون'},
  {'score': 0.6943, 'word': '21هزار'},
  {'score': 0.6861, 'word': 'میلیارد'},
@@ -71,7 +71,7 @@ word2vec = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")
 most_similar = word2vec.most_similar("هزار")
 print(most_similar)
 ```
-```bash
+```
 [{'score': 0.7885, 'word': 'چهارهزار'},
  {'score': 0.7788, 'word': '۱۰هزار'},
  {'score': 0.7727, 'word': 'دویست'},
@@ -86,7 +86,7 @@ word2vec = Embedding.load("hezarai/word2vec-cbow-fa-wikipedia")
 most_similar = word2vec.most_similar("هزار")
 print(most_similar)
 ```
-```bash
+```
 [{'score': 0.7407, 'word': 'دویست'},
  {'score': 0.7400, 'word': 'میلیون'},
  {'score': 0.7326, 'word': 'صد'},
