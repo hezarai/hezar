@@ -41,19 +41,6 @@ __all__ = [
 
 logger = get_logger(__name__)
 
-CONFIG_TYPES_MAPPING = {
-    "Config": ConfigType.BASE,
-    "ModelConfig": ConfigType.MODEL,
-    "PreprocessorConfig": ConfigType.PREPROCESSOR,
-    "TrainerConfig": ConfigType.TRAINER,
-    "DatasetConfig": ConfigType.DATASET,
-    "EmbeddingConfig": ConfigType.EMBEDDING,
-    "CriterionConfig": ConfigType.CRITERION,
-    "OptimizerConfig": ConfigType.OPTIMIZER,
-    "LRSchedulerConfig": ConfigType.LR_SCHEDULER,
-    "MetricConfig": ConfigType.METRIC,
-}
-
 CONFIG_CLASS_VARS = ["name", "config_type"]
 
 
@@ -73,7 +60,7 @@ class Config:
         try:
             return self.dict()[item]
         except KeyError:
-            raise AttributeError(f"`{self.__class__.__name__}` has no attribute `{item}`!")
+            raise AttributeError(f"`{self.__class__.__name__}` does not have the parameter `{item}`!")
 
     def __len__(self):
         return len(self.dict())
