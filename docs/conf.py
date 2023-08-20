@@ -43,12 +43,21 @@ myst_enable_extensions = [
 ]
 suppress_warnings = ["myst.header"]
 
+html_title = "Hezar Documentation"
 html_theme_options = {
     "source_repository": "https://github.com/hezarai/hezar/",
     "source_branch": "main",
     "source_directory": "docs/",
+    "light_css_variables": {
+        "color-foreground-primary": "#2C3E50"
+    },
+    "dark_css_variables": {
+        "color-foreground-primary": "#ceddeb"
+    }
 }
 
+pygments_style = "emacs"
+pygments_dark_style = "material"
 html_theme = 'furo'
 html_static_path = ['_static']
 
