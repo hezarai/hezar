@@ -4,7 +4,7 @@ Let's have a quick tour on some of the most important features of Hezar!
 ### Models
 There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
 
-- Text classification (sentiment analysis, categorization, etc) 
+- **Text classification (sentiment analysis, categorization, etc)** 
 ```python
 from hezar import Model
 
@@ -16,7 +16,7 @@ print(outputs)
 ```bash
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-- Sequence labeling (POS, NER, etc.)
+- **Sequence labeling (POS, NER, etc.)**
 ```python
 from hezar import Model
 
@@ -32,7 +32,7 @@ print(f"NER: {ner_outputs}")
 POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
-- Speech Recognition
+- **Speech Recognition**
 ```python
 from hezar import Model
 from datasets import load_dataset
@@ -48,7 +48,7 @@ print(transcript)
 ```
 
 ### Word Embeddings
-- FastText
+- **FastText**
 ```python
 from hezar import Embedding
 
@@ -63,7 +63,7 @@ print(most_similar)
  {'score': 0.6825, 'word': '26هزار'},
  {'score': 0.6803, 'word': '٣هزار'}]
 ```
-- Word2Vec (Skip-gram)
+- **Word2Vec (Skip-gram)**
 ```python
 from hezar import Embedding
 
@@ -78,7 +78,7 @@ print(most_similar)
  {'score': 0.7679, 'word': 'میلیون'},
  {'score': 0.7602, 'word': 'پانصد'}]
 ```
-- Word2Vec (CBOW)
+- **Word2Vec (CBOW)**
 ```python
 from hezar import Embedding
 
