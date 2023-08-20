@@ -43,6 +43,12 @@ myst_enable_extensions = [
 ]
 suppress_warnings = ["myst.header"]
 
+html_theme_options = {
+    "source_repository": "https://github.com/hezarai/hezar/",
+    "source_branch": "main",
+    "source_directory": "docs/",
+}
+
 html_theme = 'furo'
 html_static_path = ['_static']
 
