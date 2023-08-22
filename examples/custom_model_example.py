@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from torch import Tensor, nn
 
@@ -7,7 +7,7 @@ from hezar import Model, ModelConfig
 
 @dataclass
 class PerceptronConfig(ModelConfig):
-    name: str = "perceptron"
+    name = "perceptron"
     input_shape: int = 4
     output_shape: int = 2
 

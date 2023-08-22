@@ -56,6 +56,23 @@ class Config:
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.BASE)
 
+    def __post_init__(self):
+        if "name" in self.__annotations__:
+            if self.__dataclass_fields__["name"].init == True:  # noqa
+                raise ValueError(
+                    f"The parameter `name` in a config should be either non-initable or unannotated! "
+                    f"\nYou should define it as either:\n"
+                    f"`name = {self.name}`"
+                    f" or "
+                    f"`name: str = field(default={self.name}, init=False)`"
+                )
+        # If `name` is defined raw, redefine it so that it's registered as a dataclass field
+        elif "name" not in self.__annotations__ and self.name is not None:
+            self.name: str = self.name
+
+        if self.config_type is not None and isinstance(self.config_type, Enum):
+            self.config_type: str = self.config_type.value
+
     def __getitem__(self, item):
         try:
             return self.dict()[item]
@@ -187,9 +204,6 @@ class Config:
         if skip_none_fields:
             # exclude None items
             config = {k: v for k, v in config.items() if v is not None}
-
-        # convert enums to value
-        config = {k: v.value if isinstance(v, Enum) else v for k, v in config.items()}
 
         # make and save to directory
         os.makedirs(os.path.join(save_dir, subfolder), exist_ok=True)
