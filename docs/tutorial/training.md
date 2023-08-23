@@ -1,4 +1,4 @@
-# Training & Fine-tuning models
+# Training & Fine-tuning
 
 Training a model in Hezar is pretty much like any other library or even simpler! As mentioned before, any model in Hezar
 is also a PyTorch module. So training a model is actually training a PyTorch model with some more cool features! 

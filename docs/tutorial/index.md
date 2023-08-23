@@ -4,6 +4,6 @@
 
 models.md
 datasets.md
-training.md
 preprocessors.md
+training.md
 ```

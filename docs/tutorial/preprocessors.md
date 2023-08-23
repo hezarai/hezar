@@ -18,7 +18,7 @@ normalizer = TextNormalizer.load("hezarai/roberta-base-fa")
 feature_extractor = AudioFeatureExtractor.load("hezarai/whisper-small-fa")
 ...
 ```
-**Loading with the Preprocessor class**
+**Loading with the Preprocessor module**<br>
 Some models might need multiple types of preprocessors. For example encoder-decoder multimodal models like image captioning models 
 or even audio models need both feature extractor and text tokenizer or even a text normalizer. In order to load all 
 preprocessors in a path, you can use the `Preprocessor.load`. The output of this method depends on whether the path 
