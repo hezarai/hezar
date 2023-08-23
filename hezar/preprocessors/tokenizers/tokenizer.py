@@ -156,10 +156,10 @@ class Tokenizer(Preprocessor):
                 else:
                     inputs_length = max_length
 
+        skip_keys = skip_keys or []
         skip_keys += self.uncastable_keys  # avoid possible errors
         inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=skip_keys)
 
-        skip_keys = skip_keys or []
         for key, batch in inputs.items():
             if key in skip_keys:
                 continue
