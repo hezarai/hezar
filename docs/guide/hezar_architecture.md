@@ -94,10 +94,9 @@ word2vec = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")  # A Word2Ve
 ...
 ```
 
-
-**Registry System**<br>
 So, what's going on under the hood that handles module loading and initiation?
 
+**Registry System**<br>
 Well, there are ways to tackle this challenge, but Hezar manages this by using _a global registry_ for every module
 type. These registries are simple Python dictionaries that hold the properties for every module class, module config, 
 etc. 
