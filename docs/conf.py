@@ -50,11 +50,13 @@ html_theme_options = {
     "source_directory": "docs/",
     "light_css_variables": {
         "color-foreground-primary": "#2C3E50",
+        "color-inline-code-background": "#F1F1F1",
         "color-background-border": "white",
         "color-toc-background": "#F8F9FB"
     },
     "dark_css_variables": {
         "color-foreground-primary": "#CEDDEB",
+        "color-inline-code-background": "#1A1C1E",
         "color-background-primary": "#1A1A1B",
         "color-background-border": "#1A1B1C",
         "color-toc-background": "#1A1C1E"
