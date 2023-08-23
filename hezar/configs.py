@@ -16,7 +16,7 @@ import os
 import tempfile
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
