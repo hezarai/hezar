@@ -26,6 +26,8 @@ Clone the repo and execute the following commands:
 git clone https://github.com/hezarai/hezar.git
 pip install ./hezar
 ```
+## Documentation
+Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.html) page. 
 
 ## Quick Tour
 ### Models
@@ -193,8 +195,6 @@ More specifically, here's a simple summary of the core modules in Hezar:
 - **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
 - **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
 
-## Documentation
-Refer to the [docs](docs) for a full documentation.
 
 ## Contribution
 This is a really heavy project to be maintained by a couple of developers. The idea isn't novel at all but actually doing it is really difficult hence being the only one in the whole history of the Persian open source! So any contribution is appreciated ❤️
