@@ -1,6 +1,6 @@
 # Tutorial
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 
 models.md
 datasets.md

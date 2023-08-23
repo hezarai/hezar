@@ -1,6 +1,6 @@
 # Get Started
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 
 overview.md
 installation.md
