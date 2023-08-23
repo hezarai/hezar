@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class RobertaLMConfig(ModelConfig):
-    name: str = "roberta_lm"
+    name = "roberta_lm"
     task: str = TaskType.LANGUAGE_MODELING
     attention_probs_dropout_prob: float = 0.1
     bos_token_id: int = 0

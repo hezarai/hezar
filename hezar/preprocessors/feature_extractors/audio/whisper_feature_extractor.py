@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class WhisperFeatureExtractorConfig(AudioFeatureExtractorConfig):
-    name: str = field(default="whisper_feature_extractor", init=False)
+    name = "whisper_feature_extractor"
     feature_size: int = 80
     sampling_rate: int = 16000
     hop_length: int = 160

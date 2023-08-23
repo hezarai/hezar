@@ -13,7 +13,7 @@ from .embedding import Embedding, EmbeddingConfig
 
 @dataclass
 class FastTextConfig(EmbeddingConfig):
-    name: str = "fasttext"
+    name = "fasttext"
     dataset_path: str = None
     vector_size: int = 300
     window: int = 5

@@ -13,7 +13,7 @@ from .tokenizer import Tokenizer, TokenizerConfig
 
 @dataclass
 class WordPieceConfig(TokenizerConfig):
-    name: str = "wordpiece_tokenizer"
+    name = "wordpiece_tokenizer"
     max_length: int = 512
     truncation_strategy: str = "longest_first"
     truncation_direction: str = "right"

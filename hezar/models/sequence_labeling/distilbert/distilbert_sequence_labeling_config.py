@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class DistilBertSequenceLabelingConfig(ModelConfig):
-    name: str = "distilbert_sequence_labeling"
+    name = "distilbert_sequence_labeling"
     task: str = TaskType.SEQUENCE_LABELING
     num_labels: int = None
     id2label: dict = None

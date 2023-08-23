@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class SeqevalConfig(MetricConfig):
-    name: str = MetricType.SEQEVAL
+    name = MetricType.SEQEVAL
     suffix: bool = False
     mode: Optional[str] = None
     sample_weight: Optional[List[int]] = None

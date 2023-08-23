@@ -11,7 +11,7 @@ from .metric import Metric
 
 @dataclass
 class F1Config(MetricConfig):
-    name: str = MetricType.F1
+    name = MetricType.F1
     pos_label: int = None
     average: str = None
     sample_weight: Iterable[float] = None

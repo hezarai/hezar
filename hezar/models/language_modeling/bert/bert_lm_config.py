@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class BertLMConfig(ModelConfig):
-    name: str = "bert_lm"
+    name = "bert_lm"
     task: str = TaskType.LANGUAGE_MODELING
     vocab_size: int = 42000
     hidden_size: int = 768

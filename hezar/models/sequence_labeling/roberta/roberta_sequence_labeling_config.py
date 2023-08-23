@@ -7,7 +7,7 @@ from ....constants import TaskType
 
 @dataclass
 class RobertaSequenceLabelingConfig(ModelConfig):
-    name: str = "roberta_sequence_labeling"
+    name = "roberta_sequence_labeling"
     task: str = TaskType.SEQUENCE_LABELING
     num_labels: int = None
     id2label: dict = None

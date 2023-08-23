@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class TextClassificationDatasetConfig(DatasetConfig):
-    name: str = "text_classification"
+    name = "text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
     path: str = None
     normalizers: List[Tuple[str, Dict]] = None

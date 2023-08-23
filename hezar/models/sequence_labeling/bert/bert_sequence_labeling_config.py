@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class BertSequenceLabelingConfig(ModelConfig):
-    name: str = "bert_sequence_labeling"
+    name = "bert_sequence_labeling"
     task: str = TaskType.SEQUENCE_LABELING
     num_labels: int = None
     id2label: dict = None

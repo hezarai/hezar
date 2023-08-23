@@ -6,7 +6,7 @@ from ....configs import ModelConfig
 
 @dataclass
 class WhisperSpeechRecognitionConfig(ModelConfig):
-    name: str = field(default="whisper_speech_recognition", init=False)
+    name = "whisper_speech_recognition"
     vocab_size: int = 51865
     num_mel_bins: int = 80
     encoder_layers: int = 6

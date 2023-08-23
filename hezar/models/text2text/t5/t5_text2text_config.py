@@ -5,7 +5,7 @@ from ....configs import ModelConfig
 
 @dataclass
 class T5Text2TextConfig(ModelConfig):
-    name: str = "t5_text2text"
+    name = "t5_text2text"
     vocab_size: int = 32103
     d_model: int = 768
     d_kv: int = 64

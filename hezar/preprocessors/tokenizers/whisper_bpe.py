@@ -134,7 +134,7 @@ TASK_IDS = ["translate", "transcribe"]
 
 @dataclass
 class WhisperBPEConfig(BPEConfig):
-    name: str = field(default="whisper_bpe_tokenizer", init=False)
+    name = "whisper_bpe_tokenizer"
     unk_token: str = "<|endoftext|>"
     unk_token_id: int = 50257
     bos_token: str = "<|startoftranscript|>"

@@ -13,7 +13,7 @@ from .embedding import Embedding, EmbeddingConfig
 
 @dataclass
 class Word2VecConfig(EmbeddingConfig):
-    name: str = "word2vec"
+    name = "word2vec"
     dataset_path: str = None
     vector_size: int = 300
     window: int = 5

@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class DistilBertLMConfig(ModelConfig):
-    name: str = "distilbert_lm"
+    name = "distilbert_lm"
     task: str = TaskType.LANGUAGE_MODELING
     activation: str = "gelu"
     attention_dropout: float = 0.1

@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class TokenizerConfig(PreprocessorConfig):
-    name: str = "tokenizer"
+    name = "tokenizer"
     pretrained_path: str = None
     max_length: int = None
     truncation_strategy: str = None

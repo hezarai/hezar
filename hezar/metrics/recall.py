@@ -11,7 +11,7 @@ from .metric import Metric
 
 @dataclass
 class RecallConfig(MetricConfig):
-    name: str = MetricType.RECALL
+    name = MetricType.RECALL
     pos_label: int = None
     average: str = "macro"
     sample_weight: Iterable[float] = None

@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class TextNormalizerConfig(PreprocessorConfig):
-    name: str = field(default="text_normalizer")
+    name = "text_normalizer"
     replace_pattern: str = None
     nfkd: bool = True
     nfkc: bool = True

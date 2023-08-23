@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class RobertaTextClassificationConfig(ModelConfig):
-    name: str = "roberta_text_classification"
+    name = "roberta_text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
     num_labels: int = None
     id2label: dict = None

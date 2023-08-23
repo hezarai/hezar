@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class BertTextClassificationConfig(ModelConfig):
-    name: str = "bert_text_classification"
+    name = "bert_text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
     num_labels: int = None
     id2label: dict = None

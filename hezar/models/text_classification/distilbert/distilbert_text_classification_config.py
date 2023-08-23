@@ -6,7 +6,7 @@ from ....constants import TaskType
 
 @dataclass
 class DistilBertTextClassificationConfig(ModelConfig):
-    name: str = "distilbert_text_classification"
+    name = "distilbert_text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
     num_labels: int = None
     id2label: dict = None

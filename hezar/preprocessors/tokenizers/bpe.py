@@ -13,7 +13,7 @@ from .tokenizer import Tokenizer, TokenizerConfig
 
 @dataclass
 class BPEConfig(TokenizerConfig):
-    name: str = "bpe_tokenizer"
+    name = "bpe_tokenizer"
     max_length: int = 512
     truncation_strategy: str = "longest_first"
     truncation_direction: str = "right"

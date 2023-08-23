@@ -13,7 +13,7 @@ from .tokenizer import Tokenizer, TokenizerConfig
 
 @dataclass
 class SentencePieceUnigramConfig(TokenizerConfig):
-    name: str = "sentencepiece_unigram_tokenizer"
+    name = "sentencepiece_unigram_tokenizer"
     max_length: int = 512
     truncation_strategy: str = "longest_first"
     truncation_direction: str = "right"

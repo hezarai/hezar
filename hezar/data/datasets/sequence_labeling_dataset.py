@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class SequenceLabelingDatasetConfig(DatasetConfig):
-    name: str = "sequence_labeling"
+    name = "sequence_labeling"
     task: str = TaskType.SEQUENCE_LABELING
     path: str = None
     normalizers: List[Tuple[str, Dict]] = None
