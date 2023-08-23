@@ -308,7 +308,6 @@ class CriterionConfig(Config):
     ignore_index: int = -100
 
 
-
 @dataclass
 class MetricConfig(Config):
     """
