@@ -11,6 +11,6 @@ Navigate to the desired section using this table of contents:
 get_started/index.md
 tutorial/index.md
 guide/index.md
-
 source/index.md
+contribute/index.md
 ```
