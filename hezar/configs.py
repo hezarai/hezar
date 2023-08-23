@@ -34,8 +34,6 @@ __all__ = [
     "DatasetConfig",
     "EmbeddingConfig",
     "CriterionConfig",
-    "OptimizerConfig",
-    "LRSchedulerConfig",
     "MetricConfig",
 ]
 
