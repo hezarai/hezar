@@ -310,27 +310,6 @@ class CriterionConfig(Config):
     ignore_index: int = -100
 
 
-@dataclass
-class LRSchedulerConfig(Config):
-    """
-    Base dataclass for all scheduler configs
-    """
-    name: str = field(default=None)
-    config_type: str = field(init=False, default=ConfigType.LR_SCHEDULER)
-    verbose: bool = True
-
-
-@dataclass
-class OptimizerConfig(Config):
-    """
-    Base dataclass for all optimizer configs
-    """
-    name: str = field(default=None)
-    config_type: str = field(init=False, default=ConfigType.OPTIMIZER)
-    lr: float = None
-    weight_decay: float = .0
-    scheduler: Union[Dict[str, Any], LRSchedulerConfig] = None
-
 
 @dataclass
 class MetricConfig(Config):
@@ -354,7 +333,10 @@ class TrainerConfig(Config):
     dataset_config: Union[DatasetConfig, Dict] = None
     num_dataloader_workers: int = 0
     seed: int = 42
-    optimizer: Union[Dict[str, Any], OptimizerConfig] = None
+    optimizer: str = None
+    learning_rate: float = 2e-5
+    weight_decay: float = .0
+    scheduler: str = None
     batch_size: int = None
     use_amp: bool = False
     metrics: List[Union[str, MetricConfig]] = None

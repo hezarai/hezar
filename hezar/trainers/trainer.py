@@ -59,6 +59,8 @@ class Trainer:
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
     AVAILABLE_METRICS = []
+    default_optimizer = "adam"
+    default_lr_scheduler = None
 
     def __init__(
         self,
@@ -172,31 +174,19 @@ class Trainer:
             Optimizer and scheduler
         """
         if optimizer is None:
-            if self.config.optimizer is None:
-                optimizer_config = OptimizerConfig(
-                    name="adamw",
-                    lr=2e-5,
-                    scheduler=LRSchedulerConfig(name="reduce_on_plateau")
-                )
-            else:
-                optimizer_config = self.config.optimizer
+            optimizer_type = self.config.optimizer or self.default_optimizer
+            optimizer = optimizers[optimizer_type](
+                self.model.parameters(),
+                lr=self.config.learning_rate,
+                weight_decay=self.config.weight_decay,
+            )
 
-            # convert to dict so that we can pop some values
-            if isinstance(optimizer_config, OptimizerConfig):
-                optimizer_config = optimizer_config.dict()
-
-            optimizer_name = optimizer_config.pop("name")
-            scheduler_config = optimizer_config.pop("scheduler")
-
-            optimizer_config.pop("config_type", None)
-            optimizer = optimizers[optimizer_name](self.model.parameters(), **optimizer_config)
-
-            if lr_scheduler is None and scheduler_config is not None:
-                if isinstance(scheduler_config, LRSchedulerConfig):
-                    scheduler_config = scheduler_config.dict()
-                scheduler_name = scheduler_config.pop("name")
-                scheduler_config.pop("config_type", None)
-                lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_config)
+            if lr_scheduler is None:
+                scheduler_name = self.config.scheduler or self.default_lr_scheduler
+                if scheduler_name is None:
+                    lr_scheduler = None
+                else:
+                    lr_scheduler = lr_schedulers[scheduler_name](optimizer, verbose=True)
         return optimizer, lr_scheduler
 
     def setup_metrics(self):
