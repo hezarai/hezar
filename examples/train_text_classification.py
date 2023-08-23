@@ -8,8 +8,8 @@ from hezar import (
 )
 
 
-dataset_path = "hezarai/sentiment_digikala_snappfood"
-base_model_path = "hezarai/distilbert-base-fa"
+dataset_path = "hezarai/sentiment-dksf"
+base_model_path = "hezarai/bert-base-fa"
 
 train_dataset = Dataset.load(dataset_path, split="train", tokenizer_path=base_model_path)
 eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=base_model_path)

@@ -1,8 +1,6 @@
 from hezar import (
     TrainerConfig,
     SequenceLabelingTrainer,
-    OptimizerConfig,
-    LRSchedulerConfig,
     Dataset,
     Preprocessor,
     build_model,
@@ -16,10 +14,9 @@ eval_dataset = Dataset.load("hezarai/lscp-pos-500k", split="test", tokenizer_pat
 
 model = build_model(name, id2label=train_dataset.id2label)
 preprocessor = Preprocessor.load(lm_path)
-optimizer_config = OptimizerConfig(name="adam", lr=2e-5, scheduler=LRSchedulerConfig(name="reduce_on_plateau"))
 train_config = TrainerConfig(
     device="cuda",
-    optimizer=optimizer_config,
+    optimizer="adamw",
     init_weights_from="hezarai/distilbert-base-fa",
     num_dataloader_workers=4,
     batch_size=64,

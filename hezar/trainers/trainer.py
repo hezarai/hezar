@@ -10,7 +10,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from ..builders import build_metric
-from ..configs import LRSchedulerConfig, MetricConfig, OptimizerConfig, TrainerConfig
+from ..configs import MetricConfig, TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
