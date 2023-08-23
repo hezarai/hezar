@@ -70,8 +70,10 @@ class Config:
         elif "name" not in self.__annotations__ and self.name is not None:
             self.name: str = self.name
 
-        if self.config_type is not None and isinstance(self.config_type, Enum):
-            self.config_type: str = self.config_type.value
+        # Convert enums to values
+        for param, value in self.dict().items():
+            if isinstance(getattr(self, param), Enum):
+                setattr(self, param, getattr(self, param).value)
 
     def __getitem__(self, item):
         try:
