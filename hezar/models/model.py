@@ -26,7 +26,6 @@ from ..utils import get_logger
 __all__ = [
     "Model",
     "GenerativeModel",
-    "ModelConfig",
 ]
 
 logger = get_logger(__name__)
