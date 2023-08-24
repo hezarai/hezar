@@ -1,9 +1,5 @@
 name: Build & Deploy Docs
-on:
-  push:
-    tags: ['\d+\.\d+\.\d+']
-  pull_request:
-    tags: ['\d+\.\d+\.\d+']
+on: [push, pull_request, workflow_dispatch]
 permissions:
     contents: write
 jobs:
@@ -14,6 +10,7 @@ jobs:
       - uses: actions/setup-python@v3
       - name: Install dependencies
         run: |
+          pip install sphinx myst-parser furo sphinx-copybutton
           pip install sphinx myst-parser furo sphinx-copybutton hezar
       - name: Sphinx build
         run: |
