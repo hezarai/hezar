@@ -159,7 +159,7 @@ of utilities called _builders_. Using builders you can build modules from their 
 These family of functions take 3 main parameters:
 - `name`: A registry key name representing that module. This name has to be present in the corresponding registry!
 - `config`: Optionally you can pass a config object to control how the module is built. The config has to be of a type that the module accepts.
-- `**kwargs`: Optionally you can pass config parameters as keyword arguments to override default the default config. (The override priority is `kwargs` > `config` > default config)  
+- `**kwargs`: Optionally you can pass config parameters as keyword arguments to override the default config. (The override priority is `kwargs` > `config` > default config)  
 ```python
 from hezar import builders
 

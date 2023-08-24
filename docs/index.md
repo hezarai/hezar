@@ -1,5 +1,6 @@
 # Welcome to Hezar's documentation!
-Welcome to Hezar's official documentation!
+![](https://github.com/hezarai/hezar/raw/main/hezar.png)
+Welcome to Hezar official documentation!
 
 Here you can find every piece of info about all the aspects in Hezar.
 
