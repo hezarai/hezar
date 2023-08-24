@@ -87,10 +87,8 @@ class RobertaSequenceLabeling(Model):
         return inputs
 
     def post_process(self, inputs, **kwargs):
-        # TODO sequence labeling outputs should consider rejoining split words into single words with proper tag
         logits = inputs["logits"]
         tokens = inputs["tokens"]
-        word_ids = inputs["word_ids"]  # noqa
         predictions = logits.argmax(2).cpu()
         predictions = [[self.config.id2label[p.item()] for p in prediction] for prediction in predictions]
         outputs = []
