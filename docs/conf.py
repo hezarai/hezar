@@ -71,5 +71,5 @@ pygments_dark_style = "material"
 html_theme = 'furo'
 html_static_path = ['_static']
 
-html_logo = "hezar_logo.svg"
-html_favicon = "hezar_logo.svg"
+html_logo = "asstes/hezar_logo.svg"
+html_favicon = "assets/hezar_logo.svg"
