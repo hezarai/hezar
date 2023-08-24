@@ -30,5 +30,5 @@ class RobertaSequenceLabelingConfig(ModelConfig):
     type_vocab_size: int = 1
     use_cache: bool = True
     vocab_size: int = 42000
-    prediction_skip_tokens: Tuple[str] = ("[SEP]", "[CLS]")
+    prediction_skip_tokens: Tuple[str] = ("<s>", "</s>, <pad>")
 
