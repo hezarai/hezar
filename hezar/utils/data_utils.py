@@ -17,7 +17,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
     Convert data dtypes of the values in a batch dict
 
     Args:
-        batch_dict: The batched dictionary
+        batch_dict: The batched dictionary. Each key in the dict has a batch of data as its value.
         dtype: Target data type to convert to
         skip_keys: A list of key names to skip conversion
 
