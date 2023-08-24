@@ -188,13 +188,14 @@ Besides, it's deeply integrated with the **🤗[Hugging Face Hub](https://github
 almost any module e.g, models, datasets, preprocessors, trainers, etc. can be uploaded to or downloaded from the Hub!
 
 More specifically, here's a simple summary of the core modules in Hezar:
-- **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc. ([Learn more]())
+- **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc.
 - **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
 - **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
 - **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in just 2 lines of code!
 - **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
 - **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
 
+For more info, check the [tutorials](https://hezarai.github.io/hezar/tutorial/)
 
 ## Contribution
 This is a really heavy project to be maintained by a couple of developers. The idea isn't novel at all but actually doing it is really difficult hence being the only one in the whole history of the Persian open source! So any contribution is appreciated ❤️
