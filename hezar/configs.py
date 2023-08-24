@@ -190,7 +190,7 @@ class Config:
         skip_none_fields: Optional[bool] = True,
     ):
         """
-        Save the *config.yaml file to a local path
+        Save the `*config.yaml` file to a local path
 
         Args:
              save_dir: Save directory path
