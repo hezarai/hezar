@@ -1,5 +1,10 @@
 name: Build & Deploy Docs
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    paths:
+      - docs/
+    tags:
+      - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
 permissions:
     contents: write
 jobs:
