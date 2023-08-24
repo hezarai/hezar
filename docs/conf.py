@@ -53,14 +53,16 @@ html_theme_options = {
         "color-foreground-primary": "#2C3E50",
         "color-inline-code-background": "#F1F1F1",
         "color-background-border": "white",
-        "color-toc-background": "#F8F9FB"
+        "color-toc-background": "#F8F9FB",
+        "color-highlight-on-target": "white"
     },
     "dark_css_variables": {
         "color-foreground-primary": "#CEDDEB",
         "color-inline-code-background": "#1A1C1E",
         "color-background-primary": "#1A1A1B",
         "color-background-border": "#1A1B1C",
-        "color-toc-background": "#1A1C1E"
+        "color-toc-background": "#1A1C1E",
+        "color-highlight-on-target": "#1A1A1B"
     }
 }
 
