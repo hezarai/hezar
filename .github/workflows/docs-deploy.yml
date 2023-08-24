@@ -1,15 +1,11 @@
 name: Build & Deploy Docs
 on:
   push:
-    paths:
-      - 'docs/**'
-    tags:
-      - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
+    paths: ['docs/**']
+    tags: ['\d+\.\d+\.\d+']
   pull_request:
-    paths:
-      - 'docs/**'
-    tags:
-      - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
+    paths: ['docs/**']
+    tags: ['\d+\.\d+\.\d+']
 permissions:
     contents: write
 jobs:
