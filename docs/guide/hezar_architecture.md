@@ -115,7 +115,7 @@ models_registry = {
 ```
 To get the gist of this, just import registries and take a look at them like so:
 ```python
-from hezar.registry import (
+from hezar import (
     models_registry, 
     preprocessors_registry, 
     datasets_registry,
@@ -142,7 +142,7 @@ Each registry value is a `Registry` (data)class that has 3 properties: `config_c
 So now it's pretty easy to create modules objects using the identifier name! Let's say you want to create a 
 BPE tokenizer. You can do it this way:
 ```python
-from hezar.registry import preprocessors_registry
+from hezar import preprocessors_registry
 
 module_cls = preprocessors_registry["bpe_tokenizer"].module_class
 config_cls = preprocessors_registry["bpe_tokenizer"].config_class
@@ -174,7 +174,7 @@ from hezar import WhisperSpeechRecognition, WhisperSpeechRecognitionConfig
 
 whisper = WhisperSpeechRecognition(WhisperSpeechRecognitionConfig(max_new_tokens=400))
 ```
-The answer is that for writing code, you can always use the classes directly. But the fact is that everything works with
+The answer is that if you want to do it in a straightforward way, you can always use the classes directly. But the fact is that everything works with
 configs and a config must have at least some identifiers so that a module can be initialized from it. The main usage of
 the registries is to be able to create everything from the configs! So lets slide into the next section, the Hub!
 
@@ -206,7 +206,7 @@ Pushing to the Hugging Face Hub is so much like the save method. The only differ
 to the Hub after saving.
 
 
-## Concept 4: Task-base Modeling
+## Concept 4: Task-base Modeling & Training
 Hezar is a practical library not a framework (it can be though!). That's why we decided to categorize models, trainers,
 datasets, etc. under task names e.g, `speech_recognition`, `language_modeling`, etc. If you've worked with other 
 libraries, this might somewhat seem irrational, but trust us! For most users and usages this fits better!
@@ -215,6 +215,12 @@ libraries, this might somewhat seem irrational, but trust us! For most users and
 Re-inventing the wheel has no place in Hezar. It's strongly recommended that if something already exists somewhere and 
 we want it, just copy and paste it into the code!<br>
 In terms of backbone frameworks and libraries, we carefully R&D the present tools and choose the one that is the most 
-simple yet popular. That's why every model in Hezar is a `PyTorch nn.Module`, every tokenizer is based on the Rust 
-implementation of the famous tokenizers implemented in Hugging Face `tokenizers`, every embedding model is built upon 
-`gensim` and so on ... .
+simple yet popular. 
+
+More specifically, here's a simple summary of the core modules in Hezar:
+- **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc.
+- **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
+- **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
+- **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in just 2 lines of code!
+- **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
+- **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
