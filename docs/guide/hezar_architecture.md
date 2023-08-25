@@ -245,16 +245,19 @@ Pushing to the Hugging Face Hub is so much like the save method. The only differ
 to the Hub after saving.
 
 
-## Concept 4: Task-base Modeling & Training
+## Concept 4: Task-based Modeling & Training
 Hezar is a practical library not a framework (it can be though!). That's why we decided to categorize models, trainers,
 datasets, etc. under task names e.g, `speech_recognition`, `language_modeling`, etc. If you've worked with other 
 libraries, this might somewhat seem irrational, but trust us! For most users and usages this fits better!
 
-## Concept 5: Integration with other tools
-Re-inventing the wheel has no place in Hezar. It's strongly recommended that if something already exists somewhere and 
+Currently, all models, trainers and datasets are categorized by task name, but this does not mean that for every task, 
+there exists a model, trainer, dataset, etc. 
+
+## Concept 5: Integration with Other Tools
+Re-inventing the wheel has no place in Hezar. It's strongly recommended that if something already exists somewhere, and 
 we want it, just copy and paste it into the code!<br>
-In terms of backbone frameworks and libraries, we carefully R&D the present tools and choose the one that is the most 
-simple yet popular. 
+In terms of backbone frameworks and libraries, we carefully R&D the present tools and choose the one that is the simplest 
+yet popular. 
 
 More specifically, here's a simple summary of the core modules in Hezar:
 - **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc.

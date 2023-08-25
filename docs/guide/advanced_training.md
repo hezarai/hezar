@@ -1,2 +1,2 @@
-# Training Custom Models
+# Advanced Training
 Docs coming soon, stay tuned!
