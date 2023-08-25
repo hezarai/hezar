@@ -96,7 +96,8 @@ word2vec = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")  # A Word2Ve
 
 So, what's going on under the hood that handles module loading and initiation?
 
-**Registry System**<br>
+**Registry System**
+
 Well, there are ways to tackle this challenge, but Hezar manages this by using _a global registry_ for every module
 type. These registries are simple Python dictionaries that hold the properties for every module class, module config, 
 etc. 
@@ -113,31 +114,65 @@ models_registry = {
     "AND SO ON...": Registry(...)
 }
 ```
-To get the gist of this, just import registries and take a look at them like so:
-```python
-from hezar import (
-    models_registry, 
-    preprocessors_registry, 
-    datasets_registry,
-    embeddings_registry,
-    metrics_registry,    
-)
-
-print(preprocessors_registry.keys())  # or any other registry
-```
-```
-['text_normalizer',
- 'whisper_feature_extractor',
- 'wordpiece_tokenizer',
- 'bpe_tokenizer',
- 'sentencepiece_bpe_tokenizer',
- 'sentencepiece_unigram_tokenizer',
- 'whisper_bpe_tokenizer']
-```
 Each registry value is a `Registry` (data)class that has 3 properties: `config_class`, `module_class` and `doc`.
 - `module_class`: Holds the class object for the module. Using this property you can actually create the module object.
 - `config_class`: Holds the config class and can be passed to the module class so that the module can be created.
 - `doc`: Holds the docstring of the module if any.
+
+But how are the modules inserted into the registries? The answer is _registry class decorators_
+
+**`register_*()` Class Decorators**
+
+In the file `hezar/registry.py`, there are a bunch of decorator functions that fulfill the task of registering any module
+into the right registry automagically! 
+These decorators take two parameters:
+- `name`: A string name that has to be the same as the one in config
+- `config_class`: The config class
+
+The example below demonstrates registering a model:
+```python
+...
+from hezar import Model, ModelConfig, register_model
+
+@dataclass
+class MyBertConfig(ModelConfig):
+    name = "my_bert"
+    vocab_size: int = 1000
+    hidden_size: int = 768
+
+# Below line is all you need to add `my_bert` to `models_registry`
+@register_model("my_bert", config_class=MyBertConfig)
+class MyBert(Model):
+    def __init__(self, config: MyBertConfig, **kwargs):
+        super().__init__(config, **kwargs)
+    
+    def forward(self, inputs, **kwargs):
+        ...
+
+```
+Registry decorators currently include:
+- `register_model`
+- `register_preprocessor`
+- `register_dataset`
+- `register_embedding`
+- `register_metric`
+- `register_trainer`
+
+**Getting Available Modules**
+
+To figure out what modules are available in a registry, there are also utils for that:
+```python
+import hezar
+
+print(hezar.list_available_models())
+print(hezar.list_available_preprocessors())
+print(hezar.list_available_datasets())
+print(hezar.list_available_metrics())
+print(hezar.list_available_embeddings())
+print(hezar.list_available_trainers())
+...
+```
+**Creating Modules from Registry Names**
 
 So now it's pretty easy to create modules objects using the identifier name! Let's say you want to create a 
 BPE tokenizer. You can do it this way:
@@ -153,7 +188,8 @@ Although, this is not how it's actually done in Hezar because it's long and ugly
 internal feature of Hezar called the _builders_!
 
 
-**Builders**<br>
+**Builders**
+
 There is also another important group
 of utilities called _builders_. Using builders you can build modules from their names in a single line of code.
 These family of functions take 3 main parameters:
@@ -185,7 +221,8 @@ to do so:
 - `save`: A method to save all the necessary files and configurations to a path on the local disk.
 - `push_to_hub`: A method implemented in any type of base class that pushes all the necessary files and configurations to the Hub so that the module can be loaded from the Hub again.
 
-**Loading**<br>
+**Loading**
+
 All base modules implement their own `load` method based on their characteristics. But the first step in every load 
 process is loading the configuration as all the info lies there, and then any other file is loaded. 
 For example the class `Model` first loads its config and builds the model using `build_model` and the config parameters.
@@ -194,14 +231,16 @@ On the other hand, some simple modules like metric might just load the config to
 One important feature of any `load` method is that like builders, it accepts config parameters as keyword arguments so 
 that you can override config properties.
 
-**Saving**<br>
+**Saving**
+
 Almost every module has the `save` method implemented which is responsible for saving config and other related files to the 
 disk. This method takes a `path` parameter which is just the base folder path and any necessary subfolder will be created
 automatically based on the module type. For example, if you save a tokenizer at path `my_tokenizer/`, the `Tokenizer`'s
 `save` method will create a `preprocessor` folder and saves the `tokenizer.json` and `tokenizer_config.yaml` on that 
 folder. You can control the `subfolder` parameter and other file/path names if the base class gives you the option.
 
-**Pushing to the Hub**<br>
+**Pushing to the Hub**
+
 Pushing to the Hugging Face Hub is so much like the save method. The only difference is that the files are then uploaded
 to the Hub after saving.
 
