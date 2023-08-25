@@ -132,4 +132,4 @@ INFO: Uploaded: `Perceptron(name=perceptron)` --> `hezarai/perceptron/model.pt`
 ```
 
 
-To learn more about the internals of the models in Hezar take a look at [the models in-depth guide](../guide/models_in_depth_overview.md)
+To learn more about the internals of the models in Hezar take a look at [the models in-depth guide](../guide/models_advanced.md)
