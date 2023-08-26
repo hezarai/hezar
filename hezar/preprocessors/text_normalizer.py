@@ -1,8 +1,8 @@
 import os
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Dict, List, Union, Tuple, Mapping
 
-from tokenizers import normalizers
+from tokenizers import normalizers, Regex
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
@@ -11,16 +11,24 @@ from ..registry import register_preprocessor
 from ..utils import get_logger
 from .preprocessor import Preprocessor
 
-
 logger = get_logger(__name__)
 
 
 @dataclass
 class TextNormalizerConfig(PreprocessorConfig):
     name = "text_normalizer"
-    replace_pattern: str = None
+    replace_patterns: Union[List[Tuple[str, str]], List[List[str, str]], List[Dict[str, List]]] = None
     nfkd: bool = True
     nfkc: bool = True
+
+    def __post_init__(self):
+        # convert a list of dicts of replace_patterns to a list of tuples
+        if self.replace_patterns is not None and len(self.replace_patterns):
+            if isinstance(self.replace_patterns, Mapping):
+                patterns = []
+                for v in self.replace_patterns.values():
+                    patterns += v
+                self.replace_patterns = patterns
 
 
 @register_preprocessor("text_normalizer", config_class=TextNormalizerConfig)
@@ -37,7 +45,7 @@ class TextNormalizer(Preprocessor):
     def __call__(
         self,
         inputs: Union[str, List[str]],
-        replace_pattern: str = None,
+        replace_patterns: Union[List[Tuple[str, str]], List[List[str, str]]] = None,
         nfkd: bool = None,
         nfkc: bool = None,
         **kwargs,
@@ -47,13 +55,18 @@ class TextNormalizer(Preprocessor):
 
         nfkd = nfkd or self.config.nfkd
         nfkc = nfkc or self.config.nfkc
+        replace_patterns = replace_patterns or self.config.replace_patterns
 
         if nfkd:
             inputs = [normalizers.NFKD().normalize_str(x) for x in inputs]
         if nfkc:
             inputs = [normalizers.NFKC().normalize_str(x) for x in inputs]
 
-        # TODO add support for other normalizations
+        if replace_patterns is not None:
+            replacer = normalizers.Sequence(
+                [normalizers.Replace(Regex(src), trg) for src, trg in self.config.replace_patterns]  # noqa
+            )
+            inputs = [replacer.normalize_str(x) for x in inputs]
 
         return inputs
 
