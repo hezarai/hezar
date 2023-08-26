@@ -17,12 +17,12 @@ logger = get_logger(__name__)
 @dataclass
 class TextNormalizerConfig(PreprocessorConfig):
     name = "text_normalizer"
-    replace_patterns: Union[List[Tuple[str, str]], List[List[str, str]], List[Dict[str, List]]] = None
+    replace_patterns: Union[List[Tuple[str, str]], List[List[str]], List[Dict[str, List]]] = None
     nfkd: bool = True
     nfkc: bool = True
 
     def __post_init__(self):
-        # convert a list of dicts of replace_patterns to a list of tuples
+        # convert a list of dicts in replace_patterns to a list of tuples
         if self.replace_patterns is not None and len(self.replace_patterns):
             if isinstance(self.replace_patterns, Mapping):
                 patterns = []
@@ -45,7 +45,7 @@ class TextNormalizer(Preprocessor):
     def __call__(
         self,
         inputs: Union[str, List[str]],
-        replace_patterns: Union[List[Tuple[str, str]], List[List[str, str]]] = None,
+        replace_patterns: Union[List[Tuple[str, str]], List[List[str]]] = None,
         nfkd: bool = None,
         nfkc: bool = None,
         **kwargs,
