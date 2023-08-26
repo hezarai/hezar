@@ -424,7 +424,7 @@ class Trainer:
         dataset_config_file = dataset_config_file or self.dataset_config_file
 
         self.config.save(path, filename=config_filename, subfolder=subfolder)
-        self.model.save(path, filename=model_filename, config_filename=model_config_filename, save_config=True)
+        self.model.save(path, filename=model_filename, config_filename=model_config_filename)
         self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
 
     def push_to_hub(

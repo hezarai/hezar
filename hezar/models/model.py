@@ -149,7 +149,6 @@ class Model(nn.Module):
         self,
         path: Union[str, os.PathLike],
         filename: Optional[str] = None,
-        save_config: Optional[bool] = True,
         save_preprocessor: Optional[bool] = True,
         config_filename: Optional[str] = None,
     ):
@@ -158,7 +157,6 @@ class Model(nn.Module):
 
         Args:
             path: A local directory to save model, config, etc.
-            save_config: Whether to save config along with the model or not.
             save_preprocessor: Whether to save preprocessor(s) along with the model or not
             config_filename: Model config filename,
             filename: Model weights filename
@@ -170,10 +168,12 @@ class Model(nn.Module):
         config_filename = config_filename or self.config_filename
         filename = filename or self.model_filename
         os.makedirs(path, exist_ok=True)
+
+        self.config.save(save_dir=path, filename=config_filename)
+
         model_save_path = os.path.join(path, filename)
         torch.save(self.state_dict(), model_save_path)
-        if save_config:
-            self.config.save(save_dir=path, filename=config_filename)
+
         if save_preprocessor:
             if self.preprocessor is not None:
                 self.preprocessor.save(path)
@@ -210,7 +210,6 @@ class Model(nn.Module):
             cache_path,
             filename=filename,
             config_filename=config_filename,
-            save_config=False,
         )
         if commit_message is None:
             commit_message = "Hezar: Upload model and config"
@@ -330,7 +329,8 @@ class GenerativeModel(Model):
         super().__init__(config=config, **kwargs)
 
     def generate(self, inputs, **kwargs):
-        raise NotImplementedError("Generative models must implement the `generate()` method!")
+        raise NotImplementedError(f"`{self.__class__.__name__}` is a generative model "
+                                  f"but has not implemented the `generate()` method!")
 
     @torch.inference_mode()
     def predict(self, inputs, **kwargs):
