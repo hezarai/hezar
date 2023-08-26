@@ -4,6 +4,6 @@ The docs here are mostly generated from the official source code on the main bra
 
 
 ```{toctree}
-:maxdepth: 5
+:maxdepth: 2
 hezar
 ```
