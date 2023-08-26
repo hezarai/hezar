@@ -174,7 +174,7 @@ print(hezar.list_available_trainers())
 ```
 **Creating Modules from Registry Names**
 
-So now it's pretty easy to create modules objects using the identifier name! Let's say you want to create a 
+So now it's pretty easy to create modules objects using their `name`! Let's say you want to create a 
 BPE tokenizer. You can do it this way:
 ```python
 from hezar import preprocessors_registry
@@ -190,8 +190,7 @@ internal feature of Hezar called the _builders_!
 
 **Builders**
 
-There is also another important group
-of utilities called _builders_. Using builders you can build modules from their names in a single line of code.
+Using builders you can build modules from their registry names in a single line of code.
 These family of functions take 3 main parameters:
 - `name`: A registry key name representing that module. This name has to be present in the corresponding registry!
 - `config`: Optionally you can pass a config object to control how the module is built. The config has to be of a type that the module accepts.
@@ -204,6 +203,13 @@ sp_bpe = builders.build_preprocessor("sentencepiece_bpe_tokenizer")
 tc_dataset = builders.build_dataset("text_classification", path="hezarai/sentiment-dksf", tokenizer_path="hezarai/bert-base-fa")
 ...
 ```
+Available builders include:
+- `build_model`
+- `build_dataset`
+- `build_preprocessor`
+- `build_embedding`
+- `build_metric`
+
 So why would you need to use builders or registries when you can import everything normally? like below:
 ```python
 from hezar import WhisperSpeechRecognition, WhisperSpeechRecognitionConfig
