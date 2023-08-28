@@ -20,6 +20,7 @@ class BertTextClassification(Model):
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
     tokenizer_name = "wordpiece_tokenizer"
+    skip_keys_on_load = ["bert.embeddings.position_ids"]
 
     def __init__(self, config: BertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
