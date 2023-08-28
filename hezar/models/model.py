@@ -39,8 +39,12 @@ class Model(nn.Module):
         config: A dataclass model config
     """
 
+    # Default file names
     model_filename = DEFAULT_MODEL_FILE
     config_filename = DEFAULT_MODEL_CONFIG_FILE
+
+    # Keys to ignore on loading state dicts
+    skip_keys_on_load = []
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         super().__init__()
@@ -125,6 +129,10 @@ class Model(nn.Module):
         Args:
             state_dict: Model state dict
         """
+        if len(self.skip_keys_on_load):
+            for key in self.skip_keys_on_load:
+                if key in state_dict:
+                    state_dict.pop(key, None)
         try:
             super().load_state_dict(state_dict, strict=True)
         except RuntimeError:
@@ -316,7 +324,7 @@ class Model(nn.Module):
         elif value is None:
             preprocessor = None
         else:
-            raise ValueError(f"Preprocessor value must be a `Preprocessor` or a mapping of `Preprocessor` objects "
+            raise ValueError(f"Preprocessor value must be a `Preprocessor` or a `PreprocessorContainer` instance"
                              f"not `{type(value)}`!")
         self._preprocessor = preprocessor
 
