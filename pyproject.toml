@@ -33,18 +33,21 @@ exclude = [
 python = ">=3.8"
 torch = ">=1.10.0"
 omegaconf = ">=2.3.0"
-transformers = "==4.30.2"
+transformers = ">=4.28.0"
 datasets = ">=2.9.0"
-torchmetrics = ">=0.11.0"
 huggingface_hub = ">=0.12.0"
 gensim = ">=4.1.0"
 tensorboard = ">=2.10.0"
 seqeval = ">=1.2.0"
 soundfile = ">=0.12.0"
-
 pillow = "*"
-black = "*"
-ruff = "*"
+
+[tool.poetry.extras]
+embeddings=["gensim"]
+audio=["librosa", "soundfile"]
+refactor=["ruff"]
+tests=["pytest"]
+docs=["sphinx", "furo", "myst-parser", "sphinx-copybutton"]
 
 [tool.black]
 line-length = 120
