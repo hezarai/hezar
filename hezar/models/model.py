@@ -132,7 +132,7 @@ class Model(nn.Module):
         if len(self.skip_keys_on_load):
             for key in self.skip_keys_on_load:
                 if key in state_dict:
-                    state_dict.pop(key, None)
+                    state_dict.pop(key, None)  # noqa
         try:
             super().load_state_dict(state_dict, strict=True)
         except RuntimeError:
@@ -308,6 +308,9 @@ class Model(nn.Module):
 
     @property
     def device(self):
+        """
+        Get the model's device. This method is only safe when all weights on the model are on the same device.
+        """
         return next(self.parameters()).device
 
     @property
