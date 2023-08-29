@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import numpy as np
 
-from .logging import get_logger
+from .logging import Logger
 
 
 __all__ = [
@@ -18,7 +18,7 @@ __all__ = [
     "mel_to_hertz",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 def spectrogram(

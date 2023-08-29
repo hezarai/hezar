@@ -8,10 +8,10 @@ from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
 from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER
 from ..registry import register_preprocessor
-from ..utils import get_logger
+from ..utils import Logger
 from .preprocessor import Preprocessor
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 @dataclass

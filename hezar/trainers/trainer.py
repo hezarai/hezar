@@ -21,11 +21,11 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import get_logger
+from ..utils import Logger
 from .trainer_utils import MetricsTracker, write_to_tensorboard
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 optimizers = {
     "adam": torch.optim.Adam,

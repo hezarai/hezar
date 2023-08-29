@@ -20,7 +20,7 @@ from ..builders import build_model
 from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import get_logger
+from ..utils import Logger
 
 
 __all__ = [
@@ -28,7 +28,7 @@ __all__ = [
     "GenerativeModel",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 class Model(nn.Module):
@@ -239,12 +239,14 @@ class Model(nn.Module):
             repo_id=repo_id,
             commit_message=commit_message,
         )
-        logger.info(
-            f"Uploaded: "
-            f"`{self.__class__.__name__}(name={self.config.name})`"
-            f" --> "
-            f"`{os.path.join(repo_id, filename)}`"
-        )
+
+        logger.log_upload_success(self, os.path.join(repo_id, filename))
+        # logger.info(
+        #     f"Uploaded: "
+        #     f"`{self.__class__.__name__}(name={self.config.name})`"
+        #     f" --> "
+        #     f"`{os.path.join(repo_id, filename)}`"
+        # )
 
     def forward(self, inputs, **kwargs) -> Dict:
         """

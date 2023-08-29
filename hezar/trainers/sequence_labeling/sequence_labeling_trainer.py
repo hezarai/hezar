@@ -7,11 +7,11 @@ from ...configs import TrainerConfig
 from ...constants import MetricType
 from ...data.datasets import Dataset
 from ...models import Model
-from ...utils import get_logger
+from ...utils import Logger
 from ..trainer import Trainer
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 class SequenceLabelingTrainer(Trainer):

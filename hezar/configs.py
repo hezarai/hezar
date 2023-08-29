@@ -23,7 +23,7 @@ from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
-from .utils import get_logger, get_module_config_class
+from .utils import get_module_config_class, Logger
 
 
 __all__ = [
@@ -37,7 +37,7 @@ __all__ = [
     "MetricConfig",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 CONFIG_CLASS_VARS = ["name", "config_type"]
 

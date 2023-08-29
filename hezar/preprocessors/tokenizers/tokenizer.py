@@ -14,11 +14,11 @@ from tokenizers.models import Model
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
-from ...utils import convert_batch_dict_dtype, get_logger
+from ...utils import convert_batch_dict_dtype, Logger
 from ..preprocessor import Preprocessor
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 @dataclass

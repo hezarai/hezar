@@ -8,12 +8,12 @@ from ...configs import DatasetConfig
 from ...constants import TaskType
 from ...preprocessors import Tokenizer
 from ...registry import register_dataset
-from ...utils import get_logger
+from ...utils import Logger
 from ..data_collators import TextPaddingDataCollator
 from .dataset import Dataset
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 @dataclass

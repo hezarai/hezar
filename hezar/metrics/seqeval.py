@@ -6,11 +6,11 @@ from seqeval.metrics import accuracy_score, classification_report
 from ..configs import MetricConfig
 from ..constants import MetricType
 from ..registry import register_metric
-from ..utils import get_logger
+from ..utils import Logger
 from .metric import Metric
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 @dataclass

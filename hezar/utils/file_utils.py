@@ -1,10 +1,10 @@
 import gzip
 import shutil
 
-from .logging import get_logger
+from .logging import Logger
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 __all__ = [
     "gunzip"

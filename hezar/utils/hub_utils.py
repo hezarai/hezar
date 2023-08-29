@@ -3,7 +3,7 @@ import os.path
 from huggingface_hub import HfApi, Repository
 
 from ..constants import HEZAR_CACHE_DIR, HEZAR_HUB_ID, RepoType
-from ..utils.logging import get_logger
+from ..utils.logging import Logger
 
 
 __all__ = [
@@ -15,7 +15,7 @@ __all__ = [
     "list_repo_files",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 def resolve_pretrained_path(hub_or_local_path):

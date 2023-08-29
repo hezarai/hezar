@@ -28,7 +28,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional, Type
 
 from .configs import DatasetConfig, EmbeddingConfig, MetricConfig, ModelConfig, PreprocessorConfig, TrainerConfig
-from .utils import get_logger
+from .utils import Logger
 
 
 __all__ = [
@@ -47,7 +47,7 @@ __all__ = [
     "trainers_registry",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 @dataclass

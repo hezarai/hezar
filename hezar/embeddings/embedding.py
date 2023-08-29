@@ -11,10 +11,10 @@ from ..constants import (
     DEFAULT_EMBEDDING_FILE,
     DEFAULT_EMBEDDING_SUBFOLDER,
 )
-from ..utils import get_logger
+from ..utils import Logger
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 class Embedding:

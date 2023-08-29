@@ -7,7 +7,7 @@ from omegaconf import DictConfig
 
 from ..constants import ConfigType, RegistryType
 from .common_utils import snake_case
-from .logging import get_logger
+from .logging import Logger
 
 
 __all__ = [
@@ -20,7 +20,7 @@ __all__ = [
     "get_registry_point",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 def flatten_dict(dict_config: Union[Dict, DictConfig]) -> DictConfig:

@@ -5,11 +5,11 @@ import numpy as np
 from tokenizers import processors
 
 from ...registry import register_preprocessor
-from ...utils import get_logger
+from ...utils import Logger
 from .bpe import BPEConfig, BPETokenizer
 
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 LANGUAGES = {
     "en": "english",

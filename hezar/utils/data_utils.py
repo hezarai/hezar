@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from .logging import get_logger
+from .logging import Logger
 
 
 __all__ = [
@@ -8,7 +8,7 @@ __all__ = [
     "get_non_numeric_keys",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 # TODO: This code might be able to be written in a cleaner way, but be careful, any change might break a lot of things!

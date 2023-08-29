@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from ..preprocessors import Tokenizer
-from ..utils import convert_batch_dict_dtype, get_logger
+from ..utils import convert_batch_dict_dtype, Logger
 
 
 __all__ = [
@@ -10,7 +10,7 @@ __all__ = [
     "SequenceLabelingDataCollator",
 ]
 
-logger = get_logger(__name__)
+logger = Logger(__name__)
 
 
 class TextPaddingDataCollator:
