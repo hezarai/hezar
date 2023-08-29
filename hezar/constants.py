@@ -34,7 +34,7 @@ class TaskType(str, Enum):
     SPEECH_RECOGNITION = "speech_recognition"
     TEXT_CLASSIFICATION = "text_classification"
     TEXT_DETECTION = "text_detection"
-    TEXT2TEXT = "text2text"
+    TEXT_GENERATION = "text_generation"
 
 
 class ConfigType(str, Enum):

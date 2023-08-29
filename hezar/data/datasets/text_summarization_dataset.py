@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 @dataclass
 class TextSummarizationDatasetConfig(DatasetConfig):
     name = "text_summarization"
-    task: str = TaskType.TEXT2TEXT
+    task: str = TaskType.TEXT_GENERATION
     path: str = None
     tokenizer_path: str = None
     prefix: str = None

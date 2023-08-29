@@ -61,7 +61,7 @@ class SequenceLabelingOutput(ModelOutput):
 
 
 @dataclass
-class Text2TextOutput(ModelOutput):
+class TextGenerationOutput(ModelOutput):
     generated_texts: Optional[List[str]] = None
 
 

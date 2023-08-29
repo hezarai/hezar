@@ -5,17 +5,17 @@ from transformers import T5Config, T5ForConditionalGeneration
 
 from ....registry import register_model
 from ...model import GenerativeModel
-from .t5_text2text_config import T5Text2TextConfig
+from .t5_text_generation_config import T5TextGenerationConfig
 
 
-@register_model("t5_text2text", config_class=T5Text2TextConfig)
-class T5Text2Text(GenerativeModel):
+@register_model("t5_text_generation", config_class=T5TextGenerationConfig)
+class T5TextGeneration(GenerativeModel):
     """
     T5 for text to text generation
     """
     tokenizer_name = "sentencepiece_unigram_tokenizer"
 
-    def __init__(self, config: T5Text2TextConfig, **kwargs):
+    def __init__(self, config: T5TextGenerationConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
         self.t5 = T5ForConditionalGeneration(T5Config(**self.config))
