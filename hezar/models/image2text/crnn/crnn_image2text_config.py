@@ -1,7 +1,6 @@
 from typing import Dict
 from dataclasses import dataclass
 
-from ....models import Model
 from ....configs import ModelConfig
 
 
