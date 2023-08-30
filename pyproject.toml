@@ -41,7 +41,8 @@ gensim = "==4.3.2"
 tensorboard = ">=2.10.0"
 seqeval = ">=1.2.0"
 soundfile = ">=0.12.0"
-pillow = "*"
+librosa = ">=0.10.0"
+pillow = ">=9.*,<=10.*"
 
 [tool.black]
 line-length = 120
