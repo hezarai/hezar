@@ -138,10 +138,9 @@ class Embedding:
             path_in_repo=f"{subfolder}/{filename}",
             commit_message=commit_message,
         )
-        logger.info(
-            f"Uploaded: {self.__class__.__name__}(name={self.config.name})`"
-            f" --> "
-            f"{os.path.join(repo_id, subfolder, filename)}"
+        logger.log_upload_success(
+            name=f"{self.__class__.__name__}(name={self.config.name})",
+            target_path=f"{os.path.join(repo_id, subfolder, filename)}"
         )
 
         api.upload_file(
@@ -151,10 +150,9 @@ class Embedding:
             path_in_repo=f"{subfolder}/{vectors_filename}",
             commit_message=commit_message,
         )
-        logger.info(
-            f"Uploaded: {self.__class__.__name__}(name={self.config.name})`"
-            f" --> "
-            f"{os.path.join(repo_id, subfolder, vectors_filename)}"
+        logger.log_upload_success(
+            name=f"`{self.__class__.__name__}(name={self.config.name})`",
+            target_path=f"`{os.path.join(repo_id, subfolder, vectors_filename)}`"
         )
 
     def torch_embedding(self):

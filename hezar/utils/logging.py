@@ -8,7 +8,7 @@ __all__ = [
 
 class Logger(logging.Logger):
     def __init__(self, name: str, level=None, fmt=None):
-        fmt = fmt or "%(levelname)s: %(message)s"
+        fmt = fmt or "Hezar (%(levelname)s): %(message)s"
         level = level or "INFO"
         super().__init__(name, level)
         handler = logging.StreamHandler()
@@ -16,6 +16,8 @@ class Logger(logging.Logger):
         handler.setFormatter(formatter)
         self.addHandler(handler)
 
-    def log_upload_success(self, module, path_in_repo: str):
-        src = f"{module.__class__.__name__}(name={module.config.name})"
-        self.info(f"Uploaded: `{src}` --> `{path_in_repo}`")
+    def log_upload_success(self, name, target_path: str):
+        """
+        Log (info) success info when the file(s) upload is done.
+        """
+        self.info(f"Uploaded: `{name}` --> `{target_path}`")

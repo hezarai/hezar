@@ -212,6 +212,7 @@ class Model(nn.Module):
 
         # create remote repo
         create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
+
         # save to tmp and prepare for push
         cache_path = tempfile.mkdtemp()
         model_save_path = self.save(
@@ -221,6 +222,7 @@ class Model(nn.Module):
         )
         if commit_message is None:
             commit_message = "Hezar: Upload model and config"
+
         # upload config file
         self.config.push_to_hub(
             repo_id,
@@ -232,6 +234,7 @@ class Model(nn.Module):
         if push_preprocessor:
             if self.preprocessor is not None:
                 self.preprocessor.push_to_hub(repo_id, commit_message=commit_message, private=private)
+
         # upload model file
         upload_file(
             path_or_fileobj=model_save_path,
@@ -240,13 +243,10 @@ class Model(nn.Module):
             commit_message=commit_message,
         )
 
-        logger.log_upload_success(self, os.path.join(repo_id, filename))
-        # logger.info(
-        #     f"Uploaded: "
-        #     f"`{self.__class__.__name__}(name={self.config.name})`"
-        #     f" --> "
-        #     f"`{os.path.join(repo_id, filename)}`"
-        # )
+        logger.log_upload_success(
+            name=f"{self.__class__.__name__}(name={self.config.name})",
+            target_path=os.path.join(repo_id, filename),
+        )
 
     def forward(self, inputs, **kwargs) -> Dict:
         """

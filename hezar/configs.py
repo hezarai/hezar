@@ -252,8 +252,9 @@ class Config:
             repo_type=repo_type,
             commit_message=commit_message,
         )
-        logger.info(
-            f"Uploaded:`{self.__class__.__name__}(name={self.name})` --> `{os.path.join(repo_id, path_in_repo)}`"
+        logger.log_upload_success(
+            name=f"{self.__class__.__name__}()",
+            target_path=os.path.join(repo_id, path_in_repo)
         )
 
 
