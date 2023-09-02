@@ -6,7 +6,7 @@ on:
       - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
 
 jobs:
-  build:
+  github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
@@ -66,4 +66,10 @@ jobs:
             poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}" 
             poetry publish --build
     needs:
-      - build
+      - github-release
+
+  call-docs-workflow:
+    name: Trigger docs-deploy.yml
+    uses: ./.github/workflows/docs-deploy.yml
+    needs:
+      - pypi-release

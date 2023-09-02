@@ -1,5 +1,5 @@
 name: Build & Deploy Docs
-on: [push, pull_request, workflow_dispatch]
+on: [workflow_call, workflow_dispatch]
 permissions:
     contents: write
 jobs:
