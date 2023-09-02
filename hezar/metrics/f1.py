@@ -12,9 +12,10 @@ from .metric import Metric
 @dataclass
 class F1Config(MetricConfig):
     name = MetricType.F1
-    pos_label: int = None
-    average: str = None
+    pos_label: int = 1
+    average: str = "macro"
     sample_weight: Iterable[float] = None
+    output_keys: tuple = ("f1",)
 
 
 @register_metric("f1", config_class=F1Config)
@@ -29,11 +30,16 @@ class F1(Metric):
         labels=None,
         pos_label=1,
         average=None,
-        sample_weight=None
+        sample_weight=None,
+        zero_division="warn",
+        n_decimals=None,
+        output_keys=None,
     ):
         pos_label = pos_label or self.config.pos_label
         average = average or self.config.average
         sample_weight = sample_weight or self.config.sample_weight
+        n_decimals = n_decimals or self.config.n_decimals
+        output_keys = output_keys or self.config.output_keys
 
         score = f1_score(
             targets,
@@ -42,6 +48,14 @@ class F1(Metric):
             pos_label=pos_label,
             average=average,
             sample_weight=sample_weight,
+            zero_division=zero_division,
         )
 
-        return float(score) if score.size == 1 else score
+        score = float(score) if score.size == 1 else score
+
+        results = {"f1": round(float(score), n_decimals)}
+
+        if output_keys:
+            results = {k: v for k, v in results.items() if k in output_keys}
+
+        return results
