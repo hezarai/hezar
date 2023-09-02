@@ -1,5 +1,6 @@
-from typing import List
+import os.path
 
+import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -58,6 +59,19 @@ class MetricsTracker:
         return avg_results
 
 
-def write_to_tensorboard(writer: SummaryWriter, logs: dict, mode: str, step: int):
+class CSVLogger:
+    def __init__(self, logs_dir: str, csv_filename: str):
+        self.save_path = os.path.join(logs_dir, csv_filename)
+        self.df = pd.DataFrame({})
+
+    def write(self, logs: dict, step: int):
+        logs = {k: [v] for k, v in logs.items()}
+        row = pd.DataFrame(logs)
+        row.name = step
+        self.df = pd.concat([self.df, row])
+        self.df.to_csv(self.save_path, index=False)
+
+
+def write_to_tensorboard(writer: SummaryWriter, logs: dict, step: int):
     for metric_name, value in logs.items():
-        writer.add_scalar(f"{mode}/{metric_name}", value, step)
+        writer.add_scalar(metric_name, value, step)

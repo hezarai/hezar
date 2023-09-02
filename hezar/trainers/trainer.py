@@ -1,10 +1,10 @@
 import os
 import random
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable, Dict, Tuple, Union, Literal
 
 import numpy as np
 import torch
-from huggingface_hub import create_repo, hf_hub_download
+from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -15,6 +15,7 @@ from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_SUBFOLDER,
+    DEFAULT_TRAINER_CSV_LOG_FILE,
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
 )
@@ -22,7 +23,7 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
-from .trainer_utils import MetricsTracker, write_to_tensorboard
+from .trainer_utils import MetricsTracker, write_to_tensorboard, CSVLogger
 
 
 logger = Logger(__name__)
@@ -57,6 +58,7 @@ class Trainer:
 
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
+    trainer_csv_log_file = DEFAULT_TRAINER_CSV_LOG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
     AVAILABLE_METRICS = []
     default_optimizer = "adam"
@@ -96,7 +98,8 @@ class Trainer:
         self.metrics = self.setup_metrics()
         self.metrics_tracker = MetricsTracker(self.metrics)
 
-        self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
+        self.tensorboard = SummaryWriter(log_dir=self.config.logs_dir)
+        self.csv_logger = CSVLogger(logs_dir=self.config.logs_dir, csv_filename=self.trainer_csv_log_file)
 
     def _prepare_device_and_type(self) -> Tuple[str, str]:
         device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
@@ -386,16 +389,39 @@ class Trainer:
             print()
             training_results = self.inner_training_loop(epoch)
             evaluation_results = self.evaluate()
-            self.lr_scheduler.step(evaluation_results["loss"])
+            if self.lr_scheduler is not None:
+                self.lr_scheduler.step(evaluation_results["loss"])
 
-            # tensorboard
-            write_to_tensorboard(self.tensorboard, training_results, "train", epoch)
-            write_to_tensorboard(self.tensorboard, evaluation_results, "eval", epoch)
+            current_step_logs = {
+                "step": epoch,
+                "training_results": training_results,
+                "evaluation_results": evaluation_results,
+            }
+
+            self.log(current_step_logs)
 
             # maybe save checkpoint
             if epoch % self.config.save_freq == 0:
                 ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
                 self.save(ckpt_save_path)
+
+    def log(self, logs: Dict[str, Any]):
+        """
+        Log metrics results
+        """
+        step = logs["step"]
+        training_results = logs["training_results"]
+        evaluation_results = logs["evaluation_results"]
+
+        train_logs = {f"train.{metric_name}": value for metric_name, value in training_results.items()}
+        evaluation_logs = {f"evaluation.{metric_name}": value for metric_name, value in evaluation_results.items()}
+
+        # Log to tensorboard
+        write_to_tensorboard(self.tensorboard, train_logs, step)
+        write_to_tensorboard(self.tensorboard, evaluation_logs, step)
+
+        # Log to CSV
+        self.csv_logger.write({**train_logs, **evaluation_logs}, step)
 
     def save(
         self,
@@ -432,6 +458,7 @@ class Trainer:
         repo_id: str,
         config_filename: str = None,
         push_model: bool = True,
+        push_logs: bool = True,
         model_filename: str = None,
         model_config_filename: str = None,
         subfolder: str = None,
@@ -446,6 +473,7 @@ class Trainer:
             repo_id: Path to hub
             config_filename: Trainer config file name
             push_model: Whether to push the model or not
+            push_logs: Whether to push training logs or not
             model_filename: Model file name
             model_config_filename: Model config file name
             subfolder: Path to Trainer files
@@ -487,4 +515,12 @@ class Trainer:
                 config_filename=model_config_filename,
                 commit_message=commit_message,
                 private=private,
+            )
+
+        if push_logs:
+            upload_file(
+                path_or_fileobj=self.csv_logger.save_path,
+                path_in_repo=os.path.join(self.trainer_subfolder, self.trainer_csv_log_file),
+                repo_id=repo_id,
+                commit_message=commit_message,
             )

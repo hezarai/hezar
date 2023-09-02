@@ -343,4 +343,4 @@ class TrainerConfig(Config):
     num_epochs: int = None
     save_freq: int = 1
     checkpoints_dir: str = None
-    log_dir: str = None
+    logs_dir: str = "logs"
