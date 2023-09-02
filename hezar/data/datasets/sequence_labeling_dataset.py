@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Literal
 
 from datasets import load_dataset
 
@@ -27,6 +27,7 @@ class SequenceLabelingDatasetConfig(DatasetConfig):
     max_length: int = None
     ignore_index: int = -100
     label_all_tokens: bool = True
+    is_iob_schema: bool = False  # Usually set to True for NER & Chunker and set to False for POS
 
 
 @register_dataset("sequence_labeling", config_class=SequenceLabelingDatasetConfig)
