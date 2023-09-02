@@ -94,7 +94,7 @@ class Trainer:
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
 
         self.metrics = self.setup_metrics()
-        self.metrics_tracker = MetricsTracker(list(self.metrics.keys()))
+        self.metrics_tracker = MetricsTracker(self.metrics)
 
         self.tensorboard = SummaryWriter(log_dir=self.config.log_dir)
 

@@ -68,6 +68,6 @@ class TextClassificationTrainer(Trainer):
         labels = np.array(labels).flatten()
         results = {}
         for metric_name, metric in self.metrics.items():
-            results[metric_name] = metric.compute(predictions, labels, average="macro")
+            results.update(metric.compute(predictions, labels))
         return results
 

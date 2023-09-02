@@ -62,16 +62,18 @@ class SequenceLabelingTrainer(Trainer):
         labels = np.array(labels).squeeze()
 
         # Remove ignored index (special tokens) and append `B-` in the beginning for seqeval
+        prefix = "" if self.train_dataset.config.is_iob_schema else "B-"
         true_predictions = [
-            [f"B-{self.model.config.id2label[p]}" for (p, l) in zip(prediction, label) if l != -100]
+            [f"{prefix}{self.model.config.id2label[p]}" for (p, l) in zip(prediction, label) if l != -100]
             for prediction, label in zip(predictions, labels)
         ]
         true_labels = [
-            [f"B-{self.model.config.id2label[l]}" for (p, l) in zip(prediction, label) if l != -100]
+            [f"{prefix}{self.model.config.id2label[l]}" for (p, l) in zip(prediction, label) if l != -100]
             for prediction, label in zip(predictions, labels)
         ]
 
         results = {}
         for metric_name, metric in self.metrics.items():
-            results[metric_name] = metric.compute(true_predictions, true_labels)["f1"]
+            x = metric.compute(true_predictions, true_labels)
+            results.update(x)
         return results

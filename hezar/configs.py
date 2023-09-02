@@ -16,7 +16,7 @@ import os
 import tempfile
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Tuple
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -316,6 +316,8 @@ class MetricConfig(Config):
     """
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.METRIC)
+    output_keys: Union[List, Tuple] = None
+    n_decimals: int = 4
 
 
 @dataclass
