@@ -13,7 +13,10 @@ from .bert_lm_config import BertLMConfig
 @register_model("bert_lm", config_class=BertLMConfig)
 class BertLM(Model):
     tokenizer_name = "wordpiece_tokenizer"
-    skip_keys_on_load = ["bert.embeddings.position_ids"]
+    skip_keys_on_load = [
+        "model.embeddings.position_ids",  # For older versions
+        "bert.embeddings.position_ids"
+    ]
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

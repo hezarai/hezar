@@ -17,7 +17,10 @@ class BertSequenceLabeling(Model):
     BERT model for sequence labeling
     """
     tokenizer_name = "wordpiece_tokenizer"
-    skip_keys_on_load = ["bert.embeddings.position_ids"]
+    skip_keys_on_load = [
+        "model.embeddings.position_ids",  # For older versions
+        "bert.embeddings.position_ids"
+    ]
 
     def __init__(self, config: BertSequenceLabelingConfig, **kwargs):
         super().__init__(config, **kwargs)
