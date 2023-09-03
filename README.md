@@ -27,7 +27,13 @@ git clone https://github.com/hezarai/hezar.git
 pip install ./hezar
 ```
 ## Documentation
-Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.html) page. 
+Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.html) page or explore the key concepts:
+- [Getting Started](https://hezarai.github.io/hezar/get_started/overview.html)
+- [Quick Tour](https://hezarai.github.io/hezar/get_started/quick_tour.html)
+- [Tutorials](https://hezarai.github.io/hezar/tutorial/models.html)
+- [Developer Guides](https://hezarai.github.io/hezar/guide/hezar_architecture.html)
+- [Contribution](https://hezarai.github.io/hezar/contribute/contribute_to_hezar.html)
+- [Reference API](https://hezarai.github.io/hezar/source/index.html)
 
 ## Quick Tour
 ### Models
