@@ -109,7 +109,7 @@ models_registry = {
     "bert_text_classification": Registry(
         module_class=hezar.models.text_classification.bert.bert_text_classification.BertTextClassification,
         config_class=hezar.models.text_classification.bert.bert_text_classification_config.BertTextClassificationConfig,
-        doc="SOME DOCSTRING ..."
+        description="SOME MODEL DESCRIPTION ..."
     ),
     "AND SO ON...": Registry(...)
 }

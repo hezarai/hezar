@@ -54,7 +54,7 @@ logger = Logger(__name__)
 class Registry:
     module_class: type
     config_class: type = None
-    doc: Optional[str] = None
+    description: Optional[str] = None
 
 
 models_registry: Dict[str, Registry] = {}
@@ -65,7 +65,7 @@ metrics_registry: Dict[str, Registry] = {}
 trainers_registry: Dict[str, Registry] = {}
 
 
-def register_model(model_name: str, config_class: Type[ModelConfig]):
+def register_model(model_name: str, config_class: Type[ModelConfig], description: str = None):
     """
     A class decorator that adds the model class and the config class to the `models_registry`
 
@@ -73,6 +73,7 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
         model_name: Model's registry name e.g, `bert_sequence_labeling`
         config_class: Model's config class e.g, `BertSequenceLabelingConfig`. This parameter must be the config class
             itself not a config instance!
+        description: Optional model description
     """
 
     def register(cls):
@@ -87,7 +88,7 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
         models_registry[model_name] = Registry(
             module_class=cls,
             config_class=config_class,
-            doc=cls.__doc__
+            description=description
         )
 
         return cls
@@ -95,7 +96,7 @@ def register_model(model_name: str, config_class: Type[ModelConfig]):
     return register
 
 
-def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
+def register_dataset(dataset_name: str, config_class: Type[DatasetConfig], description: str = None):
     """
     A class decorator that adds the dataset class and the config class to the `datasets_registry`
 
@@ -103,6 +104,7 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
         dataset_name: Dataset's registry name e.g, `text_classification`.
         config_class: Dataset's config class e.g, `TextClassificationDatasetConfig`. This parameter must be the config
             class itself not a config instance!
+        description: Optional dataset description
     """
 
     def register(cls):
@@ -117,7 +119,7 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
         datasets_registry[dataset_name] = Registry(
             module_class=cls,
             config_class=config_class,
-            doc=cls.__doc__
+            description=description,
         )
 
         return cls
@@ -125,7 +127,7 @@ def register_dataset(dataset_name: str, config_class: Type[DatasetConfig]):
     return register
 
 
-def register_preprocessor(preprocessor_name: str, config_class: Type[PreprocessorConfig]):
+def register_preprocessor(preprocessor_name: str, config_class: Type[PreprocessorConfig], description: str = None):
     """
     A class decorator that adds the preprocessor class and the config class to the `preprocessors_registry`
 
@@ -133,6 +135,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
         preprocessor_name: Preprocessor's registry name e.g, `bpe_tokenizer`.
         config_class: Preprocessor's config class e.g, BPEConfig. This parameter must be the config
             class itself not a config instance!
+        description: Optional preprocessor description
     """
 
     def register(cls):
@@ -147,7 +150,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
         preprocessors_registry[preprocessor_name] = Registry(
             module_class=cls,
             config_class=config_class,
-            doc=cls.__doc__
+            description=description,
         )
 
         return cls
@@ -155,7 +158,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type[Preprocesso
     return register
 
 
-def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig]):
+def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig], description: str = None):
     """
     A class decorator that adds the embedding class and the config class to the `embeddings_registry`
 
@@ -163,6 +166,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
         embedding_name: Embedding's registry name e.g, `word2vec_cbow`.
         config_class: Embedding's config class e.g, Word2VecCBOWConfig. This parameter must be the config
             class itself not a config instance!
+        description: Optional embedding description
     """
 
     def register(cls):
@@ -177,7 +181,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
         embeddings_registry[embedding_name] = Registry(
             module_class=cls,
             config_class=config_class,
-            doc=cls.__doc__
+            description=description,
         )
 
         return cls
@@ -185,7 +189,7 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig])
     return register
 
 
-def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
+def register_trainer(trainer_name: str, config_class: Type[TrainerConfig], description: str = None):
     """
     A class decorator that adds the Trainer class and the config class to the `trainers_registry`
 
@@ -193,6 +197,7 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
         trainer_name: Trainer's registry name e.g, `text_classification_trainer`
         config_class: Trainer's config class e.g, `TextClassificationTrainerConfig`.
             This parameter must be the config class itself not a config instance!
+        description: Optional trainer description
     """
 
     def register(cls):
@@ -207,7 +212,7 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
         trainers_registry[trainer_name] = Registry(
             module_class=cls,
             config_class=config_class,
-            doc=cls.__doc__
+            description=description,
         )
 
         return cls
@@ -215,13 +220,14 @@ def register_trainer(trainer_name: str, config_class: Type[TrainerConfig]):
     return register
 
 
-def register_metric(metric_name: str, config_class: Type[MetricConfig]):
+def register_metric(metric_name: str, config_class: Type[MetricConfig], description: str = None):
     """
     A class decorator that adds the metric class and the config class to the `metrics_registry`
 
     Args:
         metric_name: Metric registry name e.g, `f1`
         config_class: Metric config class
+        description: Optional metric description
     """
 
     def register(cls):
@@ -235,7 +241,7 @@ def register_metric(metric_name: str, config_class: Type[MetricConfig]):
         metrics_registry[metric_name] = Registry(
             module_class=cls,
             config_class=config_class,
-            doc=cls.__doc__
+            description=description,
         )
 
         return cls
