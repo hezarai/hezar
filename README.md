@@ -81,6 +81,7 @@ print(transcript)
 ```commandline
 {'transcription': ['و این تنها محدود به محیط کار نیست']}
 ```
+We constantly keep working on adding and training new models and this section will hopefully be expanding every day ;)
 ### Word Embeddings
 - FastText
 ```python
