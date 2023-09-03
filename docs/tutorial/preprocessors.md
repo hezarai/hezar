@@ -68,3 +68,15 @@ three methods:
 - `load(..., subfolder="SUBFOLDER")`
 - `save(..., subfolder="SUBFOLDER")`
 - `push_to_hub(..., subfolder="SUBFOLDER")`
+
+The folder structure of the preprocessors for any save model (locally or in a repo) is something like below:
+```
+hezarai/whisper-small-fa
+├── model_config.yaml
+├── model.pt
+└── preprocessor
+    ├── feature_extractor_config.yaml
+    ├── tokenizer_config.yaml
+    └── tokenizer.json
+
+```
