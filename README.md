@@ -75,11 +75,11 @@ from datasets import load_dataset
 ds = load_dataset("mozilla-foundation/common_voice_11_0", "fa", split="test")
 sample = ds[1001]
 whisper = Model.load("hezarai/whisper-small-fa")
-transcript = whisper.predict(sample["path"])  # or pass `sample["audio"]["array"]` (with the right sample rate)
-print(transcript)
+transcripts = whisper.predict(sample["path"])  # or pass `sample["audio"]["array"]` (with the right sample rate)
+print(transcripts)
 ```
 ```commandline
-{'transcript': ['و این تنها محدود به محیط کار نیست']}
+{'transcripts': ['و این تنها محدود به محیط کار نیست']}
 ```
 We constantly keep working on adding and training new models and this section will hopefully be expanding every day ;)
 ### Word Embeddings
