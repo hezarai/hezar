@@ -151,5 +151,5 @@ class WhisperSpeechRecognition(GenerativeModel):
 
     def post_process(self, inputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
-        transcription = tokenizer.decode(inputs, decode_with_timestamps=True, skip_special_tokens=True)
-        return SpeechRecognitionOutput(transcription=transcription).dict()
+        transcript = tokenizer.decode(inputs, decode_with_timestamps=True, skip_special_tokens=True)
+        return SpeechRecognitionOutput(transcript=transcript).dict()

@@ -44,7 +44,7 @@ transcript = whisper.predict(sample["path"])  # or pass `sample["audio"]["array"
 print(transcript)
 ```
 ```
-{'transcription': ['و این تنها محدود به محیط کار نیست']}
+{'transcript': ['و این تنها محدود به محیط کار نیست']}
 ```
 
 ### Word Embeddings

@@ -67,4 +67,4 @@ class TextGenerationOutput(ModelOutput):
 
 @dataclass
 class SpeechRecognitionOutput(ModelOutput):
-    transcription: Optional[List[str]] = None
+    transcript: Optional[List[str]] = None
