@@ -114,7 +114,7 @@ models_registry = {
     "AND SO ON...": Registry(...)
 }
 ```
-Each registry value is a `Registry` (data)class that has 3 properties: `config_class`, `module_class` and `doc`.
+Each registry value is a `Registry` (data)class that has 3 properties: `config_class`, `module_class` and `description`.
 - `module_class`: Holds the class object for the module. Using this property you can actually create the module object.
 - `config_class`: Holds the config class and can be passed to the module class so that the module can be created.
 - `description`: Holds the description of the model if given.
