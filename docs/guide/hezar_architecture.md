@@ -117,7 +117,7 @@ models_registry = {
 Each registry value is a `Registry` (data)class that has 3 properties: `config_class`, `module_class` and `doc`.
 - `module_class`: Holds the class object for the module. Using this property you can actually create the module object.
 - `config_class`: Holds the config class and can be passed to the module class so that the module can be created.
-- `doc`: Holds the docstring of the module if any.
+- `description`: Holds the description of the model if given.
 
 But how are the modules inserted into the registries? The answer is _registry class decorators_
 
@@ -128,6 +128,7 @@ into the right registry automagically!
 These decorators take two parameters:
 - `name`: A string name that has to be the same as the one in config
 - `config_class`: The config class
+- `description`: Optional description for the module
 
 The example below demonstrates registering a model:
 ```python
