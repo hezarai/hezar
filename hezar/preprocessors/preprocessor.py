@@ -86,7 +86,7 @@ class Preprocessor:
                 config = OmegaConf.load(config_file)
                 name = config.get("name", None)
                 if name:
-                    preprocessor_cls = get_module_class(name, module_type=RegistryType.PREPROCESSOR)
+                    preprocessor_cls = get_module_class(name, registry_type=RegistryType.PREPROCESSOR)
                     preprocessor = preprocessor_cls.load(hub_or_local_path, subfolder=subfolder)
                     preprocessors[name] = preprocessor
                 else:

@@ -4,7 +4,7 @@ from typing import Optional, Union
 from torch.utils.data import Dataset as TorchDataset
 
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, RepoType, SplitType
+from ...constants import DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR, RegistryType, RepoType, SplitType
 from ...utils import get_module_class
 
 
@@ -53,7 +53,7 @@ class Dataset(TorchDataset):
         split = split or "train"
         config_filename = config_filename or cls.config_filename
         dataset_config = DatasetConfig.load(hub_path, filename=config_filename, repo_type=RepoType.DATASET, **kwargs)
-        dataset_class = get_module_class(dataset_config.name, module_type=ConfigType.DATASET)
+        dataset_class = get_module_class(dataset_config.name, registry_type=RegistryType.DATASET)
         dataset_config.path = hub_path
         dataset = dataset_class(dataset_config, split=split)
         return dataset

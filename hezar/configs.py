@@ -162,7 +162,7 @@ class Config:
         # Load config file and convert to dictionary
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
-        config_cls = get_module_config_class(config["name"], config_type=config.get("config_type", None))
+        config_cls = get_module_config_class(config["name"], registry_type=config.get("config_type", None))
         if config_cls is None:
             config_cls = cls
         config = config_cls.from_dict(config, strict=False, **kwargs)
