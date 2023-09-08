@@ -11,20 +11,17 @@ class CRNNImage2Text(Model):
         super().__init__(config=config, **kwargs)
         self.cnn = nn.Sequential(
             ConvBlock(self.config.n_channels, 64, 3, 1, 1),
-            nn.MaxPool2d(kernel_size=2, stride=2),
             ConvBlock(64, 128, 3, 1, 1),
-            nn.MaxPool2d(kernel_size=2, stride=2),
             ConvBlock(128, 256, 3, 1, 1),
             ConvBlock(256, 256, 3, 1, 1),
-            nn.MaxPool2d(kernel_size=(2, 1)),
             ConvBlock(256, 512, 3, 1, 1, batch_norm=True),
             ConvBlock(512, 512, 3, 1, 1, batch_norm=True),
-            nn.MaxPool2d(kernel_size=(2, 1)),
-            ConvBlock(512, 512, 2, 1, 0)
+            ConvBlock(512, 512, 3, 1, 1)
         )
+        # Resize
+        self.resize = nn.LazyLinear(self.config.max_new_chars)
         # map CNN to sequence
-        self.map2seq = nn.Linear(
-            512 * (self.config.img_height // 16 - 1), self.config.map2seq_dim)
+        self.map2seq = nn.LazyLinear(self.config.map2seq_dim)
         # RNN
         self.rnn1 = nn.LSTM(self.config.map2seq_dim, self.config.rnn_dim, bidirectional=True)
         self.rnn2 = nn.LSTM(2 * self.config.rnn_dim, self.config.rnn_dim, bidirectional=True)
