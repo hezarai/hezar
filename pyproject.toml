@@ -32,7 +32,7 @@ exclude = [
 [tool.poetry.dependencies]
 python = ">=3.8"
 numpy = ">=1.24.0"
-torch = ">=1.10.*,<=2.*"
+torch = ">=1.10.*,<2.1"
 omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
 datasets = ">=2.9.0"
