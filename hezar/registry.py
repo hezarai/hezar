@@ -9,11 +9,11 @@ Examples:
     >>> print(models_registry)
     {'distilbert_lm': {'module_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
     'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>},
-    'doc': ''}
+    'description': 'Optional model description here...'}
 
     >>> # add a model class to models_registry
     >>> from hezar import Model, register_model
-    >>> @register_model(name="my_awesome_model", config_class=MyAwesomeModelConfig)
+    >>> @register_model(name="my_awesome_model", config_class=MyAwesomeModelConfig, description="My Awesome Model!")
     >>> class MyAwesomeModel(Model):
     ...    def __init__(config: MyAwesomeModelConfig):
     ...        ...
