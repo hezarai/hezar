@@ -123,9 +123,10 @@ class TextNormalizer(Preprocessor):
     def save(
         self,
         path,
+        subfolder=None,
         config_filename=None,
-        **kwargs,
     ):
         config_filename = config_filename or self.normalizer_config_file
+        subfolder = subfolder or self.preprocessor_subfolder
         os.makedirs(path, exist_ok=True)
-        self.config.save(path, filename=config_filename, subfolder=self.preprocessor_subfolder)
+        self.config.save(path, filename=config_filename, subfolder=subfolder)
