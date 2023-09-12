@@ -341,7 +341,19 @@ class GenerativeModel(Model):
     def __init__(self, config: ModelConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
+    @torch.inference_mode()
     def generate(self, inputs, **kwargs):
+        """
+        Generation method for all generative models. The behavior of this method is usually controlled by `generation`
+        part of the model config.
+
+        Args:
+            inputs: Preprocessed input ids
+            **kwargs: Generation kwargs
+
+        Returns:
+            Generated ids
+        """
         raise NotImplementedError(f"`{self.__class__.__name__}` is a generative model "
                                   f"but has not implemented the `generate()` method!")
 
