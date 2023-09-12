@@ -1,3 +1,6 @@
+from typing import List, Union
+
+import numpy as np
 import torch
 from transformers import (
     VisionEncoderDecoderModel,
@@ -8,13 +11,24 @@ from transformers import (
     GenerationConfig,
 )
 
-from ...model import GenerativeModel
+from ....integrations import is_pillow_available
 from ....registry import register_model
+from ...model import GenerativeModel
+from ...model_outputs import Image2TextOutput
 from .trocr_image2text_config import TrOCRImage2TextConfig
+
+if is_pillow_available():
+    from PIL import Image
 
 
 @register_model("trocr_image2text", config_class=TrOCRImage2TextConfig)
 class TrOCRImage2Text(GenerativeModel):
+    """
+    TrOCR for optical character recognition
+    """
+    image_processor = "image_processor"
+    tokenizer = "bpe_tokenizer"
+
     def __init__(self, config: TrOCRImage2TextConfig, **kwargs):
         super().__init__(config, **kwargs)
         encoder = ViTModel(config=ViTConfig(**self.config.encoder))
@@ -58,3 +72,13 @@ class TrOCRImage2Text(GenerativeModel):
         outputs = self.trocr.generate(inputs=input_ids, generation_config=generation_config, **kwargs)
 
         return outputs
+
+    def preprocess(self, inputs: Union[List[str], List[np.ndarray], List["Image"], List[torch.Tensor]], **kwargs):
+        image_processor = self.preprocessor[self.image_processor]
+        processed_outputs = image_processor(inputs, **kwargs)
+        return processed_outputs
+
+    def post_process(self, inputs, **kwargs):
+        tokenizer = self.preprocessor[self.tokenizer]
+        decoded_outputs = tokenizer.decode(inputs.numpy().tolist())
+        return Image2TextOutput(texts=decoded_outputs)
