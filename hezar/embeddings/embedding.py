@@ -76,7 +76,7 @@ class Embedding:
         config_filename = config_filename or cls.config_filename
         subfolder = subfolder or cls.subfolder
 
-        config = EmbeddingConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder, **kwargs)
+        config = EmbeddingConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder)
         config.pretrained_path = hub_or_local_path
 
         embedding = build_embedding(config.name, config, **kwargs)
