@@ -7,7 +7,7 @@ from enum import Enum
 
 
 HEZAR_HUB_ID = "hezarai"
-HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.hezar')
+HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.cache/hezar')
 
 DEFAULT_MODEL_FILE = "model.pt"
 DEFAULT_MODEL_CONFIG_FILE = "model_config.yaml"
