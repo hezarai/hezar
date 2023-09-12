@@ -6,17 +6,16 @@ from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
 
 import numpy as np
 import torch
-from huggingface_hub import create_repo, upload_file
+from huggingface_hub import create_repo, upload_file, hf_hub_download
 from tokenizers import Tokenizer as HFTokenizer
 from tokenizers.decoders import Decoder
 from tokenizers.models import Model
 
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE
-from ...utils import convert_batch_dict_dtype, Logger
+from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, RegistryType, HEZAR_CACHE_DIR
+from ...utils import convert_batch_dict_dtype, Logger, get_module_class
 from ..preprocessor import Preprocessor
-
 
 logger = Logger(__name__)
 
@@ -24,7 +23,6 @@ logger = Logger(__name__)
 @dataclass
 class TokenizerConfig(PreprocessorConfig):
     name = "tokenizer"
-    pretrained_path: str = None
     max_length: int = None
     truncation_strategy: str = None
     truncation_direction: str = None
@@ -45,6 +43,7 @@ class Tokenizer(Preprocessor):
 
     Args:
         config: A TokenizerConfig instance
+        tokenizer_file: A tokenizer.json file to load the whole tokenizer from
         **kwargs: Extra config parameters that merge into the main config
     """
 
@@ -63,11 +62,19 @@ class Tokenizer(Preprocessor):
     ]
     uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
-    def __init__(self, config: TokenizerConfig, **kwargs):
+    def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
         super().__init__(config, **kwargs)
-        self._tokenizer = self.build()
+        if tokenizer_file is not None:
+            self._tokenizer = self.from_file(tokenizer_file)
+        else:
+            self._tokenizer = self.build()
 
-    def build(self) -> HFTokenizer:
+    @staticmethod
+    def from_file(path):
+        tokenizer = HFTokenizer.from_file(path)
+        return tokenizer
+
+    def build(self):
         raise NotImplementedError
 
     def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True, **kwargs):
@@ -491,10 +498,12 @@ class Tokenizer(Preprocessor):
     def load(
         cls,
         hub_or_local_path,
-        config_filename=None,
         subfolder=None,
+        config_filename=None,
+        tokenizer_filename=None,
         **kwargs,
     ) -> "Tokenizer":
+        tokenizer_filename = tokenizer_filename or cls.tokenizer_filename
         config_filename = config_filename or cls.tokenizer_config_filename
         subfolder = subfolder or cls.preprocessor_subfolder
         config = TokenizerConfig.load(
@@ -502,8 +511,18 @@ class Tokenizer(Preprocessor):
             filename=config_filename,
             subfolder=subfolder,
         )
-        config.pretrained_path = hub_or_local_path
-        tokenizer = build_preprocessor(config.name, config, **kwargs)
+
+        if os.path.isdir(hub_or_local_path):
+            tokenizer_path = os.path.join(hub_or_local_path, subfolder, tokenizer_filename)
+        else:
+            tokenizer_path = hf_hub_download(
+                hub_or_local_path,
+                filename=tokenizer_filename,
+                subfolder=subfolder,
+                cache_dir=HEZAR_CACHE_DIR,
+                resume_download=True,
+            )
+        tokenizer = build_preprocessor(config.name, config, tokenizer_file=tokenizer_path, **kwargs)
         return tokenizer
 
     def save(self, path, save_config=True, pretty=True):

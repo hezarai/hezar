@@ -152,8 +152,8 @@ class WhisperBPEConfig(BPEConfig):
 
 @register_preprocessor("whisper_bpe_tokenizer", config_class=WhisperBPEConfig)
 class WhisperBPETokenizer(BPETokenizer):
-    def __init__(self, config: WhisperBPEConfig, **kwargs):
-        super().__init__(config=config, **kwargs)
+    def __init__(self, config, tokenizer_file=None, **kwargs):
+        super().__init__(config, tokenizer_file=tokenizer_file, **kwargs)
         self.language = self.config.language
         self.task = self.config.task
         self.predict_timestamps = self.config.predict_timestamps

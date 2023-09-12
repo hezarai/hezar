@@ -48,33 +48,13 @@ class WordPieceTokenizer(Tokenizer):
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
     token_ids_name = "token_ids"
 
-    def __init__(self, config, **kwargs):
-        super().__init__(config, **kwargs)
+    def __init__(self, config, tokenizer_file=None, **kwargs):
+        super().__init__(config, tokenizer_file=tokenizer_file, **kwargs)
 
     def build(self):
-        pretrained_path = self.config.get("pretrained_path")
-        if pretrained_path:
-            if not os.path.isdir(pretrained_path):
-                tokenizer_path = hf_hub_download(
-                    pretrained_path,
-                    filename=self.tokenizer_filename,
-                    subfolder=self.preprocessor_subfolder,
-                    cache_dir=HEZAR_CACHE_DIR,
-                    resume_download=True,
-                )
-
-            else:
-                tokenizer_path = os.path.join(
-                    pretrained_path,
-                    self.preprocessor_subfolder,
-                    self.tokenizer_filename,
-                )
-            tokenizer = HFTokenizer.from_file(tokenizer_path)
-        else:
-            tokenizer = HFTokenizer(models.WordPiece(unk_token=self.config.unk_token))  # noqa
-            tokenizer.add_special_tokens(self.config.special_tokens)
-            tokenizer.decoder = decoders.WordPiece(self.config.wordpieces_prefix)  # noqa
-
+        tokenizer = HFTokenizer(models.WordPiece(unk_token=self.config.unk_token))  # noqa
+        tokenizer.add_special_tokens(self.config.special_tokens)
+        tokenizer.decoder = decoders.WordPiece(self.config.wordpieces_prefix)  # noqa
         return tokenizer
 
     def train(self, files: List[str], **train_kwargs):

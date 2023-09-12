@@ -65,43 +65,24 @@ class BPETokenizer(Tokenizer):
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
     token_ids_name = "token_ids"
 
-    def __init__(self, config, **kwargs):
-        super().__init__(config, **kwargs)
+    def __init__(self, config, tokenizer_file=None, **kwargs):
+        super().__init__(config, tokenizer_file=tokenizer_file, **kwargs)
 
     def build(self):
-        pretrained_path = self.config.get("pretrained_path")
-        if pretrained_path:
-            if not os.path.isdir(pretrained_path):
-                tokenizer_path = hf_hub_download(
-                    pretrained_path,
-                    filename=self.tokenizer_filename,
-                    subfolder=self.preprocessor_subfolder,
-                    cache_dir=HEZAR_CACHE_DIR,
-                    resume_download=True,
-                )
-
-            else:
-                tokenizer_path = os.path.join(
-                    pretrained_path,
-                    self.preprocessor_subfolder,
-                    self.tokenizer_filename,
-                )
-            tokenizer = HFTokenizer.from_file(tokenizer_path)
-        else:
-            tokenizer = HFTokenizer(
-                models.BPE(
-                    dropout=self.config.dropout,
-                    unk_token=self.config.unk_token,
-                    continuing_subword_prefix=self.config.continuing_subword_prefix,
-                    end_of_word_suffix=self.config.end_of_word_suffix,
-                    fuse_unk=self.config.fuse_unk,
-                )
+        tokenizer = HFTokenizer(
+            models.BPE(
+                dropout=self.config.dropout,
+                unk_token=self.config.unk_token,
+                continuing_subword_prefix=self.config.continuing_subword_prefix,
+                end_of_word_suffix=self.config.end_of_word_suffix,
+                fuse_unk=self.config.fuse_unk,
             )
-            tokenizer.add_special_tokens(self.config.special_tokens)
-            tokenizer.decoder = decoders.ByteLevel()  # noqa
-            tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)  # noqa
-            tokenizer.decoder = decoders.ByteLevel()  # noqa
-            tokenizer.post_processor = processors.ByteLevel(trim_offsets=False)  # noqa
+        )
+        tokenizer.add_special_tokens(self.config.special_tokens)
+        tokenizer.decoder = decoders.ByteLevel()  # noqa
+        tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)  # noqa
+        tokenizer.decoder = decoders.ByteLevel()  # noqa
+        tokenizer.post_processor = processors.ByteLevel(trim_offsets=False)  # noqa
 
         return tokenizer
 
