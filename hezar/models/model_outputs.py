@@ -3,6 +3,7 @@ Define all model outputs here
 """
 from dataclasses import asdict, dataclass
 from typing import List, Optional
+from pprint import pformat
 
 import torch
 
@@ -17,6 +18,9 @@ class ModelOutput:
 
     def dict(self):
         return asdict(self)
+
+    def __str__(self):
+        return pformat(self.dict())
 
     def __getitem__(self, item):
         try:
@@ -68,3 +72,8 @@ class TextGenerationOutput(ModelOutput):
 @dataclass
 class SpeechRecognitionOutput(ModelOutput):
     transcripts: Optional[List[str]] = None
+
+
+@dataclass
+class Image2TextOutput(ModelOutput):
+    texts: Optional[List[str]] = None
