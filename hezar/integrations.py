@@ -41,4 +41,4 @@ def is_gensim_available():
 
 
 def is_pillow_available():
-    return importlib.util.find_spec("pillow") is not None
+    return importlib.util.find_spec("PIL") is not None
