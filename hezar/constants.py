@@ -16,6 +16,7 @@ DEFAULT_TRAINER_CONFIG_FILE = "train_config.yaml"
 DEFAULT_TRAINER_CSV_LOG_FILE = "training_logs.csv"
 DEFAULT_PREPROCESSOR_SUBFOLDER = "preprocessor"
 DEFAULT_NORMALIZER_CONFIG_FILE = "normalizer_config.yaml"
+DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE = "image_processor_config.yaml"
 DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE = "feature_extractor_config.yaml"
 DEFAULT_TOKENIZER_FILE = "tokenizer.json"
 DEFAULT_TOKENIZER_CONFIG_FILE = "tokenizer_config.yaml"
@@ -81,3 +82,14 @@ class MetricType(str, Enum):
 class RepoType(str, Enum):
     DATASET = "dataset"
     MODEL = "model"
+
+
+class ImageType(str, Enum):
+    NUMPY = "numpy"
+    PIL = "pil"
+    TORCH = "torch"
+
+
+class ChannelsAxisSide(str, Enum):
+    FIRST = "first"
+    LAST = "last"
