@@ -5,3 +5,4 @@ from .metric import Metric
 from .precision import Precision, PrecisionConfig
 from .recall import Recall, RecallConfig
 from .seqeval import Seqeval, SeqevalConfig
+from .wer import WER, WERConfig
