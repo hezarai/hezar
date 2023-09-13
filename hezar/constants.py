@@ -79,6 +79,7 @@ class MetricType(str, Enum):
     SEQEVAL = "seqeval"
     CER = "cer"
     WER = "wer"
+    BLEU = "bleu"
 
 
 class RepoType(str, Enum):
