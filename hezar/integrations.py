@@ -9,6 +9,8 @@ __all__ = [
     "is_wandb_available",
     "is_gensim_available",
     "is_pillow_available",
+    "is_jiwer_available",
+    "is_nltk_available",
 ]
 
 
@@ -42,3 +44,11 @@ def is_gensim_available():
 
 def is_pillow_available():
     return importlib.util.find_spec("PIL") is not None
+
+
+def is_jiwer_available():
+    return importlib.util.find_spec("jiwer") is not None
+
+
+def is_nltk_available():
+    return importlib.util.find_spec("nltk") is not None
