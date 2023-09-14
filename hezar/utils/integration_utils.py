@@ -24,6 +24,16 @@ def is_backend_available(backend: Backends):
 
 
 def verify_dependencies(obj, backends: List[Union[Backends, str]] = None):
+    """
+    Check if all the required dependencies are installed or not.
+
+    Args:
+        obj: The target object to check. (Usually `self`)
+        backends: A list of dependency names of type `str` or `Backends`
+
+    Raises:
+        ModuleNotFoundError
+    """
     if backends is None:
         return
     unavailable = []
