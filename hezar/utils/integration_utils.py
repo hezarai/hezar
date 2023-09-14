@@ -42,6 +42,7 @@ def verify_dependencies(obj, backends: List[Union[Backends, str]] = None):
             unavailable.append(backend)
     if len(unavailable):
         raise ModuleNotFoundError(
-            f"`{obj.__class__.__name__}` requires {unavailable} "
+            f"`{obj.__class__.__name__}` requires "
+            f"{f'`{unavailable[0]}`' if len(unavailable) == 1 else unavailable} "
             f"which {'is' if len(unavailable) == 1 else 'are'} not installed!"
         )

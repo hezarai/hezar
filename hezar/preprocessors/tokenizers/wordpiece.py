@@ -3,12 +3,19 @@ from dataclasses import dataclass, field
 from typing import List
 
 from huggingface_hub import hf_hub_download
-from tokenizers import Tokenizer as HFTokenizer
-from tokenizers import decoders, models, trainers
 
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR
+from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, Backends
 from ...registry import register_preprocessor
+from ...utils import is_backend_available
 from .tokenizer import Tokenizer, TokenizerConfig
+
+if is_backend_available(Backends.TOKENIZERS):
+    from tokenizers import Tokenizer as HFTokenizer
+    from tokenizers import decoders, models, pre_tokenizers, processors, trainers
+
+_required_backends = [
+    Backends.TOKENIZERS,
+]
 
 
 @dataclass
@@ -43,6 +50,7 @@ class WordPieceTokenizer(Tokenizer):
         config: Preprocessor config for the tokenizer
         **kwargs: Extra/manual config parameters
     """
+    required_backends = _required_backends
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE

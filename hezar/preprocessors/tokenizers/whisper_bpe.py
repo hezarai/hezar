@@ -1,12 +1,18 @@
-from dataclasses import dataclass
+import os
+from dataclasses import dataclass, field
 from typing import List
 
-import numpy as np
-from tokenizers import processors
-
+from ...constants import Backends
 from ...registry import register_preprocessor
-from ...utils import Logger
+from ...utils import is_backend_available, Logger
 from .bpe import BPEConfig, BPETokenizer
+
+if is_backend_available(Backends.TOKENIZERS):
+    from tokenizers import processors
+
+_required_backends = [
+    Backends.TOKENIZERS,
+]
 
 
 logger = Logger(__name__)
@@ -152,6 +158,8 @@ class WhisperBPEConfig(BPEConfig):
 
 @register_preprocessor("whisper_bpe_tokenizer", config_class=WhisperBPEConfig)
 class WhisperBPETokenizer(BPETokenizer):
+    required_backends = _required_backends
+
     def __init__(self, config, tokenizer_file=None, **kwargs):
         super().__init__(config, tokenizer_file=tokenizer_file, **kwargs)
         self.language = self.config.language

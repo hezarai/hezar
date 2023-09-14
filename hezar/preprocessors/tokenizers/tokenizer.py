@@ -7,15 +7,17 @@ from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
 import numpy as np
 import torch
 from huggingface_hub import create_repo, upload_file, hf_hub_download
-from tokenizers import Tokenizer as HFTokenizer
-from tokenizers.decoders import Decoder
-from tokenizers.models import Model
 
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, RegistryType, HEZAR_CACHE_DIR
-from ...utils import convert_batch_dict_dtype, Logger, get_module_class
+from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, Backends, HEZAR_CACHE_DIR
+from ...utils import convert_batch_dict_dtype, Logger, verify_dependencies, is_backend_available
 from ..preprocessor import Preprocessor
+
+if is_backend_available(Backends.TOKENIZERS):
+    from tokenizers import Tokenizer as HFTokenizer
+    from tokenizers.decoders import Decoder
+    from tokenizers.models import Model
 
 logger = Logger(__name__)
 
@@ -46,6 +48,7 @@ class Tokenizer(Preprocessor):
         tokenizer_file: A tokenizer.json file to load the whole tokenizer from
         **kwargs: Extra config parameters that merge into the main config
     """
+    required_backends: List[Union[str, Backends]] = []
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
@@ -63,6 +66,8 @@ class Tokenizer(Preprocessor):
     uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
     def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
+        verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
+
         super().__init__(config, **kwargs)
         if tokenizer_file is not None:
             self._tokenizer = self.from_file(tokenizer_file)
