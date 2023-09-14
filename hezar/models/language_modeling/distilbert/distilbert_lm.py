@@ -3,13 +3,14 @@ A DistilBERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model 
 """
 from typing import List, Union
 
-from transformers import DistilBertConfig, DistilBertModel
-
 from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
+from ....utils import is_backend_available
 from .distilbert_lm_config import DistilBertLMConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import DistilBertConfig, DistilBertModel
 
 _required_backends = [
     Backends.TRANSFORMERS,

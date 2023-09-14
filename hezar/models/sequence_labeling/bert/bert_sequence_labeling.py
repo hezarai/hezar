@@ -4,13 +4,15 @@ A BERT model for sequence labeling built using HuggingFace Transformers
 from typing import Dict, List, Union
 
 from torch import nn
-from transformers import BertConfig, BertModel
 
 from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
+from ....utils import is_backend_available
 from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import BertConfig, BertModel
 
 _required_backends = [
     Backends.TRANSFORMERS,

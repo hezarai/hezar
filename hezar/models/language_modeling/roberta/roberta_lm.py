@@ -3,13 +3,14 @@ A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model cla
 """
 from typing import List, Union
 
-from transformers import RobertaConfig, RobertaModel
-
 from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
+from ....utils import is_backend_available
 from .roberta_lm_config import RobertaLMConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import RobertaConfig, RobertaModel
 
 _required_backends = [
     Backends.TRANSFORMERS,

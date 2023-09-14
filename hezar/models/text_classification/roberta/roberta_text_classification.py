@@ -4,13 +4,15 @@ A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model cla
 from typing import Dict, List, Union
 
 from torch import nn, tanh
-from transformers import RobertaConfig, RobertaModel
 
 from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
+from ....utils import is_backend_available
 from .roberta_text_classification_config import RobertaTextClassificationConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import RobertaConfig, RobertaModel
 
 _required_backends = [
     Backends.TRANSFORMERS,

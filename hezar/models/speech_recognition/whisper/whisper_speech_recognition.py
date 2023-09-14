@@ -2,7 +2,6 @@ from typing import List, Union
 
 import numpy as np
 import torch
-from transformers import WhisperConfig, WhisperForConditionalGeneration
 
 from ....constants import Backends
 from ....registry import register_model
@@ -11,6 +10,8 @@ from ...model import GenerativeModel
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import WhisperConfig, WhisperForConditionalGeneration
 
 if is_backend_available(Backends.LIBROSA):
     import librosa

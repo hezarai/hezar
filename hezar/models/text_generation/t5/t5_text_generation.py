@@ -1,13 +1,15 @@
 from typing import Dict, List, Union
 
 import torch
-from transformers import T5Config, T5ForConditionalGeneration
 
 from ....constants import Backends
 from ....registry import register_model
 from ...model import GenerativeModel
+from ....utils import is_backend_available
 from .t5_text_generation_config import T5TextGenerationConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import T5Config, T5ForConditionalGeneration
 
 _required_backends = [
     Backends.TRANSFORMERS,

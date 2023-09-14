@@ -3,13 +3,14 @@ A BERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
 from typing import List, Union
 
-from transformers import BertConfig, BertModel
-
 from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
+from ....utils import is_backend_available
 from .bert_lm_config import BertLMConfig
 
+if is_backend_available(Backends.TRANSFORMERS):
+    from transformers import BertConfig, BertModel
 
 _required_backends = [
     Backends.TRANSFORMERS,
