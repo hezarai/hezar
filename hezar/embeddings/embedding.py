@@ -30,8 +30,7 @@ class Embedding:
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
     def __init__(self, config: EmbeddingConfig, **kwargs):
-        # Check if all the required dependencies are installed
-        verify_dependencies(self, self.required_backends)
+        verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
 
         self.config = config.update(kwargs)
         self.model = self.build()
