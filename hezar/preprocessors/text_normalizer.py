@@ -2,15 +2,19 @@ import os
 from dataclasses import dataclass
 from typing import Dict, List, Mapping, Tuple, Union
 
-from tokenizers import Regex, normalizers
-
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER
+from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER, Backends
 from ..registry import register_preprocessor
-from ..utils import Logger
+from ..utils import Logger, is_backend_available
 from .preprocessor import Preprocessor
 
+if is_backend_available(Backends.TOKENIZERS):
+    from tokenizers import Regex, normalizers
+
+_required_backends = [
+    Backends.TOKENIZERS,
+]
 
 logger = Logger(__name__)
 
@@ -37,6 +41,8 @@ class TextNormalizer(Preprocessor):
     """
     A simple configurable text normalizer
     """
+    required_backends = _required_backends
+
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
     normalizer_config_file = DEFAULT_NORMALIZER_CONFIG_FILE
 

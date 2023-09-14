@@ -1,11 +1,12 @@
 import os
 from collections import OrderedDict
+from typing import List, Union
 
 from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
 
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, RegistryType, RepoType
-from ..utils import get_module_class, list_repo_files
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, RegistryType, RepoType, Backends
+from ..utils import get_module_class, list_repo_files, verify_dependencies
 
 
 class Preprocessor:
@@ -15,10 +16,13 @@ class Preprocessor:
     Args:
         config: Preprocessor properties
     """
+    required_backends: List[Union[str, Backends]] = []
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
     def __init__(self, config, **kwargs):
+        verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
+
         self.config = config.update(kwargs)
 
     def __call__(self, inputs, **kwargs):

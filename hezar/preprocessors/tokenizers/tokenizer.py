@@ -67,8 +67,6 @@ class Tokenizer(Preprocessor):
     uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
     def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
-        verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
-
         super().__init__(config, **kwargs)
         if tokenizer_file is not None:
             self._tokenizer = self.from_file(tokenizer_file)

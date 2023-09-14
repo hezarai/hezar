@@ -5,7 +5,7 @@ import numpy as np
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER, ImageType
+from ..constants import DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER, ImageType, Backends
 from ..registry import register_preprocessor
 from ..utils import (
     convert_batch_dict_dtype,
@@ -18,6 +18,9 @@ from ..utils import (
 )
 from .preprocessor import Preprocessor
 
+_required_backends = [
+    Backends.PILLOW,
+]
 
 _DESCRIPTION = r"""
 A general image processor to do all the image transforms in a composable/configurable pipeline
@@ -52,6 +55,8 @@ class ImageProcessor(Preprocessor):
     """
     General image processor to perform sequential transforms on the images
     """
+    required_backends = _required_backends
+
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
     image_processor_config_file = DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE
 
