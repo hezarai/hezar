@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from typing import Iterable, Union
 
 from ..configs import MetricConfig
-from ..constants import MetricType
-from ..integrations import is_nltk_available
+from ..constants import MetricType, Backends
 from ..registry import register_metric
+from ..utils import is_backend_available
 from .metric import Metric
 
-if is_nltk_available():
+if is_backend_available(Backends.NLTK):
     from nltk.translate.bleu_score import corpus_bleu
 
 

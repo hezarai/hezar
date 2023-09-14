@@ -3,13 +3,13 @@ from typing import Union, Tuple, List, Iterable
 import numpy as np
 import torch
 
-from ..integrations import is_pillow_available
-from ..constants import ImageType, ChannelsAxisSide
+from ..constants import ImageType, ChannelsAxisSide, Backends
+from .integration_utils import is_backend_available
 from .logging import Logger
 
 logger = Logger(__name__)
 
-if is_pillow_available():
+if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
 __all__ = [

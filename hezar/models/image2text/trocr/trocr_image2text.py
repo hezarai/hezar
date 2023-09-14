@@ -11,13 +11,14 @@ from transformers import (
     GenerationConfig,
 )
 
-from ....integrations import is_pillow_available
+from ....constants import Backends
+from ....utils import is_backend_available
 from ....registry import register_model
 from ...model import GenerativeModel
 from ...model_outputs import Image2TextOutput
 from .trocr_image2text_config import TrOCRImage2TextConfig
 
-if is_pillow_available():
+if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
 

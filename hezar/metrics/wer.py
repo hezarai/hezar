@@ -2,12 +2,12 @@ from dataclasses import dataclass
 
 
 from ..configs import MetricConfig
-from ..constants import MetricType
-from ..integrations import is_jiwer_available
+from ..constants import MetricType, Backends
+from ..utils import is_backend_available
 from ..registry import register_metric
 from .metric import Metric
 
-if is_jiwer_available():
+if is_backend_available(Backends.JIWER):
     import jiwer
 
 _DESCRIPTION = "Word Error Rate (WER) using `jiwer`. Commonly used for Speech Recognition systems"
