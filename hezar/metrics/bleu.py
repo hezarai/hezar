@@ -10,6 +10,10 @@ from .metric import Metric
 if is_backend_available(Backends.NLTK):
     from nltk.translate.bleu_score import corpus_bleu
 
+_required_backends = [
+    Backends.NLTK,
+]
+
 
 @dataclass
 class BLEUConfig(MetricConfig):
@@ -19,6 +23,8 @@ class BLEUConfig(MetricConfig):
 
 @register_metric("bleu", config_class=BLEUConfig)
 class BLEU(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: BLEUConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 

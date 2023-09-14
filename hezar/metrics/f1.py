@@ -4,9 +4,13 @@ from typing import Iterable
 from sklearn.metrics import f1_score
 
 from ..configs import MetricConfig
-from ..constants import MetricType
+from ..constants import MetricType, Backends
 from ..registry import register_metric
 from .metric import Metric
+
+_required_backends = [
+    Backends.SCIKIT,
+]
 
 
 @dataclass
@@ -20,6 +24,8 @@ class F1Config(MetricConfig):
 
 @register_metric("f1", config_class=F1Config)
 class F1(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: F1Config, **kwargs):
         super().__init__(config, **kwargs)
 

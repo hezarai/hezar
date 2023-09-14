@@ -4,9 +4,13 @@ from typing import Iterable, Union
 from sklearn.metrics import precision_score
 
 from ..configs import MetricConfig
-from ..constants import MetricType
+from ..constants import MetricType, Backends
 from ..registry import register_metric
 from .metric import Metric
+
+_required_backends = [
+    Backends.SCIKIT,
+]
 
 
 @dataclass
@@ -21,6 +25,8 @@ class PrecisionConfig(MetricConfig):
 
 @register_metric("precision", config_class=PrecisionConfig)
 class Precision(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: PrecisionConfig, **kwargs):
         super().__init__(config, **kwargs)
 

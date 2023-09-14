@@ -4,9 +4,13 @@ from typing import Iterable
 from sklearn.metrics import accuracy_score
 
 from ..configs import MetricConfig
-from ..constants import MetricType
+from ..constants import MetricType, Backends
 from ..registry import register_metric
 from .metric import Metric
+
+_required_backends = [
+    Backends.SCIKIT,
+]
 
 
 @dataclass
@@ -19,6 +23,8 @@ class AccuracyConfig(MetricConfig):
 
 @register_metric("accuracy", config_class=AccuracyConfig)
 class Accuracy(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: AccuracyConfig, **kwargs):
         super().__init__(config, **kwargs)
 

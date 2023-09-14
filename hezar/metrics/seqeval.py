@@ -1,14 +1,18 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
-from seqeval.metrics import accuracy_score, classification_report
-
 from ..configs import MetricConfig
-from ..constants import MetricType
+from ..constants import MetricType, Backends
 from ..registry import register_metric
-from ..utils import Logger
+from ..utils import Logger, is_backend_available
 from .metric import Metric
 
+if is_backend_available(Backends.SEQEVAL):
+    from seqeval.metrics import accuracy_score, classification_report
+
+_required_backends = [
+    Backends.SEQEVAL,
+]
 
 logger = Logger(__name__)
 
@@ -25,6 +29,8 @@ class SeqevalConfig(MetricConfig):
 
 @register_metric("seqeval", config_class=SeqevalConfig)
 class Seqeval(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: SeqevalConfig, **kwargs):
         super().__init__(config, **kwargs)
 

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 from ..configs import MetricConfig
 from ..constants import MetricType, Backends
 from ..utils import is_backend_available
@@ -12,6 +11,10 @@ if is_backend_available(Backends.JIWER):
 
 _DESCRIPTION = "Word Error Rate (WER) using `jiwer`. Commonly used for Speech Recognition systems"
 
+_required_backends = [
+    Backends.JIWER,
+]
+
 
 @dataclass
 class WERConfig(MetricConfig):
@@ -22,6 +25,8 @@ class WERConfig(MetricConfig):
 
 @register_metric("wer", config_class=WERConfig, description=_DESCRIPTION)
 class WER(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: WERConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 

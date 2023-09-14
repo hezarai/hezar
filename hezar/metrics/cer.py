@@ -12,6 +12,10 @@ if is_backend_available(Backends.JIWER):
 
 _DESCRIPTION = "Character Error Rate (CER) using `jiwer`. Commonly used for Speech Recognition systems"
 
+_required_backends = [
+    Backends.JIWER,
+]
+
 
 @dataclass
 class CERConfig(MetricConfig):
@@ -23,6 +27,8 @@ class CERConfig(MetricConfig):
 
 @register_metric("cer", config_class=CERConfig, description=_DESCRIPTION)
 class CER(Metric):
+    required_backends = _required_backends
+
     def __init__(self, config: CERConfig, **kwargs):
         super().__init__(config=config, **kwargs)
         self.transform = tr.Compose(
