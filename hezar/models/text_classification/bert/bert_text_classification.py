@@ -11,6 +11,7 @@ from ....registry import register_model
 from ...model import Model
 from .bert_text_classification_config import BertTextClassificationConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

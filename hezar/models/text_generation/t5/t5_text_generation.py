@@ -8,6 +8,7 @@ from ....registry import register_model
 from ...model import GenerativeModel
 from .t5_text_generation_config import T5TextGenerationConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

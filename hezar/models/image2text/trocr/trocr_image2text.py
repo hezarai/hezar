@@ -3,20 +3,21 @@ from typing import List, Union
 import numpy as np
 import torch
 from transformers import (
-    VisionEncoderDecoderModel,
-    RobertaForCausalLM,
-    RobertaConfig,
-    ViTModel,
-    ViTConfig,
     GenerationConfig,
+    RobertaConfig,
+    RobertaForCausalLM,
+    VisionEncoderDecoderModel,
+    ViTConfig,
+    ViTModel,
 )
 
 from ....constants import Backends
-from ....utils import is_backend_available
 from ....registry import register_model
+from ....utils import is_backend_available
 from ...model import GenerativeModel
 from ...model_outputs import Image2TextOutput
 from .trocr_image2text_config import TrOCRImage2TextConfig
+
 
 if is_backend_available(Backends.PILLOW):
     from PIL import Image

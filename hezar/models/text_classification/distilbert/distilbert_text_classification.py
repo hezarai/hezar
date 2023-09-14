@@ -11,6 +11,7 @@ from ....registry import register_model
 from ...model import Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

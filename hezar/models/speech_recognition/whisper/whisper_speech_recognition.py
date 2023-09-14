@@ -5,11 +5,12 @@ import torch
 from transformers import WhisperConfig, WhisperForConditionalGeneration
 
 from ....constants import Backends
-from ....utils import is_backend_available
 from ....registry import register_model
+from ....utils import is_backend_available
 from ...model import GenerativeModel
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
+
 
 if is_backend_available(Backends.LIBROSA):
     import librosa

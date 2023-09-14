@@ -1,5 +1,6 @@
-from hezar.constants import TaskType
 from hezar import Model
+from hezar.constants import TaskType
+
 
 task_to_example_repo = {
     TaskType.TEXT_CLASSIFICATION: "hezarai/roberta-fa-sentiment-dksf",

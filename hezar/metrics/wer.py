@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 
 from ..configs import MetricConfig
-from ..constants import MetricType, Backends
-from ..utils import is_backend_available
+from ..constants import Backends, MetricType
 from ..registry import register_metric
+from ..utils import is_backend_available
 from .metric import Metric
+
 
 if is_backend_available(Backends.JIWER):
     import jiwer

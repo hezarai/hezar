@@ -10,6 +10,7 @@ from ....models import Model
 from ....registry import register_model
 from .bert_lm_config import BertLMConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

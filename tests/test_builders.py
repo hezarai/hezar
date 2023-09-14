@@ -1,5 +1,5 @@
 def build_models():
-    from hezar import list_available_models, build_model
+    from hezar import build_model, list_available_models
 
     for name in list_available_models():
         try:
@@ -10,7 +10,7 @@ def build_models():
 
 
 def build_preprocessors():
-    from hezar import list_available_preprocessors, build_preprocessor
+    from hezar import build_preprocessor, list_available_preprocessors
 
     for name in list_available_preprocessors():
         try:
@@ -21,7 +21,7 @@ def build_preprocessors():
 
 
 def build_embeddings():
-    from hezar import list_available_embeddings, build_embedding
+    from hezar import build_embedding, list_available_embeddings
 
     for name in list_available_embeddings():
         try:
@@ -32,7 +32,7 @@ def build_embeddings():
 
 
 def build_datasets():
-    from hezar import list_available_datasets, build_dataset
+    from hezar import build_dataset, list_available_datasets
 
     for name in list_available_datasets():
         try:
@@ -43,7 +43,7 @@ def build_datasets():
 
 
 def build_metrics():
-    from hezar import list_available_metrics, build_metric
+    from hezar import build_metric, list_available_metrics
 
     for name in list_available_metrics():
         try:

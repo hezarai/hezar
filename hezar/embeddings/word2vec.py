@@ -7,8 +7,9 @@ from huggingface_hub import hf_hub_download
 
 from ..constants import HEZAR_CACHE_DIR, Backends
 from ..registry import register_embedding
-from .embedding import Embedding, EmbeddingConfig
 from ..utils import is_backend_available
+from .embedding import Embedding, EmbeddingConfig
+
 
 if is_backend_available(Backends.GENSIM):
     from gensim.models import word2vec

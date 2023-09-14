@@ -10,6 +10,7 @@ from ....models import Model
 from ....registry import register_model
 from .distilbert_lm_config import DistilBertLMConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

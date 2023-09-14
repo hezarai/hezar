@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any, Callable, Dict, Tuple, Union, Literal
+from typing import Any, Callable, Dict, Tuple, Union
 
 import numpy as np
 import torch
@@ -14,8 +14,8 @@ from ..configs import MetricConfig, TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
-    DEFAULT_TRAINER_SUBFOLDER,
     DEFAULT_TRAINER_CSV_LOG_FILE,
+    DEFAULT_TRAINER_SUBFOLDER,
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
 )
@@ -23,7 +23,7 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
-from .trainer_utils import MetricsTracker, write_to_tensorboard, CSVLogger
+from .trainer_utils import CSVLogger, MetricsTracker, write_to_tensorboard
 
 
 logger = Logger(__name__)

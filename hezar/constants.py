@@ -5,6 +5,7 @@ Home to all constant variables in Hezar
 import os
 from enum import Enum
 
+
 HEZAR_HUB_ID = "hezarai"
 HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.cache/hezar')
 

@@ -1,25 +1,26 @@
 from dataclasses import dataclass, field
-from typing import List, Tuple, Iterable
+from typing import Iterable, List, Tuple
 
 import numpy as np
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import ImageType, DEFAULT_PREPROCESSOR_SUBFOLDER, DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE
+from ..constants import DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER, ImageType
 from ..registry import register_preprocessor
-from .preprocessor import Preprocessor
 from ..utils import (
-    load_image,
-    resize_image,
-    rescale_image,
-    normalize_image,
-    convert_image_type,
     convert_batch_dict_dtype,
+    convert_image_type,
+    load_image,
+    normalize_image,
+    rescale_image,
+    resize_image,
     transpose_channels_axis_side,
 )
+from .preprocessor import Preprocessor
+
 
 _DESCRIPTION = r"""
-A general image processor to do all the image transforms in a composable/configurable pipeline 
+A general image processor to do all the image transforms in a composable/configurable pipeline
 """
 
 _image_type_aliases = {

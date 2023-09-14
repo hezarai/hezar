@@ -1,6 +1,7 @@
 from ..constants import RegistryType
 from .common_utils import snake_case
 
+
 __all__ = [
     "list_available_models",
     "list_available_preprocessors",
@@ -17,32 +18,32 @@ __all__ = [
 
 def list_available_models():
     from ..registry import models_registry
-    return sorted(list(models_registry.keys()))
+    return sorted(models_registry.keys())
 
 
 def list_available_preprocessors():
     from ..registry import preprocessors_registry
-    return sorted(list(preprocessors_registry.keys()))
+    return sorted(preprocessors_registry.keys())
 
 
 def list_available_datasets():
     from ..registry import datasets_registry
-    return sorted(list(datasets_registry.keys()))
+    return sorted(datasets_registry.keys())
 
 
 def list_available_metrics():
     from ..registry import metrics_registry
-    return sorted(list(metrics_registry.keys()))
+    return sorted(metrics_registry.keys())
 
 
 def list_available_trainers():
     from ..registry import trainers_registry
-    return sorted(list(trainers_registry.keys()))
+    return sorted(trainers_registry.keys())
 
 
 def list_available_embeddings():
     from ..registry import embeddings_registry
-    return sorted(list(embeddings_registry.keys()))
+    return sorted(embeddings_registry.keys())
 
 
 def _get_registry_from_type(registry_type: RegistryType):

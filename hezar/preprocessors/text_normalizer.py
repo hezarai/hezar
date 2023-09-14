@@ -1,8 +1,8 @@
 import os
 from dataclasses import dataclass
-from typing import Dict, List, Union, Tuple, Mapping
+from typing import Dict, List, Mapping, Tuple, Union
 
-from tokenizers import normalizers, Regex
+from tokenizers import Regex, normalizers
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
@@ -10,6 +10,7 @@ from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUB
 from ..registry import register_preprocessor
 from ..utils import Logger
 from .preprocessor import Preprocessor
+
 
 logger = Logger(__name__)
 

@@ -11,6 +11,7 @@ from ....registry import register_model
 from ...model import Model
 from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

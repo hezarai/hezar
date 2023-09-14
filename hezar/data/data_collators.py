@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from ..preprocessors import Tokenizer
-from ..utils import convert_batch_dict_dtype, Logger
+from ..utils import Logger, convert_batch_dict_dtype
 
 
 __all__ = [

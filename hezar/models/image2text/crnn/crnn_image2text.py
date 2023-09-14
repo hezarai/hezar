@@ -1,8 +1,8 @@
 from torch import nn
 
+from ....registry import register_model
 from ...model import Model
 from .crnn_image2text_config import CRNNImage2TextConfig
-from ....registry import register_model
 
 
 @register_model("crnn_image2text", config_class=CRNNImage2TextConfig)

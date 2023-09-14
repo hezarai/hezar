@@ -4,9 +4,10 @@ from typing import Iterable
 from sklearn.metrics import accuracy_score
 
 from ..configs import MetricConfig
-from ..constants import MetricType, Backends
+from ..constants import Backends, MetricType
 from ..registry import register_metric
 from .metric import Metric
+
 
 _required_backends = [
     Backends.SCIKIT,

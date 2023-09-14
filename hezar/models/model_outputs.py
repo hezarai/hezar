@@ -2,8 +2,8 @@
 Define all model outputs here
 """
 from dataclasses import asdict, dataclass
-from typing import List, Optional
 from pprint import pformat
+from typing import List, Optional
 
 import torch
 

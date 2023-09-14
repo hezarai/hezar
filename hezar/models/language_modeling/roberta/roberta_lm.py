@@ -10,6 +10,7 @@ from ....models import Model
 from ....registry import register_model
 from .roberta_lm_config import RobertaLMConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

@@ -11,6 +11,7 @@ from ....registry import register_model
 from ...model import Model
 from .roberta_sequence_labeling_config import RobertaSequenceLabelingConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

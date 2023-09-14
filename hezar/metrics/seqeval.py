@@ -1,11 +1,12 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional, Union
 
 from ..configs import MetricConfig
-from ..constants import MetricType, Backends
+from ..constants import Backends, MetricType
 from ..registry import register_metric
 from ..utils import Logger, is_backend_available
 from .metric import Metric
+
 
 if is_backend_available(Backends.SEQEVAL):
     from seqeval.metrics import accuracy_score, classification_report

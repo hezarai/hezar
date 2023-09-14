@@ -11,6 +11,7 @@ from ....registry import register_model
 from ...model import Model
 from .bert_sequence_labeling_config import BertSequenceLabelingConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]

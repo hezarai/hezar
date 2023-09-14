@@ -11,6 +11,7 @@ from ....registry import register_model
 from ...model import Model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
 
+
 _required_backends = [
     Backends.TRANSFORMERS,
 ]
