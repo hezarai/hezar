@@ -3,12 +3,19 @@ import pprint
 from dataclasses import dataclass
 from typing import List, Literal, Union
 
-from gensim.models import fasttext
 from huggingface_hub import hf_hub_download
 
-from ..constants import HEZAR_CACHE_DIR
+from ..constants import HEZAR_CACHE_DIR, Backends
 from ..registry import register_embedding
 from .embedding import Embedding, EmbeddingConfig
+from ..utils import is_backend_available
+
+if is_backend_available(Backends.GENSIM):
+    from gensim.models import fasttext
+
+_required_backends = [
+    Backends.GENSIM,
+]
 
 
 @dataclass
@@ -30,6 +37,7 @@ class FastTextConfig(EmbeddingConfig):
 
 @register_embedding("fasttext", config_class=FastTextConfig)
 class FastText(Embedding):
+    required_backends = _required_backends
     vectors_filename = f"{Embedding.filename}.wv.vectors.npy"
 
     def __init__(self, config: FastTextConfig, **kwargs):

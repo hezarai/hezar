@@ -3,12 +3,19 @@ import pprint
 from dataclasses import dataclass
 from typing import List, Literal, Union
 
-from gensim.models import word2vec
 from huggingface_hub import hf_hub_download
 
-from ..constants import HEZAR_CACHE_DIR
+from ..constants import HEZAR_CACHE_DIR, Backends
 from ..registry import register_embedding
 from .embedding import Embedding, EmbeddingConfig
+from ..utils import is_backend_available
+
+if is_backend_available(Backends.GENSIM):
+    from gensim.models import word2vec
+
+_required_backends = [
+    Backends.GENSIM,
+]
 
 
 @dataclass
@@ -31,6 +38,7 @@ class Word2VecConfig(EmbeddingConfig):
 
 @register_embedding("word2vec", config_class=Word2VecConfig)
 class Word2Vec(Embedding):
+    required_backends = _required_backends
     vectors_filename = f"{Embedding.filename}.wv.vectors.npy"
 
     def __init__(self, config: Word2VecConfig, **kwargs):

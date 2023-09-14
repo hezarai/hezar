@@ -10,8 +10,9 @@ from ..constants import (
     DEFAULT_EMBEDDING_CONFIG_FILE,
     DEFAULT_EMBEDDING_FILE,
     DEFAULT_EMBEDDING_SUBFOLDER,
+    Backends,
 )
-from ..utils import Logger
+from ..utils import Logger, verify_dependencies
 
 
 logger = Logger(__name__)
@@ -21,12 +22,17 @@ class Embedding:
     """
     Base class for all embeddings.
     """
+    required_backends: List[Union[str, Backends]] = []
+
     filename = DEFAULT_EMBEDDING_FILE
     vectors_filename = None
     config_filename = DEFAULT_EMBEDDING_CONFIG_FILE
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
     def __init__(self, config: EmbeddingConfig, **kwargs):
+        # Check if all the required dependencies are installed
+        verify_dependencies(self, self.required_backends)
+
         self.config = config.update(kwargs)
         self.model = self.build()
 
