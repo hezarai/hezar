@@ -4,9 +4,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "hezar"
-version = "0.26.0"
+version = "0.26.1"
 packages = [{ include = "hezar" }]
-description = "Hezar: A seamless AI framework & library for Persian"
+description = "Hezar: The all-in-one AI library for Persian, supporting a wide variety of tasks and modalities!"
 license = "MIT"
 authors = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
 maintainers = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
@@ -37,12 +37,24 @@ omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
 datasets = ">=2.9.0"
 huggingface_hub = ">=0.12.0"
-gensim = "4.3.2"
-tensorboard = ">=2.10.0"
-seqeval = ">=1.2.0"
-soundfile = ">=0.12.0"
-librosa = ">=0.10.0"
-pillow = ">=9.*,<=10.*"
+gensim = {version="4.3.2", optional=true}
+tensorboard = {version=">=2.10.0", optional=true}
+seqeval = {version=">=1.2.0", optional=true}
+jiwer = {version=">=3.*", optional=true}
+soundfile = {version=">=0.12.0", optional=true}
+librosa = {version=">=0.10.0", optional=true}
+pillow = {version=">=9.*,<=10.*", optional=true}
+nltk = {version=">=3.8.0", optional=true}
+
+[tool.poetry.extras]
+nlp=["transformers", "tokenizers", "datasets", "tensorboard", "seqeval", "jiwer", "nltk"]
+audio=["soundfile", "librosa", "jiwer", "tensorboard"]
+vision=["pillow", "numpy"]
+embeddings=["gensim"]
+docs=["sphinx", "myst-parser", "furo", "sphinx-copybutton"]
+linting=["ruff", "black"]
+
+
 
 [tool.black]
 line-length = 120
