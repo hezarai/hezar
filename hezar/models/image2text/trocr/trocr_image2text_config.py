@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ....configs import ModelConfig
 
@@ -64,6 +64,6 @@ class GenerationConfig:
 @dataclass
 class TrOCRImage2TextConfig(ModelConfig):
     name = "trocr_image2text"
-    encoder: EncoderConfig = EncoderConfig()
-    decoder: DecoderConfig = DecoderConfig()
-    generation: GenerationConfig = GenerationConfig()
+    encoder: EncoderConfig = field(default_factory=EncoderConfig)
+    decoder: DecoderConfig = field(default_factory=DecoderConfig)
+    generation: GenerationConfig = field(default_factory=GenerationConfig)
