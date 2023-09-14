@@ -41,8 +41,8 @@ class Backends(str, Enum):
     JIWER = "jiwer"
     NLTK = "nltk"
 
-    def __str__(self) -> str:
-        return str.__str__(self)
+    def __str__(self):
+        return str(self.value)
 
 
 class TaskType(str, Enum):
