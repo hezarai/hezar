@@ -6,9 +6,14 @@ from typing import Dict, List, Union
 from torch import nn, tanh
 from transformers import RobertaConfig, RobertaModel
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
+
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
 
 
 @register_model("roberta_text_classification", config_class=RobertaTextClassificationConfig)
@@ -19,6 +24,7 @@ class RobertaTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+    required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
     skip_keys_on_load = [
         "model.embeddings.position_ids",  # For older versions

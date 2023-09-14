@@ -6,13 +6,19 @@ from typing import Dict, List, Union
 from torch import nn
 from transformers import DistilBertConfig, DistilBertModel
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
 from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfig
 
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
+
 
 @register_model("distilbert_sequence_labeling", DistilBertSequenceLabelingConfig)
 class DistilBertSequenceLabeling(Model):
+    required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
 
     def __init__(self, config: DistilBertSequenceLabelingConfig, **kwargs):

@@ -21,12 +21,18 @@ from .trocr_image2text_config import TrOCRImage2TextConfig
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
+_required_backends = [
+    Backends.TRANSFORMERS,
+    Backends.PILLOW
+]
+
 
 @register_model("trocr_image2text", config_class=TrOCRImage2TextConfig)
 class TrOCRImage2Text(GenerativeModel):
     """
     TrOCR for optical character recognition
     """
+    required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer = "bpe_tokenizer"
 

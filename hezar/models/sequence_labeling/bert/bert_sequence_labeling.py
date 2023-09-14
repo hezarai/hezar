@@ -6,9 +6,14 @@ from typing import Dict, List, Union
 from torch import nn
 from transformers import BertConfig, BertModel
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
 from .bert_sequence_labeling_config import BertSequenceLabelingConfig
+
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
 
 
 @register_model("bert_sequence_labeling", BertSequenceLabelingConfig)
@@ -16,6 +21,7 @@ class BertSequenceLabeling(Model):
     """
     BERT model for sequence labeling
     """
+    required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = [
         "model.embeddings.position_ids",  # For older versions

@@ -6,9 +6,14 @@ from typing import List, Union
 from torch import nn, tanh
 from transformers import RobertaConfig, RobertaModel
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
 from .roberta_sequence_labeling_config import RobertaSequenceLabelingConfig
+
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
 
 
 @register_model("roberta_sequence_labeling", config_class=RobertaSequenceLabelingConfig)
@@ -19,6 +24,7 @@ class RobertaSequenceLabeling(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+    required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
 
     def __init__(self, config, **kwargs):

@@ -6,9 +6,14 @@ from typing import Dict, List, Union
 from torch import nn
 from transformers import DistilBertConfig, DistilBertModel
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
+
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
 
 
 @register_model(model_name="distilbert_text_classification", config_class=DistilBertTextClassificationConfig)
@@ -19,6 +24,7 @@ class DistilBertTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+    required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
 
     def __init__(self, config: DistilBertTextClassificationConfig, **kwargs):

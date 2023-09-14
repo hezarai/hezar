@@ -5,13 +5,19 @@ from typing import List, Union
 
 from transformers import BertConfig, BertModel
 
+from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
 from .bert_lm_config import BertLMConfig
 
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
+
 
 @register_model("bert_lm", config_class=BertLMConfig)
 class BertLM(Model):
+    required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = [
         "model.embeddings.position_ids",  # For older versions

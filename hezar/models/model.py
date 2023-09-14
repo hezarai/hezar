@@ -18,9 +18,9 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR
+from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR, Backends
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger
+from ..utils import Logger, verify_dependencies
 
 
 __all__ = [
@@ -38,7 +38,7 @@ class Model(nn.Module):
     Args:
         config: A dataclass model config
     """
-
+    required_backends: List[Union[Backends, str]] = []
     # Default file names
     model_filename = DEFAULT_MODEL_FILE
     config_filename = DEFAULT_MODEL_CONFIG_FILE
@@ -47,6 +47,7 @@ class Model(nn.Module):
     skip_keys_on_load = []
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
+        verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
         self._preprocessor = None

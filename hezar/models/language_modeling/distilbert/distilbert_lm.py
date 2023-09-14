@@ -5,13 +5,19 @@ from typing import List, Union
 
 from transformers import DistilBertConfig, DistilBertModel
 
+from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
 from .distilbert_lm_config import DistilBertLMConfig
 
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
+
 
 @register_model("distilbert_lm", config_class=DistilBertLMConfig)
 class DistilBertLM(Model):
+    required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
 
     def __init__(self, config, **kwargs):

@@ -14,12 +14,18 @@ from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 if is_backend_available(Backends.LIBROSA):
     import librosa
 
+_required_backends = [
+    Backends.TRANSFORMERS,
+    Backends.LIBROSA,
+]
+
 
 @register_model("whisper_speech_recognition", config_class=WhisperSpeechRecognitionConfig)
 class WhisperSpeechRecognition(GenerativeModel):
     """
     Whisper model for automatic speech recognition
     """
+    required_backends = _required_backends
     is_generation_model = True
     feature_extractor_name = "whisper_feature_extractor"
     tokenizer_name = "whisper_bpe_tokenizer"

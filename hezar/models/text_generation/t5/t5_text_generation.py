@@ -3,9 +3,14 @@ from typing import Dict, List, Union
 import torch
 from transformers import T5Config, T5ForConditionalGeneration
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import GenerativeModel
 from .t5_text_generation_config import T5TextGenerationConfig
+
+_required_backends = [
+    Backends.TRANSFORMERS,
+]
 
 
 @register_model("t5_text_generation", config_class=T5TextGenerationConfig)
@@ -13,6 +18,7 @@ class T5TextGeneration(GenerativeModel):
     """
     T5 for text to text generation
     """
+    required_backends = _required_backends
     tokenizer_name = "sentencepiece_unigram_tokenizer"
 
     def __init__(self, config: T5TextGenerationConfig, **kwargs):
