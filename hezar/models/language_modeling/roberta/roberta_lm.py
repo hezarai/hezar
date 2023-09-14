@@ -13,6 +13,10 @@ from .roberta_lm_config import RobertaLMConfig
 @register_model("roberta_lm", config_class=RobertaLMConfig)
 class RobertaLM(Model):
     tokenizer_name = "bpe_tokenizer"
+    skip_keys_on_load = [
+        "model.embeddings.position_ids",  # For older versions
+        "roberta.embeddings.position_ids"
+    ]
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

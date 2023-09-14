@@ -20,6 +20,10 @@ class RobertaTextClassification(Model):
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
     tokenizer_name = "bpe_tokenizer"
+    skip_keys_on_load = [
+        "model.embeddings.position_ids",  # For older versions
+        "roberta.embeddings.position_ids"
+    ]
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
