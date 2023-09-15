@@ -21,7 +21,6 @@ Submodules
    hezar.builders
    hezar.configs
    hezar.constants
-   hezar.integrations
    hezar.registry
 
 Module contents
