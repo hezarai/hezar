@@ -595,19 +595,19 @@ class Tokenizer(Preprocessor):
         )
 
     @property
-    def model(self) -> Model:
+    def model(self) -> "Model":
         return self._tokenizer.model
 
     @model.setter
-    def model(self, model: Model):
+    def model(self, model: "Model"):
         self._tokenizer.model = model  # noqa
 
     @property
-    def decoder(self) -> Decoder:
+    def decoder(self) -> "Decoder":
         return self._tokenizer.decoder
 
     @decoder.setter
-    def decoder(self, decoder: Decoder):
+    def decoder(self, decoder: "Decoder"):
         self._tokenizer.decoder = decoder  # noqa
 
     @property
