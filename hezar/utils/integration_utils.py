@@ -1,4 +1,5 @@
 import importlib.util
+from importlib.metadata import version
 from typing import List, Union
 
 from ..constants import Backends
@@ -7,6 +8,7 @@ from ..constants import Backends
 __all__ = [
     "is_backend_available",
     "verify_dependencies",
+    "get_lib_version",
 ]
 
 
@@ -46,3 +48,7 @@ def verify_dependencies(obj, backends: List[Union[Backends, str]] = None):
             f"{f'`{unavailable[0]}`' if len(unavailable) == 1 else unavailable} "
             f"which {'is' if len(unavailable) == 1 else 'are'} not installed!"
         )
+
+
+def get_lib_version(lib: str):
+    return version(lib)

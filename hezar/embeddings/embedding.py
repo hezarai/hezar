@@ -12,10 +12,22 @@ from ..constants import (
     DEFAULT_EMBEDDING_SUBFOLDER,
     Backends,
 )
-from ..utils import Logger, verify_dependencies
-
+from ..utils import Logger, verify_dependencies, get_lib_version
 
 logger = Logger(__name__)
+
+REQUIRED_GENSIM_VERSION = "4.3.2"
+REQUIRED_NUMPY_VERSION = "1.24"
+
+
+def _verify_gensim_installation():
+    if (
+        not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION)
+        or not get_lib_version("gensim").startswith(REQUIRED_GENSIM_VERSION)
+    ):
+        raise ImportError(
+            f"The required Gensim version for this version of Hezar is currently {REQUIRED_GENSIM_VERSION} "
+            f"And the required Numpy version for Gensim=={REQUIRED_GENSIM_VERSION} is {REQUIRED_NUMPY_VERSION}")
 
 
 class Embedding:
@@ -31,6 +43,7 @@ class Embedding:
 
     def __init__(self, config: EmbeddingConfig, **kwargs):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
+        _verify_gensim_installation()
 
         self.config = config.update(kwargs)
         self.model = self.build()
