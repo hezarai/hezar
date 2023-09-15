@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-python@v3
       - name: Install dependencies
         run: |
-          pip install sphinx myst-parser furo sphinx-copybutton hezar
+          pip install sphinx myst-parser furo sphinx-copybutton
       - name: Sphinx build
         run: |
           sphinx-apidoc -e -o docs/source hezar/

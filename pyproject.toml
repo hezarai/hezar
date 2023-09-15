@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "hezar"
-version = "0.26.5"
+version = "0.26.6"
 packages = [{ include = "hezar" }]
 description = "Hezar: The all-in-one AI library for Persian, supporting a wide variety of tasks and modalities!"
 license = "MIT"
@@ -48,12 +48,12 @@ pillow = {version=">=9.*,<=10.*", optional=true}
 nltk = {version=">=3.8.0", optional=true}
 
 [tool.poetry.extras]
-nlp=["transformers", "tokenizers", "seqeval", "jiwer", "nltk"]
-audio=["soundfile", "librosa", "jiwer"]
-vision=["transformers", "pillow"]
-embeddings=["gensim"]
-docs=["sphinx", "myst-parser", "furo", "sphinx-copybutton"]
-linting=["ruff", "black"]
+nlp = ["seqeval", "jiwer", "nltk"]
+audio = ["soundfile", "librosa", "jiwer"]
+vision = ["pillow"]
+embeddings = ["gensim"]
+docs = ["sphinx", "myst-parser", "furo", "sphinx-copybutton"]
+linting = ["ruff", "black"]
 
 
 
