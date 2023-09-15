@@ -53,6 +53,7 @@ vision = ["pillow"]
 embeddings = ["gensim"]
 docs = ["sphinx", "myst-parser", "furo", "sphinx-copybutton"]
 linting = ["ruff", "black"]
+all = ["gensim", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk"]
 
 [tool.black]
 line-length = 120
