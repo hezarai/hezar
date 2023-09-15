@@ -25,6 +25,7 @@ if is_backend_available(Backends.PILLOW):
 
 _required_backends = [
     Backends.TRANSFORMERS,
+    Backends.TOKENIZERS,
     Backends.PILLOW
 ]
 
@@ -77,7 +78,6 @@ class TrOCRImage2Text(GenerativeModel):
         if generation_config is None:
             generation_config = self.config.dict()["generation"]
         generation_config = GenerationConfig(**generation_config)
-        self.trocr.eval()
         outputs = self.trocr.generate(inputs=input_ids, generation_config=generation_config, **kwargs)
 
         return outputs

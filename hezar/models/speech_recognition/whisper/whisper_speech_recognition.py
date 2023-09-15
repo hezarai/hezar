@@ -18,6 +18,7 @@ if is_backend_available(Backends.LIBROSA):
 
 _required_backends = [
     Backends.TRANSFORMERS,
+    Backends.TOKENIZERS,
     Backends.LIBROSA,
 ]
 

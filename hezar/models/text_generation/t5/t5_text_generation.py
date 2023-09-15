@@ -13,6 +13,7 @@ if is_backend_available(Backends.TRANSFORMERS):
 
 _required_backends = [
     Backends.TRANSFORMERS,
+    Backends.TOKENIZERS,
 ]
 
 
