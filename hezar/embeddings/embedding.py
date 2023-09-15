@@ -27,7 +27,7 @@ def _verify_gensim_installation():
     ):
         raise ImportError(
             f"The required Gensim version for this version of Hezar is currently {REQUIRED_GENSIM_VERSION} "
-            f"And the required Numpy version for Gensim=={REQUIRED_GENSIM_VERSION} is {REQUIRED_NUMPY_VERSION}")
+            f"and the required Numpy version for Gensim=={REQUIRED_GENSIM_VERSION} is {REQUIRED_NUMPY_VERSION}")
 
 
 class Embedding:
