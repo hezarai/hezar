@@ -31,7 +31,8 @@ exclude = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-numpy = ">=1.24.0"
+numpy = ">=1.24.0<1.25.0"
+numba = ">=0.57.*<0.58.*"
 torch = ">=1.10.*,<2.1"
 omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
@@ -54,8 +55,6 @@ vision = ["pillow"]
 embeddings = ["gensim"]
 docs = ["sphinx", "myst-parser", "furo", "sphinx-copybutton"]
 linting = ["ruff", "black"]
-
-
 
 [tool.black]
 line-length = 120
