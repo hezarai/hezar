@@ -16,10 +16,13 @@ from ..utils import Logger, verify_dependencies, get_lib_version
 
 logger = Logger(__name__)
 
+# The below code is a workaround. Gensim models have this limitation that the models can only be loaded using the same
+# gensim & numpy version they were saved with.
 REQUIRED_GENSIM_VERSION = "4.3.2"
 REQUIRED_NUMPY_VERSION = "1.24"
 
 
+# Check if the right combo of gensim/numpy versions are installed
 def _verify_gensim_installation():
     if (
         not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION)
