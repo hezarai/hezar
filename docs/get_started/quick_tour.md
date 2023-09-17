@@ -46,7 +46,18 @@ print(transcripts)
 ```
 {'transcripts': ['و این تنها محدود به محیط کار نیست']}
 ```
+- **Image to Text (OCR)**
+```python
+from hezar import Model
 
+model = Model.load("hezarai/trocr-fa-v1")
+text = model.predict(["examples/assets/ocr_example.jpg"])
+print(text)
+```
+```
+{'texts': [' چه میشه کرد، باید صبر کنیم']}
+```
+We constantly keep working on adding and training new models and this section will hopefully be expanding every day ;)
 ### Word Embeddings
 - **FastText**
 ```python
