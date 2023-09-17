@@ -1,6 +1,7 @@
-from hezar import Model
+from hezar import Model, Logger
 from hezar.constants import TaskType
 
+logger = Logger(__name__)
 
 task_to_example_repo = {
     TaskType.TEXT_CLASSIFICATION: "hezarai/roberta-fa-sentiment-dksf",
@@ -16,7 +17,7 @@ def test_model_loading():
     for task, repo in task_to_example_repo.items():
         model = Model.load(repo)
         models.append(model)
-        print(f"Successfully loaded {repo} for `{task}`")
+        logger.info(f"Successfully loaded {repo} for `{task}`")
     return models
 
 
@@ -24,5 +25,4 @@ def test_model_saving():
     models = test_model_loading()
     for model in models:
         model.save(model.config.name)
-
-
+        logger.info(f"Successfully saved {model.config.name}")
