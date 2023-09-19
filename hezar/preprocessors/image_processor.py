@@ -15,6 +15,7 @@ from ..utils import (
     rescale_image,
     resize_image,
     mirror_image,
+    grey_scale_image,
     transpose_channels_axis_side,
 )
 from .preprocessor import Preprocessor
@@ -50,6 +51,7 @@ class ImageProcessorConfig(PreprocessorConfig):
         metadata={"description": "Image size tuple (width, height)"},
     )
     mirror: bool = False
+    grey_scale: bool = False
 
 
 @register_preprocessor("image_processor", config_class=ImageProcessorConfig, description=_DESCRIPTION)
@@ -74,6 +76,7 @@ class ImageProcessor(Preprocessor):
         size: Tuple[int, int] = None,
         resample: float = None,
         mirror: bool = None,
+        grey_scale: bool = None,
         return_tensors: str = "pt",
         **kwargs,
     ):
@@ -100,6 +103,7 @@ class ImageProcessor(Preprocessor):
         size = size or self.config.size
         resample = resample or self.config.resample
         mirror = mirror or self.config.mirror
+        grey_scale = grey_scale or self.config.grey_scale
 
         # Load images if inputs are list of files
         images = [load_image(x, return_type="numpy") if isinstance(x, str) else x for x in images]
@@ -107,8 +111,13 @@ class ImageProcessor(Preprocessor):
         # Cast image types
         images = [convert_image_type(image, target_type="numpy") for image in images]
 
+        # Convert to greyscale
+        if grey_scale:
+            images = [grey_scale_image(image, return_type="numpy") for image in images]
+
         # Mirror images if mirror is set
-        images = [mirror_image(image, return_type="numpy") for image in images]
+        if mirror:
+            images = [mirror_image(image, return_type="numpy") for image in images]
 
         if size is not None:
             if not isinstance(size, Iterable) or len(size) > 2:

@@ -19,12 +19,17 @@ __all__ = [
     "rescale_image",
     "resize_image",
     "mirror_image",
+    "grey_scale_image",
     "find_channels_axis_side",
     "transpose_channels_axis_side",
 ]
 
 
 def verify_image_dims(image: np.ndarray):
+    # handle greyscale
+    if len(image.shape) == 2:
+        image = np.expand_dims(image, 0)
+
     if len(image.shape) != 3:
         raise ValueError(f"Image input must be a numpy array of size 3! Got {image.shape}")
 
@@ -99,16 +104,26 @@ def resize_image(
     return np_image
 
 
-def mirror_image(
-    image: np.ndarray,
-    return_type: Union[str, ImageType] = ImageType.NUMPY,
-):
-    verify_image_dims(image)
-
+def mirror_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageType.NUMPY):
     if not isinstance(image, np.ndarray):
         raise ValueError("image must be a numpy array")
+
+    verify_image_dims(image)
+
     pil_image = convert_image_type(image, ImageType.PIL)
     pil_image = pil_image.transpose(Image.FLIP_LEFT_RIGHT)
+    final_image = convert_image_type(pil_image, return_type)
+    return final_image
+
+
+def grey_scale_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageType.NUMPY):
+    if not isinstance(image, np.ndarray):
+        raise ValueError("image must be a numpy array")
+
+    verify_image_dims(image)
+
+    pil_image = convert_image_type(image, ImageType.PIL)
+    pil_image = pil_image.convert("L")
     final_image = convert_image_type(pil_image, return_type)
     return final_image
 
