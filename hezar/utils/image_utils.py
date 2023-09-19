@@ -16,6 +16,7 @@ __all__ = [
     "convert_image_type",
     "normalize_image",
     "load_image",
+    "show_image",
     "rescale_image",
     "resize_image",
     "mirror_image",
@@ -26,12 +27,8 @@ __all__ = [
 
 
 def verify_image_dims(image: np.ndarray):
-    # handle greyscale
-    if len(image.shape) == 2:
-        image = np.expand_dims(image, 0)
-
-    if len(image.shape) != 3:
-        raise ValueError(f"Image input must be a numpy array of size 3! Got {image.shape}")
+    if len(image.shape) not in (2, 3):
+        raise ValueError(f"Image input must be a numpy array of size 2 or 3! Got {image.shape}")
 
 
 def convert_image_type(
@@ -42,31 +39,62 @@ def convert_image_type(
     Convert image lib type. Supports numpy array, pillow image and torch tensor.
     """
     if isinstance(image, Image.Image):
-        image = np.asarray(image)
+        if image.mode == "L":
+            image = np.asarray(image)
+            image = np.expand_dims(image, 0)
+        else:
+            image = np.asarray(image)
     elif isinstance(image, torch.Tensor):
         image = image.numpy()
 
     verify_image_dims(image)
 
-    if target_type == ImageType.PIL:
-        # transpose channels to the first axis since pillow cannot handle it otherwise
+    if target_type == ImageType.PILLOW:
+        # transpose channels to the last axis since pillow cannot handle it otherwise
         if find_channels_axis_side(image) == ChannelsAxisSide.FIRST:
             image = transpose_channels_axis_side(
                 image,
                 axis_side=ChannelsAxisSide.LAST,
                 src_axis_side=ChannelsAxisSide.FIRST,
             )
-        image = Image.fromarray(image)
+        num_channels = image.shape[0] if find_channels_axis_side(image) == ChannelsAxisSide.FIRST else image.shape[-1]
+        if num_channels == 1:
+            image = image[:, :, -1]
+            image = Image.fromarray(image, "L")
+        else:
+            image = Image.fromarray(image)
     elif target_type == ImageType.TORCH:
         image = torch.tensor(image)
 
     return image
 
 
-def load_image(path, return_type: Union[str, ImageType] = ImageType.PIL):
+def load_image(path, return_type: Union[str, ImageType] = ImageType.PILLOW):
+    """
+    Load an image file to a desired return format
+
+    Args:
+        path: Path to image file
+        return_type: Image output type ("pillow", "numpy", "torch")
+
+    Returns:
+        The desired output image of type `PIL.Image` or `numpy.ndarray` or `torch.Tensor`
+    """
     pil_image = Image.open(path).convert("RGB")
     converted_image = convert_image_type(pil_image, return_type)
     return converted_image
+
+
+def show_image(image: Union["Image", torch.Tensor, np.ndarray], title: str = "Image"):
+    """
+    Given any type of input image (PIL, numpy, torch), show the image in a window
+
+    Args:
+        image: Input image of types PIL.Image, numpy.ndarray or torch.Tensor
+        title: Optional title for the preview window
+    """
+    pil_image = convert_image_type(image, ImageType.PILLOW)
+    pil_image.show(title=title)
 
 
 def rescale_image(image: np.ndarray, scale: float):
@@ -90,7 +118,7 @@ def resize_image(
         size: A tuple of (width, height)
         resample: Resampling filter (refer to PIL.Image.Resampling) for possible values
         reducing_gap: Optimization method for resizing based on reducing times
-        return_type: Return type of the image (numpy, torch, pil)
+        return_type: Return type of the image (numpy, torch, pillow)
 
     Returns:
         The resized image
@@ -98,7 +126,7 @@ def resize_image(
     verify_image_dims(image)
     if len(size) != 2:
         raise ValueError(f"The value of `size` must be a 2-sized tuple! Got length {len(size)}(`{size}`)")
-    pil_image = convert_image_type(image, ImageType.PIL)
+    pil_image = convert_image_type(image, ImageType.PILLOW)
     pil_image = pil_image.resize(size, resample=resample, reducing_gap=reducing_gap)
     np_image = convert_image_type(pil_image, return_type)
     return np_image
@@ -110,7 +138,7 @@ def mirror_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageTy
 
     verify_image_dims(image)
 
-    pil_image = convert_image_type(image, ImageType.PIL)
+    pil_image = convert_image_type(image, ImageType.PILLOW)
     pil_image = pil_image.transpose(Image.FLIP_LEFT_RIGHT)
     final_image = convert_image_type(pil_image, return_type)
     return final_image
@@ -122,9 +150,10 @@ def grey_scale_image(image: np.ndarray, return_type: Union[str, ImageType] = Ima
 
     verify_image_dims(image)
 
-    pil_image = convert_image_type(image, ImageType.PIL)
+    pil_image = convert_image_type(image, ImageType.PILLOW)
     pil_image = pil_image.convert("L")
-    final_image = convert_image_type(pil_image, return_type)
+    np_image = convert_image_type(pil_image, ImageType.NUMPY)
+    final_image = convert_image_type(np_image, target_type=return_type)
     return final_image
 
 
@@ -157,8 +186,9 @@ def normalize_image(
     return image
 
 
-def find_channels_axis_side(image: np.ndarray, num_channels: int = 3):
-    if image.shape[0] == num_channels:
+def find_channels_axis_side(image: np.ndarray, num_channels: int = None):
+    valid_num_channels = (num_channels,) if num_channels is not None else (1, 2, 3)
+    if image.shape[0] in valid_num_channels:
         return ChannelsAxisSide.FIRST
     else:
         return ChannelsAxisSide.LAST
@@ -167,7 +197,7 @@ def find_channels_axis_side(image: np.ndarray, num_channels: int = 3):
 def transpose_channels_axis_side(
     image: np.ndarray,
     axis_side: Union[str, ChannelsAxisSide],
-    num_channels: int = 3,
+    num_channels: int = None,
     src_axis_side: Union[str, ChannelsAxisSide] = None,
 ):
     """

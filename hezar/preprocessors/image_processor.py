@@ -34,8 +34,8 @@ _image_type_aliases = {
     "torch": ImageType.TORCH,
     "np": ImageType.NUMPY,
     "numpy": ImageType.NUMPY,
-    "pil": ImageType.PIL,
-    "pillow": ImageType.PIL,
+    "pil": ImageType.PILLOW,
+    "pillow": ImageType.PILLOW,
 }
 
 
