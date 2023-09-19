@@ -20,7 +20,7 @@ __all__ = [
     "rescale_image",
     "resize_image",
     "mirror_image",
-    "grey_scale_image",
+    "gray_scale_image",
     "find_channels_axis_side",
     "transpose_channels_axis_side",
 ]
@@ -144,7 +144,7 @@ def mirror_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageTy
     return final_image
 
 
-def grey_scale_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageType.NUMPY):
+def gray_scale_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageType.NUMPY):
     if not isinstance(image, np.ndarray):
         raise ValueError("image must be a numpy array")
 
