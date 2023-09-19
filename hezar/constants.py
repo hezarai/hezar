@@ -108,7 +108,7 @@ class RepoType(str, Enum):
 
 class ImageType(str, Enum):
     NUMPY = "numpy"
-    PIL = "pil"
+    PILLOW = "pillow"
     TORCH = "torch"
 
 
