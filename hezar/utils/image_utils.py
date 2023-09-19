@@ -7,7 +7,6 @@ from ..constants import Backends, ChannelsAxisSide, ImageType
 from .integration_utils import is_backend_available
 from .logging import Logger
 
-
 logger = Logger(__name__)
 
 if is_backend_available(Backends.PILLOW):
@@ -19,6 +18,7 @@ __all__ = [
     "load_image",
     "rescale_image",
     "resize_image",
+    "mirror_image",
     "find_channels_axis_side",
     "transpose_channels_axis_side",
 ]
@@ -36,14 +36,21 @@ def convert_image_type(
     """
     Convert image lib type. Supports numpy array, pillow image and torch tensor.
     """
-    if isinstance(image, Image.Image) and target_type != ImageType.PIL:
+    if isinstance(image, Image.Image):
         image = np.asarray(image)
-    elif isinstance(image, torch.Tensor) and target_type != ImageType.TORCH:
+    elif isinstance(image, torch.Tensor):
         image = image.numpy()
 
     verify_image_dims(image)
 
     if target_type == ImageType.PIL:
+        # transpose channels to the first axis since pillow cannot handle it otherwise
+        if find_channels_axis_side(image) == ChannelsAxisSide.FIRST:
+            image = transpose_channels_axis_side(
+                image,
+                axis_side=ChannelsAxisSide.LAST,
+                src_axis_side=ChannelsAxisSide.FIRST,
+            )
         image = Image.fromarray(image)
     elif target_type == ImageType.TORCH:
         image = torch.tensor(image)
@@ -90,6 +97,20 @@ def resize_image(
     pil_image = pil_image.resize(size, resample=resample, reducing_gap=reducing_gap)
     np_image = convert_image_type(pil_image, return_type)
     return np_image
+
+
+def mirror_image(
+    image: np.ndarray,
+    return_type: Union[str, ImageType] = ImageType.NUMPY,
+):
+    verify_image_dims(image)
+
+    if not isinstance(image, np.ndarray):
+        raise ValueError("image must be a numpy array")
+    pil_image = convert_image_type(image, ImageType.PIL)
+    pil_image = pil_image.transpose(Image.FLIP_LEFT_RIGHT)
+    final_image = convert_image_type(pil_image, return_type)
+    return final_image
 
 
 def normalize_image(

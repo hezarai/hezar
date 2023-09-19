@@ -14,6 +14,7 @@ from ..utils import (
     normalize_image,
     rescale_image,
     resize_image,
+    mirror_image,
     transpose_channels_axis_side,
 )
 from .preprocessor import Preprocessor
@@ -48,6 +49,7 @@ class ImageProcessorConfig(PreprocessorConfig):
         default=None,
         metadata={"description": "Image size tuple (width, height)"},
     )
+    mirror: bool = False
 
 
 @register_preprocessor("image_processor", config_class=ImageProcessorConfig, description=_DESCRIPTION)
@@ -71,6 +73,7 @@ class ImageProcessor(Preprocessor):
         rescale: float = None,
         size: Tuple[int, int] = None,
         resample: float = None,
+        mirror: bool = None,
         return_tensors: str = "pt",
         **kwargs,
     ):
@@ -96,12 +99,16 @@ class ImageProcessor(Preprocessor):
         rescale = rescale or self.config.rescale
         size = size or self.config.size
         resample = resample or self.config.resample
+        mirror = mirror or self.config.mirror
 
         # Load images if inputs are list of files
         images = [load_image(x, return_type="numpy") if isinstance(x, str) else x for x in images]
 
         # Cast image types
         images = [convert_image_type(image, target_type="numpy") for image in images]
+
+        # Mirror images if mirror is set
+        images = [mirror_image(image, return_type="numpy") for image in images]
 
         if size is not None:
             if not isinstance(size, Iterable) or len(size) > 2:
