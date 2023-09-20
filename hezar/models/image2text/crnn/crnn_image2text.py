@@ -1,25 +1,34 @@
 from torch import nn
 
 from ....registry import register_model
-from ...model import Model
+from ...model import GenerativeModel
+from ...model_outputs import Image2TextOutput
 from .crnn_image2text_config import CRNNImage2TextConfig
+from .crnn_decode_utils import ctc_decode
 
 
 @register_model("crnn_image2text", config_class=CRNNImage2TextConfig)
-class CRNNImage2Text(Model):
+class CRNNImage2Text(GenerativeModel):
+    """
+    A robust CRNN model for character level OCR based on the original paper.
+    """
+    image_processor = "image_processor"
+
     def __init__(self, config: CRNNImage2TextConfig, **kwargs):
         super().__init__(config=config, **kwargs)
         self.cnn = nn.Sequential(
             ConvBlock(self.config.n_channels, 64, 3, 1, 1),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             ConvBlock(64, 128, 3, 1, 1),
+            nn.MaxPool2d(kernel_size=2, stride=2),
             ConvBlock(128, 256, 3, 1, 1),
             ConvBlock(256, 256, 3, 1, 1),
+            nn.MaxPool2d(kernel_size=(2, 1)),
             ConvBlock(256, 512, 3, 1, 1, batch_norm=True),
             ConvBlock(512, 512, 3, 1, 1, batch_norm=True),
+            nn.MaxPool2d(kernel_size=(2, 1)),
             ConvBlock(512, 512, 3, 1, 1)
         )
-        # Resize
-        self.resize = nn.LazyLinear(self.config.max_new_chars)
         # map CNN to sequence
         self.map2seq = nn.LazyLinear(self.config.map2seq_dim)
         # RNN
@@ -28,9 +37,18 @@ class CRNNImage2Text(Model):
         # classifier
         self.classifier = nn.Linear(2 * self.config.rnn_dim, len(self.config.id2label))
 
+    def save(self, path, filename=None, save_preprocessor=True, config_filename=None):
+        # Handle uninitialized parameters
+        if self.resize.in_features == 0 or self.map2seq.in_features == 0:
+            import torch
+            dummy_input = torch.ones((1, 1, self.config.image_height, self.config.image_width))
+            self({"pixel_values": dummy_input})
+        super().save(path, filename, save_preprocessor, config_filename)
+
     def forward(self, inputs, **kwargs):
+        pixel_values = inputs.get("pixel_values")
         # CNN block
-        x = self.cnn(inputs)
+        x = self.cnn(pixel_values)
         # reformat array
         batch, channel, height, width = x.size()
         x = x.view(batch, channel * height, width)
@@ -41,6 +59,24 @@ class CRNNImage2Text(Model):
         x = self.classifier(x)
         x = nn.functional.log_softmax(x, 2)
         return x
+
+    def generate(self, inputs, **kwargs):
+        logits = self(inputs)
+        decoded = ctc_decode(logits, blank=self.config.blank_id)
+        return decoded
+
+    def preprocess(self, inputs, **kwargs):
+        image_processor = self.preprocessor[self.image_processor]
+        processed_outputs = image_processor(inputs, **kwargs)
+        return processed_outputs
+
+    def post_process(self, inputs, **kwargs):
+        texts = []
+        for decoded_ids in inputs:
+            chars = [self.config.id2label[id_] for id_ in decoded_ids]
+            text = "".join(chars)
+            texts.append(text)
+        return Image2TextOutput(texts=texts)
 
 
 class ConvBlock(nn.Module):

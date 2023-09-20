@@ -8,9 +8,10 @@ from ....configs import ModelConfig
 class CRNNImage2TextConfig(ModelConfig):
     name = "crnn_image2text"
     id2label: Dict[int, str] = None
+    blank_id: int = 0
     n_channels: int = 1
-    img_height: int = 50
+    image_height: int = 32
+    image_width: int = 128
     map2seq_dim: int = 64
     rnn_dim: int = 256
-    max_new_chars: int = 128
 
