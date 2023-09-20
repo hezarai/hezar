@@ -39,11 +39,11 @@ class CRNNImage2Text(GenerativeModel):
 
     def save(self, path, filename=None, save_preprocessor=True, config_filename=None):
         # Handle uninitialized parameters
-        if self.resize.in_features == 0 or self.map2seq.in_features == 0:
+        if self.map2seq.in_features == 0:
             import torch
             dummy_input = torch.ones((1, 1, self.config.image_height, self.config.image_width))
             self({"pixel_values": dummy_input})
-        super().save(path, filename, save_preprocessor, config_filename)
+        return super().save(path, filename, save_preprocessor, config_filename)
 
     def forward(self, inputs, **kwargs):
         pixel_values = inputs.get("pixel_values")
