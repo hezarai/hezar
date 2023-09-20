@@ -81,13 +81,19 @@ print(transcripts)
 - Image to Text (OCR)
 ```python
 from hezar import Model
-
+# OCR with TrOCR 
 model = Model.load("hezarai/trocr-fa-v1")
-text = model.predict(["examples/assets/ocr_example.jpg"])
-print(text)
+texts = model.predict(["examples/assets/ocr_example.jpg"])
+print(f"TrOCR Output: {texts}")
+
+# OCR with CRNN
+model = Model.load("hezarai/crnn-base-fa-64x256")
+texts = model.predict("examples/assets/ocr_example.jpg")
+print(f"CRNN Output: {texts}")
 ```
 ```
-{'texts': [' چه میشه کرد، باید صبر کنیم']}
+TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
+CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
 We constantly keep working on adding and training new models and this section will hopefully be expanding every day ;)
 ### Word Embeddings
