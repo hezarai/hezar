@@ -176,7 +176,7 @@ class Config:
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
         # Remove class vars to avoid TypeError (unexpected argument)
-        [dict_config.pop(k) for k in CONFIG_CLASS_VARS]
+        [dict_config.pop(k, None) for k in CONFIG_CLASS_VARS]
 
         config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})  # noqa
 
