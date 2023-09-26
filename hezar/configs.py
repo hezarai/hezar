@@ -182,9 +182,8 @@ class Config:
                     f"The `config_type` for `{cls.__name__}` is `{cls.config_type}` "
                     f"which is different from the `config_type` parameter in `{filename}` which is `{config_type}`!"
                 )
-        if cls.__name__ in _config_to_type_mapping:
-            config_cls = get_module_config_class(config["name"], registry_type=config_type)
-        else:
+        config_cls = get_module_config_class(config["name"], registry_type=config_type)
+        if config_cls is None:
             config_cls = cls
         config = config_cls.from_dict(config, strict=False, **kwargs)
         return config
