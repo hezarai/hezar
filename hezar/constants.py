@@ -29,6 +29,10 @@ TQDM_BAR_FORMAT = "{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}"
 
 
 class Backends(str, Enum):
+    """
+    All required dependency packages and libraries. Note that the values here must be the exact module names used
+    for importing, for example if you set PILLOW the value must be `PIL` not `pillow`, `pil`, etc.
+    """
     PYTORCH = "torch"
     TRANSFORMERS = "transformers"
     DATASETS = "datasets"
