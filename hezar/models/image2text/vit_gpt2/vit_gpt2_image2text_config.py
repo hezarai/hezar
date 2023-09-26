@@ -6,27 +6,26 @@ from ....configs import ModelConfig
 @dataclass
 class DecoderConfig(ModelConfig):
     name = "vit_gpt2_decoder"
-    is_decoder: bool = True
     add_cross_attention: bool = True
-    attention_probs_dropout_prob: float = 0.1
-    bos_token_id: int = 0
-    eos_token_id: int = 2
-    classifier_dropout: float = None
+    vocab_size: int = 42001
+    attn_pdrop: float = 0.1
+    bos_token_id: int = 5
+    embd_pdrop: float = 0.1
+    eos_token_id: int = 5
     gradient_checkpointing: bool = False
-    hidden_act: str = "gelu"
-    hidden_dropout_prob: float = 0.1
-    hidden_size: int = 768
-    initializer_range: int = 0.02
-    intermediate_size: int = 3072
-    layer_norm_eps: float = 1e-12
-    max_position_embeddings: int = 514
-    num_attention_heads: int = 12
-    num_hidden_layers: int = 12
-    pad_token_id: int = 1
-    position_embedding_type: str = "absolute"
-    type_vocab_size: int = 1
+    initializer_range: float = 0.02
+    layer_norm_epsilon: float = 1e-05
+    model_type: str = "gpt2"
+    n_ctx: int = 1024
+    n_embd: int = 768
+    n_head: int = 12
+    n_inner: int = None
+    n_layer: int = 12
+    n_positions: int = 1024
+    resid_pdrop: float = 0.1
+    summary_activation: bool = False
+    summary_first_dropout: float = 0.1
     use_cache: bool = True
-    vocab_size: int = 42000
 
 
 @dataclass
