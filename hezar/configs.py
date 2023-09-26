@@ -41,6 +41,16 @@ logger = Logger(__name__)
 
 CONFIG_CLASS_VARS = ["name", "config_type"]
 
+_config_to_type_mapping = {
+    "ModelConfig": ConfigType.MODEL,
+    "PreprocessorConfig": ConfigType.PREPROCESSOR,
+    "TrainerConfig": ConfigType.TRAINER,
+    "DatasetConfig": ConfigType.DATASET,
+    "EmbeddingConfig": ConfigType.EMBEDDING,
+    "CriterionConfig": ConfigType.CRITERION,
+    "MetricConfig": ConfigType.METRIC,
+}
+
 
 @dataclass
 class Config:
@@ -162,8 +172,19 @@ class Config:
         # Load config file and convert to dictionary
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
-        config_cls = get_module_config_class(config["name"], registry_type=config.get("config_type", None))
-        if config_cls is None:
+        # Check if config_type in the file and class are equal
+        config_type = config.get("config_type", None)
+        if config_type is None:
+            logger.warning(f"`config_type` parameter in `{filename}` is `None` or does not exist!")
+        elif config_type in _config_to_type_mapping.values():
+            if config_type != cls.config_type:
+                raise ValueError(
+                    f"The `config_type` for `{cls.__name__}` is `{cls.config_type}` "
+                    f"which is different from the `config_type` parameter in `{filename}` which is `{config_type}`!"
+                )
+        if cls.__name__ in _config_to_type_mapping:
+            config_cls = get_module_config_class(config["name"], registry_type=config_type)
+        else:
             config_cls = cls
         config = config_cls.from_dict(config, strict=False, **kwargs)
         return config
