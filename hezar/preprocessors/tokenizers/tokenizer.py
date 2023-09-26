@@ -33,11 +33,15 @@ class TokenizerConfig(PreprocessorConfig):
     padding_strategy: str = None
     padding_direction: str = None
     pad_to_multiple_of: int = None
-    pad_token_id: int = None
-    pad_token: str = None
-    pad_token_type_id: int = None
+    pad_token_type_id: int = 0
+    bos_token: str = None
+    eos_token: str = None
     unk_token: str = None
-    special_tokens: list = None
+    sep_token: str = None
+    pad_token: str = None
+    cls_token: str = None
+    mask_token: str = None
+    special_tokens: List[str] = None
 
 
 class Tokenizer(Preprocessor):
@@ -54,16 +58,6 @@ class Tokenizer(Preprocessor):
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
     token_ids_name = "token_ids"
-    SPECIAL_TOKENS = [
-        "bos_token",
-        "eos_token",
-        "unk_token",
-        "sep_token",
-        "pad_token",
-        "cls_token",
-        "mask_token",
-        "additional_special_tokens",
-    ]
     uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
     def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
@@ -72,6 +66,26 @@ class Tokenizer(Preprocessor):
             self._tokenizer = self.from_file(tokenizer_file)
         else:
             self._tokenizer = self.build()
+
+        self._special_tokens = self._create_special_tokens()
+
+        self._tokenizer.add_special_tokens(self.special_tokens)
+
+    def _create_special_tokens(self):
+        _special_tokens = [
+            self.config.bos_token,
+            self.config.eos_token,
+            self.config.unk_token,
+            self.config.sep_token,
+            self.config.pad_token,
+            self.config.cls_token,
+            self.config.mask_token,
+        ]
+        if self.config.special_tokens is not None:
+            _special_tokens.extend(self.config.special_tokens)
+
+        valid_tokens = [token for token in _special_tokens if token is not None]
+        return valid_tokens
 
     @staticmethod
     def from_file(path):
@@ -338,8 +352,8 @@ class Tokenizer(Preprocessor):
                 target = {
                     "length": length,
                     "direction": padding_side,
-                    "pad_id": self.config.pad_token_id,
-                    "pad_token": self.config.pad_token,
+                    "pad_id": self.token_to_id(self.pad_token),
+                    "pad_token": self.pad_token,
                     "pad_type_id": self.config.pad_token_type_id,
                     "pad_to_multiple_of": pad_to_multiple_of,
                 }
@@ -631,8 +645,64 @@ class Tokenizer(Preprocessor):
 
     @property
     def special_tokens(self):
-        return self.config.special_tokens
+        return self._special_tokens
 
     @property
     def special_ids(self):
         return [self.token_to_id(t) for t in self.special_tokens]
+
+    @property
+    def pad_token(self):
+        return self.config.pad_token
+
+    @property
+    def bos_token(self):
+        return self.config.bos_token
+
+    @property
+    def eos_token(self):
+        return self.config.eos_token
+
+    @property
+    def unk_token(self):
+        return self.config.unk_token
+
+    @property
+    def mask_token(self):
+        return self.config.mask_token
+
+    @property
+    def cls_token(self):
+        return self.config.cls_token
+
+    @property
+    def sep_token(self):
+        return self.config.sep_token
+
+    @property
+    def pad_token_id(self):
+        return self.token_to_id(self.config.pad_token)
+
+    @property
+    def bos_token_id(self):
+        return self.token_to_id(self.config.bos_token)
+
+    @property
+    def eos_token_id(self):
+        return self.token_to_id(self.config.eos_token)
+
+    @property
+    def unk_token_id(self):
+        return self.token_to_id(self.config.unk_token)
+
+    @property
+    def mask_token_id(self):
+        return self.token_to_id(self.config.mask_token)
+
+    @property
+    def cls_token_id(self):
+        return self.token_to_id(self.config.cls_token)
+
+    @property
+    def sep_token_id(self):
+        return self.token_to_id(self.config.sep_token)

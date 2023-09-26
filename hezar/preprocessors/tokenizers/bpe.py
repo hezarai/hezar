@@ -25,26 +25,29 @@ class BPEConfig(TokenizerConfig):
     stride: int = 0
     padding_strategy: str = "longest"
     padding_direction: str = "right"
-    special_tokens: List[str] = field(
-        default_factory=lambda: [
-            "<s>",
-            "<pad>",
-            "</s>",
-            "<unk>",
-            "<mask>",
-            "<|endoftext|>",
-            "<|startoftext|>",
-            "<nl>",
-            "<hs>",
-            "<sep>",
-            "<cls>",
-        ],
-    )
-    unk_token: str = "<unk>"
-    pad_token_id: int = 0
-    pad_token_type_id: int = 0
-    pad_token: str = "<pad>"
     pad_to_multiple_of: int = 0
+    bos_token: str = "<s>"
+    eos_token: str = "</s>"
+    unk_token: str = "<unk>"
+    sep_token: str = "<sep>"
+    pad_token: str = "<pad>"
+    cls_token: str = "<cls>"
+    mask_token: str = "<mask>"
+    special_tokens: List = field(
+        default_factory=lambda: [
+           "<s>",
+           "<pad>",
+           "</s>",
+           "<unk>",
+           "<mask>",
+           "<|endoftext|>",
+           "<|startoftext|>",
+           "<nl>",
+           "<hs>",
+           "<sep>",
+           "<cls>",
+        ]
+    )
     dropout: float = None
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""
@@ -84,7 +87,6 @@ class BPETokenizer(Tokenizer):
                 fuse_unk=self.config.fuse_unk,
             )
         )
-        tokenizer.add_special_tokens(self.config.special_tokens)
         tokenizer.decoder = decoders.ByteLevel()  # noqa
         tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)  # noqa
         tokenizer.decoder = decoders.ByteLevel()  # noqa

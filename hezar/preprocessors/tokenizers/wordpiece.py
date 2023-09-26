@@ -26,11 +26,13 @@ class WordPieceConfig(TokenizerConfig):
     padding_strategy: str = "longest"
     padding_direction: str = "right"
     pad_to_multiple_of: int = 0
-    pad_token_id: int = 0
     pad_token: str = "[PAD]"
+    unk_token: str = "[UNK]"
+    sep_token: str = "[SEP]"
+    cls_token: str = "[CLS]"
+    mask_token: str = "[MASK]"
     pad_token_type_id: int = 0
     special_tokens: List[str] = field(default_factory=lambda: ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"])
-    unk_token: str = "[UNK]"
     wordpieces_prefix: str = "##"
     vocab_size: int = 30000
     min_frequency: int = 2
@@ -59,7 +61,6 @@ class WordPieceTokenizer(Tokenizer):
 
     def build(self):
         tokenizer = HFTokenizer(models.WordPiece(unk_token=self.config.unk_token))  # noqa
-        tokenizer.add_special_tokens(self.config.special_tokens)
         tokenizer.decoder = decoders.WordPiece(self.config.wordpieces_prefix)  # noqa
         return tokenizer
 

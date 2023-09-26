@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 import numpy as np
@@ -8,14 +8,12 @@ from ...registry import register_preprocessor
 from ...utils import Logger, is_backend_available
 from .bpe import BPEConfig, BPETokenizer
 
-
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import processors
 
 _required_backends = [
     Backends.TOKENIZERS,
 ]
-
 
 logger = Logger(__name__)
 
@@ -139,16 +137,128 @@ TO_LANGUAGE_CODE = {
 
 TASK_IDS = ["translate", "transcribe"]
 
+SPECIAL_TOKENS = [
+    "<|endoftext|>",
+    "<|endoftext|>",
+    "<|startoftranscript|>",
+    "<|en|>",
+    "<|zh|>",
+    "<|de|>",
+    "<|es|>",
+    "<|ru|>",
+    "<|ko|>",
+    "<|fr|>",
+    "<|ja|>",
+    "<|pt|>",
+    "<|tr|>",
+    "<|pl|>",
+    "<|ca|>",
+    "<|nl|>",
+    "<|ar|>",
+    "<|sv|>",
+    "<|it|>",
+    "<|id|>",
+    "<|hi|>",
+    "<|fi|>",
+    "<|vi|>",
+    "<|he|>",
+    "<|uk|>",
+    "<|el|>",
+    "<|ms|>",
+    "<|cs|>",
+    "<|ro|>",
+    "<|da|>",
+    "<|hu|>",
+    "<|ta|>",
+    "<|no|>",
+    "<|th|>",
+    "<|ur|>",
+    "<|hr|>",
+    "<|bg|>",
+    "<|lt|>",
+    "<|la|>",
+    "<|mi|>",
+    "<|ml|>",
+    "<|cy|>",
+    "<|sk|>",
+    "<|te|>",
+    "<|fa|>",
+    "<|lv|>",
+    "<|bn|>",
+    "<|sr|>",
+    "<|az|>",
+    "<|sl|>",
+    "<|kn|>",
+    "<|et|>",
+    "<|mk|>",
+    "<|br|>",
+    "<|eu|>",
+    "<|is|>",
+    "<|hy|>",
+    "<|ne|>",
+    "<|mn|>",
+    "<|bs|>",
+    "<|kk|>",
+    "<|sq|>",
+    "<|sw|>",
+    "<|gl|>",
+    "<|mr|>",
+    "<|pa|>",
+    "<|si|>",
+    "<|km|>",
+    "<|sn|>",
+    "<|yo|>",
+    "<|so|>",
+    "<|af|>",
+    "<|oc|>",
+    "<|ka|>",
+    "<|be|>",
+    "<|tg|>",
+    "<|sd|>",
+    "<|gu|>",
+    "<|am|>",
+    "<|yi|>",
+    "<|lo|>",
+    "<|uz|>",
+    "<|fo|>",
+    "<|ht|>",
+    "<|ps|>",
+    "<|tk|>",
+    "<|nn|>",
+    "<|mt|>",
+    "<|sa|>",
+    "<|lb|>",
+    "<|my|>",
+    "<|bo|>",
+    "<|tl|>",
+    "<|mg|>",
+    "<|as|>",
+    "<|tt|>",
+    "<|haw|>",
+    "<|ln|>",
+    "<|ha|>",
+    "<|ba|>",
+    "<|jw|>",
+    "<|su|>",
+    "<|translate|>",
+    "<|transcribe|>",
+    "<|startoflm|>",
+    "<|startofprev|>",
+    "<|nocaptions|>",
+    "<|notimestamps|>",
+]
+
 
 @dataclass
 class WhisperBPEConfig(BPEConfig):
     name = "whisper_bpe_tokenizer"
     unk_token: str = "<|endoftext|>"
-    unk_token_id: int = 50257
     bos_token: str = "<|startoftranscript|>"
-    bos_token_id: int = 50257
     eos_token: str = "<|endoftext|>"
-    eos_token_id: int = 50257
+    translate_token: str = "<|translate|>"
+    transcribe_token: str = "<|transcribe|>"
+    notimestamps_token: str = "<|notimestamps|>"
+    special_tokens: List = field(default_factory=lambda: SPECIAL_TOKENS)
     padding_direction: str = "right"
     add_prefix_space: bool = False
     add_bos_token: bool = False
@@ -293,25 +403,21 @@ class WhisperBPETokenizer(BPETokenizer):
 
         prefix_token_ids = self.prefix_tokens
         prefixes = self.convert_ids_to_tokens(prefix_token_ids)
-        eos = self.config.eos_token
-        eos_token_id = self.config.eos_token_id
         prefix_template = " ".join([f"{token}:0" for token in prefixes])
         self._tokenizer.post_processor = processors.TemplateProcessing(
-            single=f"{prefix_template} $A:0 {eos}:0",
-            pair=f"{prefix_template} $A:0 $B:1 {eos}:1",
+            single=f"{prefix_template} $A:0 {self.eos_token}:0",
+            pair=f"{prefix_template} $A:0 $B:1 {self.eos_token}:1",
             special_tokens=[
-                (eos, eos_token_id),
+                (self.eos_token, self.eos_token_id),
                 *zip(prefixes, prefix_token_ids),
             ],
         )
 
     @property
     def prefix_tokens(self) -> List[int]:
-        all_special_ids = self.special_ids
-        bos_token_id = all_special_ids[-106]
-        translate_token_id = all_special_ids[-6]
-        transcribe_token_id = all_special_ids[-5]
-        notimestamps_token_id = all_special_ids[-1]
+        translate_token_id = self.token_to_id(self.config.translate_token)
+        transcribe_token_id = self.token_to_id(self.config.transcribe_token)
+        notimestamps_token_id = self.token_to_id(self.config.notimestamps_token)
         langs = tuple(LANGUAGES.keys())
 
         if self.language is not None:
@@ -331,9 +437,9 @@ class WhisperBPETokenizer(BPETokenizer):
             if self.task not in TASK_IDS:
                 raise ValueError(f"Unsupported task: {self.task}. Task should be in: {TASK_IDS}")
 
-        bos_sequence = [bos_token_id]
+        bos_sequence = [self.bos_token_id]
         if self.language is not None:
-            bos_sequence.append(bos_token_id + 1 + langs.index(language_id))
+            bos_sequence.append(self.bos_token_id + 1 + langs.index(language_id))
         if self.task is not None:
             bos_sequence.append(transcribe_token_id if self.task == "transcribe" else translate_token_id)
         if not self.predict_timestamps:

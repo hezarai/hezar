@@ -25,7 +25,14 @@ class SentencePieceUnigramConfig(TokenizerConfig):
     stride: int = 0
     padding_strategy: str = "longest"
     padding_direction: str = "right"
-    special_tokens: List[str] = field(
+    bos_token: str = "<s>"
+    eos_token: str = "</s>"
+    unk_token: str = "<unk>"
+    sep_token: str = "<sep>"
+    pad_token: str = "<pad>"
+    cls_token: str = "<cls>"
+    mask_token: str = "<mask>"
+    special_tokens: List = field(
         default_factory=lambda: [
             "<s>",
             "<pad>",
@@ -38,12 +45,8 @@ class SentencePieceUnigramConfig(TokenizerConfig):
             "<hs>",
             "<sep>",
             "<cls>",
-        ],
+        ]
     )
-    unk_token: str = "<unk>"
-    pad_token_id: int = 0
-    pad_token_type_id: int = 0
-    pad_token: str = "<pad>"
     pad_to_multiple_of: int = 0
     dropout: float = None
     continuing_subword_prefix: str = ""
@@ -78,7 +81,6 @@ class SentencePieceUnigramTokenizer(Tokenizer):
 
     def build(self):
         tokenizer = HFTokenizer(models.Unigram())  # noqa
-        tokenizer.add_special_tokens(self.config.special_tokens)
         tokenizer.normalizer = normalizers.Sequence(  # noqa
             [  # noqa
                 normalizers.Nmt(), # noqa
