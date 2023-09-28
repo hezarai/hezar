@@ -185,7 +185,7 @@ class Config:
         config_cls = get_module_config_class(config["name"], registry_type=config_type)
         if config_cls is None:
             config_cls = cls
-        config = config_cls.from_dict(config, strict=False, **kwargs)
+        config = config_cls.from_dict(config, **kwargs)
         return config
 
     @classmethod
@@ -198,7 +198,7 @@ class Config:
         # Remove class vars to avoid TypeError (unexpected argument)
         [dict_config.pop(k, None) for k in CONFIG_CLASS_VARS]
 
-        config = cls(**{k: v for k, v in dict_config.items() if hasattr(cls, k)})  # noqa
+        config = cls(**{k: v for k, v in dict_config.items() if k in cls.__annotations__})  # noqa
 
         return config
 
