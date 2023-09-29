@@ -94,7 +94,7 @@ class T5TextGeneration(GenerativeModel):
         tokenizer = self.preprocessor["sentencepiece_unigram_tokenizer"]
         for output_ids in inputs["output_ids"][0]:
             if isinstance(output_ids, torch.Tensor):
-                output_ids = output_ids.numpy().tolist()
+                output_ids = output_ids.cpu().numpy().tolist()
             record = {
                 "output_text": tokenizer.decode(
                     output_ids,

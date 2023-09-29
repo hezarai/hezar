@@ -91,5 +91,5 @@ class ViTRobertaImage2Text(GenerativeModel):
 
     def post_process(self, inputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer]
-        decoded_outputs = tokenizer.decode(inputs.numpy().tolist())
+        decoded_outputs = tokenizer.decode(inputs.cpu().numpy().tolist())
         return Image2TextOutput(texts=decoded_outputs)
