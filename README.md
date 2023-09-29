@@ -39,7 +39,7 @@ Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.
 ### Models
 There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
 
-- Text classification (sentiment analysis, categorization, etc) 
+- **Text classification (sentiment analysis, categorization, etc)** 
 ```python
 from hezar import Model
 
@@ -51,7 +51,7 @@ print(outputs)
 ```commandline
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-- Sequence labeling (POS, NER, etc.)
+- **Sequence labeling (POS, NER, etc.)**
 ```python
 from hezar import Model
 
@@ -67,7 +67,7 @@ print(f"NER: {ner_outputs}")
 POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
-- Speech Recognition
+- **Speech Recognition**
 ```python
 from hezar import Model
 
@@ -78,7 +78,7 @@ print(transcripts)
 ```commandline
 {'transcripts': ['و این تنها محدود به محیط کار نیست']}
 ```
-- Image to Text (OCR)
+- **Image to Text (OCR)**
 ```python
 from hezar import Model
 # OCR with TrOCR 
@@ -96,7 +96,7 @@ TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
 CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
 
-- Image to Text (Image Captioning)
+- **Image to Text (Image Captioning)**
 ```python
 from hezar import Model
 
