@@ -1,0 +1,2 @@
+from .vit_roberta_image2text_config import ViTRobertaImage2TextConfig
+from .vit_roberta_image2text import ViTRobertaImage2Text
