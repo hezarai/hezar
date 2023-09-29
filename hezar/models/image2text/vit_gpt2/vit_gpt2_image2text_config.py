@@ -48,13 +48,13 @@ class EncoderConfig(ModelConfig):
 
 
 @dataclass
-class GenerationConfig:
+class GenerationConfig(ModelConfig):
     bos_token_id: int = 0
     decoder_start_token_id: int = 0
     early_stopping: bool = True
     eos_token_id: int = 2
     length_penalty: float = 2.0
-    max_length: int = 64
+    max_new_tokens: int = 24
     no_repeat_ngram_size: int = 3
     num_beams: int = 4
     pad_token_id: int = 1
