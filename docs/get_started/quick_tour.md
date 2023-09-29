@@ -60,7 +60,19 @@ print(f"CRNN Output: {texts}")
 TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
 CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
-We constantly keep working on adding and training new models and this section will hopefully be expanding every day ;)
+
+- **Image to Text (Image Captioning)**
+```python
+from hezar import Model
+
+model = Model.load("hezarai/vit-roberta-fa-image-captioning-flickr30k")
+texts = model.predict("examples/assets/image_captioning_example.jpg")
+print(texts)
+```
+```
+{'texts': ['سگی با توپ تنیس در دهانش می دود.']}
+```
+We constantly keep working on adding and training new models and this section will hopefully be expanding over time ;)
 ### Word Embeddings
 - **FastText**
 ```python
