@@ -70,6 +70,7 @@ class ImageProcessor(Preprocessor):
     def __call__(
         self,
         images: List,
+        device: str = None,
         mean: float = None,
         std: float = None,
         rescale: float = None,
@@ -139,6 +140,10 @@ class ImageProcessor(Preprocessor):
         images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)
 
         images = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)
+
+        if device:
+            import torch
+            images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}
 
         return images
 

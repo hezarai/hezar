@@ -118,7 +118,7 @@ class Tokenizer(Preprocessor):
         if isinstance(ids[0], int):
             ids = [ids]
         if isinstance(ids, torch.Tensor):
-            ids = ids.numpy().tolist()
+            ids = ids.cpu().numpy().tolist()
         if isinstance(ids, np.ndarray):
             ids = ids.tolist()
         return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)

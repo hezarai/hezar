@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List, Union
 
 import numpy as np
+import torch
 
 from ....registry import register_preprocessor
 from ....utils import Logger, convert_batch_dict_dtype, mel_filter_bank, spectrogram, window_function
@@ -52,6 +53,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
     def __call__(
         self,
         raw_speech: Union[np.ndarray, List[float], List[np.ndarray], List[List[float]]],
+        device: str = None,
         truncation: bool = True,
         pad_to_multiple_of: int = None,
         return_tensors: str = None,
@@ -132,6 +134,8 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
         if return_tensors is not None:
             padded_inputs = {k: np.asarray(v) for k, v in padded_inputs.items()}
             padded_inputs = convert_batch_dict_dtype(padded_inputs, dtype=return_tensors)
+            if device:
+                padded_inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in padded_inputs.items()}
 
         return padded_inputs
 

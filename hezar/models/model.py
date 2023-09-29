@@ -288,12 +288,13 @@ class Model(nn.Module):
         return inputs
 
     @torch.inference_mode()
-    def predict(self, inputs, **kwargs) -> Union[Dict, List[Dict]]:
+    def predict(self, inputs, device: Union[str, torch.device] = None, **kwargs) -> Union[Dict, List[Dict]]:
         """
         Perform an end-to-end prediction on raw inputs.
 
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
+            device: What device to perform inference on
 
         Returns:
             Output dict of results
@@ -303,11 +304,23 @@ class Model(nn.Module):
         # Preprocessing step
         if self.preprocessor is not None:
             inputs = self.preprocess(inputs, **kwargs)
+        # Map inputs and model to device
+        device = device or self.device
+        inputs = self._move_inputs_to_device(inputs, device)
+        self.to(device)
         # Model forward step
         model_outputs = self(inputs, **kwargs)
         # Post-processing step
         processed_outputs = self.post_process(model_outputs, **kwargs)
         return processed_outputs
+
+    @staticmethod
+    def _move_inputs_to_device(inputs, device):
+        if isinstance(inputs, torch.Tensor):
+            inputs = inputs.to(device)
+        elif isinstance(inputs, Mapping):
+            inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+        return inputs
 
     @property
     def device(self):
@@ -330,8 +343,9 @@ class Model(nn.Module):
         elif value is None:
             preprocessor = None
         else:
-            raise ValueError(f"Preprocessor value must be a `Preprocessor` or a `PreprocessorContainer` instance"
-                             f"not `{type(value)}`!")
+            raise ValueError(
+                f"Preprocessor value must be a `Preprocessor` or `PreprocessorContainer` instance not `{type(value)}`!"
+            )
         self._preprocessor = preprocessor
 
 
@@ -355,16 +369,18 @@ class GenerativeModel(Model):
         Returns:
             Generated ids
         """
-        raise NotImplementedError(f"`{self.__class__.__name__}` is a generative model "
-                                  f"but has not implemented the `generate()` method!")
+        raise NotImplementedError(
+            f"`{self.__class__.__name__}` is a generative model but has not implemented the `generate()` method!"
+        )
 
     @torch.inference_mode()
-    def predict(self, inputs, **kwargs):
+    def predict(self, inputs, device: Union[str, torch.device] = None, **kwargs):
         """
         Perform an end-to-end prediction on raw inputs designed for generative models.
 
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
+            device: What device to perform inference on
 
         Returns:
             Output dict of results
@@ -374,6 +390,10 @@ class GenerativeModel(Model):
         # Preprocessing step
         if self.preprocessor is not None:
             inputs = self.preprocess(inputs, **kwargs)
+        # Map inputs to device also
+        device = device or self.device
+        inputs = self._move_inputs_to_device(inputs, device)
+        self.to(device)
         # Model forward step
         model_outputs = self.generate(inputs, **kwargs)
         # Post-processing step

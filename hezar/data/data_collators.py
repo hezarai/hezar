@@ -88,7 +88,7 @@ class TextPaddingDataCollator:
             padded_batch = []
             for x in batch:
                 if isinstance(x, torch.Tensor):
-                    x = x.numpy().tolist()
+                    x = x.cpu().numpy().tolist()
                 elif isinstance(x, np.ndarray):
                     x = x.tolist()
                 difference = input_length - len(x)
