@@ -1,5 +1,6 @@
 from .model import *
 from .audio_classification import *
+from .backbone import *
 from .image2text import *
 from .language_modeling import *
 from .sequence_labeling import *

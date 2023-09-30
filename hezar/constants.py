@@ -53,6 +53,7 @@ class Backends(str, Enum):
 
 class TaskType(str, Enum):
     AUDIO_CLASSIFICATION = "audio_classification"
+    BACKBONE = "backbone"
     IMAGE2TEXT = "image2text"
     LANGUAGE_MODELING = "language_modeling"
     SEQUENCE_LABELING = "sequence_labeling"
