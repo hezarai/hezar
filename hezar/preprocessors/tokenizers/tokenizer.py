@@ -188,7 +188,7 @@ class Tokenizer(Preprocessor):
         for key, batch in inputs.items():
             if key in skip_keys:
                 continue
-            padding_id = 0 if key == "attention_mask" else self.config.pad_token_id
+            padding_id = 0 if key == "attention_mask" else self.pad_token_id
             padded_batch = []
             for x in batch:
                 difference = inputs_length - len(x)
