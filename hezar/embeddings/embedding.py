@@ -2,7 +2,7 @@ import os
 import tempfile
 from typing import Dict, List, Union
 
-from huggingface_hub import HfApi
+from huggingface_hub import HfApi, hf_hub_download
 
 from ..builders import build_embedding
 from ..configs import EmbeddingConfig
@@ -10,6 +10,7 @@ from ..constants import (
     DEFAULT_EMBEDDING_CONFIG_FILE,
     DEFAULT_EMBEDDING_FILE,
     DEFAULT_EMBEDDING_SUBFOLDER,
+    HEZAR_CACHE_DIR,
     Backends,
 )
 from ..utils import Logger, verify_dependencies, get_lib_version
@@ -40,18 +41,21 @@ class Embedding:
     required_backends: List[Union[str, Backends]] = []
 
     filename = DEFAULT_EMBEDDING_FILE
-    vectors_filename = None
+    vectors_filename = f"{filename}.wv.vectors.npy"
     config_filename = DEFAULT_EMBEDDING_CONFIG_FILE
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
-    def __init__(self, config: EmbeddingConfig, **kwargs):
+    def __init__(self, config: EmbeddingConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
         _verify_gensim_installation()
 
         self.config = config.update(kwargs)
-        self.model = self.build()
+        self.model = self.from_file(embedding_file, vectors_file) if embedding_file else self.build()
 
     def build(self):
+        raise NotImplementedError
+
+    def from_file(self, embedding_path, vectors_path):
         raise NotImplementedError
 
     def __call__(self, inputs: Union[str, List[str]], **kwargs):
@@ -91,16 +95,45 @@ class Embedding:
         cls,
         hub_or_local_path,
         config_filename=None,
+        embedding_file=None,
+        vectors_file=None,
         subfolder=None,
         **kwargs,
     ) -> "Embedding":
+
         config_filename = config_filename or cls.config_filename
+        embedding_file = embedding_file or cls.filename
+        vectors_file = vectors_file or cls.vectors_filename
         subfolder = subfolder or cls.subfolder
 
         config = EmbeddingConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder)
-        config.pretrained_path = hub_or_local_path
 
-        embedding = build_embedding(config.name, config, **kwargs)
+        if os.path.isdir(hub_or_local_path):
+            embedding_path = os.path.join(hub_or_local_path, subfolder, embedding_file)
+            vectors_path = os.path.join(hub_or_local_path, subfolder, vectors_file)
+        else:
+            embedding_path = hf_hub_download(
+                hub_or_local_path,
+                filename=embedding_file,
+                subfolder=subfolder,
+                cache_dir=HEZAR_CACHE_DIR,
+                resume_download=True,
+            )
+            vectors_path = hf_hub_download(
+                hub_or_local_path,
+                filename=vectors_file,
+                subfolder=subfolder,
+                cache_dir=HEZAR_CACHE_DIR,
+                resume_download=True,
+            )
+
+        embedding = build_embedding(
+            config.name,
+            config=config,
+            embedding_file=embedding_path,
+            vectors_file=vectors_path,
+            **kwargs,
+        )
 
         return embedding
 

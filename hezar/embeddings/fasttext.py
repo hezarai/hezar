@@ -3,9 +3,7 @@ import pprint
 from dataclasses import dataclass
 from typing import List, Literal, Union
 
-from huggingface_hub import hf_hub_download
-
-from ..constants import HEZAR_CACHE_DIR, Backends
+from ..constants import Backends
 from ..registry import register_embedding
 from ..utils import is_backend_available
 from .embedding import Embedding, EmbeddingConfig
@@ -33,61 +31,33 @@ class FastTextConfig(EmbeddingConfig):
     train_algorithm: Literal["skipgram", "cbow"] = "skipgram"
     cbow_mean = 1
     epochs = 5
-    pretrained_path: str = None
 
 
 @register_embedding("fasttext", config_class=FastTextConfig)
 class FastText(Embedding):
     required_backends = _required_backends
-    vectors_filename = f"{Embedding.filename}.wv.vectors.npy"
 
-    def __init__(self, config: FastTextConfig, **kwargs):
-        super().__init__(config, **kwargs)
-        self.model = self.build()
+    def __init__(self, config: FastTextConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
+        super().__init__(config, embedding_file=embedding_file, vectors_file=vectors_file, **kwargs)
 
     def build(self):
-        pretrained_path = self.config.get("pretrained_path")
-        if pretrained_path:
-            if not os.path.isdir(pretrained_path):
-                embedding_path = hf_hub_download(
-                    pretrained_path,
-                    filename=self.filename,
-                    subfolder=self.subfolder,
-                    cache_dir=HEZAR_CACHE_DIR,
-                    resume_download=True,
-                )
-                vectors_path = hf_hub_download(
-                    pretrained_path,
-                    filename=self.vectors_filename,
-                    subfolder=self.subfolder,
-                    cache_dir=HEZAR_CACHE_DIR,
-                    resume_download=True,
-                )
-            else:
-                embedding_path = os.path.join(
-                    pretrained_path,
-                    self.subfolder,
-                    self.filename,
-                )
-                vectors_path = os.path.join(
-                    pretrained_path,
-                    self.subfolder,
-                    self.vectors_filename,
-                )
-            if not os.path.isfile(vectors_path):
-                raise ValueError(f"Could not load or find vectors file at `{vectors_path}`! "
-                                 f"Please make sure it's been downloaded properly!")
-            embedding_model = fasttext.FastText.load(embedding_path)
-        else:
-            embedding_model = fasttext.FastText(
-                vector_size=self.config.vector_size,
-                window=self.config.window,
-                sg=1 if self.config.train_algorithm == "skipgram" else 0,
-                workers=self.config.workers,
-                alpha=self.config.alpha,
-                min_alpha=self.config.min_alpha,
-                min_count=self.config.min_count,
-            )
+        embedding_model = fasttext.FastText(
+            vector_size=self.config.vector_size,
+            window=self.config.window,
+            sg=1 if self.config.train_algorithm == "skipgram" else 0,
+            workers=self.config.workers,
+            alpha=self.config.alpha,
+            min_alpha=self.config.min_alpha,
+            min_count=self.config.min_count,
+        )
+        return embedding_model
+
+    def from_file(self, embedding_path, vectors_path):
+        if not os.path.isfile(vectors_path):
+            raise ValueError(f"Could not load or find vectors file at `{vectors_path}`! "
+                             f"Please make sure it's been downloaded properly!")
+
+        embedding_model = fasttext.FastText.load(embedding_path)
 
         return embedding_model
 
