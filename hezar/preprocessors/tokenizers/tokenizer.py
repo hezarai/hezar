@@ -41,7 +41,7 @@ class TokenizerConfig(PreprocessorConfig):
     pad_token: str = None
     cls_token: str = None
     mask_token: str = None
-    special_tokens: List[str] = None
+    additional_special_tokens: List[str] = None
 
 
 class Tokenizer(Preprocessor):
@@ -67,11 +67,9 @@ class Tokenizer(Preprocessor):
         else:
             self._tokenizer = self.build()
 
-        self._special_tokens = self._create_special_tokens()
+        self.special_tokens = self._get_all_special_tokens()
 
-        self._tokenizer.add_special_tokens(self.special_tokens)
-
-    def _create_special_tokens(self):
+    def _get_all_special_tokens(self):
         _special_tokens = [
             self.config.bos_token,
             self.config.eos_token,
@@ -81,8 +79,12 @@ class Tokenizer(Preprocessor):
             self.config.cls_token,
             self.config.mask_token,
         ]
-        if self.config.special_tokens is not None:
-            _special_tokens.extend(self.config.special_tokens)
+        _special_tokens = [token for token in _special_tokens if token in self.vocab]
+
+        if self.config.additional_special_tokens is not None:
+            for token in self.config.additional_special_tokens:
+                if token not in _special_tokens:
+                    _special_tokens.append(token)
 
         valid_tokens = [token for token in _special_tokens if token is not None]
         return valid_tokens
@@ -642,10 +644,6 @@ class Tokenizer(Preprocessor):
         `int`: Size of the base vocabulary (without the added tokens).
         """
         return self._tokenizer.get_vocab_size(with_added_tokens=False)
-
-    @property
-    def special_tokens(self):
-        return self._special_tokens
 
     @property
     def special_ids(self):

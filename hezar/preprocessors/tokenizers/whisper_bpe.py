@@ -137,7 +137,7 @@ TO_LANGUAGE_CODE = {
 
 TASK_IDS = ["translate", "transcribe"]
 
-SPECIAL_TOKENS = [
+ADDITIONAL_SPECIAL_TOKENS = [
     "<|endoftext|>",
     "<|endoftext|>",
     "<|startoftranscript|>",
@@ -258,7 +258,7 @@ class WhisperBPEConfig(BPEConfig):
     translate_token: str = "<|translate|>"
     transcribe_token: str = "<|transcribe|>"
     notimestamps_token: str = "<|notimestamps|>"
-    special_tokens: List = field(default_factory=lambda: SPECIAL_TOKENS)
+    additional_special_tokens: List = field(default_factory=lambda: ADDITIONAL_SPECIAL_TOKENS)
     padding_direction: str = "right"
     add_prefix_space: bool = False
     add_bos_token: bool = False
@@ -315,7 +315,7 @@ class WhisperBPETokenizer(BPETokenizer):
         Timestamp tokens are above the special tokens' id range and are ignored by `decode()`. This method decodes
         given tokens with timestamps tokens annotated, e.g. "<|1.08|>".
         """
-        timestamp_begin = self.special_ids[-1] + 1
+        timestamp_begin = self.token_to_id(self.config.notimestamps_token) + 1
         outputs = [[]]
         for token in token_ids:
             if token >= timestamp_begin:
@@ -341,7 +341,7 @@ class WhisperBPETokenizer(BPETokenizer):
         token_ids = np.array(token_ids)
         if token_ids.shape[0] > 1 and len(token_ids.shape) > 1:
             raise ValueError("Can only process a single input at a time")
-        timestamp_begin = self.special_ids[-1] + 1
+        timestamp_begin = self.token_to_id(self.config.notimestamps_token) + 1
         timestamp_tokens = token_ids >= timestamp_begin
 
         consecutive = np.where(timestamp_tokens[:-1] & timestamp_tokens[1:])[0] + 1
@@ -377,7 +377,7 @@ class WhisperBPETokenizer(BPETokenizer):
 
         # Check for special tokens
         prompt_text_ids = batch_encoding["input_ids"][1:]
-        special_token_id = next((x for x in prompt_text_ids if x >= self.all_special_ids[0]), None)
+        special_token_id = next((x for x in prompt_text_ids if x >= self.special_ids[0]), None)
         if special_token_id is not None:
             token = self.convert_ids_to_tokens(special_token_id)
             raise ValueError(f"Encountered text in the prompt corresponding to disallowed special token: {token}.")

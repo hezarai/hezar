@@ -33,21 +33,7 @@ class BPEConfig(TokenizerConfig):
     pad_token: str = "<pad>"
     cls_token: str = "<cls>"
     mask_token: str = "<mask>"
-    special_tokens: List = field(
-        default_factory=lambda: [
-           "<s>",
-           "<pad>",
-           "</s>",
-           "<unk>",
-           "<mask>",
-           "<|endoftext|>",
-           "<|startoftext|>",
-           "<nl>",
-           "<hs>",
-           "<sep>",
-           "<cls>",
-        ]
-    )
+    additional_special_tokens: List[str] = None
     dropout: float = None
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""

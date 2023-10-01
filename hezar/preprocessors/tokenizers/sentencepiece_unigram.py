@@ -32,21 +32,7 @@ class SentencePieceUnigramConfig(TokenizerConfig):
     pad_token: str = "<pad>"
     cls_token: str = "<cls>"
     mask_token: str = "<mask>"
-    special_tokens: List = field(
-        default_factory=lambda: [
-            "<s>",
-            "<pad>",
-            "</s>",
-            "<unk>",
-            "<mask>",
-            "<|endoftext|>",
-            "<|startoftext|>",
-            "<nl>",
-            "<hs>",
-            "<sep>",
-            "<cls>",
-        ]
-    )
+    additional_special_tokens: List[str] = None
     pad_to_multiple_of: int = 0
     dropout: float = None
     continuing_subword_prefix: str = ""

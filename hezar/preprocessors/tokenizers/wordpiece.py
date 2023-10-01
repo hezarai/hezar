@@ -32,7 +32,7 @@ class WordPieceConfig(TokenizerConfig):
     cls_token: str = "[CLS]"
     mask_token: str = "[MASK]"
     pad_token_type_id: int = 0
-    special_tokens: List[str] = field(default_factory=lambda: ["[UNK]", "[SEP]", "[CLS]", "[PAD]", "[MASK]"])
+    additional_special_tokens: List[str] = None
     wordpieces_prefix: str = "##"
     vocab_size: int = 30000
     min_frequency: int = 2
