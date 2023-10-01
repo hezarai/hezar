@@ -46,9 +46,8 @@ class ModelOutput:
 
 @dataclass
 class LanguageModelingOutput(ModelOutput):
-    last_hidden_state: Optional[torch.FloatTensor] = None
-    hidden_state: Optional[torch.FloatTensor] = None
-    attentions: Optional[torch.FloatTensor] = None
+    filled_texts: Optional[List[str]] = None
+    filled_tokens: Optional[List[str]] = None
 
 
 @dataclass
