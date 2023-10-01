@@ -30,6 +30,10 @@ class RobertaSequenceLabeling(Model):
     """
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
+    skip_keys_on_load = [
+        "roberta.embeddings.position_ids",
+        "model.embeddings.position_ids"
+    ]
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

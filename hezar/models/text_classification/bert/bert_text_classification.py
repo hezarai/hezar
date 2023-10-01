@@ -32,7 +32,8 @@ class BertTextClassification(Model):
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = [
         "model.embeddings.position_ids",  # For older versions
-        "bert.embeddings.position_ids"
+        "bert.embeddings.position_ids",
+        "model.bert.embeddings.position_ids"
     ]
 
     def __init__(self, config: BertTextClassificationConfig, **kwargs):
