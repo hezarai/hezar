@@ -66,10 +66,13 @@ class BertLM(Model):
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
+
         tokenizer = self.preprocessor[self.tokenizer_name]
+
+        for text in inputs:
+            if tokenizer.mask_token not in text:
+                raise ValueError(f"The input must have a `{tokenizer.mask_token}` token!")
+
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
