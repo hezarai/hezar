@@ -16,7 +16,7 @@ print(outputs)
 ```
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
-- **Sequence labeling (POS, NER, etc.)**
+- **Sequence Labeling (POS, NER, etc.)**
 ```python
 from hezar import Model
 
@@ -44,7 +44,7 @@ print(outputs)
 ```
 {'filled_texts': ['سلام بچه ها حالتون چطوره'], 'filled_tokens': [' چطوره']}
 ```
-- **Speech recognition**
+- **Speech Recognition**
 ```python
 from hezar import Model
 
