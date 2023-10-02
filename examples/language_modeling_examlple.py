@@ -1,7 +1,7 @@
 from hezar import Model
 
 
-path = "roberta-base-fa"
+path = "hezarai/roberta-fa-mlm"
 text = ["سلام بچه ها حالتون <mask>"]
 model = Model.load(path)
 outputs = model.predict(text)
