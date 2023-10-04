@@ -1,4 +1,5 @@
-from hezar import Tokenizer, Logger
+from hezar import Logger, Tokenizer
+
 
 tokenizer_to_example_repo = {
     "wordpiece": "hezarai/bert-base-fa",

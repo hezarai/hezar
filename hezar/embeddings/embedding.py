@@ -13,7 +13,8 @@ from ..constants import (
     HEZAR_CACHE_DIR,
     Backends,
 )
-from ..utils import Logger, verify_dependencies, get_lib_version
+from ..utils import Logger, get_lib_version, verify_dependencies
+
 
 logger = Logger(__name__)
 
