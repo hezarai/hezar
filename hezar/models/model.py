@@ -410,7 +410,6 @@ class GenerativeModel(Model):
     def __init__(self, config: ModelConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
-    @torch.inference_mode()
     def generate(self, inputs, **kwargs):
         """
         Generation method for all generative models. The behavior of this method is usually controlled by `generation`
