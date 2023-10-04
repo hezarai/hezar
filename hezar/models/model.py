@@ -299,30 +299,35 @@ class Model(nn.Module):
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
             device: What device to perform inference on
+            **kwargs: Other arguments for `preprocess`, `forward`, `generate` and `post_process`. each will be passed to
+            the correct method automatically.
 
         Returns:
             Output dict of results
         """
         # Unpack kwargs for each step
         preprocess_kwargs, forward_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
+
         # Put model in eval mode
         self.eval()
+
         # Preprocessing step
         model_inputs = self.preprocess(inputs, **preprocess_kwargs)
-        if not isinstance(model_inputs, Mapping):
-            raise ValueError(
-                f"The method `{self.__class__.__name__}.preprocess` must be dict-like, not `{type(model_inputs)}`!"
-            )
+
         # Map inputs and model to device
         device = device or self.device
         model_inputs = self._move_inputs_to_device(model_inputs, device)
         self.to(device)
-        if hasattr(self, "generate"):
-            # Generation step
-            model_outputs = self.generate(**model_inputs, **forward_kwargs)
+
+        # Specify model inference function
+        inference_fn = self.generate if hasattr(self, "generate") else self.__call__
+
+        # Model inference step (forward for regular models and generate for generative models)
+        if isinstance(model_inputs, Mapping):
+            model_outputs = inference_fn(**model_inputs, **forward_kwargs)
         else:
-            # Model forward step
-            model_outputs = self(**model_inputs, **forward_kwargs)
+            model_outputs = inference_fn(model_inputs, **forward_kwargs)
+
         # Post-processing step
         processed_outputs = self.post_process(model_outputs, **post_process_kwargs)
         return processed_outputs
