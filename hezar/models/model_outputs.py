@@ -5,8 +5,6 @@ from dataclasses import asdict, dataclass
 from pprint import pformat
 from typing import List, Optional
 
-import torch
-
 
 @dataclass
 class ModelOutput:

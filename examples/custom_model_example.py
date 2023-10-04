@@ -29,8 +29,8 @@ class Perceptron(Model):
         x = self.nn(inputs)
         return x
 
-    def post_process(self, inputs, **kwargs):
-        return inputs.numpy()
+    def post_process(self, model_outputs, **kwargs):
+        return model_outputs.numpy()
 
 
 model = Perceptron(PerceptronConfig())

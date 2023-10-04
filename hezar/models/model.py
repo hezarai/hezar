@@ -7,6 +7,7 @@ Examples:
     >>> from hezar import Model
     >>> model = Model.load("hezarai/bert-base-fa")
 """
+import inspect
 import os
 import tempfile
 from collections import OrderedDict
@@ -249,48 +250,51 @@ class Model(nn.Module):
             target_path=os.path.join(repo_id, filename),
         )
 
-    def forward(self, inputs, **kwargs) -> Dict:
+    def forward(self, model_inputs, **kwargs) -> Dict:
         """
         Forward inputs through the model and return logits, etc.
 
         Args:
-            inputs: The required inputs for the model forward
+            model_inputs: The required inputs for the model forward
 
         Returns:
             A dict of outputs like logits, loss, etc.
         """
         raise NotImplementedError
 
-    def preprocess(self, inputs, **kwargs):
+    def preprocess(self, raw_inputs, **kwargs):
         """
-        Given raw inputs, preprocess the inputs and prepare them for model forward.
+        Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
         Args:
-            inputs: Raw model inputs
+            raw_inputs: Raw model inputs
             **kwargs: Extra kw arguments
 
         Returns:
             A dict of inputs for model forward
         """
-        return inputs
+        return raw_inputs
 
-    def post_process(self, inputs, **kwargs):
+    def post_process(self, model_outputs, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
         Args:
-            inputs: model outputs
+            model_outputs: model outputs
             **kwargs: extra arguments specific to the derived class
 
         Returns:
             Processed model output values and converted to human-readable results
         """
-        return inputs
+        return model_outputs
 
     @torch.inference_mode()
     def predict(self, inputs, device: Union[str, torch.device] = None, **kwargs) -> Union[Dict, List[Dict]]:
         """
         Perform an end-to-end prediction on raw inputs.
+
+        If the model is a generative model, it has to implement the `generate()` method which will be called instead of
+        `forward()`.
 
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
@@ -299,28 +303,73 @@ class Model(nn.Module):
         Returns:
             Output dict of results
         """
+        # Unpack kwargs for each step
+        preprocess_kwargs, forward_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
         # Put model in eval mode
         self.eval()
         # Preprocessing step
-        if self.preprocessor is not None:
-            inputs = self.preprocess(inputs, **kwargs)
+        model_inputs = self.preprocess(inputs, **preprocess_kwargs)
+        if not isinstance(model_inputs, Mapping):
+            raise ValueError(
+                f"The method `{self.__class__.__name__}.preprocess` must be dict-like, not `{type(model_inputs)}`!"
+            )
         # Map inputs and model to device
         device = device or self.device
-        inputs = self._move_inputs_to_device(inputs, device)
+        model_inputs = self._move_inputs_to_device(model_inputs, device)
         self.to(device)
-        # Model forward step
-        model_outputs = self(inputs, **kwargs)
+        if hasattr(self, "generate"):
+            # Generation step
+            model_outputs = self.generate(**model_inputs, **forward_kwargs)
+        else:
+            # Model forward step
+            model_outputs = self(**model_inputs, **forward_kwargs)
         # Post-processing step
-        processed_outputs = self.post_process(model_outputs, **kwargs)
+        processed_outputs = self.post_process(model_outputs, **post_process_kwargs)
         return processed_outputs
 
     @staticmethod
     def _move_inputs_to_device(inputs, device):
+        """
+        Move all input tensors in the inputs to the device
+
+        Args:
+            inputs: A torch.Tensor or a batch dict that contains tensors in its values
+            device: A torch compatible device
+
+        Returns:
+            Same inputs moved to the device
+        """
         if isinstance(inputs, torch.Tensor):
             inputs = inputs.to(device)
         elif isinstance(inputs, Mapping):
             inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
         return inputs
+
+    def _unpack_prediction_kwargs(self, **kwargs):
+        """
+        The `predict` method can accept extra parameters for each of the `preprocess`, `forward/generate`
+        and `post_process` methods. These parameters are passed as keyword arguments so that we have to make sure that
+        each of them are passed to the correct method.
+
+        Args:
+            **kwargs: The kwargs to be unpacked
+
+        Returns:
+             A 3-sized tuple of (preprocess_kwargs, forward_kwargs, post_process_kwargs)
+        """
+        preprocess_kwargs_keys = list(dict(inspect.signature(type(self).preprocess).parameters).keys())[2:-1]
+        post_process_kwargs_keys = list(dict(inspect.signature(type(self).post_process).parameters).keys())[2:-1]
+        if hasattr(self, "generate"):
+            # Get `generate` kwargs instead of `forward` if the model is generative
+            forward_kwargs_keys = list(dict(inspect.signature(type(self).generate).parameters).keys())[2:-1]
+        else:
+            forward_kwargs_keys = list(dict(inspect.signature(type(self).forward).parameters).keys())[2:-1]
+
+        preprocess_kwargs = {k: kwargs.get(k) for k in preprocess_kwargs_keys if k in kwargs}
+        forward_kwargs = {k: kwargs.get(k) for k in forward_kwargs_keys if k in kwargs}
+        post_process_kwargs = {k: kwargs.get(k) for k in post_process_kwargs_keys if k in kwargs}
+
+        return preprocess_kwargs, forward_kwargs, post_process_kwargs
 
     @property
     def device(self):
@@ -372,30 +421,3 @@ class GenerativeModel(Model):
         raise NotImplementedError(
             f"`{self.__class__.__name__}` is a generative model but has not implemented the `generate()` method!"
         )
-
-    @torch.inference_mode()
-    def predict(self, inputs, device: Union[str, torch.device] = None, **kwargs):
-        """
-        Perform an end-to-end prediction on raw inputs designed for generative models.
-
-        Args:
-            inputs: Raw inputs e.g, a list of texts, path to images, etc.
-            device: What device to perform inference on
-
-        Returns:
-            Output dict of results
-        """
-        # Put model in eval mode
-        self.eval()
-        # Preprocessing step
-        if self.preprocessor is not None:
-            inputs = self.preprocess(inputs, **kwargs)
-        # Map inputs to device also
-        device = device or self.device
-        inputs = self._move_inputs_to_device(inputs, device)
-        self.to(device)
-        # Model forward step
-        model_outputs = self.generate(inputs, **kwargs)
-        # Post-processing step
-        processed_outputs = self.post_process(model_outputs, **kwargs)
-        return processed_outputs

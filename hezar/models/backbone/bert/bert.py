@@ -9,6 +9,7 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from .bert_config import BERTConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
 
@@ -31,22 +32,24 @@ class BERT(Model):
         super().__init__(config=config, **kwargs)
         self.bert = BertModel(BertConfig(**self.config))
 
-    def forward(self, inputs, **kwargs):
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        token_type_ids = inputs.get("token_type_ids", None)
-        position_ids = inputs.get("position_ids", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        encoder_hidden_states = inputs.get("encoder_hidden_states", None)
-        encoder_attention_mask = inputs.get("encoder_attention_mask", None)
-        past_key_values = inputs.get("past_key_values", None)
-        use_cache = inputs.get("use_cache", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        encoder_hidden_states=None,
+        encoder_attention_mask=None,
+        past_key_values=None,
+        use_cache=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ):
         outputs = self.bert(
-            input_ids=input_ids,
+            input_ids=token_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
@@ -72,11 +75,11 @@ class BERT(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs):
-        hidden_states = inputs.get("hidden_states", None)
-        attentions = inputs.get("attentions", None)
+    def post_process(self, model_outputs, **kwargs):
+        hidden_states = model_outputs.get("hidden_states", None)
+        attentions = model_outputs.get("attentions", None)
         outputs = {
-            "last_hidden_state": inputs.get("last_hidden_state"),
+            "last_hidden_state": model_outputs.get("last_hidden_state"),
             "hidden_states": hidden_states,
             "attentions": attentions,
         }

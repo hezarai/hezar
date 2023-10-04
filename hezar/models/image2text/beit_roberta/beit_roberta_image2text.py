@@ -10,14 +10,15 @@ from ...model import GenerativeModel
 from ...model_outputs import Image2TextOutput
 from .beit_roberta_image2text_config import BeitRobertaImage2TextConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import (
+        BeitConfig,
+        BeitModel,
         GenerationConfig,
         RobertaConfig,
         RobertaForCausalLM,
         VisionEncoderDecoderModel,
-        BeitModel,
-        BeitConfig,
     )
 
 if is_backend_available(Backends.PILLOW):
@@ -45,17 +46,20 @@ class BeitRobertaImage2Text(GenerativeModel):
         decoder = RobertaForCausalLM(config=RobertaConfig(**self.config.decoder))
         self.beit_roberta = VisionEncoderDecoderModel(encoder=encoder, decoder=decoder)
 
-    def forward(self, inputs, **kwargs):
-        pixel_values = inputs.get("pixel_values", None)
-        decoder_input_ids = inputs.get("decoder_input_ids", None)
-        decoder_attention_mask = inputs.get("decoder_attention_mask", None)
-        encoder_outputs = inputs.get("encoder_outputs", None)
-        past_key_values = inputs.get("past_key_values", None)
-        decoder_inputs_embeds = inputs.get("decoder_inputs_embeds", None)
-        labels = inputs.get("labels", None)
-        use_cache = inputs.get("use_cache", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
+    def forward(
+        self,
+        pixel_values,
+        decoder_input_ids=None,
+        decoder_attention_mask=None,
+        encoder_outputs=None,
+        past_key_values=None,
+        decoder_inputs_embeds=None,
+        labels=None,
+        use_cache=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ):
 
         outputs = self.beit_roberta(
             pixel_values=pixel_values,
@@ -72,13 +76,11 @@ class BeitRobertaImage2Text(GenerativeModel):
 
         return outputs
 
-    def generate(self, inputs, **kwargs):
-        input_ids = inputs.get("pixel_values", None)
-        generation_config = inputs.get("generation_config", None)
+    def generate(self, pixel_values, generation_config=None, **kwargs):
         if generation_config is None:
             generation_config = self.config.dict()["generation"]
         generation_config = GenerationConfig(**generation_config)
-        outputs = self.beit_roberta.generate(inputs=input_ids, generation_config=generation_config, **kwargs)
+        outputs = self.beit_roberta.generate(inputs=pixel_values, generation_config=generation_config, **kwargs)
 
         return outputs
 
@@ -87,7 +89,7 @@ class BeitRobertaImage2Text(GenerativeModel):
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, inputs, **kwargs):
+    def post_process(self, model_outputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer]
-        decoded_outputs = tokenizer.decode(inputs.cpu().numpy().tolist())
+        decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
         return Image2TextOutput(texts=decoded_outputs)

@@ -10,6 +10,7 @@ from ...model import GenerativeModel
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import WhisperConfig, WhisperForConditionalGeneration
 
@@ -37,22 +38,24 @@ class WhisperSpeechRecognition(GenerativeModel):
         super().__init__(config, **kwargs)
         self.whisper = WhisperForConditionalGeneration(WhisperConfig(**self.config))
 
-    def forward(self, inputs, **kwargs):
-        input_features = inputs.get("input_features")
-        attention_mask = inputs.get("attention_mask", None)
-        decoder_input_ids = inputs.get("decoder_input_ids", None)
-        decoder_attention_mask = inputs.get("decoder_attention_mask", None)
-        head_mask = inputs.get("head_mask", None)
-        decoder_head_mask = inputs.get("decoder_head_mask", None)
-        cross_attn_head_mask = inputs.get("cross_attn_head_mask", None)
-        encoder_outputs = inputs.get("encoder_outputs", None)
-        past_key_values = inputs.get("past_key_values", None)
-        decoder_inputs_embeds = inputs.get("decoder_inputs_embeds", None)
-        labels = inputs.get("labels", None)
-        use_cache = inputs.get("use_cache", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-
+    def forward(
+        self,
+        input_features,
+        attention_mask=None,
+        decoder_input_ids=None,
+        decoder_attention_mask=None,
+        head_mask=None,
+        decoder_head_mask=None,
+        cross_attn_head_mask=None,
+        encoder_outputs=None,
+        past_key_values=None,
+        decoder_inputs_embeds=None,
+        labels=None,
+        use_cache=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ):
         outputs = self.whisper(
             input_features=input_features,
             attention_mask=attention_mask,
@@ -72,22 +75,24 @@ class WhisperSpeechRecognition(GenerativeModel):
 
         return outputs
 
-    def generate(self, inputs, **kwargs):
-        inputs_tensor = inputs.pop("input_features")
-        forced_decoder_ids = inputs.pop("forced_decoder_ids", None)
-        generation_config = inputs.pop("generation_config", None)
-        logits_processor = inputs.pop("logits_processor", None)
-        stopping_criteria = inputs.pop("stopping_criteria", None)
-        prefix_allowed_tokens_fn = inputs.pop("prefix_allowed_tokens_fn", None)
-        synced_gpus = inputs.pop("synced_gpus", None)
-        return_timestamps = inputs.pop("return_timestamps", None)
-        task = inputs.pop("task", None)
-        language = inputs.pop("language", None)
-        is_multilingual = inputs.pop("is_multilingual", None)
-        prompt_ids = inputs.pop("prompt_ids", None)
-
+    def generate(
+        self,
+        input_features,
+        forced_decoder_ids=None,
+        generation_config=None,
+        logits_processor=None,
+        stopping_criteria=None,
+        prefix_allowed_tokens_fn=None,
+        synced_gpus=None,
+        return_timestamps=None,
+        task=None,
+        language=None,
+        is_multilingual=None,
+        prompt_ids=None,
+        **kwargs,
+    ):
         generation_outputs = self.whisper.generate(
-            inputs=inputs_tensor,
+            inputs=input_features,
             generation_config=generation_config,
             logits_processor=logits_processor,
             stopping_criteria=stopping_criteria,
@@ -99,7 +104,6 @@ class WhisperSpeechRecognition(GenerativeModel):
             is_multilingual=is_multilingual,
             prompt_ids=prompt_ids,
             forced_decoder_ids=forced_decoder_ids,
-            **inputs,
             **kwargs,
         )
         return generation_outputs
@@ -160,7 +164,7 @@ class WhisperSpeechRecognition(GenerativeModel):
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
 
-    def post_process(self, inputs, **kwargs):
+    def post_process(self, model_outputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
-        transcripts = tokenizer.decode(inputs, decode_with_timestamps=True, skip_special_tokens=True)
+        transcripts = tokenizer.decode(model_outputs, decode_with_timestamps=True, skip_special_tokens=True)
         return SpeechRecognitionOutput(transcripts=transcripts).dict()

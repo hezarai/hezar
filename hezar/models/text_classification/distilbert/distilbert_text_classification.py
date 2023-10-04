@@ -7,9 +7,10 @@ from torch import nn
 
 from ....constants import Backends
 from ....registry import register_model
-from ...model import Model
 from ....utils import is_backend_available
+from ...model import Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
+
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
@@ -46,16 +47,19 @@ class DistilBertTextClassification(Model):
         bert_config = DistilBertConfig(**self.config)
         return bert_config
 
-    def forward(self, inputs, **kwargs) -> Dict:
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ) -> Dict:
 
         lm_outputs = self.distilbert(
-            input_ids=input_ids,
+            input_ids=token_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
@@ -87,9 +91,8 @@ class DistilBertTextClassification(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs) -> Dict:
-        return_all_scores = kwargs.get("return_all_scores", False)
-        logits = inputs["logits"]
+    def post_process(self, model_outputs, return_all_scores=False, **kwargs) -> Dict:
+        logits = model_outputs["logits"]
         if return_all_scores:
             predictions = logits
             predictions_probs = logits.softmax(1)

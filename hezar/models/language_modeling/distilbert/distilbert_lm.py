@@ -12,6 +12,7 @@ from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
 from .distilbert_lm_config import DistilBertLMConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertForMaskedLM
 
@@ -30,16 +31,18 @@ class DistilBertLM(Model):
         super().__init__(config=config, **kwargs)
         self.distilbert_mlm = DistilBertForMaskedLM(DistilBertConfig(**self.config))
 
-    def forward(self, inputs, **kwargs):
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ):
         outputs = self.distilbert_mlm(
-            input_ids=input_ids,
+            input_ids=token_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
@@ -48,7 +51,7 @@ class DistilBertLM(Model):
             return_dict=True,
         )
 
-        outputs["token_ids"] = input_ids
+        outputs["token_ids"] = token_ids
 
         return outputs
 
@@ -65,9 +68,9 @@ class DistilBertLM(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs):
-        output_logits = inputs.get("logits", None)
-        token_ids = inputs.get("token_ids", None)
+    def post_process(self, model_outputs, **kwargs):
+        output_logits = model_outputs.get("logits", None)
+        token_ids = model_outputs.get("token_ids", None)
 
         tokenizer = self.preprocessor[self.tokenizer_name]
 

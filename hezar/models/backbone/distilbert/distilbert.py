@@ -9,6 +9,7 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from .distilbert_config import DistilBERTConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
 
@@ -27,16 +28,18 @@ class DistilBERT(Model):
         super().__init__(config=config, **kwargs)
         self.distilbert = DistilBertModel(DistilBertConfig(**self.config))
 
-    def forward(self, inputs, **kwargs):
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ):
         outputs = self.distilbert(
-            input_ids=input_ids,
+            input_ids=token_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
@@ -56,11 +59,11 @@ class DistilBERT(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs):
-        hidden_states = inputs.get("hidden_states", None)
-        attentions = inputs.get("attentions", None)
+    def post_process(self, model_outputs, **kwargs):
+        hidden_states = model_outputs.get("hidden_states", None)
+        attentions = model_outputs.get("attentions", None)
         outputs = {
-            "last_hidden_state": inputs.get("last_hidden_state"),
+            "last_hidden_state": model_outputs.get("last_hidden_state"),
             "hidden_states": hidden_states,
             "attentions": attentions,
         }

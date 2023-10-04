@@ -109,8 +109,8 @@ class Perceptron(Model):
         x = self.nn(inputs)
         return x
 
-    def post_process(self, inputs, **kwargs):
-        return inputs.numpy()
+    def post_process(self, model_outputs, **kwargs):
+        return model_outputs.numpy()
 
 ```
 The only point here is that you have to pass a `ModelConfig` to your model and read everything from the config and the 

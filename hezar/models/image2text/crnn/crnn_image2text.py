@@ -3,8 +3,8 @@ from torch import nn
 from ....registry import register_model
 from ...model import GenerativeModel
 from ...model_outputs import Image2TextOutput
-from .crnn_image2text_config import CRNNImage2TextConfig
 from .crnn_decode_utils import ctc_decode
+from .crnn_image2text_config import CRNNImage2TextConfig
 
 
 @register_model("crnn_image2text", config_class=CRNNImage2TextConfig)
@@ -45,8 +45,7 @@ class CRNNImage2Text(GenerativeModel):
             self({"pixel_values": dummy_input})
         return super().save(path, filename, save_preprocessor, config_filename)
 
-    def forward(self, inputs, **kwargs):
-        pixel_values = inputs.get("pixel_values")
+    def forward(self, pixel_values, **kwargs):
         # CNN block
         x = self.cnn(pixel_values)
         # reformat array
@@ -60,8 +59,8 @@ class CRNNImage2Text(GenerativeModel):
         x = nn.functional.log_softmax(x, 2)
         return x
 
-    def generate(self, inputs, **kwargs):
-        logits = self(inputs)
+    def generate(self, pixel_values, **kwargs):
+        logits = self(pixel_values)
         decoded = ctc_decode(logits, blank=self.config.blank_id)
         return decoded
 
@@ -70,9 +69,9 @@ class CRNNImage2Text(GenerativeModel):
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, inputs, **kwargs):
+    def post_process(self, model_outputs, **kwargs):
         texts = []
-        for decoded_ids in inputs:
+        for decoded_ids in model_outputs:
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
             texts.append(text)

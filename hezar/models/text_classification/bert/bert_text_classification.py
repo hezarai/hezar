@@ -7,9 +7,10 @@ from torch import nn
 
 from ....constants import Backends
 from ....registry import register_model
-from ...model import Model
 from ....utils import is_backend_available
+from ...model import Model
 from .bert_text_classification_config import BertTextClassificationConfig
+
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
@@ -54,24 +55,26 @@ class BertTextClassification(Model):
         bert_config = BertConfig(**self.config)
         return bert_config
 
-    def forward(self, inputs, **kwargs) -> Dict:
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        token_types_ids = inputs.get("token_type_ids", None)
-        position_ids = inputs.get("position_ids", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        encoder_hidden_states = inputs.get("encoder_hidden_states", None)
-        encoder_attention_mask = inputs.get("encoder_attention_mask", None)
-        past_key_values = inputs.get("past_key_values", None)
-        use_cache = inputs.get("use_cache", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        encoder_hidden_states=None,
+        encoder_attention_mask=None,
+        past_key_values=None,
+        use_cache=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ) -> Dict:
 
         lm_outputs = self.bert(
-            input_ids,
+            token_ids,
             attention_mask=attention_mask,
-            token_type_ids=token_types_ids,
             position_ids=position_ids,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
@@ -103,9 +106,8 @@ class BertTextClassification(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs) -> Dict:
-        return_all_scores = kwargs.get("return_all_scores", False)
-        logits = inputs["logits"]
+    def post_process(self, model_outputs, return_all_scores=False, **kwargs) -> Dict:
+        logits = model_outputs["logits"]
         if return_all_scores:
             predictions = logits
             predictions_probs = logits.softmax(1)

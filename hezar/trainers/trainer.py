@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable, Dict, Mapping, Tuple, Union
 
 import numpy as np
 import torch
@@ -242,7 +242,15 @@ class Trainer:
         Returns:
             Model outputs
         """
-        outputs = self.model(input_batch)
+        if isinstance(input_batch, torch.Tensor):
+            outputs = self.model(input_batch)
+        elif isinstance(input_batch, Mapping):
+            outputs = self.model(**input_batch)
+        else:
+            raise ValueError(
+                f"`input_batch` must be a tensor or a dict-like object containing key/value pairs of tensors, "
+                f"but got {type(input_batch)}"
+            )
         return outputs
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs) -> torch.Tensor:

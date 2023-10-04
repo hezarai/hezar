@@ -7,9 +7,10 @@ from torch import nn, tanh
 
 from ....constants import Backends
 from ....registry import register_model
-from ...model import Model
 from ....utils import is_backend_available
+from ...model import Model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
+
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaModel
@@ -48,19 +49,21 @@ class RobertaTextClassification(Model):
         bert_config = RobertaConfig(**self.config)
         return bert_config
 
-    def forward(self, inputs, **kwargs):
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        token_type_ids = inputs.get("token_type_ids", None)
-        position_ids = inputs.get("position_ids", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-        return_dict = inputs.get("return_dict", None)
-
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+        **kwargs,
+    ):
         lm_outputs = self.roberta(
-            input_ids,
+            token_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
@@ -90,9 +93,8 @@ class RobertaTextClassification(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs) -> Dict:
-        return_all_scores = kwargs.get("return_all_scores", False)
-        logits = inputs["logits"]
+    def post_process(self, model_outputs, return_all_scores=False, **kwargs) -> Dict:
+        logits = model_outputs["logits"]
         if return_all_scores:
             predictions = logits
             predictions_probs = logits.softmax(1)

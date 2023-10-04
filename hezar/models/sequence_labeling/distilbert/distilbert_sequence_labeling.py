@@ -7,9 +7,10 @@ from torch import nn
 
 from ....constants import Backends
 from ....registry import register_model
-from ...model import Model
 from ....utils import is_backend_available
+from ...model import Model
 from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfig
+
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
@@ -47,16 +48,18 @@ class DistilBertSequenceLabeling(Model):
         config = DistilBertConfig(**self.config)
         return config
 
-    def forward(self, inputs, **kwargs) -> Dict:
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs,
+    ) -> Dict:
         lm_outputs = self.distilbert(
-            input_ids=input_ids,
+            input_ids=token_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
@@ -72,7 +75,7 @@ class DistilBertSequenceLabeling(Model):
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
-            **inputs
+            "tokens": kwargs.get("tokens", None)
         }
         return outputs
 
@@ -94,9 +97,9 @@ class DistilBertSequenceLabeling(Model):
         )
         return inputs
 
-    def post_process(self, inputs, **kwargs):
-        logits = inputs["logits"]
-        tokens = inputs["tokens"]
+    def post_process(self, model_outputs, **kwargs):
+        logits = model_outputs["logits"]
+        tokens = model_outputs["tokens"]
         predictions = logits.argmax(2).cpu()
         predictions = [[self.config.id2label[p.item()] for p in prediction] for prediction in predictions]
         outputs = []

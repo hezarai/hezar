@@ -7,9 +7,10 @@ from torch import nn, tanh
 
 from ....constants import Backends
 from ....registry import register_model
-from ...model import Model
 from ....utils import is_backend_available
+from ...model import Model
 from .roberta_sequence_labeling_config import RobertaSequenceLabelingConfig
+
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaModel
@@ -48,19 +49,21 @@ class RobertaSequenceLabeling(Model):
         config = RobertaConfig(**self.config)
         return config
 
-    def forward(self, inputs, **kwargs):
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        token_type_ids = inputs.get("token_type_ids", None)
-        position_ids = inputs.get("position_ids", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
-        return_dict = inputs.get("return_dict", None)
-
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+        **kwargs,
+    ):
         lm_outputs = self.roberta(
-            input_ids,
+            token_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
@@ -77,7 +80,7 @@ class RobertaSequenceLabeling(Model):
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
-            **inputs
+            "tokens": kwargs.get("tokens", None)
         }
         return outputs
 
@@ -100,9 +103,9 @@ class RobertaSequenceLabeling(Model):
         )
         return inputs
 
-    def post_process(self, inputs, **kwargs):
-        logits = inputs["logits"]
-        tokens = inputs["tokens"]
+    def post_process(self, model_outputs, **kwargs):
+        logits = model_outputs["logits"]
+        tokens = model_outputs["tokens"]
         predictions = logits.argmax(2).cpu()
         predictions = [[self.config.id2label[p.item()] for p in prediction] for prediction in predictions]
         outputs = []

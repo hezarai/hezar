@@ -12,6 +12,7 @@ from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
 from .roberta_lm_config import RobertaLMConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaForMaskedLM
 
@@ -34,20 +35,23 @@ class RobertaLM(Model):
         super().__init__(config=config, **kwargs)
         self.roberta_mlm = RobertaForMaskedLM(RobertaConfig(**self.config))
 
-    def forward(self, inputs, **kwargs):
-        input_ids = inputs.get("token_ids")
-        attention_mask = inputs.get("attention_mask", None)
-        token_type_ids = inputs.get("token_type_ids", None)
-        position_ids = inputs.get("position_ids", None)
-        head_mask = inputs.get("head_mask", None)
-        inputs_embeds = inputs.get("inputs_embeds", None)
-        encoder_hidden_states = inputs.get("encoder_hidden_states", None)
-        encoder_attention_mask = inputs.get("encoder_attention_mask", None)
-        output_attentions = inputs.get("output_attentions", None)
-        output_hidden_states = inputs.get("output_hidden_states", None)
+    def forward(
+        self,
+        token_ids,
+        attention_mask=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        encoder_hidden_states=None,
+        encoder_attention_mask=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        **kwargs
+    ):
 
         outputs = self.roberta_mlm(
-            input_ids=input_ids,
+            input_ids=token_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
@@ -58,7 +62,7 @@ class RobertaLM(Model):
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
-        outputs["token_ids"] = input_ids
+        outputs["token_ids"] = token_ids
 
         return outputs
 
@@ -75,16 +79,16 @@ class RobertaLM(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, inputs, **kwargs):
-        output_logits = inputs.get("logits", None)
-        token_ids = inputs.get("token_ids", None)
+    def post_process(self, model_outputs, top_k=5):
+        output_logits = model_outputs.get("logits")
+        token_ids = model_outputs.get("token_ids")
 
         tokenizer = self.preprocessor[self.tokenizer_name]
 
         filled_token_ids = token_ids.numpy().copy()
         fill_tokens = []
         for batch_i, logits in enumerate(output_logits):
-            masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten()  # noqa
+            masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten() # noqa
             if len(masked_index) > 1:
                 raise ValueError(
                     f"Can't handle multiple `{tokenizer.mask_token}` tokens in the input for {self.__class__.__name__}!"
