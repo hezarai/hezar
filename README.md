@@ -37,7 +37,11 @@ Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.
 
 ## Quick Tour
 ### Models
-There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
+There's a bunch of ready to use trained models for different tasks on the Hub! 
+
+**🤗Hugging Face Hub Page**: [https://huggingface.co/hezarai](https://huggingface.co/hezarai)
+
+Let's walk you through some examples! 
 
 - **Text Classification (sentiment analysis, categorization, etc)** 
 ```python
