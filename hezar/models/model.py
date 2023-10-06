@@ -250,7 +250,7 @@ class Model(nn.Module):
             target_path=os.path.join(repo_id, filename),
         )
 
-    def forward(self, model_inputs, **kwargs) -> Dict:
+    def forward(self, *model_inputs, **kwargs) -> Dict:
         """
         Forward inputs through the model and return logits, etc.
 
@@ -365,10 +365,15 @@ class Model(nn.Module):
         # Whether to use forward or generate based on model type (Model or GenerativeModel)
         inference_fn = type(self).generate if hasattr(self, "generate") else type(self).forward
 
-        # Get keyword arguments from the child class (ignore self, first arg and **kwargs)
-        preprocess_kwargs_keys = list(dict(inspect.signature(type(self).preprocess).parameters).keys())[2:-1]
-        post_process_kwargs_keys = list(dict(inspect.signature(type(self).post_process).parameters).keys())[2:-1]
-        forward_kwargs_keys = list(dict(inspect.signature(inference_fn).parameters).keys())[2:-1]
+        def _get_positional_kwargs(fn):
+            params = dict(inspect.signature(fn).parameters)
+            params = {k: v for k, v in params.items() if v.default != v.empty}
+            return params
+
+        # Get keyword arguments from the child class (ignore positional arguments)
+        preprocess_kwargs_keys = list(_get_positional_kwargs(type(self).preprocess).keys())
+        post_process_kwargs_keys = list(_get_positional_kwargs(type(self).post_process).keys())
+        forward_kwargs_keys = list(_get_positional_kwargs(inference_fn).keys())
 
         preprocess_kwargs = {k: kwargs.get(k) for k in preprocess_kwargs_keys if k in kwargs}
         forward_kwargs = {k: kwargs.get(k) for k in forward_kwargs_keys if k in kwargs}
@@ -379,7 +384,7 @@ class Model(nn.Module):
     @property
     def device(self):
         """
-        Get the model's device. This method is only safe when all weights on the model are on the same device.
+        Get the model's device. This method is only safe when all weights of the model are on the same device.
         """
         return next(self.parameters()).device
 
