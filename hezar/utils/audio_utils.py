@@ -1,14 +1,19 @@
 """
 Common audio utils taken from `transformers.audio_utils`
 """
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import numpy as np
 
+from ..constants import Backends
+from .integration_utils import is_backend_available
 from .logging import Logger
 
+if is_backend_available(Backends.LIBROSA):
+    import librosa
 
 __all__ = [
+    "load_audio_files",
     "spectrogram",
     "amplitude_to_db",
     "power_to_db",
@@ -19,6 +24,13 @@ __all__ = [
 ]
 
 logger = Logger(__name__)
+
+
+def load_audio_files(paths: Union[str, List[str]], sampling_rate: int = 16000):
+    if isinstance(paths, str):
+        paths = [paths]
+    inputs = [librosa.load(x, sr=sampling_rate)[0] for x in paths]
+    return inputs
 
 
 def spectrogram(

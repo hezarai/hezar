@@ -5,7 +5,7 @@ import torch
 
 from ....constants import Backends
 from ....registry import register_model
-from ....utils import is_backend_available
+from ....utils import is_backend_available, load_audio_files
 from ...model import Model
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
@@ -14,8 +14,6 @@ from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import WhisperConfig, WhisperForConditionalGeneration
 
-if is_backend_available(Backends.LIBROSA):
-    import librosa
 
 _required_backends = [
     Backends.TRANSFORMERS,
@@ -149,12 +147,8 @@ class WhisperSpeechRecognition(Model):
         self.whisper.freeze_encoder()
 
     def preprocess(self, inputs: Union[str, np.ndarray, List[np.ndarray], List[str]], **kwargs):
-        if isinstance(inputs, np.ndarray) and len(inputs.shape) > 1:
-            inputs = [inputs]
-        if isinstance(inputs, str) or (isinstance(inputs, List), isinstance(inputs[0], str)):
-            if isinstance(inputs, str):
-                inputs = [inputs]
-            inputs = [librosa.load(x, sr=self.config.sampling_rate)[0] for x in inputs]
+        if isinstance(inputs, str) or (isinstance(inputs, List) and isinstance(inputs[0], str)):
+            inputs = load_audio_files(inputs)
 
         tokenizer = self.preprocessor[self.tokenizer_name]
         feature_extractor = self.preprocessor[self.feature_extractor_name]
