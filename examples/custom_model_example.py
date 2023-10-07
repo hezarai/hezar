@@ -24,7 +24,7 @@ class Perceptron(Model):
             out_features=self.config.output_shape,
         )
 
-    def forward(self, inputs: list, **kwargs):
+    def forward(self, inputs: list):
         inputs = Tensor(inputs).reshape(1, -1)
         x = self.nn(inputs)
         return x
