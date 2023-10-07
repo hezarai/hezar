@@ -6,7 +6,7 @@ import torch
 from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
-from ...model import GenerativeModel
+from ...model import Model
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
@@ -25,10 +25,11 @@ _required_backends = [
 
 
 @register_model("whisper_speech_recognition", config_class=WhisperSpeechRecognitionConfig)
-class WhisperSpeechRecognition(GenerativeModel):
+class WhisperSpeechRecognition(Model):
     """
     Whisper model for automatic speech recognition
     """
+    is_generative = True
     required_backends = _required_backends
     is_generation_model = True
     feature_extractor_name = "whisper_feature_extractor"

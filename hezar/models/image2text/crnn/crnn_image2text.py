@@ -1,17 +1,18 @@
 from torch import nn
 
 from ....registry import register_model
-from ...model import GenerativeModel
+from ...model import Model
 from ...model_outputs import Image2TextOutput
 from .crnn_decode_utils import ctc_decode
 from .crnn_image2text_config import CRNNImage2TextConfig
 
 
 @register_model("crnn_image2text", config_class=CRNNImage2TextConfig)
-class CRNNImage2Text(GenerativeModel):
+class CRNNImage2Text(Model):
     """
     A robust CRNN model for character level OCR based on the original paper.
     """
+    is_generative = True
     image_processor = "image_processor"
 
     def __init__(self, config: CRNNImage2TextConfig, **kwargs):

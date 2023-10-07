@@ -6,7 +6,7 @@ import torch
 from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
-from ...model import GenerativeModel
+from ...model import Model
 from ...model_outputs import Image2TextOutput
 from .vit_roberta_image2text_config import ViTRobertaImage2TextConfig
 
@@ -32,10 +32,11 @@ _required_backends = [
 
 
 @register_model("vit_roberta_image2text", config_class=ViTRobertaImage2TextConfig)
-class ViTRobertaImage2Text(GenerativeModel):
+class ViTRobertaImage2Text(Model):
     """
     ViT + RoBERTa for image to text
     """
+    is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer = "bpe_tokenizer"

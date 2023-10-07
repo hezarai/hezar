@@ -6,7 +6,7 @@ import torch
 from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
-from ...model import GenerativeModel
+from ...model import Model
 from ...model_outputs import Image2TextOutput
 from .beit_roberta_image2text_config import BeitRobertaImage2TextConfig
 
@@ -32,10 +32,11 @@ _required_backends = [
 
 
 @register_model("beit_roberta_image2text", config_class=BeitRobertaImage2TextConfig)
-class BeitRobertaImage2Text(GenerativeModel):
+class BeitRobertaImage2Text(Model):
     """
     BEiT + RoBERTa for image to text
     """
+    is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer = "bpe_tokenizer"

@@ -11,7 +11,7 @@ import inspect
 import os
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, Union, Tuple
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -26,7 +26,6 @@ from ..utils import Logger, verify_dependencies
 
 __all__ = [
     "Model",
-    "GenerativeModel",
 ]
 
 logger = Logger(__name__)
@@ -43,6 +42,9 @@ class Model(nn.Module):
     # Default file names
     model_filename = DEFAULT_MODEL_FILE
     config_filename = DEFAULT_MODEL_CONFIG_FILE
+
+    # Specify if the model is a generative model. If True, the model must also implement the `generate` method
+    is_generative: bool = False
 
     # Keys to ignore on loading state dicts
     skip_keys_on_load = []
@@ -262,6 +264,31 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
+    def generate(self, *model_inputs, **kwargs):
+        """
+        Generation method for all generative models. Generative models have the `is_generative` attribute set to True.
+        The behavior of this method is usually controlled by `generation`
+        part of the model's config.
+
+        Args:
+            model_inputs: Model inputs for generation, usually the same as forward's `model_inputs`
+            **kwargs: Generation kwargs
+
+        Returns:
+            Generated ids
+        """
+        model_cls_name = self.__class__.__name__
+        if self.is_generative:
+            raise NotImplementedError(
+                f"`{model_cls_name}` is a generative model (`{model_cls_name}.is_generative = True`) "
+                f"but has not implemented the `generate()` method!"
+            )
+        else:
+            raise NotImplementedError(
+                f"`{model_cls_name}` does not seem to be a generative model (`{model_cls_name}.is_generative = False`) "
+                f"hence having the `generate` method unimplemented!"
+            )
+
     def preprocess(self, raw_inputs, **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
@@ -289,7 +316,13 @@ class Model(nn.Module):
         return model_outputs
 
     @torch.inference_mode()
-    def predict(self, inputs, device: Union[str, torch.device] = None, **kwargs) -> Union[Dict, List[Dict]]:
+    def predict(
+        self,
+        inputs,
+        device: Union[str, torch.device] = None,
+        unpack_forward_inputs: bool = True,
+        **kwargs,
+    ) -> Union[Dict, List[Dict]]:
         """
         Perform an end-to-end prediction on raw inputs.
 
@@ -299,6 +332,9 @@ class Model(nn.Module):
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
             device: What device to perform inference on
+            unpack_forward_inputs: Whether to unpack forward inputs. Set to False if you want to send preprocess outputs
+             directly to the forward/generate method without unpacking it. Note that this only applies to the cases that
+             the preprocess method's output is a dict-like/mapping object.
             **kwargs: Other arguments for `preprocess`, `forward`, `generate` and `post_process`. each will be passed to
             the correct method automatically.
 
@@ -307,6 +343,15 @@ class Model(nn.Module):
         """
         # Unpack kwargs for each step
         preprocess_kwargs, forward_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
+        invalid_kwargs = {k: v for k, v in kwargs.items() if
+                          k not in {
+                              **preprocess_kwargs,
+                              **forward_kwargs,
+                              **post_process_kwargs
+                          }}
+        if len(invalid_kwargs):
+            logger.warning(f"Unrecognized arguments {list(invalid_kwargs.keys())} passed to `predict` method for "
+                           f"`{self.__class__.__name__}`")
 
         # Put model in eval mode
         self.eval()
@@ -320,10 +365,10 @@ class Model(nn.Module):
         self.to(device)
 
         # Specify model inference function
-        inference_fn = self.generate if hasattr(self, "generate") else self.__call__
+        inference_fn = self.generate if self.is_generative else self.__call__
 
         # Model inference step (forward for regular models and generate for generative models)
-        if isinstance(model_inputs, Mapping):
+        if isinstance(model_inputs, Mapping) and unpack_forward_inputs:
             model_outputs = inference_fn(**model_inputs, **forward_kwargs)
         else:
             model_outputs = inference_fn(model_inputs, **forward_kwargs)
@@ -363,7 +408,7 @@ class Model(nn.Module):
              A 3-sized tuple of (preprocess_kwargs, forward_kwargs, post_process_kwargs)
         """
         # Whether to use forward or generate based on model type (Model or GenerativeModel)
-        inference_fn = type(self).generate if hasattr(self, "generate") else type(self).forward
+        inference_fn = type(self).generate if self.is_generative else type(self).forward
 
         def _get_positional_kwargs(fn):
             params = dict(inspect.signature(fn).parameters)
@@ -406,27 +451,3 @@ class Model(nn.Module):
                 f"Preprocessor value must be a `Preprocessor` or `PreprocessorContainer` instance not `{type(value)}`!"
             )
         self._preprocessor = preprocessor
-
-
-class GenerativeModel(Model):
-    """
-    A Model subclass specific to generative models
-    """
-    def __init__(self, config: ModelConfig, **kwargs):
-        super().__init__(config=config, **kwargs)
-
-    def generate(self, inputs, **kwargs):
-        """
-        Generation method for all generative models. The behavior of this method is usually controlled by `generation`
-        part of the model config.
-
-        Args:
-            inputs: Preprocessed input ids
-            **kwargs: Generation kwargs
-
-        Returns:
-            Generated ids
-        """
-        raise NotImplementedError(
-            f"`{self.__class__.__name__}` is a generative model but has not implemented the `generate()` method!"
-        )
