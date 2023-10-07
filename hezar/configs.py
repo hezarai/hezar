@@ -17,6 +17,7 @@ import tempfile
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
+from pprint import pformat
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -94,6 +95,9 @@ class Config:
 
     def __iter__(self):
         return iter(self.dict())
+
+    def __str__(self):
+        return pformat(self.dict())
 
     def dict(self):
         """

@@ -31,7 +31,6 @@ class WhisperSpeechRecognition(Model):
     """
     is_generative = True
     required_backends = _required_backends
-    is_generation_model = True
     feature_extractor_name = "whisper_feature_extractor"
     tokenizer_name = "whisper_bpe_tokenizer"
 
