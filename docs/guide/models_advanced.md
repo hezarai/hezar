@@ -143,3 +143,25 @@ whisper_2 = Model.load("my-whisper")
 whisper_2.push_to_hub("arxyzan/whisper-small-fa")
 ```
 
+## Inference & Prediction
+The end-to-end prediction for any model is done by calling the `predict()` method on raw inputs.
+The `predict()` method itself, calls three main methods in order:
+- `preprocess()`
+- `forward()`/`generate()`*
+- `post_process()`
+
+*based on model type; regular or generative
+### Preprocessing with `preprocess()`
+This method takes in raw model inputs and processes them to create direct model inputs and returns a dictionary of named
+inputs that is unpacked for model's `forward`/`generate` method. Each model can handle raw inputs however necessary.
+But ready-to-use models in Hezar, all use preprocessor modules. preprocessor modules can be tokenizers, feature extractors,
+normalizers, etc. The `Model` class has a `preprocessor` property that stores a dictionary of the required preprocessors
+for the model. These preprocessors are named after their original name in config or registry like `bpe_tokenizer`, `image_normalizer`, etc.
+
+#### The `preprocessor` property
+The preprocessor property can be directly set on a model. This preprocessor must be of type `Preprocessor`. If a model 
+needs multiple preprocessors you can pass in a dictionary of preprocessors by their name (preferably registry name).
+Take a look at below example:
+```python
+
+```
