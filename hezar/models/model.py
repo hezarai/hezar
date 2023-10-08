@@ -11,7 +11,7 @@ import inspect
 import os
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, List, Mapping, Optional, Union, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Union, Iterable
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -22,11 +22,8 @@ from ..configs import ModelConfig
 from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR, Backends
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, verify_dependencies
+from .model_outputs import ModelOutput
 
-
-__all__ = [
-    "Model",
-]
 
 logger = Logger(__name__)
 
@@ -267,15 +264,14 @@ class Model(nn.Module):
     def generate(self, *model_inputs, **kwargs) -> Dict:
         """
         Generation method for all generative models. Generative models have the `is_generative` attribute set to True.
-        The behavior of this method is usually controlled by `generation`
-        part of the model's config.
+        The behavior of this method is usually controlled by `generation` part of the model's config.
 
         Args:
             model_inputs: Model inputs for generation, usually the same as forward's `model_inputs`
             **kwargs: Generation kwargs
 
         Returns:
-            Generated ids
+            Generated output tensor
         """
         model_cls_name = self.__class__.__name__
         if self.is_generative:
@@ -289,20 +285,20 @@ class Model(nn.Module):
                 f"hence leaving the `generate` method unimplemented!"
             )
 
-    def preprocess(self, *raw_inputs, **kwargs):
+    def preprocess(self, raw_inputs, **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
         Args:
             raw_inputs: Raw model inputs
-            **kwargs: Extra kw arguments
+            **kwargs: Extra kwargs specific to the model. See the model's specific class for more info
 
         Returns:
             A dict of inputs for model forward
         """
         return raw_inputs
 
-    def post_process(self, *model_outputs, **kwargs):
+    def post_process(self, model_outputs, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
@@ -318,11 +314,11 @@ class Model(nn.Module):
     @torch.inference_mode()
     def predict(
         self,
-        inputs,
+        inputs: Union[Any, List[Any]],
         device: Union[str, torch.device] = None,
         unpack_forward_inputs: bool = True,
         **kwargs,
-    ) -> Union[Dict, List[Dict]]:
+    ) -> Union[Dict, List[Dict], torch.Tensor, Iterable, ModelOutput]:
         """
         Perform an end-to-end prediction on raw inputs.
 
@@ -336,7 +332,7 @@ class Model(nn.Module):
              directly to the forward/generate method without unpacking it. Note that this only applies to the cases that
              the preprocess method's output is a dict-like/mapping object.
             **kwargs: Other arguments for `preprocess`, `forward`, `generate` and `post_process`. each will be passed to
-            the correct method automatically.
+             the correct method automatically.
 
         Returns:
             Output dict of results
@@ -393,6 +389,11 @@ class Model(nn.Module):
             inputs = inputs.to(device)
         elif isinstance(inputs, Mapping):
             inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+        else:
+            raise ValueError(
+                f"Cannot move inputs of type `{type(inputs)}` to `{device}`. "
+                f"Inputs data type must be either `torch.Tensor` or a mapping object like `dict`!"
+            )
         return inputs
 
     def _unpack_prediction_kwargs(self, **kwargs):
@@ -407,7 +408,7 @@ class Model(nn.Module):
         Returns:
              A 3-sized tuple of (preprocess_kwargs, forward_kwargs, post_process_kwargs)
         """
-        # Whether to use forward or generate based on model type (Model or GenerativeModel)
+        # Whether to use forward or generate based on model type
         inference_fn = type(self).generate if self.is_generative else type(self).forward
 
         def _get_positional_kwargs(fn):
@@ -438,16 +439,24 @@ class Model(nn.Module):
         return self._preprocessor
 
     @preprocessor.setter
-    def preprocessor(self, value: Union[Preprocessor, PreprocessorsContainer]):
+    def preprocessor(self, value: Union[Preprocessor, PreprocessorsContainer, List[Preprocessor]]):
+        """
+        A safe setter method for model's preprocessor. Value must be either a Preprocessor, a list of Preprocessors or
+        a PreprocessorsContainer instance.
+        """
         if isinstance(value, Preprocessor):
             preprocessor = PreprocessorsContainer()
             preprocessor[value.config.name] = value
         elif isinstance(value, Mapping):
             preprocessor = PreprocessorsContainer(**value)
+        elif isinstance(value, list):
+            preprocessor = PreprocessorsContainer(**{p.config.name: p for p in value})
         elif value is None:
             preprocessor = None
         else:
             raise ValueError(
-                f"Preprocessor value must be a `Preprocessor` or `PreprocessorContainer` instance not `{type(value)}`!"
+                f"Preprocessor value must be a `Preprocessor` "
+                f"or a list of Preprocessor objects"
+                f"or `PreprocessorContainer` instance not `{type(value)}`!"
             )
         self._preprocessor = preprocessor

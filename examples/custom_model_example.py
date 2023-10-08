@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+import torch
 from torch import Tensor, nn
 
-from hezar import Model, ModelConfig
+from hezar import Model, ModelConfig, register_model
 
 
 @dataclass
@@ -12,6 +13,7 @@ class PerceptronConfig(ModelConfig):
     output_shape: int = 2
 
 
+@register_model("perceptron", config_class=PerceptronConfig)
 class Perceptron(Model):
     """
     A simple single layer network
@@ -24,9 +26,13 @@ class Perceptron(Model):
             out_features=self.config.output_shape,
         )
 
-    def forward(self, inputs: list):
-        inputs = Tensor(inputs).reshape(1, -1)
-        x = self.nn(inputs)
+    def preprocess(self, raw_inputs, **kwargs):
+        inputs_tensor = Tensor(raw_inputs)
+        return inputs_tensor
+
+    def forward(self, x: torch.Tensor):
+        x = x.reshape(1, -1)
+        x = self.nn(x)
         return x
 
     def post_process(self, model_outputs, **kwargs):
