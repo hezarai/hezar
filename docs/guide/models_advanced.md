@@ -128,6 +128,79 @@ from hezar import build_model, BERTConfig
 bert = build_model("bert", BERTConfig(hidden_act="gelu", hidden_size=840))
 ```
 
+## Inference & Prediction
+The end-to-end prediction for any model is done by calling the `predict()` method on raw inputs.
+The `predict()` method itself, calls three main methods in order:
+- `preprocess()`
+- `forward()`/`generate()`*
+- `post_process()`
+
+*based on model type; regular or generative
+### Preprocessing/Post-processing
+These steps are performed by two methods:
+- `preprocess()`: takes in raw inputs and processes them to create direct model inputs and returns a dictionary of named
+inputs that is unpacked for model's `forward`/`generate` method. Each model can handle raw inputs however necessary.
+But ready-to-use models in Hezar, all use preprocessor modules. preprocessor modules can be tokenizers, feature extractors,
+normalizers, etc. The `Model` class has a `preprocessor` property that stores a dictionary of the required preprocessors
+for the model. These preprocessors are named after their original name in config or registry like `bpe_tokenizer`, `image_processor`, etc.
+- `post_process()`: responsible for converting model forward/generate outputs which are usually tensors to a human-readable
+format. You might also use the `preprocessor` property at this stage i.e, for decoding, etc.
+
+#### The `preprocessor` property
+The preprocessor property can be directly set on a model. This preprocessor must be of type `Preprocessor`. If a model 
+needs multiple preprocessors you can pass in a dictionary of preprocessors by their name (preferably registry name).
+You can use the preprocessor property like below:
+```python
+class TextClassificationModel(Model):
+    def __init__(self):
+        ...
+    
+    def forward(self, inputs):
+        ...
+
+    def preprocess(self, raw_texts):
+        tokenizer = self.preprocessor["bpe_tokenizer"]
+        model_inputs = tokenizer(raw_texts, return_tensors="pt")
+        return model_inputs
+    
+    def post_process(self, model_outputs):
+        logits = model_outputs["logits"]
+        label_ids = logits.argmax(1)
+        labels_str = [self.config.id2label[label_id] for label_id in label_ids]
+        return labels_str
+```
+You can inspect the preprocessor for any model like below:
+```python
+from hezar import Model
+
+whisper = Model.load("hezarai/whisper-small-fa")
+whisper_preprocessors = whisper.preprocessor
+print(whisper_preprocessors)
+```
+```
+PreprocessorsContainer(
+    [
+        ('whisper_feature_extractor',
+         < hezar.preprocessors.feature_extractors.audio.whisper_feature_extractor.WhisperFeatureExtractor at 0x7f6316fdcbb0 >),
+        ('whisper_bpe_tokenizer',
+         < hezar.preprocessors.tokenizers.whisper_bpe.WhisperBPETokenizer at 0x7f643cb13f40 >)
+    ]
+)
+```
+### Passing kwargs to `predict()`
+You can also pass in additional parameters corresponding to any of the methods and the `predict()` method will figure out 
+how each arg should be passed to the write method (`preprocess`, `forward` or `post_process`).
+
+Suppose you model's methods take parameters like below:
+- `preprocess(raw_inputs, return_attention_mask=False)`
+- `post_process(model_inputs, output_all_scores=False)`
+You can pass in parameters for such model like below:
+```python
+model.predict(raw_inputs, return_attention_mask=True, output_all_scores=True)
+```
+The predict method knows which parameter corresponds to which method. (see [issue #96](https://github.com/hezarai/hezar/issues/96))
+
+
 ## Saving, Loading & Pushing to Hub
 All Hezar models can be easily saved, loaded and pushed to hub in the same way.
 
@@ -142,26 +215,52 @@ whisper.save("my-whisper")
 whisper_2 = Model.load("my-whisper")
 whisper_2.push_to_hub("arxyzan/whisper-small-fa")
 ```
+Note that the preprocessors of the model will also be loaded if available when using `Model.load()`. However, you can 
+disable this behavior by `Model.load(path, load_preprocessor=False)`.
+#### `load()` Parameters
+`Model.load()` takes these parameters:
+- `hub_or_local_path`: Path to a Hub repo or a folder on your local disk
+- `load_locally`: Force this method to look for the path locally
+- `load_preprocessor`: Whether to load the preprocessor(s) or not (defaults to True)
+- `model_filename`: Optionally specify the model's weights file name (defaults to `model.pt`)
+- `config_filename`: Optionally specify the model's config file name (defaults to `model_config.yaml`)
+- `save_path`: Optionally save the loaded model to a custom path
+- `**kwargs`: Additional config parameters to overwrite the loaded config parameters
 
-## Inference & Prediction
-The end-to-end prediction for any model is done by calling the `predict()` method on raw inputs.
-The `predict()` method itself, calls three main methods in order:
-- `preprocess()`
-- `forward()`/`generate()`*
-- `post_process()`
-
-*based on model type; regular or generative
-### Preprocessing with `preprocess()`
-This method takes in raw model inputs and processes them to create direct model inputs and returns a dictionary of named
-inputs that is unpacked for model's `forward`/`generate` method. Each model can handle raw inputs however necessary.
-But ready-to-use models in Hezar, all use preprocessor modules. preprocessor modules can be tokenizers, feature extractors,
-normalizers, etc. The `Model` class has a `preprocessor` property that stores a dictionary of the required preprocessors
-for the model. These preprocessors are named after their original name in config or registry like `bpe_tokenizer`, `image_normalizer`, etc.
-
-#### The `preprocessor` property
-The preprocessor property can be directly set on a model. This preprocessor must be of type `Preprocessor`. If a model 
-needs multiple preprocessors you can pass in a dictionary of preprocessors by their name (preferably registry name).
-Take a look at below example:
-```python
-
+#### Loading State Dicts
+Although Hezar models are regular PyTorch `nn.Module`s, but for convenience, we overrode the `load_state_dict` in a way
+that the user can load backbone models on a model for fine-tuning purposes. Also, our method can safely ignore mismatching
+keys if the values are compatible. So if you receive a warning when fine-tuning a model like below:
 ```
+Hezar (WARNING): Partially loading the weights as the model architecture and the given state dict are incompatible! 
+Ignore this warning in case you plan on fine-tuning this model
+Incompatible keys: []
+Missing keys: ['classifier.weight', 'classifier.bias']
+```
+You are good to go with your training because only the last classifier weights are missing and new for the training.
+
+### Saving Models
+Saving models to a path is pretty simple. Note that this method takes a **folder** path not a file path because it saves
+all the files for the model, config and preprocessors to this path but instead you can control the behavior of this method
+too.
+#### `save()` Parameters
+`Model.save()` takes these parameters:
+- `path`: A path to a local folder
+- `filename`: Model's file name (defaults to `model.pt`)
+- `save_preprocessor`: Whether to save the preprocessor or not
+- `config_filename`: Model's config file name (defaults to `model_config.yaml`)
+
+### Pushing to the Hub
+Pushing Hezar models to the Hub (just like other modules in Hezar) is done by using the `push_to_hub` method.
+#### `push_to_hub()` Parameters
+This method is actually the save method that is followed by the upload operation so its parameters are similar to `save`.
+- `repo_id`: Path to the repo id on the Hugging Face Hub
+- `filename`: Model's file name (defaults to `model.pt`)
+- `config_filename`: Optionally specify the model's config file name (defaults to `model_config.yaml`)
+- `push_preprocessor`: Whether to push the preprocessor or not
+- `commit_message`: Commit message for this push
+- `private`: Specify if the repo should be private or not. Only applicable if the repo does not already exist.
+
+## Wrap Up
+In this guide, we walked through the detail and internals of the models in Hezar. Hezar models are PyTorch Modules equiped
+with extra functionalities for better integration and exportability.
