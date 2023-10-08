@@ -31,20 +31,12 @@ class CRNNImage2Text(Model):
             ConvBlock(512, 512, 3, 1, 1)
         )
         # map CNN to sequence
-        self.map2seq = nn.LazyLinear(self.config.map2seq_dim)
+        self.map2seq = nn.Linear(self.config.map2seq_in_dim, self.config.map2seq_out_dim)
         # RNN
-        self.rnn1 = nn.LSTM(self.config.map2seq_dim, self.config.rnn_dim, bidirectional=True)
+        self.rnn1 = nn.LSTM(self.config.map2seq_out_dim, self.config.rnn_dim, bidirectional=True)
         self.rnn2 = nn.LSTM(2 * self.config.rnn_dim, self.config.rnn_dim, bidirectional=True)
         # classifier
         self.classifier = nn.Linear(2 * self.config.rnn_dim, len(self.config.id2label))
-
-    def save(self, path, filename=None, save_preprocessor=True, config_filename=None):
-        # Handle uninitialized parameters
-        if self.map2seq.in_features == 0:
-            import torch
-            dummy_input = torch.ones((1, 1, self.config.image_height, self.config.image_width))
-            self({"pixel_values": dummy_input})
-        return super().save(path, filename, save_preprocessor, config_filename)
 
     def forward(self, pixel_values, **kwargs):
         # CNN block

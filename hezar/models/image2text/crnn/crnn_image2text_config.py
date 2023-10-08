@@ -12,6 +12,7 @@ class CRNNImage2TextConfig(ModelConfig):
     n_channels: int = 1
     image_height: int = 32
     image_width: int = 128
-    map2seq_dim: int = 64
+    map2seq_in_dim: int = 2048
+    map2seq_out_dim: int = 64
     rnn_dim: int = 256
 
