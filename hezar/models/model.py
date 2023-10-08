@@ -264,7 +264,7 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def generate(self, *model_inputs, **kwargs):
+    def generate(self, *model_inputs, **kwargs) -> Dict:
         """
         Generation method for all generative models. Generative models have the `is_generative` attribute set to True.
         The behavior of this method is usually controlled by `generation`
@@ -286,10 +286,10 @@ class Model(nn.Module):
         else:
             raise NotImplementedError(
                 f"`{model_cls_name}` does not seem to be a generative model (`{model_cls_name}.is_generative = False`) "
-                f"hence having the `generate` method unimplemented!"
+                f"hence leaving the `generate` method unimplemented!"
             )
 
-    def preprocess(self, raw_inputs, **kwargs):
+    def preprocess(self, *raw_inputs, **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
@@ -302,7 +302,7 @@ class Model(nn.Module):
         """
         return raw_inputs
 
-    def post_process(self, model_outputs, **kwargs):
+    def post_process(self, *model_outputs, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
