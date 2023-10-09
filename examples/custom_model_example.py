@@ -26,7 +26,7 @@ class Perceptron(Model):
             out_features=self.config.output_shape,
         )
 
-    def preprocess(self, raw_inputs, **kwargs):
+    def preprocess(self, raw_inputs):
         inputs_tensor = Tensor(raw_inputs)
         return inputs_tensor
 
@@ -35,8 +35,8 @@ class Perceptron(Model):
         x = self.nn(x)
         return x
 
-    def post_process(self, model_outputs, **kwargs):
-        return model_outputs.numpy()
+    def post_process(self, model_outputs: torch.Tensor):
+        return model_outputs.cpu().numpy()
 
 
 model = Perceptron(PerceptronConfig())

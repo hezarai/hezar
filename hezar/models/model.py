@@ -261,7 +261,7 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def generate(self, *model_inputs, **kwargs) -> Dict:
+    def generate(self, *model_inputs, **kwargs):
         """
         Generation method for all generative models. Generative models have the `is_generative` attribute set to True.
         The behavior of this method is usually controlled by `generation` part of the model's config.
@@ -285,7 +285,7 @@ class Model(nn.Module):
                 f"hence leaving the `generate` method unimplemented!"
             )
 
-    def preprocess(self, raw_inputs, **kwargs):
+    def preprocess(self, *raw_inputs: Union[Any, List[Any]], **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
@@ -298,12 +298,12 @@ class Model(nn.Module):
         """
         return raw_inputs
 
-    def post_process(self, model_outputs, **kwargs):
+    def post_process(self, *model_outputs: Union[Dict[str, torch.Tensor], torch.Tensor], **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
         Args:
-            model_outputs: model outputs
+            model_outputs: model outputs to process
             **kwargs: extra arguments specific to the derived class
 
         Returns:
