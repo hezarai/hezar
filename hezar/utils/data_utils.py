@@ -35,7 +35,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
             if isinstance(v, np.ndarray):
                 batch_dict[k] = v.tolist()
             elif isinstance(v, torch.Tensor):
-                batch_dict[k] = v.numpy().tolist()
+                batch_dict[k] = v.cpu().numpy().tolist()
         return batch_dict
 
     if dtype in ["np", "numpy"]:

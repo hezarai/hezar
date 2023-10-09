@@ -74,7 +74,7 @@ class DistilBertLM(Model):
 
         tokenizer = self.preprocessor[self.tokenizer_name]
 
-        filled_token_ids = token_ids.numpy().copy()
+        filled_token_ids = token_ids.cpu().numpy().copy()
         fill_tokens = []
         for batch_i, logits in enumerate(output_logits):
             masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten()  # noqa

@@ -46,7 +46,7 @@ def convert_image_type(
         else:
             image = np.asarray(image)
     elif isinstance(image, torch.Tensor):
-        image = image.numpy()
+        image = image.cpu().numpy()
 
     verify_image_dims(image)
 
