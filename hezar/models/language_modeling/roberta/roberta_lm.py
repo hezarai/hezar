@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
@@ -12,7 +13,6 @@ from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
 from .roberta_lm_config import RobertaLMConfig
 
-
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaForMaskedLM
 
@@ -26,10 +26,7 @@ _required_backends = [
 class RobertaLM(Model):
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
-    skip_keys_on_load = [
-        "model.embeddings.position_ids",  # For older versions
-        "roberta.embeddings.position_ids"
-    ]
+    skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -47,9 +44,8 @@ class RobertaLM(Model):
         encoder_attention_mask=None,
         output_attentions=None,
         output_hidden_states=None,
-        **kwargs
+        **kwargs,
     ):
-
         outputs = self.roberta_mlm(
             input_ids=token_ids,
             attention_mask=attention_mask,
@@ -88,7 +84,9 @@ class RobertaLM(Model):
         filled_token_ids = token_ids.cpu().numpy().copy()
         fill_tokens = []
         for batch_i, logits in enumerate(output_logits):
-            masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten() # noqa
+            masked_index = torch.nonzero(
+                token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False
+            ).flatten()  # noqa
             if len(masked_index) > 1:
                 raise ValueError(
                     f"Can't handle multiple `{tokenizer.mask_token}` tokens in the input for {self.__class__.__name__}!"

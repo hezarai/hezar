@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 from ..constants import RegistryType
 from .common_utils import snake_case
-
 
 __all__ = [
     "list_available_models",
@@ -18,57 +18,69 @@ __all__ = [
 
 def list_available_models():
     from ..registry import models_registry
+
     return sorted(models_registry.keys())
 
 
 def list_available_preprocessors():
     from ..registry import preprocessors_registry
+
     return sorted(preprocessors_registry.keys())
 
 
 def list_available_datasets():
     from ..registry import datasets_registry
+
     return sorted(datasets_registry.keys())
 
 
 def list_available_metrics():
     from ..registry import metrics_registry
+
     return sorted(metrics_registry.keys())
 
 
 def list_available_trainers():
     from ..registry import trainers_registry
+
     return sorted(trainers_registry.keys())
 
 
 def list_available_embeddings():
     from ..registry import embeddings_registry
+
     return sorted(embeddings_registry.keys())
 
 
 def _get_registry_from_type(registry_type: RegistryType):
     if registry_type == RegistryType.MODEL:
         from ..registry import models_registry  # noqa
+
         registry = models_registry
 
     elif registry_type == RegistryType.PREPROCESSOR:
         from ..registry import preprocessors_registry  # noqa
+
         registry = preprocessors_registry
 
     elif registry_type == RegistryType.DATASET:
         from ..registry import datasets_registry  # noqa
+
         registry = datasets_registry
 
     elif registry_type == RegistryType.EMBEDDING:
         from ..registry import embeddings_registry  # noqa
+
         registry = embeddings_registry
 
     elif registry_type == RegistryType.TRAINER:
         from ..registry import trainers_registry  # noqa
+
         registry = trainers_registry
 
     elif registry_type == RegistryType.METRIC:
         from ..registry import metrics_registry  # noqa
+
         registry = metrics_registry
 
     else:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A BERT model for sequence labeling built using HuggingFace Transformers
 """
@@ -10,7 +11,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
 from .bert_sequence_labeling_config import BertSequenceLabelingConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
@@ -26,12 +26,10 @@ class BertSequenceLabeling(Model):
     """
     BERT model for sequence labeling
     """
+
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
-    skip_keys_on_load = [
-        "model.embeddings.position_ids",  # For older versions
-        "bert.embeddings.position_ids"
-    ]
+    skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config: BertSequenceLabelingConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -62,7 +60,6 @@ class BertSequenceLabeling(Model):
         output_hidden_states=None,
         **kwargs,
     ) -> Dict:
-
         lm_outputs = self.bert(
             token_ids,
             attention_mask=attention_mask,
@@ -82,7 +79,7 @@ class BertSequenceLabeling(Model):
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
-            "tokens": kwargs.get("tokens", None)
+            "tokens": kwargs.get("tokens", None),
         }
         return outputs
 

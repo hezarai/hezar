@@ -16,7 +16,7 @@ xlsum_dataset = load_dataset("hezarai/xlsum-fa")
 
 ### Load using Hezar Dataset
 ```python
-from hezar import Dataset 
+from hezar import Dataset
 
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
@@ -25,7 +25,7 @@ xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset i
 ```
 
 The difference between using Hezar vs Hugging Face datasets is the output class. In Hezar when you load
-a dataset using the `Dataset` class, it automatically finds the proper class for that dataset and creates a 
+a dataset using the `Dataset` class, it automatically finds the proper class for that dataset and creates a
 PyTorch `Dataset` instance so that it can be easily passed to a PyTorch `DataLoader` class.
 ```python
 from torch.utils.data import DataLoader
@@ -33,7 +33,7 @@ from torch.utils.data import DataLoader
 from hezar.data.datasets import Dataset
 
 dataset = Dataset.load(
-    "hezarai/lscp-pos-500k", 
+    "hezarai/lscp-pos-500k",
     tokenizer_path="hezarai/distilbert-base-fa",  # tokenizer_path is necessary for data collator
 )
 
@@ -43,8 +43,8 @@ print(next(itr))
 ```
 But when loading using Hugging Face datasets, the output is an HF Dataset instance.
 
-So in a nutshell, any Hezar dataset can be loaded using HF datasets but not vise-versa! 
-(Because Hezar looks out for a `dataset_config.yaml` file in any dataset repo so non-Hezar datasets cannot be 
+So in a nutshell, any Hezar dataset can be loaded using HF datasets but not vise-versa!
+(Because Hezar looks out for a `dataset_config.yaml` file in any dataset repo so non-Hezar datasets cannot be
 loaded using Hezar `Dataset` class.)
 
 ## Dataset classes

@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*-
 import importlib.util
 from importlib.metadata import version
 from typing import List, Union
 
 from ..constants import Backends
-
 
 __all__ = [
     "is_backend_available",

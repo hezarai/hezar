@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A BERT base language model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
@@ -8,7 +9,6 @@ from ....models import Model
 from ....registry import register_model
 from ....utils import is_backend_available
 from .bert_config import BERTConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
@@ -23,10 +23,7 @@ _required_backends = [
 class BERT(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
-    skip_keys_on_load = [
-        "model.embeddings.position_ids",  # For older versions
-        "bert.embeddings.position_ids"
-    ]
+    skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

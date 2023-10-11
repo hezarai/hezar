@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A DistilBERT base language model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
@@ -8,7 +9,6 @@ from ....models import Model
 from ....registry import register_model
 from ....utils import is_backend_available
 from .distilbert_config import DistilBERTConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel

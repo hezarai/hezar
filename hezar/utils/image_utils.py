@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Iterable, Tuple, Union
 
 import numpy as np
@@ -6,7 +7,6 @@ import torch
 from ..constants import Backends, ChannelsAxisSide, ImageType
 from .integration_utils import is_backend_available
 from .logging import Logger
-
 
 logger = Logger(__name__)
 

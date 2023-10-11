@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from typing import Optional, Union
 
@@ -16,6 +17,7 @@ class Dataset(TorchDataset):
         config:
         **kwargs:
     """
+
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = HEZAR_CACHE_DIR
 

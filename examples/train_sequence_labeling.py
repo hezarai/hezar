@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 from hezar import (
     BertSequenceLabeling,
     BertSequenceLabelingConfig,
-    TrainerConfig,
-    SequenceLabelingTrainer,
     Dataset,
     Preprocessor,
+    SequenceLabelingTrainer,
+    TrainerConfig,
 )
 
 base_model_path = "hezarai/bert-base-fa"
@@ -33,4 +34,3 @@ trainer = SequenceLabelingTrainer(
     preprocessor=preprocessor,
 )
 trainer.train()
-

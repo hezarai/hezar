@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple, Union
@@ -24,7 +25,6 @@ from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
 from .trainer_utils import CSVLogger, MetricsTracker, write_to_tensorboard
-
 
 logger = Logger(__name__)
 
@@ -76,7 +76,6 @@ class Trainer:
         lr_scheduler=None,
         **kwargs,
     ):
-
         self.config = config
 
         self.device, self.device_type = self._prepare_device_and_type()
@@ -162,8 +161,10 @@ class Trainer:
                 shuffle=True,
             )
         else:
-            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
-                           "Setting eval_dataloader to None...")
+            logger.warning(
+                "Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
+                "Setting eval_dataloader to None..."
+            )
             eval_dataloader = None
 
         return train_dataloader, eval_dataloader
@@ -511,11 +512,7 @@ class Trainer:
             commit_message=commit_message,
         )
         self.train_dataset.config.push_to_hub(
-            repo_id,
-            filename=dataset_config_file,
-            subfolder=subfolder,
-            private=private,
-            commit_message=commit_message
+            repo_id, filename=dataset_config_file, subfolder=subfolder, private=private, commit_message=commit_message
         )
 
         # upload model

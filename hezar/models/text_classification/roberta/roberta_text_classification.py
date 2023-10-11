@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
@@ -10,7 +11,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaModel
@@ -29,12 +29,10 @@ class RobertaTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
-    skip_keys_on_load = [
-        "model.embeddings.position_ids",  # For older versions
-        "roberta.embeddings.position_ids"
-    ]
+    skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

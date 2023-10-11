@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
@@ -10,7 +11,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
@@ -29,6 +29,7 @@ class DistilBertTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
 
@@ -57,7 +58,6 @@ class DistilBertTextClassification(Model):
         output_hidden_states=None,
         **kwargs,
     ) -> Dict:
-
         lm_outputs = self.distilbert(
             input_ids=token_ids,
             attention_mask=attention_mask,

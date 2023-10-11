@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Callable
 
 import numpy as np
@@ -9,7 +10,6 @@ from ...data.datasets import Dataset
 from ...models import Model
 from ...utils import Logger
 from ..trainer import Trainer
-
 
 logger = Logger(__name__)
 
@@ -28,6 +28,7 @@ class SequenceLabelingTrainer(Trainer):
         lr_scheduler: Optional learning-rate scheduler
 
     """
+
     AVAILABLE_METRICS = [MetricType.SEQEVAL]
 
     def __init__(

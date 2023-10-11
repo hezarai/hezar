@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 from hezar import Model
-
 
 path = "hezarai/roberta-fa-mlm"
 text = ["سلام بچه ها حالتون <mask>"]

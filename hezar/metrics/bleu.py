@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 from typing import Iterable, Union
 
@@ -6,7 +7,6 @@ from ..constants import Backends, MetricType
 from ..registry import register_metric
 from ..utils import is_backend_available
 from .metric import Metric
-
 
 if is_backend_available(Backends.NLTK):
     from nltk.translate.bleu_score import corpus_bleu
@@ -33,7 +33,7 @@ class BLEU(Metric):
         self,
         predictions: Union[Iterable[str], str] = None,
         targets: Union[Iterable[str], str] = None,
-        weights=(.25, .25, .25, .25),
+        weights=(0.25, 0.25, 0.25, 0.25),
         n_decimals=None,
         output_keys=None,
         **kwargs,

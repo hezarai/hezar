@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from dataclasses import dataclass
 from typing import Dict, List, Mapping, Tuple, Union
@@ -8,7 +9,6 @@ from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUB
 from ..registry import register_preprocessor
 from ..utils import Logger, is_backend_available
 from .preprocessor import Preprocessor
-
 
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import Regex, normalizers
@@ -42,6 +42,7 @@ class TextNormalizer(Preprocessor):
     """
     A simple configurable text normalizer
     """
+
     required_backends = _required_backends
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
@@ -79,13 +80,7 @@ class TextNormalizer(Preprocessor):
         return inputs
 
     @classmethod
-    def load(
-        cls,
-        hub_or_local_path,
-        subfolder=None,
-        config_filename=None,
-        **kwargs
-    ) -> "TextNormalizer":
+    def load(cls, hub_or_local_path, subfolder=None, config_filename=None, **kwargs) -> "TextNormalizer":
         config_filename = config_filename or cls.normalizer_config_file
         subfolder = subfolder or cls.preprocessor_subfolder
         config = TextNormalizerConfig.load(

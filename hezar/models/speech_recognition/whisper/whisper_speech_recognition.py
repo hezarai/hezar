@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import List, Union
 
 import numpy as np
@@ -9,7 +10,6 @@ from ....utils import is_backend_available, load_audio_files
 from ...model import Model
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import WhisperConfig, WhisperForConditionalGeneration
@@ -27,6 +27,7 @@ class WhisperSpeechRecognition(Model):
     """
     Whisper model for automatic speech recognition
     """
+
     is_generative = True
     required_backends = _required_backends
     feature_extractor_name = "whisper_feature_extractor"

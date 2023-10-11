@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -7,7 +8,6 @@ from ..configs import MetricConfig
 from ..constants import Backends, MetricType
 from ..registry import register_metric
 from .metric import Metric
-
 
 _required_backends = [
     Backends.SCIKIT,

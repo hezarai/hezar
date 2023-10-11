@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 
 from datasets import load_dataset
@@ -9,7 +10,6 @@ from ...registry import register_dataset
 from ...utils import Logger
 from ..data_collators import TextPaddingDataCollator
 from .dataset import Dataset
-
 
 logger = Logger(__name__)
 
@@ -67,8 +67,10 @@ class TextSummarizationDataset(Dataset):
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
-            logger.warning("This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                           "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
+            logger.warning(
+                "This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
+                "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset."
+            )
             tokenizer = None
         return tokenizer
 

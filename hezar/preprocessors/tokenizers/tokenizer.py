@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import tempfile
 from collections import defaultdict
@@ -13,7 +14,6 @@ from ...configs import PreprocessorConfig
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR, Backends
 from ...utils import Logger, convert_batch_dict_dtype, is_backend_available
 from ..preprocessor import Preprocessor
-
 
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import Tokenizer as HFTokenizer
@@ -53,6 +53,7 @@ class Tokenizer(Preprocessor):
         tokenizer_file: A tokenizer.json file to load the whole tokenizer from
         **kwargs: Extra config parameters that merge into the main config
     """
+
     required_backends: List[Union[str, Backends]] = []
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
@@ -162,23 +163,29 @@ class Tokenizer(Preprocessor):
 
         if padding == "longest":
             if max_length is not None:
-                logger.warning("Setting padding='longest' and max_length is not valid. You must set one of them"
-                               "and leave the other as None. Falling back to padding='longest'")
+                logger.warning(
+                    "Setting padding='longest' and max_length is not valid. You must set one of them"
+                    "and leave the other as None. Falling back to padding='longest'"
+                )
 
             inputs_length = inputs_max_length
 
         elif padding == "max_length":
             if max_length is None:
-                logger.warning("Setting padding='max_length' but no max_length value is provided in the function "
-                               "parameters nor the tokenizer config! Falling back to padding='longest'")
+                logger.warning(
+                    "Setting padding='max_length' but no max_length value is provided in the function "
+                    "parameters nor the tokenizer config! Falling back to padding='longest'"
+                )
                 inputs_length = inputs_max_length
             else:
                 # TODO implement truncation if possible and remove this condition
                 if max_length <= inputs_max_length:
-                    logger.warning(f"Cannot set max_length to {max_length} "
-                                   f"while max input length is {inputs_max_length}!"
-                                   f"Falling back to padding='longest' "
-                                   f"since truncation is not available yet in Hezar :(")
+                    logger.warning(
+                        f"Cannot set max_length to {max_length} "
+                        f"while max input length is {inputs_max_length}!"
+                        f"Falling back to padding='longest' "
+                        f"since truncation is not available yet in Hezar :("
+                    )
                     inputs_length = inputs_max_length
                 else:
                     inputs_length = max_length
@@ -508,7 +515,7 @@ class Tokenizer(Preprocessor):
         tokens = []
         for offset in offsets_mapping:
             offset_start, offset_end = offset
-            tokens.append(text[offset_start: offset_end])
+            tokens.append(text[offset_start:offset_end])
         for i, token in enumerate(tokens):
             if ids[i] in self.special_ids:
                 tokens[i] = self._tokenizer.id_to_token(ids[i])

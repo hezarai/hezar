@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def build_models():
     from hezar import build_model, list_available_models
 

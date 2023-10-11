@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass, field
 from typing import Iterable, List, Tuple
 
@@ -19,7 +20,6 @@ from ..utils import (
     transpose_channels_axis_side,
 )
 from .preprocessor import Preprocessor
-
 
 _required_backends = [
     Backends.PILLOW,
@@ -60,6 +60,7 @@ class ImageProcessor(Preprocessor):
     """
     General image processor to perform sequential transforms on the images
     """
+
     required_backends = _required_backends
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
@@ -144,6 +145,7 @@ class ImageProcessor(Preprocessor):
 
         if device:
             import torch
+
             images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}
 
         return images
@@ -174,14 +176,7 @@ class ImageProcessor(Preprocessor):
 
         self.config.save(path, subfolder=subfolder, filename=config_filename)
 
-    def push_to_hub(
-        self,
-        repo_id,
-        subfolder=None,
-        commit_message=None,
-        private=None,
-        config_filename=None
-    ):
+    def push_to_hub(self, repo_id, subfolder=None, commit_message=None, private=None, config_filename=None):
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.image_processor_config_file
 

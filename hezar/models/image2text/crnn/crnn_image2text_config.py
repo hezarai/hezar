@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 from typing import Dict
 
@@ -15,4 +16,3 @@ class CRNNImage2TextConfig(ModelConfig):
     map2seq_in_dim: int = 2048
     map2seq_out_dim: int = 64
     rnn_dim: int = 256
-

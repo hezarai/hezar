@@ -99,8 +99,8 @@ So, what's going on under the hood that handles module loading and initiation?
 **Registry System**
 
 Well, there are ways to tackle this challenge, but Hezar manages this by using _a global registry_ for every module
-type. These registries are simple Python dictionaries that hold the properties for every module class, module config, 
-etc. 
+type. These registries are simple Python dictionaries that hold the properties for every module class, module config,
+etc.
 The general structure is like below:
 
 ```python
@@ -124,7 +124,7 @@ But how are the modules inserted into the registries? The answer is _registry cl
 **`register_*()` Class Decorators**
 
 In the file `hezar/registry.py`, there are a bunch of decorator functions that fulfill the task of registering any module
-into the right registry automagically! 
+into the right registry automagically!
 These decorators take two parameters:
 - `name`: A string name that has to be the same as the one in config
 - `config_class`: The config class
@@ -146,7 +146,7 @@ class MyBertConfig(ModelConfig):
 class MyBert(Model):
     def __init__(self, config: MyBertConfig, **kwargs):
         super().__init__(config, **kwargs)
-    
+
     def forward(self, inputs, **kwargs):
         ...
 
@@ -175,7 +175,7 @@ print(hezar.list_available_trainers())
 ```
 **Creating Modules from Registry Names**
 
-So now it's pretty easy to create modules objects using their `name`! Let's say you want to create a 
+So now it's pretty easy to create modules objects using their `name`! Let's say you want to create a
 BPE tokenizer. You can do it this way:
 ```python
 from hezar import preprocessors_registry
@@ -195,7 +195,7 @@ Using builders you can build modules from their registry names in a single line 
 These family of functions take 3 main parameters:
 - `name`: A registry key name representing that module. This name has to be present in the corresponding registry!
 - `config`: Optionally you can pass a config object to control how the module is built. The config has to be of a type that the module accepts.
-- `**kwargs`: Optionally you can pass config parameters as keyword arguments to override the default config. (The override priority is `kwargs` > `config` > default config)  
+- `**kwargs`: Optionally you can pass config parameters as keyword arguments to override the default config. (The override priority is `kwargs` > `config` > default config)
 ```python
 from hezar import builders
 
@@ -230,20 +230,20 @@ to do so:
 
 **Loading**
 
-All base modules implement their own `load` method based on their characteristics. But the first step in every load 
-process is loading the configuration as all the info lies there, and then any other file is loaded. 
+All base modules implement their own `load` method based on their characteristics. But the first step in every load
+process is loading the configuration as all the info lies there, and then any other file is loaded.
 For example the class `Model` first loads its config and builds the model using `build_model` and the config parameters.
 Then the state dict is loaded to the model. If the path contains preprocessor files and configs, it would load them too.
 On the other hand, some simple modules like metric might just load the config to create a metric instance.
-One important feature of any `load` method is that like builders, it accepts config parameters as keyword arguments so 
+One important feature of any `load` method is that like builders, it accepts config parameters as keyword arguments so
 that you can override config properties.
 
 **Saving**
 
-Almost every module has the `save` method implemented which is responsible for saving config and other related files to the 
+Almost every module has the `save` method implemented which is responsible for saving config and other related files to the
 disk. This method takes a `path` parameter which is just the base folder path and any necessary subfolder will be created
 automatically based on the module type. For example, if you save a tokenizer at path `my_tokenizer/`, the `Tokenizer`'s
-`save` method will create a `preprocessor` folder and saves the `tokenizer.json` and `tokenizer_config.yaml` on that 
+`save` method will create a `preprocessor` folder and saves the `tokenizer.json` and `tokenizer_config.yaml` on that
 folder. You can control the `subfolder` parameter and other file/path names if the base class gives you the option.
 
 **Pushing to the Hub**
@@ -254,17 +254,17 @@ to the Hub after saving.
 
 ## Concept 4: Task-based Modeling & Training
 Hezar is a practical library not a framework (it can be though!). That's why we decided to categorize models, trainers,
-datasets, etc. under task names e.g, `speech_recognition`, `language_modeling`, etc. If you've worked with other 
+datasets, etc. under task names e.g, `speech_recognition`, `language_modeling`, etc. If you've worked with other
 libraries, this might somewhat seem irrational, but trust us! For most users and usages this fits better!
 
-Currently, all models, trainers and datasets are categorized by task name, but this does not mean that for every task, 
-there exists a model, trainer, dataset, etc. 
+Currently, all models, trainers and datasets are categorized by task name, but this does not mean that for every task,
+there exists a model, trainer, dataset, etc.
 
 ## Concept 5: Integration with Other Tools
-Re-inventing the wheel has no place in Hezar. It's strongly recommended that if something already exists somewhere, and 
+Re-inventing the wheel has no place in Hezar. It's strongly recommended that if something already exists somewhere, and
 we want it, just copy and paste it into the code!<br>
-In terms of backbone frameworks and libraries, we carefully R&D the present tools and choose the one that is the simplest 
-yet popular. 
+In terms of backbone frameworks and libraries, we carefully R&D the present tools and choose the one that is the simplest
+yet popular.
 
 More specifically, here's a simple summary of the core modules in Hezar:
 - **Models**:  Every model is a `hezar.models.Model` instance which is in fact, a PyTorch `nn.Module` wrapper with extra features for saving, loading, exporting, etc.

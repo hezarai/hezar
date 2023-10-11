@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import os
 from typing import Dict, Union
@@ -6,7 +7,6 @@ import omegaconf
 from omegaconf import DictConfig
 
 from .logging import Logger
-
 
 __all__ = [
     "flatten_dict",

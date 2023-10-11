@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 from typing import List, Union
 
@@ -7,7 +8,6 @@ import torch
 from ....registry import register_preprocessor
 from ....utils import Logger, convert_batch_dict_dtype, mel_filter_bank, spectrogram, window_function
 from .audio_feature_extractor import AudioFeatureExtractor, AudioFeatureExtractorConfig
-
 
 logger = Logger(__name__)
 
@@ -36,6 +36,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
     This class extracts mel-filter bank features from raw speech using a custom numpy implementation of the `Short Time
     Fourier Transform` which should match pytorch's `torch.stft` equivalent.
     """
+
     def __init__(self, config: WhisperFeatureExtractorConfig, **kwargs):
         super().__init__(config=config, **kwargs)
         self.n_samples = self.config.chunk_length * self.config.sampling_rate
@@ -135,7 +136,9 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
             padded_inputs = {k: np.asarray(v) for k, v in padded_inputs.items()}
             padded_inputs = convert_batch_dict_dtype(padded_inputs, dtype=return_tensors)
             if device:
-                padded_inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in padded_inputs.items()}
+                padded_inputs = {
+                    k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in padded_inputs.items()
+                }
 
         return padded_inputs
 

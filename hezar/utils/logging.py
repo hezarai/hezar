@@ -1,9 +1,7 @@
+# -*- coding: utf-8 -*-
 import logging
 
-
-__all__ = [
-    "Logger"
-]
+__all__ = ["Logger"]
 
 
 class Logger(logging.Logger):

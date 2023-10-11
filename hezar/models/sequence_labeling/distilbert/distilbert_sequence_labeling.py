@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A DISTILBERT model for sequence labeling built using HuggingFace Transformers
 """
@@ -10,7 +11,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
 from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
@@ -75,7 +75,7 @@ class DistilBertSequenceLabeling(Model):
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
-            "tokens": kwargs.get("tokens", None)
+            "tokens": kwargs.get("tokens", None),
         }
         return outputs
 

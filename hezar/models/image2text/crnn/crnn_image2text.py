@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from torch import nn
 
 from ....registry import register_model
@@ -12,6 +13,7 @@ class CRNNImage2Text(Model):
     """
     A robust CRNN model for character level OCR based on the original paper.
     """
+
     is_generative = True
     image_processor = "image_processor"
 
@@ -28,7 +30,7 @@ class CRNNImage2Text(Model):
             ConvBlock(256, 512, 3, 1, 1, batch_norm=True),
             ConvBlock(512, 512, 3, 1, 1, batch_norm=True),
             nn.MaxPool2d(kernel_size=(2, 1)),
-            ConvBlock(512, 512, 3, 1, 1)
+            ConvBlock(512, 512, 3, 1, 1),
         )
         # map CNN to sequence
         self.map2seq = nn.Linear(self.config.map2seq_in_dim, self.config.map2seq_out_dim)
@@ -72,19 +74,10 @@ class CRNNImage2Text(Model):
 
 
 class ConvBlock(nn.Module):
-    def __init__(
-        self,
-        input_channel,
-        output_channel,
-        kernel_sizes,
-        strides,
-        paddings,
-        batch_norm: bool = False
-    ):
+    def __init__(self, input_channel, output_channel, kernel_sizes, strides, paddings, batch_norm: bool = False):
         super(ConvBlock, self).__init__()
         self.do_batch_norm = batch_norm
-        self.conv = nn.Conv2d(input_channel, output_channel,
-                              kernel_sizes, strides, paddings)
+        self.conv = nn.Conv2d(input_channel, output_channel, kernel_sizes, strides, paddings)
         self.bn = nn.BatchNorm2d(output_channel)
         self.relu = nn.ReLU(inplace=True)
 

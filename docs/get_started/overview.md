@@ -1,10 +1,10 @@
 # Overview
 
-Welcome to Hezar! A library that makes state-of-the-art machine learning as easy as possible aimed for the Persian 
+Welcome to Hezar! A library that makes state-of-the-art machine learning as easy as possible aimed for the Persian
 language, built by the Persian community!
 
 In Hezar, the primary goal is to provide plug-and-play AI/ML utilities so that you don't need to know much about what's
-going on under the hood. Hezar is not just a model library, but instead it's packed with every aspect you need for any 
+going on under the hood. Hezar is not just a model library, but instead it's packed with every aspect you need for any
 ML pipeline like datasets, trainers, preprocessors, feature extractors, etc.
 
 Hezar is a library that:

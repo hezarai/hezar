@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from hezar import Embedding
 
 fasttext = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")

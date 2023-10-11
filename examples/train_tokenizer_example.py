@@ -1,14 +1,14 @@
+# -*- coding: utf-8 -*-
 from hezar.preprocessors.tokenizers import (
     BPEConfig,
     BPETokenizer,
-    WordPieceConfig,
-    WordPieceTokenizer,
     SentencePieceBPEConfig,
     SentencePieceBPETokenizer,
     SentencePieceUnigramConfig,
     SentencePieceUnigramTokenizer,
+    WordPieceConfig,
+    WordPieceTokenizer,
 )
-
 
 data = [
     "Beautiful is better than ugly."

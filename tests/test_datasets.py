@@ -1,13 +1,13 @@
+# -*- coding: utf-8 -*-
 from hezar import Dataset, Logger
 from hezar.constants import TaskType
-
 
 logger = Logger(__name__)
 
 task_to_dataset_example_repo = {
     TaskType.TEXT_CLASSIFICATION: "hezarai/sentiment-dksf",
     TaskType.SEQUENCE_LABELING: "hezarai/parstwiner",
-    TaskType.TEXT_GENERATION: "hezarai/xlsum-fa"
+    TaskType.TEXT_GENERATION: "hezarai/xlsum-fa",
 }
 
 

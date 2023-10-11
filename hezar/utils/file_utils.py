@@ -1,14 +1,12 @@
+# -*- coding: utf-8 -*-
 import gzip
 import shutil
 
 from .logging import Logger
 
-
 logger = Logger(__name__)
 
-__all__ = [
-    "gunzip"
-]
+__all__ = ["gunzip"]
 
 
 def gunzip(src_path, dest_path):

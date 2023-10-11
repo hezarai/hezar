@@ -3,17 +3,17 @@
 Models (under `hezar.models`) is the most used module in Hezar. In this section, we'll take a deeper tour of this
 module.
 
-Note that this section assumes you already know the basics of Hezar and in specific, the models module, but if not, 
+Note that this section assumes you already know the basics of Hezar and in specific, the models module, but if not,
 you can check out the introduction guide on models [here](../tutorial/models.md).
 
 ## Building Models
 As you'd probably know at this point, any subclass of Model is a regular PyTorch nn.Module, so creating any model
 is straightforward. But what makes it different?
 
-First difference is in the `__init__` method. Every model has to take in a `config` parameter that contains all the 
-necessary parameters needed for the model to be created and initialized. This `config` parameter is a 
+First difference is in the `__init__` method. Every model has to take in a `config` parameter that contains all the
+necessary parameters needed for the model to be created and initialized. This `config` parameter is a
 dataclass of type `ModelConfig` derived from the base config class which is `Config`. The `Config` class is the
-base config container for all configs in Hezar. Find out more about 
+base config container for all configs in Hezar. Find out more about
 configs [here](hezar_architecture.md/#concept-1-configurable-modules).
 
 Take a look at the snippets below:
@@ -68,7 +68,7 @@ class SampleNet(Model):
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, self.config.num_classes)
-    
+
     def forward(self, x):
         x = self.pool(nn.functional.relu(self.conv1(x)))
         x = self.pool(nn.functional.relu(self.conv2(x)))
@@ -81,7 +81,7 @@ class SampleNet(Model):
 So what you actually need to do to make your PyTorch model compatible with Hezar is:
 1. Move all the required arguments of the model to a new dataclass config by deriving the `ModelConfig` class
 2. Implement your model by inheriting from `Model` instead of `nn.Module` and construct your model architecture by using config parameters
-3. Optionally you can register your model by using the `register_model` decorator under the same `name` parameter  in the config. This step makes your model importable/exportable (compatible with `save`, `load`, `push_to_hub` methods) 
+3. Optionally you can register your model by using the `register_model` decorator under the same `name` parameter  in the config. This step makes your model importable/exportable (compatible with `save`, `load`, `push_to_hub` methods)
 
 
 ## Models Registry System
@@ -98,7 +98,7 @@ print(list_available_models())
 ```
 
 ### Models Registry and `build_model`
-The `models_registry` (like all registry containers in Hezar) is a dictionary of model names mapped to their module classes 
+The `models_registry` (like all registry containers in Hezar) is a dictionary of model names mapped to their module classes
 and config classes. So one can easily build a model with default parameters by its registry key.
 
 ```python
@@ -147,14 +147,14 @@ for the model. These preprocessors are named after their original name in config
 format. You might also use the `preprocessor` property at this stage i.e, for decoding, etc.
 
 #### The `preprocessor` property
-The preprocessor property can be directly set on a model. This preprocessor must be of type `Preprocessor`. If a model 
+The preprocessor property can be directly set on a model. This preprocessor must be of type `Preprocessor`. If a model
 needs multiple preprocessors you can pass in a dictionary of preprocessors by their name (preferably registry name).
 You can use the preprocessor property like below:
 ```python
 class TextClassificationModel(Model):
     def __init__(self):
         ...
-    
+
     def forward(self, inputs):
         ...
 
@@ -162,7 +162,7 @@ class TextClassificationModel(Model):
         tokenizer = self.preprocessor["bpe_tokenizer"]
         model_inputs = tokenizer(raw_texts, return_tensors="pt")
         return model_inputs
-    
+
     def post_process(self, model_outputs):
         logits = model_outputs["logits"]
         label_ids = logits.argmax(1)
@@ -188,7 +188,7 @@ PreprocessorsContainer(
 )
 ```
 ### Passing kwargs to `predict()`
-You can also pass in additional parameters corresponding to any of the methods and the `predict()` method will figure out 
+You can also pass in additional parameters corresponding to any of the methods and the `predict()` method will figure out
 how each arg should be passed to the write method (`preprocess`, `forward` or `post_process`).
 
 Suppose you model's methods take parameters like below:
@@ -205,8 +205,8 @@ The predict method knows which parameter corresponds to which method. (see [issu
 All Hezar models can be easily saved, loaded and pushed to hub in the same way.
 
 ### Loading Models
-Loading models is done by using the `.load()` method. This method takes in the path to the desired model which can be 
-a path on the Hub or a path on your local disk. 
+Loading models is done by using the `.load()` method. This method takes in the path to the desired model which can be
+a path on the Hub or a path on your local disk.
 ```python
 from hezar import Model
 
@@ -215,7 +215,7 @@ whisper.save("my-whisper")
 whisper_2 = Model.load("my-whisper")
 whisper_2.push_to_hub("arxyzan/whisper-small-fa")
 ```
-Note that the preprocessors of the model will also be loaded if available when using `Model.load()`. However, you can 
+Note that the preprocessors of the model will also be loaded if available when using `Model.load()`. However, you can
 disable this behavior by `Model.load(path, load_preprocessor=False)`.
 #### `load()` Parameters
 `Model.load()` takes these parameters:
@@ -232,7 +232,7 @@ Although Hezar models are regular PyTorch `nn.Module`s, but for convenience, we 
 that the user can load backbone models on a model for fine-tuning purposes. Also, our method can safely ignore mismatching
 keys if the values are compatible. So if you receive a warning when fine-tuning a model like below:
 ```
-Hezar (WARNING): Partially loading the weights as the model architecture and the given state dict are incompatible! 
+Hezar (WARNING): Partially loading the weights as the model architecture and the given state dict are incompatible!
 Ignore this warning in case you plan on fine-tuning this model
 Incompatible keys: []
 Missing keys: ['classifier.weight', 'classifier.bias']

@@ -76,4 +76,3 @@ known-first-party = ["hezar"]
 
 [tool.ruff.pydocstyle]
 convention = "google"
-

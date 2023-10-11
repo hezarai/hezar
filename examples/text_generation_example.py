@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from hezar import Model
 
 model = Model.load("hezarai/t5-base-fa")

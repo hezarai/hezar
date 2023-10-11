@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from hezar import Model
 
 hub_path = "hezarai/distilbert-fa-sentiment-dksf"

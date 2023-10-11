@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from collections import OrderedDict
 from typing import List, Union
@@ -16,6 +17,7 @@ class Preprocessor:
     Args:
         config: Preprocessor properties
     """
+
     required_backends: List[Union[str, Backends]] = []
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
@@ -49,13 +51,7 @@ class Preprocessor:
         raise NotImplementedError
 
     @classmethod
-    def load(
-        cls,
-        hub_or_local_path,
-        subfolder: str = None,
-        force_return_dict: bool = False,
-        **kwargs
-    ):
+    def load(cls, hub_or_local_path, subfolder: str = None, force_return_dict: bool = False, **kwargs):
         """
         Load a preprocessor or a pipeline of preprocessors from a local or Hub path. This method automatically detects
         any preprocessor in the path. If there's only one preprocessor, returns it and if there are more, returns a
@@ -82,10 +78,7 @@ class Preprocessor:
                     config_file = os.path.join(hub_or_local_path, subfolder, f)
                 else:
                     config_file = hf_hub_download(
-                        hub_or_local_path,
-                        filename=f,
-                        subfolder=subfolder,
-                        repo_type=RepoType.MODEL
+                        hub_or_local_path, filename=f, subfolder=subfolder, repo_type=RepoType.MODEL
                     )
                 config = OmegaConf.load(config_file)
                 name = config.get("name", None)
@@ -105,6 +98,7 @@ class PreprocessorsContainer(OrderedDict):
     """
     A class to hold the preprocessors by their name
     """
+
     def __getattr__(self, item):
         """
         Override this method to be able to access preprocessors as attributes

@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 from typing import Any, Dict
 
 from .logging import Logger
-
 
 __all__ = [
     "convert_batch_dict_dtype",
@@ -53,8 +53,7 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
                 if not isinstance(v, cast_type):
                     batch_dict[k] = caster(v)
             except Exception as e:  # noqa
-                logger.warning(f"Could not convert values of `{k}` to type `{dtype}`\n"
-                               f"Error: {e}")
+                logger.warning(f"Could not convert values of `{k}` to type `{dtype}`\n" f"Error: {e}")
     return batch_dict
 
 

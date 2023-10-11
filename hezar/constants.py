@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
 """
 Home to all constant variables in Hezar
 """
 
 import os
 from enum import Enum
-
 
 HEZAR_HUB_ID = "hezarai"
 HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.cache/hezar')
@@ -33,6 +33,7 @@ class Backends(str, Enum):
     All required dependency packages and libraries. Note that the values here must be the exact module names used
     for importing, for example if you set PILLOW the value must be `PIL` not `pillow`, `pil`, etc.
     """
+
     PYTORCH = "torch"
     TRANSFORMERS = "transformers"
     DATASETS = "datasets"

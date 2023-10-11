@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass, field
 from typing import List
 
@@ -5,7 +6,6 @@ from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, 
 from ...registry import register_preprocessor
 from ...utils import is_backend_available
 from .tokenizer import Tokenizer, TokenizerConfig
-
 
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import Tokenizer as HFTokenizer
@@ -56,6 +56,7 @@ class SentencePieceUnigramTokenizer(Tokenizer):
         config: Preprocessor config for the tokenizer
         **kwargs: Extra/manual config parameters
     """
+
     required_backends = _required_backends
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
@@ -69,10 +70,10 @@ class SentencePieceUnigramTokenizer(Tokenizer):
         tokenizer = HFTokenizer(models.Unigram())  # noqa
         tokenizer.normalizer = normalizers.Sequence(  # noqa
             [  # noqa
-                normalizers.Nmt(), # noqa
-                 normalizers.NFKC(), # noqa
-                 normalizers.Replace(Regex(" {2,}"), " ")  # noqa
-             ]  # noqa
+                normalizers.Nmt(),  # noqa
+                normalizers.NFKC(),  # noqa
+                normalizers.Replace(Regex(" {2,}"), " "),  # noqa
+            ]  # noqa
         )  # noqa
         tokenizer.pre_tokenizer = pre_tokenizers.Metaspace(  # noqa
             replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space

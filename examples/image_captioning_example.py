@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from hezar import Model
 
 model = Model.load("hezarai/vit-roberta-fa-image-captioning-flickr30k")

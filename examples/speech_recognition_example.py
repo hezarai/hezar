@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from hezar import Model
 
 whisper = Model.load("hezarai/whisper-small-fa")

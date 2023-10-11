@@ -1,1 +1,2 @@
-from .t5 import T5TextGenerationConfig, T5TextGeneration
+# -*- coding: utf-8 -*-
+from .t5 import T5TextGeneration, T5TextGenerationConfig

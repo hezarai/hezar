@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 from time import perf_counter
-
 
 __all__ = [
     "exec_timer",
@@ -15,6 +15,7 @@ class exec_timer:
         >>>     # operations here
         >>> print(timer.time)
     """
+
     def __enter__(self):
         self.time = perf_counter()
         return self

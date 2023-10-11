@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import List, Union
 
 import numpy as np
@@ -9,7 +10,6 @@ from ....utils import is_backend_available
 from ...model import Model
 from ...model_outputs import Image2TextOutput
 from .trocr_image2text_config import TrOCRImage2TextConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import (
@@ -24,11 +24,7 @@ if is_backend_available(Backends.TRANSFORMERS):
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
-_required_backends = [
-    Backends.TRANSFORMERS,
-    Backends.TOKENIZERS,
-    Backends.PILLOW
-]
+_required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 
 
 @register_model("trocr_image2text", config_class=TrOCRImage2TextConfig)
@@ -36,6 +32,7 @@ class TrOCRImage2Text(Model):
     """
     TrOCR for optical character recognition
     """
+
     is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A DistilBERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
@@ -11,7 +12,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
 from .distilbert_lm_config import DistilBertLMConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertForMaskedLM
@@ -77,7 +77,9 @@ class DistilBertLM(Model):
         filled_token_ids = token_ids.cpu().numpy().copy()
         fill_tokens = []
         for batch_i, logits in enumerate(output_logits):
-            masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten()  # noqa
+            masked_index = torch.nonzero(
+                token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False
+            ).flatten()  # noqa
             if len(masked_index) > 1:
                 raise ValueError(
                     f"Can't handle multiple `{tokenizer.mask_token}` tokens in the input for {self.__class__.__name__}!"

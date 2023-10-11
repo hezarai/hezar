@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Dict, List, Union
 
 import torch
@@ -7,7 +8,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
 from .t5_text_generation_config import T5TextGenerationConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import T5Config, T5ForConditionalGeneration
@@ -23,6 +23,7 @@ class T5TextGeneration(Model):
     """
     T5 for text to text generation
     """
+
     is_generative = True
     required_backends = _required_backends
     tokenizer_name = "sentencepiece_unigram_tokenizer"
@@ -51,7 +52,6 @@ class T5TextGeneration(Model):
         output_hidden_states=None,
         **kwargs,
     ) -> Dict:
-
         outputs = self.t5(
             input_ids=token_ids,
             attention_mask=attention_mask,

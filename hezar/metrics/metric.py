@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Dict, List, Union
 
 from ..configs import MetricConfig
@@ -13,6 +14,7 @@ class Metric:
     not to reinvent the wheel. If a metric is already implemented by some package, use it! The only reason to implement
     such a module, is to make sure the metrics are treated the same all over the framework.
     """
+
     required_backends: Union[List[Union[str, Backends]]] = []
 
     def __init__(self, config: MetricConfig, **kwargs):

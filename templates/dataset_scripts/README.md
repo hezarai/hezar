@@ -4,14 +4,14 @@ These scripts are separated by dataset file type (csv, parquet, etc) and task (t
 
 ### Write your own script
 First choose the desired template based on your dataset file format and task.
-For example if you have a sentiment analysis dataset in CSV format, you have to choose 
+For example if you have a sentiment analysis dataset in CSV format, you have to choose
 `csv/text_classification.py` file. In this file all the instructions are documented for every part.
 Some are mandatory and some are optional and are specified by a `# TODO` comment around them.
 
 For an in-depth documentation on how datasets loading scripts work in the HuggingFace Hub, read [here](https://huggingface.co/docs/datasets/dataset_script).
 
 #### Step 1
-Grab the template and apply all the required changes to it. 
+Grab the template and apply all the required changes to it.
 #### Step 2
 In another file or console, you can test load the script using this code:
 ```python

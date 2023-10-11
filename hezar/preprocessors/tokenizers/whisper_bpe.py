@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass, field
 from typing import List
 
@@ -7,7 +8,6 @@ from ...constants import Backends
 from ...registry import register_preprocessor
 from ...utils import Logger, is_backend_available
 from .bpe import BPEConfig, BPETokenizer
-
 
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import processors
@@ -291,11 +291,7 @@ class WhisperBPETokenizer(BPETokenizer):
         """
         Override decode method to enable timestamps and offsets.
         """
-        text = super().decode(
-            token_ids,
-            skip_special_tokens=skip_special_tokens,
-            **kwargs
-        )
+        text = super().decode(token_ids, skip_special_tokens=skip_special_tokens, **kwargs)
         if decode_with_timestamps:
             text = [
                 self._decode_with_timestamps(
@@ -391,7 +387,7 @@ class WhisperBPETokenizer(BPETokenizer):
         has_prompt = isinstance(token_ids, list) and token_ids and token_ids[0] == prompt_token_id
         if has_prompt:
             if decoder_start_token_id in token_ids:
-                return token_ids[token_ids.index(decoder_start_token_id):]
+                return token_ids[token_ids.index(decoder_start_token_id) :]
             else:
                 return []
 

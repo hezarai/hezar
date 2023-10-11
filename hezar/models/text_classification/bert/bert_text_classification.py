@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A BERT model for text classification built using HuggingFace Transformers
 """
@@ -10,7 +11,6 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
 from .bert_text_classification_config import BertTextClassificationConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
@@ -29,19 +29,21 @@ class BertTextClassification(Model):
     Args:
         config: The whole model config including arguments needed for the inner 🤗Transformers model.
     """
+
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = [
         "model.embeddings.position_ids",  # For older versions
         "bert.embeddings.position_ids",
-        "model.bert.embeddings.position_ids"
+        "model.bert.embeddings.position_ids",
     ]
 
     def __init__(self, config: BertTextClassificationConfig, **kwargs):
         super().__init__(config, **kwargs)
         self.bert = BertModel(self._build_inner_config())
         classifier_dropout = (
-            self.config.classifier_dropout if self.config.classifier_dropout is not None
+            self.config.classifier_dropout
+            if self.config.classifier_dropout is not None
             else self.config.hidden_dropout_prob
         )
         self.dropout = nn.Dropout(classifier_dropout)
@@ -71,7 +73,6 @@ class BertTextClassification(Model):
         output_hidden_states=None,
         **kwargs,
     ) -> Dict:
-
         lm_outputs = self.bert(
             token_ids,
             attention_mask=attention_mask,
