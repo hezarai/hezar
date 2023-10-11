@@ -12,14 +12,9 @@ from ...model_outputs import Image2TextOutput
 from .trocr_image2text_config import TrOCRImage2TextConfig
 
 if is_backend_available(Backends.TRANSFORMERS):
-    from transformers import (
-        GenerationConfig,
-        RobertaConfig,
-        RobertaForCausalLM,
-        VisionEncoderDecoderModel,
-        ViTConfig,
-        ViTModel,
-    )
+    from transformers import (GenerationConfig, RobertaConfig,
+                              RobertaForCausalLM, VisionEncoderDecoderModel,
+                              ViTConfig, ViTModel)
 
 if is_backend_available(Backends.PILLOW):
     from PIL import Image

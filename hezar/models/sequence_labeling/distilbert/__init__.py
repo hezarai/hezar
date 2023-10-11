@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
 from .distilbert_sequence_labeling import DistilBertSequenceLabeling
-from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfig
+from .distilbert_sequence_labeling_config import \
+    DistilBertSequenceLabelingConfig

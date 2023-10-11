@@ -11,7 +11,8 @@ from huggingface_hub import create_repo, hf_hub_download, upload_file
 
 from ...builders import build_preprocessor
 from ...configs import PreprocessorConfig
-from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR, Backends
+from ...constants import (DEFAULT_TOKENIZER_CONFIG_FILE,
+                          DEFAULT_TOKENIZER_FILE, HEZAR_CACHE_DIR, Backends)
 from ...utils import Logger, convert_batch_dict_dtype, is_backend_available
 from ..preprocessor import Preprocessor
 

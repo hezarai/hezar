@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-from hezar import (
-    BertSequenceLabeling,
-    BertSequenceLabelingConfig,
-    Dataset,
-    Preprocessor,
-    SequenceLabelingTrainer,
-    TrainerConfig,
-)
+from hezar import (BertSequenceLabeling, BertSequenceLabelingConfig, Dataset,
+                   Preprocessor, SequenceLabelingTrainer, TrainerConfig)
 
 base_model_path = "hezarai/bert-base-fa"
 

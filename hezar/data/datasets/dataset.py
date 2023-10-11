@@ -6,7 +6,8 @@ from torch.utils.data import Dataset as TorchDataset
 
 from ...builders import build_dataset
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR, RepoType, SplitType
+from ...constants import (DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR,
+                          RepoType, SplitType)
 
 
 class Dataset(TorchDataset):

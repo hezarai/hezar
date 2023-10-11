@@ -12,14 +12,11 @@ from tqdm import tqdm
 
 from ..builders import build_metric
 from ..configs import MetricConfig, TrainerConfig
-from ..constants import (
-    DEFAULT_DATASET_CONFIG_FILE,
-    DEFAULT_TRAINER_CONFIG_FILE,
-    DEFAULT_TRAINER_CSV_LOG_FILE,
-    DEFAULT_TRAINER_SUBFOLDER,
-    HEZAR_CACHE_DIR,
-    TQDM_BAR_FORMAT,
-)
+from ..constants import (DEFAULT_DATASET_CONFIG_FILE,
+                         DEFAULT_TRAINER_CONFIG_FILE,
+                         DEFAULT_TRAINER_CSV_LOG_FILE,
+                         DEFAULT_TRAINER_SUBFOLDER, HEZAR_CACHE_DIR,
+                         TQDM_BAR_FORMAT)
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer

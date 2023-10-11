@@ -10,7 +10,8 @@ from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
-from .distilbert_sequence_labeling_config import DistilBertSequenceLabelingConfig
+from .distilbert_sequence_labeling_config import \
+    DistilBertSequenceLabelingConfig
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel

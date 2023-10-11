@@ -20,7 +20,8 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR, Backends
+from ..constants import (DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE,
+                         HEZAR_CACHE_DIR, Backends)
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, verify_dependencies
 from .model_outputs import ModelOutput

@@ -7,13 +7,9 @@ from huggingface_hub import HfApi, hf_hub_download
 
 from ..builders import build_embedding
 from ..configs import EmbeddingConfig
-from ..constants import (
-    DEFAULT_EMBEDDING_CONFIG_FILE,
-    DEFAULT_EMBEDDING_FILE,
-    DEFAULT_EMBEDDING_SUBFOLDER,
-    HEZAR_CACHE_DIR,
-    Backends,
-)
+from ..constants import (DEFAULT_EMBEDDING_CONFIG_FILE, DEFAULT_EMBEDDING_FILE,
+                         DEFAULT_EMBEDDING_SUBFOLDER, HEZAR_CACHE_DIR,
+                         Backends)
 from ..utils import Logger, get_lib_version, verify_dependencies
 
 logger = Logger(__name__)

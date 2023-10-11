@@ -12,14 +12,9 @@ from ...model_outputs import Image2TextOutput
 from .beit_roberta_image2text_config import BeitRobertaImage2TextConfig
 
 if is_backend_available(Backends.TRANSFORMERS):
-    from transformers import (
-        BeitConfig,
-        BeitModel,
-        GenerationConfig,
-        RobertaConfig,
-        RobertaForCausalLM,
-        VisionEncoderDecoderModel,
-    )
+    from transformers import (BeitConfig, BeitModel, GenerationConfig,
+                              RobertaConfig, RobertaForCausalLM,
+                              VisionEncoderDecoderModel)
 
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
