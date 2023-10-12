@@ -12,12 +12,21 @@ Examples:
 """
 from typing import Optional
 
-from .configs import (DatasetConfig, EmbeddingConfig, MetricConfig,
-                      ModelConfig, PreprocessorConfig)
+from .configs import (
+    DatasetConfig,
+    EmbeddingConfig,
+    MetricConfig,
+    ModelConfig,
+    PreprocessorConfig,
+)
 from .constants import SplitType
-from .registry import (datasets_registry, embeddings_registry,
-                       metrics_registry, models_registry,
-                       preprocessors_registry)
+from .registry import (
+    datasets_registry,
+    embeddings_registry,
+    metrics_registry,
+    models_registry,
+    preprocessors_registry,
+)
 from .utils import snake_case
 
 __all__ = ["build_model", "build_dataset", "build_preprocessor", "build_embedding", "build_metric"]

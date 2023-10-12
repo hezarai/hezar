@@ -1,10 +1,13 @@
-from hezar.preprocessors.tokenizers import (BPEConfig, BPETokenizer,
-                                            SentencePieceBPEConfig,
-                                            SentencePieceBPETokenizer,
-                                            SentencePieceUnigramConfig,
-                                            SentencePieceUnigramTokenizer,
-                                            WordPieceConfig,
-                                            WordPieceTokenizer)
+from hezar.preprocessors.tokenizers import (
+    BPEConfig,
+    BPETokenizer,
+    SentencePieceBPEConfig,
+    SentencePieceBPETokenizer,
+    SentencePieceUnigramConfig,
+    SentencePieceUnigramTokenizer,
+    WordPieceConfig,
+    WordPieceTokenizer,
+)
 
 data = [
     "Beautiful is better than ugly."

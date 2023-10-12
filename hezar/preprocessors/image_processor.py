@@ -5,13 +5,24 @@ import numpy as np
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import (DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE,
-                         DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, ImageType)
+from ..constants import (
+    DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE,
+    DEFAULT_PREPROCESSOR_SUBFOLDER,
+    Backends,
+    ImageType,
+)
 from ..registry import register_preprocessor
-from ..utils import (convert_batch_dict_dtype, convert_image_type,
-                     gray_scale_image, load_image, mirror_image,
-                     normalize_image, rescale_image, resize_image,
-                     transpose_channels_axis_side)
+from ..utils import (
+    convert_batch_dict_dtype,
+    convert_image_type,
+    gray_scale_image,
+    load_image,
+    mirror_image,
+    normalize_image,
+    rescale_image,
+    resize_image,
+    transpose_channels_axis_side,
+)
 from .preprocessor import Preprocessor
 
 _required_backends = [

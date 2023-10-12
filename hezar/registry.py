@@ -27,8 +27,14 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
 
-from .configs import (DatasetConfig, EmbeddingConfig, MetricConfig,
-                      ModelConfig, PreprocessorConfig, TrainerConfig)
+from .configs import (
+    DatasetConfig,
+    EmbeddingConfig,
+    MetricConfig,
+    ModelConfig,
+    PreprocessorConfig,
+    TrainerConfig,
+)
 from .utils import Logger
 
 __all__ = [

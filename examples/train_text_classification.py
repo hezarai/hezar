@@ -1,6 +1,11 @@
-from hezar import (BertTextClassification, BertTextClassificationConfig,
-                   Dataset, Preprocessor, TextClassificationTrainer,
-                   TrainerConfig)
+from hezar import (
+    BertTextClassification,
+    BertTextClassificationConfig,
+    Dataset,
+    Preprocessor,
+    TextClassificationTrainer,
+    TrainerConfig,
+)
 
 dataset_path = "hezarai/sentiment-dksf"
 base_model_path = "hezarai/bert-base-fa"

@@ -1,2 +1,6 @@
-from .audio import (AudioFeatureExtractor, AudioFeatureExtractorConfig,
-                    WhisperFeatureExtractor, WhisperFeatureExtractorConfig)
+from .audio import (
+    AudioFeatureExtractor,
+    AudioFeatureExtractorConfig,
+    WhisperFeatureExtractor,
+    WhisperFeatureExtractorConfig,
+)

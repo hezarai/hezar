@@ -1,5 +1,10 @@
-from hezar import (Dataset, Preprocessor, SequenceLabelingTrainer,
-                   TrainerConfig, build_model)
+from hezar import (
+    Dataset,
+    Preprocessor,
+    SequenceLabelingTrainer,
+    TrainerConfig,
+    build_model,
+)
 
 name = "roberta_sequence_labeling"
 lm_path = "hezarai/roberta-base-fa"

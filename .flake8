@@ -1,3 +1,9 @@
 [flake8]
+ignore=C901,E501,E741,W605,F403,F405,W503,E203
+per-file-ignores=
+    __init__.py: E402,F401,F403,F811,I001
+    *example*.py: F401,F841,I001
+    *test*.py: F401, F841
+select = B,C,E,F,W
+lines-after-imports=2
 max-line-length=120
-per-file-ignores=__init__.py:F401,F403

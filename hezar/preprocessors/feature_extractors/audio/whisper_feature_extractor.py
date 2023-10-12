@@ -5,10 +5,14 @@ import numpy as np
 import torch
 
 from ....registry import register_preprocessor
-from ....utils import (Logger, convert_batch_dict_dtype, mel_filter_bank,
-                       spectrogram, window_function)
-from .audio_feature_extractor import (AudioFeatureExtractor,
-                                      AudioFeatureExtractorConfig)
+from ....utils import (
+    Logger,
+    convert_batch_dict_dtype,
+    mel_filter_bank,
+    spectrogram,
+    window_function,
+)
+from .audio_feature_extractor import AudioFeatureExtractor, AudioFeatureExtractorConfig
 
 logger = Logger(__name__)
 
