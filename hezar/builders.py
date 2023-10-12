@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Builder functions are used to create an instance of a module e.g, models, preprocessors, etc. without having to import
 their corresponding classes manually. These builders use modules' registries to do so. Every builder gets a name and

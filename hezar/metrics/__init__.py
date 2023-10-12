@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .accuracy import Accuracy, AccuracyConfig
 from .bleu import BLEU, BLEUConfig
 from .cer import CER, CERConfig

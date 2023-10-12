@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from torch.utils.data import DataLoader
 
 from hezar.data.datasets import Dataset

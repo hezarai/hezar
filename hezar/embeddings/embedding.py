@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import tempfile
 from typing import Dict, List, Union

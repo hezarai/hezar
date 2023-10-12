@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .bpe import BPEConfig, BPETokenizer
 from .sentencepiece_bpe import (SentencePieceBPEConfig,
                                 SentencePieceBPETokenizer)

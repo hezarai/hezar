@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import Logger, Model
 from hezar.constants import TaskType
 

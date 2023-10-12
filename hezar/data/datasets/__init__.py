@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .dataset import Dataset
 from .sequence_labeling_dataset import (SequenceLabelingDataset,
                                         SequenceLabelingDatasetConfig)

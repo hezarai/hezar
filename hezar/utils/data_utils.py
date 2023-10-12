@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Any, Dict
 
 from .logging import Logger

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Dict, List, Union
 
 from ..configs import MetricConfig

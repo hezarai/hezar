@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """

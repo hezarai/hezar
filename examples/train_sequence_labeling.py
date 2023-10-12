@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import (BertSequenceLabeling, BertSequenceLabelingConfig, Dataset,
                    Preprocessor, SequenceLabelingTrainer, TrainerConfig)
 

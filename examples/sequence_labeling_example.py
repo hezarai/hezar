@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import Model
 
 hub_path = "hezarai/bert-fa-pos-lscp-500k"

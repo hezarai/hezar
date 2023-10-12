@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hezar uses a registry system in a way that for any core module like model, dataset, etc. there is an entry in its
 specific registry. These registries are simple python dictionaries that map a module's name to its class and its config

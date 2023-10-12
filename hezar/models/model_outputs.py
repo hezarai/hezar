@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Define all model outputs here
 """

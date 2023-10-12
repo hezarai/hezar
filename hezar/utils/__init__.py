@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .audio_utils import *
 from .common_utils import *
 from .context_managers import *

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from torch import nn
 
 from ....registry import register_model

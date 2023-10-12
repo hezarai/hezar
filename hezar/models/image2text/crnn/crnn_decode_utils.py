@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 
@@ -6,12 +5,12 @@ def _reconstruct(labels, blank=0):
     new_labels = []
     # merge same labels
     previous = None
-    for l in labels:
-        if l != previous:
-            new_labels.append(l)
-            previous = l
+    for label in labels:
+        if label != previous:
+            new_labels.append(label)
+            previous = label
     # delete blank
-    new_labels = [l for l in new_labels if l != blank]
+    new_labels = [label for label in new_labels if label != blank]
 
     return new_labels
 
@@ -29,6 +28,6 @@ def ctc_decode(log_probs, id2label=None, blank=0):
     for emission_log_prob in emission_log_probs:
         decoded = greedy_decode(emission_log_prob, blank=blank)
         if id2label:
-            decoded = [id2label[l] for l in decoded]
+            decoded = [id2label[label] for label in decoded]
         decoded_list.append(decoded)
     return decoded_list

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from dataclasses import dataclass, field
 from typing import List
 
@@ -387,7 +386,7 @@ class WhisperBPETokenizer(BPETokenizer):
         has_prompt = isinstance(token_ids, list) and token_ids and token_ids[0] == prompt_token_id
         if has_prompt:
             if decoder_start_token_id in token_ids:
-                return token_ids[token_ids.index(decoder_start_token_id) :]
+                return token_ids[token_ids.index(decoder_start_token_id):]
             else:
                 return []
 
@@ -699,7 +698,8 @@ class WhisperBPETokenizer(BPETokenizer):
                 # We can only match subsequences of the same size.
                 if len(left) != len(right):
                     raise RuntimeError(
-                        "There is a bug within whisper `decode_asr` function, please report it. Dropping to prevent bad inference."
+                        "There is a bug within whisper `decode_asr` function, please report it. "
+                        "Dropping to prevent bad inference."
                     )
 
                 matches = np.sum(left == right)

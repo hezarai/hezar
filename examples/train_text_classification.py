@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import (BertTextClassification, BertTextClassificationConfig,
                    Dataset, Preprocessor, TextClassificationTrainer,
                    TrainerConfig)

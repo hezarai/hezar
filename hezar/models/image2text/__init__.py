@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .beit_roberta import BeitRobertaImage2Text, BeitRobertaImage2TextConfig
 from .crnn import CRNNImage2Text, CRNNImage2TextConfig
 from .trocr import TrOCRImage2Text, TrOCRImage2TextConfig

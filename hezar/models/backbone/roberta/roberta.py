@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 RoBERTa base language model (HuggingFace Transformers) wrapped by a Hezar Model class
 """

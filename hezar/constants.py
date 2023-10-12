@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Home to all constant variables in Hezar
 """

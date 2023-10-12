@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ..constants import RegistryType
 from .common_utils import snake_case
 

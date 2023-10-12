@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import Embedding, Logger
 
 embedding_to_example_repo = {

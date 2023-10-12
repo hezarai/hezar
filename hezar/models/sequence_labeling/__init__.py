@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .bert import BertSequenceLabeling, BertSequenceLabelingConfig
 from .distilbert import (DistilBertSequenceLabeling,
                          DistilBertSequenceLabelingConfig)

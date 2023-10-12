@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Configs are at the core of Hezar. All core modules like `Model`, `Preprocessor`, `Trainer`, etc. take their parameters
 as a config container which is an instance of `Config` or its derivatives. A `Config` is a Python dataclass with

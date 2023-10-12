@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from re import sub
 from typing import Dict, List
 

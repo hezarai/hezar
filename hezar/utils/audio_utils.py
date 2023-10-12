@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Common audio utils taken from `transformers.audio_utils`
 """
@@ -182,7 +181,7 @@ def spectrogram(
 
     timestep = 0
     for frame_idx in range(num_frames):
-        buffer[:frame_length] = waveform[timestep : timestep + frame_length]
+        buffer[:frame_length] = waveform[timestep:timestep + frame_length]
 
         if preemphasis is not None:
             buffer[1:frame_length] -= preemphasis * buffer[: frame_length - 1]
@@ -376,7 +375,7 @@ def window_function(
 
     padded_window = np.zeros(frame_length)
     offset = (frame_length - window_length) // 2 if center else 0
-    padded_window[offset : offset + window_length] = window
+    padded_window[offset:offset + window_length] = window
     return padded_window
 
 
@@ -445,7 +444,7 @@ def mel_filter_bank(
 
     if norm is not None and norm == "slaney":
         # Slaney-style mel is scaled to be approx constant energy per channel
-        enorm = 2.0 / (filter_freqs[2 : num_mel_filters + 2] - filter_freqs[:num_mel_filters])
+        enorm = 2.0 / (filter_freqs[2:num_mel_filters + 2] - filter_freqs[:num_mel_filters])
         mel_filters *= np.expand_dims(enorm, 0)
 
     if (mel_filters.max(axis=0) == 0.0).any():

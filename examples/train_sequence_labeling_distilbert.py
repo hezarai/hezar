@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import (Dataset, Preprocessor, SequenceLabelingTrainer,
                    TrainerConfig, build_model)
 

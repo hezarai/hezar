@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 A DistilBERT base language model (HuggingFace Transformers) wrapped by a Hezar Model class
 """

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import Tokenizer
 
 tokenizer = Tokenizer.load(hub_or_local_path="hezarai/roberta-base-fa")

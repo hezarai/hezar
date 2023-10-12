@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Hezar models inherit the base class `Model`. A `Model` itself is a PyTorch Module to implement neural networks but has
 some extra Hezar-specific functionalities and methods e.g, pushing to hub, loading from hub, etc.

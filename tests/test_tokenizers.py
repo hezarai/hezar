@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from hezar import Logger, Tokenizer
 
 tokenizer_to_example_repo = {

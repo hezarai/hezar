@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 
 from datasets import load_dataset
