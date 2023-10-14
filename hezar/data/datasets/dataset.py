@@ -1,11 +1,12 @@
 import os
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 from torch.utils.data import Dataset as TorchDataset
 
 from ...builders import build_dataset
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR, RepoType, SplitType
+from ...constants import DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR, RepoType, SplitType, Backends
+from ...utils import verify_dependencies
 
 
 class Dataset(TorchDataset):
@@ -16,10 +17,12 @@ class Dataset(TorchDataset):
         config:
         **kwargs:
     """
+    required_backends: List[Union[str, Backends]] = None
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = HEZAR_CACHE_DIR
 
     def __init__(self, config: DatasetConfig, **kwargs):
+        verify_dependencies(self, self.required_backends)
         self.config = config.update(kwargs)
         self.preprocessor = None
         self.data_collator = None
