@@ -511,7 +511,11 @@ class Trainer:
             commit_message=commit_message,
         )
         self.train_dataset.config.push_to_hub(
-            repo_id, filename=dataset_config_file, subfolder=subfolder, private=private, commit_message=commit_message
+            repo_id,
+            filename=dataset_config_file,
+            subfolder=subfolder,
+            private=private,
+            commit_message=commit_message
         )
 
         # upload model

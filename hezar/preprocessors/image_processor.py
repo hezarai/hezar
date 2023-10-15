@@ -180,7 +180,14 @@ class ImageProcessor(Preprocessor):
 
         self.config.save(path, subfolder=subfolder, filename=config_filename)
 
-    def push_to_hub(self, repo_id, subfolder=None, commit_message=None, private=None, config_filename=None):
+    def push_to_hub(
+        self,
+        repo_id,
+        subfolder=None,
+        commit_message=None,
+        private=None,
+        config_filename=None
+    ):
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.image_processor_config_file
 

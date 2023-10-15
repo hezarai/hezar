@@ -83,7 +83,13 @@ class TextNormalizer(Preprocessor):
         return inputs
 
     @classmethod
-    def load(cls, hub_or_local_path, subfolder=None, config_filename=None, **kwargs) -> "TextNormalizer":
+    def load(
+        cls,
+        hub_or_local_path,
+        subfolder=None,
+        config_filename=None,
+        **kwargs
+    ) -> "TextNormalizer":
         config_filename = config_filename or cls.normalizer_config_file
         subfolder = subfolder or cls.preprocessor_subfolder
         config = TextNormalizerConfig.load(
