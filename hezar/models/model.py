@@ -267,6 +267,19 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
+    def compute_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """
+        Compute loss on the model outputs against the given labels
+
+        Args:
+            inputs: Input tensor to compute loss on
+            targets: Target tensor
+
+        Returns:
+            Loss tensor
+        """
+        raise NotImplementedError
+
     def generate(self, *model_inputs, **kwargs):
         """
         Generation method for all generative models. Generative models have the `is_generative` attribute set to True.

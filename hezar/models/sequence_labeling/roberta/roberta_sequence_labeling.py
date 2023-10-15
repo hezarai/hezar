@@ -3,6 +3,7 @@ A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model cla
 """
 from typing import List, Union
 
+import torch
 from torch import nn, tanh
 
 from ....constants import Backends
@@ -81,6 +82,11 @@ class RobertaSequenceLabeling(Model):
             "tokens": kwargs.get("tokens", None),
         }
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        criterion = nn.CrossEntropyLoss()
+        loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
+        return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):

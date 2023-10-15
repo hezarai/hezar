@@ -63,6 +63,11 @@ class BertLM(Model):
 
         return outputs
 
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        criterion = torch.nn.CrossEntropyLoss()
+        loss = criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        return loss
+
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
@@ -85,9 +90,7 @@ class BertLM(Model):
         filled_token_ids = token_ids.cpu().numpy().copy()
         fill_tokens = []
         for batch_i, logits in enumerate(output_logits):
-            masked_index = torch.nonzero(
-                token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False
-            ).flatten()  # noqa
+            masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten()  # noqa
             if len(masked_index) > 1:
                 raise ValueError(
                     f"Can't handle multiple `{tokenizer.mask_token}` tokens in the input for {self.__class__.__name__}!"

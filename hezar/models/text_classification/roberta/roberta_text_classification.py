@@ -3,6 +3,7 @@ A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model cla
 """
 from typing import Dict, List, Union
 
+import torch
 from torch import nn, tanh
 
 from ....constants import Backends
@@ -80,6 +81,11 @@ class RobertaTextClassification(Model):
             "attentions": lm_outputs.attentions,
         }
         return outputs
+
+    def compute_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        criterion = nn.CrossEntropyLoss()
+        loss = criterion(inputs.view(-1, self.config.num_labels), targets.view(-1))
+        return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):

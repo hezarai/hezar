@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 
 from ....registry import register_model
@@ -52,6 +53,20 @@ class CRNNImage2Text(Model):
         x = self.classifier(x)
         x = nn.functional.log_softmax(x, 2)
         return x
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, labels_lengths: torch.Tensor = None):
+        if labels_lengths is None:
+            raise ValueError(f"CRNN requires `labels_lengths` to compute loss!")
+
+        criterion = nn.CTCLoss(reduction="sum")
+
+        labels_lengths = torch.flatten(labels_lengths)
+        batch_size = logits.size(1)
+        input_lengths = torch.LongTensor([logits.size(0) * batch_size])
+
+        loss = criterion(logits, labels, input_lengths, labels_lengths) / batch_size
+
+        return loss
 
     def generate(self, pixel_values, **kwargs):
         logits = self(pixel_values)

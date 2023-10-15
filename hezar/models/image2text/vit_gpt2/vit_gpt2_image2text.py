@@ -52,7 +52,6 @@ class ViTGPT2Image2Text(Model):
         encoder_outputs=None,
         past_key_values=None,
         decoder_inputs_embeds=None,
-        labels=None,
         use_cache=None,
         output_attentions=None,
         output_hidden_states=None,
@@ -65,13 +64,17 @@ class ViTGPT2Image2Text(Model):
             encoder_outputs=encoder_outputs,
             past_key_values=past_key_values,
             decoder_inputs_embeds=decoder_inputs_embeds,
-            labels=labels,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        criterion = torch.nn.CrossEntropyLoss()
+        loss = criterion(logits.reshape(-1, self.vit_gpt2.decoder.config.vocab_size), labels.reshape(-1))
+        return loss
 
     def generate(self, pixel_values, generation_config=None, **kwargs):
         if generation_config is None:

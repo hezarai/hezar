@@ -3,6 +3,7 @@ A DistilBERT model for text classification built using HuggingFace Transformers
 """
 from typing import Dict, List, Union
 
+import torch
 from torch import nn
 
 from ....constants import Backends
@@ -80,6 +81,11 @@ class DistilBertTextClassification(Model):
             "attentions": lm_outputs.attentions,
         }
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        criterion = nn.CrossEntropyLoss()
+        loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
+        return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
