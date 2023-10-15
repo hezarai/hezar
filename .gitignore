@@ -139,3 +139,4 @@ misc/
 runs/
 checkpoints/
 data/
+logs/
