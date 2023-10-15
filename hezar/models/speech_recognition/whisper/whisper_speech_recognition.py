@@ -66,6 +66,7 @@ class WhisperSpeechRecognition(Model):
             encoder_outputs=encoder_outputs,
             past_key_values=past_key_values,
             decoder_inputs_embeds=decoder_inputs_embeds,
+            labels=None,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,

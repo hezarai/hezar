@@ -55,6 +55,7 @@ class RobertaLM(Model):
             inputs_embeds=inputs_embeds,
             encoder_hidden_states=encoder_hidden_states,
             encoder_attention_mask=encoder_attention_mask,
+            labels=None,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
