@@ -25,8 +25,9 @@ REQUIRED_NUMPY_VERSION = "1.24"
 
 # Check if the right combo of gensim/numpy versions are installed
 def _verify_gensim_installation():
-    if not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION) or not get_lib_version("gensim").startswith(
-        REQUIRED_GENSIM_VERSION
+    if (
+        not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION)
+        or not get_lib_version("gensim").startswith(REQUIRED_GENSIM_VERSION)
     ):
         raise ImportError(
             f"The required Gensim version for this version of Hezar is currently {REQUIRED_GENSIM_VERSION} "
