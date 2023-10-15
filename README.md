@@ -1,12 +1,10 @@
 
-![](hezar.png)
+![Hezar Logo](hezar.png)
 
 _<p align="center"> The all-in-one AI library for Persian_
 <br>
-[![Documentation Status](https://github.com/hezarai/hezar/actions/workflows/docs-deploy.yml/badge.svg)](https://hezarai.github.io/hezar/index.html)
 [![PyPI version](https://badge.fury.io/py/hezar.svg)](https://pypi.org/project/hezar/)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
-[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![Documentation Status](https://github.com/hezarai/hezar/actions/workflows/docs-deploy.yml/badge.svg)](https://hezarai.github.io/hezar/index.html)
 </p>
 
 **Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
@@ -23,12 +21,12 @@ Hezar is a library that:
 
 ## Installation
 Hezar is available on PyPI and can be installed with pip:
-```commandline
+```
 pip install hezar
 ```
 You can also install the latest version from the source.
 Clone the repo and execute the following commands:
-```commandline
+```
 git clone https://github.com/hezarai/hezar.git
 pip install ./hezar
 ```
@@ -58,7 +56,7 @@ model = Model.load("hezarai/bert-fa-sentiment-dksf")
 outputs = model.predict(example)
 print(outputs)
 ```
-```commandline
+```
 {'labels': ['positive'], 'probs': [0.812910258769989]}
 ```
 - **Sequence Labeling (POS, NER, etc.)**
@@ -73,7 +71,7 @@ ner_outputs = ner_model.predict(inputs)
 print(f"POS: {pos_outputs}")
 print(f"NER: {ner_outputs}")
 ```
-```commandline
+```
 POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
@@ -97,7 +95,7 @@ whisper = Model.load("hezarai/whisper-small-fa")
 transcripts = whisper.predict("examples/assets/speech_example.mp3")
 print(transcripts)
 ```
-```commandline
+```
 {'transcripts': ['و این تنها محدود به محیط کار نیست']}
 ```
 - **Image to Text (OCR)**
@@ -139,7 +137,7 @@ fasttext = Embedding.load("hezarai/fasttext-fa-300")
 most_similar = fasttext.most_similar("هزار")
 print(most_similar)
 ```
-```commandline
+```
 [{'score': 0.7579, 'word': 'میلیون'},
  {'score': 0.6943, 'word': '21هزار'},
  {'score': 0.6861, 'word': 'میلیارد'},
@@ -154,7 +152,7 @@ word2vec = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")
 most_similar = word2vec.most_similar("هزار")
 print(most_similar)
 ```
-```commandline
+```
 [{'score': 0.7885, 'word': 'چهارهزار'},
  {'score': 0.7788, 'word': '۱۰هزار'},
  {'score': 0.7727, 'word': 'دویست'},
@@ -169,7 +167,7 @@ word2vec = Embedding.load("hezarai/word2vec-cbow-fa-wikipedia")
 most_similar = word2vec.most_similar("هزار")
 print(most_similar)
 ```
-```commandline
+```
 [{'score': 0.7407, 'word': 'دویست'},
  {'score': 0.7400, 'word': 'میلیون'},
  {'score': 0.7326, 'word': 'صد'},
