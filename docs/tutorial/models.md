@@ -1,5 +1,5 @@
 # Models
-In Hezar, models are the typical PyTorch modules with some extra features for loading, saving, exporting, etc. 
+In Hezar, models are the typical PyTorch modules with some extra features for loading, saving, exporting, etc.
 Let's dive into some of the most important ones!
 
 ## Models Basics
@@ -30,11 +30,11 @@ The `load` methods takes the following steps to build the model:
 1. Load the config file `model_config.yaml` and figure out the model's class using the `name` config parameter. (`bert_lm` in this snippet)
 2. Build the model with random weights from the corresponding class. (`BertLM` in this snippet)
 3. Download the weights file (`model.pt`) and load the state dict into to the model.
-4. If the path contains any preprocessor, the preprocessor (`WordPieceTokenizer` in this snippet) will be loaded too. 
+4. If the path contains any preprocessor, the preprocessor (`WordPieceTokenizer` in this snippet) will be loaded too.
 (You can disable loading preprocessors by setting `Model.load(path, load_preprocessor=False)`)
 
 ### Inference & Prediction
-Now that you have loaded a model along with its preprocessors, feature extractors, etc. you can perform an end-to-end 
+Now that you have loaded a model along with its preprocessors, feature extractors, etc. you can perform an end-to-end
 inference in a single line of code using `Model.predict` method.
 
 A sequence labeling example would be like this:
@@ -113,8 +113,8 @@ class Perceptron(Model):
         return model_outputs.numpy()
 
 ```
-The only point here is that you have to pass a `ModelConfig` to your model and read everything from the config and the 
-rest is just typical PyTorch stuff. 
+The only point here is that you have to pass a `ModelConfig` to your model and read everything from the config and the
+rest is just typical PyTorch stuff.
 
 Now you have access to all the features of a Hezar model.
 ```python

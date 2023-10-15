@@ -1,12 +1,12 @@
 from hezar.preprocessors.tokenizers import (
     BPEConfig,
     BPETokenizer,
-    WordPieceConfig,
-    WordPieceTokenizer,
     SentencePieceBPEConfig,
     SentencePieceBPETokenizer,
     SentencePieceUnigramConfig,
     SentencePieceUnigramTokenizer,
+    WordPieceConfig,
+    WordPieceTokenizer,
 )
 
 

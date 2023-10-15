@@ -28,6 +28,7 @@ class SequenceLabelingTrainer(Trainer):
         lr_scheduler: Optional learning-rate scheduler
 
     """
+
     AVAILABLE_METRICS = [MetricType.SEQEVAL]
 
     def __init__(

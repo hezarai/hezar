@@ -1,3 +1,3 @@
-from .bert import BertSequenceLabelingConfig, BertSequenceLabeling
-from .distilbert import DistilBertSequenceLabelingConfig, DistilBertSequenceLabeling
-from .roberta import RobertaSequenceLabelingConfig, RobertaSequenceLabeling
+from .bert import BertSequenceLabeling, BertSequenceLabelingConfig
+from .distilbert import DistilBertSequenceLabeling, DistilBertSequenceLabelingConfig
+from .roberta import RobertaSequenceLabeling, RobertaSequenceLabelingConfig

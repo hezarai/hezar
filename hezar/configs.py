@@ -16,8 +16,8 @@ import os
 import tempfile
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
 from pprint import pformat
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -62,6 +62,7 @@ class Config:
     also some Hezar specific methods: `load`, `save` and `push_to_hub`.
 
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.BASE)
 
@@ -276,10 +277,7 @@ class Config:
             repo_type=repo_type,
             commit_message=commit_message,
         )
-        logger.log_upload_success(
-            name=f"{self.__class__.__name__}()",
-            target_path=os.path.join(repo_id, path_in_repo)
-        )
+        logger.log_upload_success(name=f"{self.__class__.__name__}()", target_path=os.path.join(repo_id, path_in_repo))
 
 
 @dataclass
@@ -287,6 +285,7 @@ class ModelConfig(Config):
     """
     Base dataclass for all model configs
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.MODEL)
 
@@ -296,6 +295,7 @@ class PreprocessorConfig(Config):
     """
     Base dataclass for all preprocessor configs
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.PREPROCESSOR)
 
@@ -305,6 +305,7 @@ class DatasetConfig(Config):
     """
     Base dataclass for all dataset configs
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.DATASET)
     task: Union[TaskType, List[TaskType]] = field(
@@ -317,6 +318,7 @@ class EmbeddingConfig(Config):
     """
     Base dataclass for all embedding configs
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.EMBEDDING)
 
@@ -326,6 +328,7 @@ class CriterionConfig(Config):
     """
     Base dataclass for all criterion configs
     """
+
     name: str = field(default=None)
     config_type: str = field(init=False, default=ConfigType.CRITERION)
     weight: Optional[torch.Tensor] = None
@@ -338,6 +341,7 @@ class MetricConfig(Config):
     """
     Base dataclass config for all metric configs
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.METRIC)
     output_keys: Union[List, Tuple] = None
@@ -349,6 +353,7 @@ class TrainerConfig(Config):
     """
     Base dataclass for all trainer configs
     """
+
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.TRAINER)
     task: TaskType = None
@@ -359,7 +364,7 @@ class TrainerConfig(Config):
     seed: int = 42
     optimizer: str = None
     learning_rate: float = 2e-5
-    weight_decay: float = .0
+    weight_decay: float = 0.0
     scheduler: str = None
     batch_size: int = None
     use_amp: bool = False

@@ -23,10 +23,7 @@ _required_backends = [
 class BERT(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
-    skip_keys_on_load = [
-        "model.embeddings.position_ids",  # For older versions
-        "bert.embeddings.position_ids"
-    ]
+    skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

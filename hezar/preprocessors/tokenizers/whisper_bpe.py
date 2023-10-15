@@ -291,11 +291,7 @@ class WhisperBPETokenizer(BPETokenizer):
         """
         Override decode method to enable timestamps and offsets.
         """
-        text = super().decode(
-            token_ids,
-            skip_special_tokens=skip_special_tokens,
-            **kwargs
-        )
+        text = super().decode(token_ids, skip_special_tokens=skip_special_tokens, **kwargs)
         if decode_with_timestamps:
             text = [
                 self._decode_with_timestamps(
@@ -703,7 +699,8 @@ class WhisperBPETokenizer(BPETokenizer):
                 # We can only match subsequences of the same size.
                 if len(left) != len(right):
                     raise RuntimeError(
-                        "There is a bug within whisper `decode_asr` function, please report it. Dropping to prevent bad inference."
+                        "There is a bug within whisper `decode_asr` function, please report it. "
+                        "Dropping to prevent bad inference."
                     )
 
                 matches = np.sum(left == right)

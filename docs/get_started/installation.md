@@ -1,14 +1,14 @@
 # Installation
 
 ## Install from PyPi
-Installing Hezar is as easy as any other Python library! Most of the requirements are cross-platform and installing 
+Installing Hezar is as easy as any other Python library! Most of the requirements are cross-platform and installing
 them on any machine is a piece of cake!
 
 ```
 pip install hezar
 ```
 ### Installation variations
-Hezar is packed with a lot of tools that are dependent on other packages. Most of the 
+Hezar is packed with a lot of tools that are dependent on other packages. Most of the
 time you might not want everything to be installed, hence, providing multiple variations of
 Hezar so that the installation is light and fast for general use.
 

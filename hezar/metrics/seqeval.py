@@ -80,5 +80,3 @@ class Seqeval(Metric):
             results = {k: v for k, v in results.items() if k in output_keys}
 
         return results
-
-

@@ -46,9 +46,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
                     ```
                     """
                     "pos_tags": datasets.Sequence(  # USE `pos_tags`, `ner_tags`, `chunk_tags`, etc.
-                        datasets.features.ClassLabel(
-                            names=["YOU SHOULD PUT THE UNIQUE TAGS LIST HERE"]  # TODO
-                        )
+                        datasets.features.ClassLabel(names=["YOU SHOULD PUT THE UNIQUE TAGS LIST HERE"])  # TODO
                     ),
                 }
             ),
@@ -65,12 +63,8 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         test_path = dl_manager.download_and_extract(_DOWNLOAD_URLS["test"])
 
         return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN, gen_kwargs={"filepath": train_path}
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST, gen_kwargs={"filepath": test_path}
-            ),
+            datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": train_path}),
+            datasets.SplitGenerator(name=datasets.Split.TEST, gen_kwargs={"filepath": test_path}),
         ]
 
     # TODO
@@ -85,9 +79,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         """
         logger.info("⏳ Generating examples from = %s", filepath)
         with open(filepath, encoding="utf-8") as csv_file:
-            csv_reader = csv.reader(
-                csv_file, quotechar='"', skipinitialspace=True
-            )
+            csv_reader = csv.reader(csv_file, quotechar='"', skipinitialspace=True)
 
             # Uncomment below line to skip the first row if your csv file has a header row
             # next(csv_reader, None)

@@ -9,10 +9,7 @@ __all__ = [
 
 
 def snake_case(s):
-    return '_'.join(
-        sub('([A-Z][a-z]+)', r' \1',
-            sub('([A-Z]+)', r' \1',
-                s.replace('-', ' '))).split()).lower()
+    return "_".join(sub("([A-Z][a-z]+)", r" \1", sub("([A-Z]+)", r" \1", s.replace("-", " "))).split()).lower()
 
 
 def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:

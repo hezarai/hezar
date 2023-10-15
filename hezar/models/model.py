@@ -11,7 +11,7 @@ import inspect
 import os
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, List, Mapping, Optional, Union, Iterable
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -19,7 +19,12 @@ from torch import nn
 
 from ..builders import build_model
 from ..configs import ModelConfig
-from ..constants import DEFAULT_MODEL_CONFIG_FILE, DEFAULT_MODEL_FILE, HEZAR_CACHE_DIR, Backends
+from ..constants import (
+    DEFAULT_MODEL_CONFIG_FILE,
+    DEFAULT_MODEL_FILE,
+    HEZAR_CACHE_DIR,
+    Backends,
+)
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, verify_dependencies
 from .model_outputs import ModelOutput
@@ -35,6 +40,7 @@ class Model(nn.Module):
     Args:
         config: A dataclass model config
     """
+
     required_backends: List[Union[Backends, str]] = []
     # Default file names
     model_filename = DEFAULT_MODEL_FILE
@@ -339,15 +345,14 @@ class Model(nn.Module):
         """
         # Unpack kwargs for each step
         preprocess_kwargs, forward_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
-        invalid_kwargs = {k: v for k, v in kwargs.items() if
-                          k not in {
-                              **preprocess_kwargs,
-                              **forward_kwargs,
-                              **post_process_kwargs
-                          }}
+        invalid_kwargs = {
+            k: v for k, v in kwargs.items() if k not in {**preprocess_kwargs, **forward_kwargs, **post_process_kwargs}
+        }
         if len(invalid_kwargs):
-            logger.warning(f"Unrecognized arguments {list(invalid_kwargs.keys())} passed to `predict` method for "
-                           f"`{self.__class__.__name__}`")
+            logger.warning(
+                f"Unrecognized arguments {list(invalid_kwargs.keys())} passed to `predict` method for "
+                f"`{self.__class__.__name__}`"
+            )
 
         # Put model in eval mode
         self.eval()

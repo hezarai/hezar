@@ -4,7 +4,7 @@ Let's have a quick tour on some of the most important features of Hezar!
 ### Models
 There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
 
-- **Text classification (sentiment analysis, categorization, etc)** 
+- **Text classification (sentiment analysis, categorization, etc)**
 ```python
 from hezar import Model
 
@@ -58,7 +58,7 @@ print(transcripts)
 - **Image to Text (OCR)**
 ```python
 from hezar import Model
-# OCR with TrOCR 
+# OCR with TrOCR
 model = Model.load("hezarai/trocr-fa-v1")
 texts = model.predict(["examples/assets/ocr_example.jpg"])
 print(f"TrOCR Output: {texts}")
@@ -135,7 +135,7 @@ print(most_similar)
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
 ```python
-from hezar import Dataset 
+from hezar import Dataset
 
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance

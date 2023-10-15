@@ -54,6 +54,7 @@ class BPETokenizer(Tokenizer):
         config: Preprocessor config for the tokenizer
         **kwargs: Extra/manual config parameters
     """
+
     required_backends = _required_backends
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE

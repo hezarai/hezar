@@ -23,10 +23,7 @@ _required_backends = [
 class RoBERTa(Model):
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
-    skip_keys_on_load = [
-        "model.embeddings.position_ids",  # For older versions
-        "roberta.embeddings.position_ids"
-    ]
+    skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -48,7 +45,6 @@ class RoBERTa(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-
         outputs = self.roberta(
             input_ids=token_ids,
             attention_mask=attention_mask,

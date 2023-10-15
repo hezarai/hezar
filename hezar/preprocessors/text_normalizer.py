@@ -4,7 +4,11 @@ from typing import Dict, List, Mapping, Tuple, Union
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_NORMALIZER_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER, Backends
+from ..constants import (
+    DEFAULT_NORMALIZER_CONFIG_FILE,
+    DEFAULT_PREPROCESSOR_SUBFOLDER,
+    Backends,
+)
 from ..registry import register_preprocessor
 from ..utils import Logger, is_backend_available
 from .preprocessor import Preprocessor
@@ -42,6 +46,7 @@ class TextNormalizer(Preprocessor):
     """
     A simple configurable text normalizer
     """
+
     required_backends = _required_backends
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER

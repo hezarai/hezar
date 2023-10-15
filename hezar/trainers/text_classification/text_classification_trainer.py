@@ -29,6 +29,7 @@ class TextClassificationTrainer(Trainer):
         lr_scheduler: Optional learning-rate scheduler
 
     """
+
     AVAILABLE_METRICS = [
         MetricType.ACCURACY,
         MetricType.RECALL,
@@ -70,4 +71,3 @@ class TextClassificationTrainer(Trainer):
         for metric_name, metric in self.metrics.items():
             results.update(metric.compute(predictions, labels))
         return results
-

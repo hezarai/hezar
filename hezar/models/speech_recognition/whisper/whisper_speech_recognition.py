@@ -27,6 +27,7 @@ class WhisperSpeechRecognition(Model):
     """
     Whisper model for automatic speech recognition
     """
+
     is_generative = True
     required_backends = _required_backends
     feature_extractor_name = "whisper_feature_extractor"

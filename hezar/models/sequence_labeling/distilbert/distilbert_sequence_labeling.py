@@ -75,7 +75,7 @@ class DistilBertSequenceLabeling(Model):
             "logits": logits,
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
-            "tokens": kwargs.get("tokens", None)
+            "tokens": kwargs.get("tokens", None),
         }
         return outputs
 

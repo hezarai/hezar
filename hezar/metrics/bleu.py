@@ -33,7 +33,7 @@ class BLEU(Metric):
         self,
         predictions: Union[Iterable[str], str] = None,
         targets: Union[Iterable[str], str] = None,
-        weights=(.25, .25, .25, .25),
+        weights=(0.25, 0.25, 0.25, 0.25),
         n_decimals=None,
         output_keys=None,
         **kwargs,

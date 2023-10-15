@@ -23,6 +23,7 @@ class T5TextGeneration(Model):
     """
     T5 for text to text generation
     """
+
     is_generative = True
     required_backends = _required_backends
     tokenizer_name = "sentencepiece_unigram_tokenizer"
@@ -51,7 +52,6 @@ class T5TextGeneration(Model):
         output_hidden_states=None,
         **kwargs,
     ) -> Dict:
-
         outputs = self.t5(
             input_ids=token_ids,
             attention_mask=attention_mask,

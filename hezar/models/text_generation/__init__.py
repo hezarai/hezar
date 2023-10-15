@@ -1,1 +1,1 @@
-from .t5 import T5TextGenerationConfig, T5TextGeneration
+from .t5 import T5TextGeneration, T5TextGenerationConfig

@@ -5,7 +5,12 @@ import numpy as np
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE, DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, ImageType
+from ..constants import (
+    DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE,
+    DEFAULT_PREPROCESSOR_SUBFOLDER,
+    Backends,
+    ImageType,
+)
 from ..registry import register_preprocessor
 from ..utils import (
     convert_batch_dict_dtype,
@@ -60,6 +65,7 @@ class ImageProcessor(Preprocessor):
     """
     General image processor to perform sequential transforms on the images
     """
+
     required_backends = _required_backends
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
@@ -144,6 +150,7 @@ class ImageProcessor(Preprocessor):
 
         if device:
             import torch
+
             images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}
 
         return images

@@ -16,6 +16,7 @@ class Preprocessor:
     Args:
         config: Preprocessor properties
     """
+
     required_backends: List[Union[str, Backends]] = []
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
@@ -105,6 +106,7 @@ class PreprocessorsContainer(OrderedDict):
     """
     A class to hold the preprocessors by their name
     """
+
     def __getattr__(self, item):
         """
         Override this method to be able to access preprocessors as attributes

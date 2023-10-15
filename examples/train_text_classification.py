@@ -1,10 +1,10 @@
 from hezar import (
     BertTextClassification,
     BertTextClassificationConfig,
-    TrainerConfig,
-    TextClassificationTrainer,
     Dataset,
     Preprocessor,
+    TextClassificationTrainer,
+    TrainerConfig,
 )
 
 
@@ -23,7 +23,7 @@ train_config = TrainerConfig(
     batch_size=8,
     num_epochs=5,
     checkpoints_dir="checkpoints/",
-    metrics=["f1", "precision", "accuracy", "recall"]
+    metrics=["f1", "precision", "accuracy", "recall"],
 )
 
 trainer = TextClassificationTrainer(

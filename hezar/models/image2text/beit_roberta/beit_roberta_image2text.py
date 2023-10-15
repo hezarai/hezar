@@ -24,11 +24,7 @@ if is_backend_available(Backends.TRANSFORMERS):
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
-_required_backends = [
-    Backends.TRANSFORMERS,
-    Backends.TOKENIZERS,
-    Backends.PILLOW
-]
+_required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 
 
 @register_model("beit_roberta_image2text", config_class=BeitRobertaImage2TextConfig)
@@ -36,6 +32,7 @@ class BeitRobertaImage2Text(Model):
     """
     BEiT + RoBERTa for image to text
     """
+
     is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"
@@ -61,7 +58,6 @@ class BeitRobertaImage2Text(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-
         outputs = self.beit_roberta(
             pixel_values=pixel_values,
             decoder_input_ids=decoder_input_ids,

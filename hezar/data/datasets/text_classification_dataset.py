@@ -68,8 +68,10 @@ class TextClassificationDataset(Dataset):
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
-            logger.warning("This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                           "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset.")
+            logger.warning(
+                "This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
+                "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset."
+            )
             tokenizer = None
         return tokenizer
 

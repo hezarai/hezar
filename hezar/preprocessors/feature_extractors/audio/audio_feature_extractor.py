@@ -23,6 +23,7 @@ class AudioFeatureExtractor(Preprocessor):
     """
     Base class for all audio feature extractors.
     """
+
     model_input_name = "input_features"
     config_filename = DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE
 
@@ -62,8 +63,10 @@ class AudioFeatureExtractor(Preprocessor):
                 key: np.array([example[key] for example in processed_features]) for key in processed_features[0].keys()
             }
         if self.model_input_name not in processed_features:
-            raise ValueError(f"Processed inputs must have a `{self.model_input_name}` key!\n"
-                             f"Provided keys: {list(processed_features.keys())}")
+            raise ValueError(
+                f"Processed inputs must have a `{self.model_input_name}` key!\n"
+                f"Provided keys: {list(processed_features.keys())}"
+            )
 
         required_input = processed_features[self.model_input_name]
 
@@ -168,18 +171,14 @@ class AudioFeatureExtractor(Preprocessor):
             difference = max_length - len(required_input)
             if self.config.padding_side == "right":
                 if return_attention_mask:
-                    processed_features["attention_mask"] = np.pad(
-                        processed_features["attention_mask"], (0, difference)
-                    )
+                    processed_features["attention_mask"] = np.pad(processed_features["attention_mask"], (0, difference))
                 padding_shape = ((0, difference), (0, 0)) if self.config.feature_size > 1 else (0, difference)
                 processed_features[self.model_input_name] = np.pad(
                     required_input, padding_shape, "constant", constant_values=self.config.padding_value
                 )
             elif self.config.padding_side == "left":
                 if return_attention_mask:
-                    processed_features["attention_mask"] = np.pad(
-                        processed_features["attention_mask"], (difference, 0)
-                    )
+                    processed_features["attention_mask"] = np.pad(processed_features["attention_mask"], (difference, 0))
                 padding_shape = ((difference, 0), (0, 0)) if self.config.feature_size > 1 else (difference, 0)
                 processed_features[self.model_input_name] = np.pad(
                     required_input, padding_shape, "constant", constant_values=self.config.padding_value
@@ -284,7 +283,7 @@ class AudioFeatureExtractor(Preprocessor):
         subfolder: str = None,
         config_filename: str = None,
         force_return_dict: bool = False,
-        **kwargs
+        **kwargs,
     ):
         subfolder = subfolder or cls.preprocessor_subfolder
         config_filename = config_filename or cls.config_filename
@@ -298,5 +297,3 @@ class AudioFeatureExtractor(Preprocessor):
         feature_extractor = build_preprocessor(config.name, config=config, **kwargs)
 
         return feature_extractor
-
-

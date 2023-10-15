@@ -54,8 +54,10 @@ class FastText(Embedding):
 
     def from_file(self, embedding_path, vectors_path):
         if not os.path.isfile(vectors_path):
-            raise ValueError(f"Could not load or find vectors file at `{vectors_path}`! "
-                             f"Please make sure it's been downloaded properly!")
+            raise ValueError(
+                f"Could not load or find vectors file at `{vectors_path}`! "
+                f"Please make sure it's been downloaded properly!"
+            )
 
         embedding_model = fasttext.FastText.load(embedding_path)
 
@@ -94,8 +96,10 @@ class FastText(Embedding):
 
     def similarity(self, word1: str, word2: str):
         if not isinstance(word1, str) or not isinstance(word2, str):
-            raise ValueError(f"`Embedding.similarity()` takes two string objects!\n"
-                             f"`word1`: {type(word1)}, `word2`: {type(word2)}")
+            raise ValueError(
+                f"`Embedding.similarity()` takes two string objects!\n"
+                f"`word1`: {type(word1)}, `word2`: {type(word2)}"
+            )
         similarity = self.word_vectors.similarity(word1, word2)
         return similarity
 

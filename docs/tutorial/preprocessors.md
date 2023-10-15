@@ -1,9 +1,9 @@
 # Preprocessors
-A really important group of modules in Hezar is the preprocessors. Preprocessors are responsible for every single 
+A really important group of modules in Hezar is the preprocessors. Preprocessors are responsible for every single
 processing of inputs from their rawest form to the point that they're ready to be fed to the model.
 
-Preprocessors include all the tokenizers, feature extractors, normalizers, etc. and all of them are considered as a 
-preprocessor type. 
+Preprocessors include all the tokenizers, feature extractors, normalizers, etc. and all of them are considered as a
+preprocessor type.
 
 ## Loading preprocessors
 Following the common pattern among all modules in Hezar, preprocessors also can be loaded in the same way.
@@ -19,9 +19,9 @@ feature_extractor = AudioFeatureExtractor.load("hezarai/whisper-small-fa")
 ...
 ```
 **Loading with the Preprocessor module**<br>
-Some models might need multiple types of preprocessors. For example encoder-decoder multimodal models like image captioning models 
-or even audio models need both feature extractor and text tokenizer or even a text normalizer. In order to load all 
-preprocessors in a path, you can use the `Preprocessor.load`. The output of this method depends on whether the path 
+Some models might need multiple types of preprocessors. For example encoder-decoder multimodal models like image captioning models
+or even audio models need both feature extractor and text tokenizer or even a text normalizer. In order to load all
+preprocessors in a path, you can use the `Preprocessor.load`. The output of this method depends on whether the path
 contains single or multiple preprocessors.
 - If path contains only one preprocessor the output is a preprocessor object of the right type.
 - If path contains multiple preprocessors, the output is a `PreprocessorContainer` which is a dict-like object that holds

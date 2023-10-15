@@ -32,13 +32,15 @@ def _verify_gensim_installation():
     ):
         raise ImportError(
             f"The required Gensim version for this version of Hezar is currently {REQUIRED_GENSIM_VERSION} "
-            f"and the required Numpy version for Gensim=={REQUIRED_GENSIM_VERSION} is {REQUIRED_NUMPY_VERSION}")
+            f"and the required Numpy version for Gensim=={REQUIRED_GENSIM_VERSION} is {REQUIRED_NUMPY_VERSION}"
+        )
 
 
 class Embedding:
     """
     Base class for all embeddings.
     """
+
     required_backends: List[Union[str, Backends]] = []
 
     filename = DEFAULT_EMBEDDING_FILE
@@ -101,7 +103,6 @@ class Embedding:
         subfolder=None,
         **kwargs,
     ) -> "Embedding":
-
         config_filename = config_filename or cls.config_filename
         embedding_file = embedding_file or cls.filename
         vectors_file = vectors_file or cls.vectors_filename
@@ -195,7 +196,7 @@ class Embedding:
         )
         logger.log_upload_success(
             name=f"{self.__class__.__name__}(name={self.config.name})",
-            target_path=f"{os.path.join(repo_id, subfolder, filename)}"
+            target_path=f"{os.path.join(repo_id, subfolder, filename)}",
         )
 
         api.upload_file(
@@ -207,11 +208,12 @@ class Embedding:
         )
         logger.log_upload_success(
             name=f"`{self.__class__.__name__}(name={self.config.name})`",
-            target_path=f"`{os.path.join(repo_id, subfolder, vectors_filename)}`"
+            target_path=f"`{os.path.join(repo_id, subfolder, vectors_filename)}`",
         )
 
     def torch_embedding(self):
         import torch
+
         weights = torch.FloatTensor(self.vectors)
         embedding_layer = torch.nn.Embedding.from_pretrained(weights)
         return embedding_layer

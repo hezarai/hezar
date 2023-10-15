@@ -39,8 +39,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=datasets.Features(
-                {text_column: datasets.Value("string"),
-                 label_column: datasets.features.ClassLabel(names=label_names)}
+                {text_column: datasets.Value("string"), label_column: datasets.features.ClassLabel(names=label_names)}
             ),
             homepage="HOMEPAGE",
             citation=_CITATION,
@@ -55,12 +54,8 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         test_path = dl_manager.download_and_extract(_DOWNLOAD_URLS["test"])
 
         return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN, gen_kwargs={"filepath": train_path}
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST, gen_kwargs={"filepath": test_path}
-            ),
+            datasets.SplitGenerator(name=datasets.Split.TRAIN, gen_kwargs={"filepath": train_path}),
+            datasets.SplitGenerator(name=datasets.Split.TEST, gen_kwargs={"filepath": test_path}),
         ]
 
     # TODO
@@ -76,9 +71,7 @@ class DatasetName(datasets.GeneratorBasedBuilder):
         label2id = self.info.features[self.info.task_templates[0].label_column].str2int
         logger.info("⏳ Generating examples from = %s", filepath)
         with open(filepath, encoding="utf-8") as csv_file:
-            csv_reader = csv.reader(
-                csv_file, quotechar='"', skipinitialspace=True
-            )
+            csv_reader = csv.reader(csv_file, quotechar='"', skipinitialspace=True)
 
             # Uncomment below line to skip the first row if your csv file has a header row
             # next(csv_reader, None)

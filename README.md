@@ -1,8 +1,13 @@
 
 ![](hezar.png)
 
-_<p align="center"> The all-in-one AI library for Persian</p>_
-
+_<p align="center"> The all-in-one AI library for Persian_
+<br>
+[![Documentation Status](https://github.com/hezarai/hezar/actions/workflows/docs-deploy.yml/badge.svg)](https://hezarai.github.io/hezar/index.html)
+[![PyPI version](https://badge.fury.io/py/hezar.svg)](https://pypi.org/project/hezar/)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+</p>
 **Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
 
 Hezar is a library that:
@@ -37,13 +42,13 @@ Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.
 
 ## Quick Tour
 ### Models
-There's a bunch of ready to use trained models for different tasks on the Hub! 
+There's a bunch of ready to use trained models for different tasks on the Hub!
 
 **🤗Hugging Face Hub Page**: [https://huggingface.co/hezarai](https://huggingface.co/hezarai)
 
-Let's walk you through some examples! 
+Let's walk you through some examples!
 
-- **Text Classification (sentiment analysis, categorization, etc)** 
+- **Text Classification (sentiment analysis, categorization, etc)**
 ```python
 from hezar import Model
 
@@ -97,7 +102,7 @@ print(transcripts)
 - **Image to Text (OCR)**
 ```python
 from hezar import Model
-# OCR with TrOCR 
+# OCR with TrOCR
 model = Model.load("hezarai/trocr-fa-v1")
 texts = model.predict(["examples/assets/ocr_example.jpg"])
 print(f"TrOCR Output: {texts}")
@@ -173,7 +178,7 @@ print(most_similar)
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
 ```python
-from hezar import Dataset 
+from hezar import Dataset
 
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
@@ -225,15 +230,15 @@ trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor
 You can actually go way deeper with the trainers. Refer to the [notebooks](notebooks) to see the examples!
 
 ## Going Deeper
-Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks 
-without reinventing the wheel, but by being built on top of 
-**[PyTorch](https://github.com/pytorch/pytorch), 
+Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks
+without reinventing the wheel, but by being built on top of
+**[PyTorch](https://github.com/pytorch/pytorch),
 🤗[Transformers](https://github.com/huggingface/transformers),
-🤗[Tokenizers](https://github.com/huggingface/tokenizers), 
-🤗[Datasets](https://github.com/huggingface/datasets), 
-[Scikit-learn](https://github.com/scikit-learn/scikit-learn), 
-[Gensim](https://github.com/RaRe-Technologies/gensim),** etc. 
-Besides, it's deeply integrated with the **🤗[Hugging Face Hub](https://github.com/huggingface/huggingface_hub)** and 
+🤗[Tokenizers](https://github.com/huggingface/tokenizers),
+🤗[Datasets](https://github.com/huggingface/datasets),
+[Scikit-learn](https://github.com/scikit-learn/scikit-learn),
+[Gensim](https://github.com/RaRe-Technologies/gensim),** etc.
+Besides, it's deeply integrated with the **🤗[Hugging Face Hub](https://github.com/huggingface/huggingface_hub)** and
 almost any module e.g, models, datasets, preprocessors, trainers, etc. can be uploaded to or downloaded from the Hub!
 
 More specifically, here's a simple summary of the core modules in Hezar:
@@ -247,7 +252,6 @@ More specifically, here's a simple summary of the core modules in Hezar:
 For more info, check the [tutorials](https://hezarai.github.io/hezar/tutorial/)
 
 ## Contribution
-This is a really heavy project to be maintained by a couple of developers. 
-The idea isn't novel at all but actually doing it is really difficult hence being the only one in the whole history of the Persian open source! 
+This is a really heavy project to be maintained by a couple of developers.
+The idea isn't novel at all but actually doing it is really difficult hence being the only one in the whole history of the Persian open source!
 So any contribution is appreciated ❤️
-

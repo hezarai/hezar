@@ -15,6 +15,7 @@ class exec_timer:
         >>>     # operations here
         >>> print(timer.time)
     """
+
     def __enter__(self):
         self.time = perf_counter()
         return self

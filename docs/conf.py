@@ -6,9 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Hezar'
-copyright = '2023, Hezar AI Team & contributors'
-author = 'Hezar AI Team & contributors'
+project = "Hezar"
+copyright = "2023, Hezar AI Team & contributors"
+author = "Hezar AI Team & contributors"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -21,11 +21,11 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
-    "sphinx_copybutton"
+    "sphinx_copybutton",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README.md']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "README.md"]
 
 myst_enable_extensions = [
     "amsmath",
@@ -54,7 +54,7 @@ html_theme_options = {
         "color-inline-code-background": "#F1F1F1",
         "color-background-border": "white",
         "color-toc-background": "#F8F9FB",
-        "color-highlight-on-target": "white"
+        "color-highlight-on-target": "white",
     },
     "dark_css_variables": {
         "color-foreground-primary": "#CEDDEB",
@@ -62,14 +62,14 @@ html_theme_options = {
         "color-background-primary": "#1A1A1B",
         "color-background-border": "#1A1B1C",
         "color-toc-background": "#1A1C1E",
-        "color-highlight-on-target": "#1A1A1B"
-    }
+        "color-highlight-on-target": "#1A1A1B",
+    },
 }
 
 pygments_style = "emacs"
 pygments_dark_style = "material"
-html_theme = 'furo'
-html_static_path = ['_static']
+html_theme = "furo"
+html_static_path = ["_static"]
 
 html_logo = "assets/hezar_logo.svg"
 html_favicon = "assets/hezar_logo.svg"

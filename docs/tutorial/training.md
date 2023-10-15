@@ -1,11 +1,11 @@
 # Training & Fine-tuning
 
 Training a model in Hezar is pretty much like any other library or even simpler! As mentioned before, any model in Hezar
-is also a PyTorch module. So training a model is actually training a PyTorch model with some more cool features! 
+is also a PyTorch module. So training a model is actually training a PyTorch model with some more cool features!
 Let's dive in.
 
 ## Setup
-In this example we're going to train a sentiment analysis model based on DistilBERT on a dataset containing 
+In this example we're going to train a sentiment analysis model based on DistilBERT on a dataset containing
 text and sentiment pairs collected from SnappFood/Digikala user comments.
 ### Import everything needed
 First things first, let's import the required stuff.
@@ -25,7 +25,7 @@ Lets define our paths to the datasets, tokenizer, etc.
 ```python
 MODEL_NAME = "distilbert_text_classification"  # model registry name
 DATASET_PATH = "hezarai/sentiment-dksf"  # dataset path on the Hub
-BASE_MODEL_PATH = "hezarai/distilbert-base-fa"  # used as model backbone weights and tokenizer 
+BASE_MODEL_PATH = "hezarai/distilbert-base-fa"  # used as model backbone weights and tokenizer
 ```
 ## Datasets
 We can easily load our desired datasets from the Hub.
@@ -87,8 +87,8 @@ trainer.train()
 ```
 ```
 Epoch: 1/5      100%|####################################| 3576/3576 [07:07<00:00,  8.37batch/s, f1=0.732, loss=0.619]
-Evaluating...   100%|####################################| 290/290 [00:07<00:00, 38.64batch/s, f1=0.8, loss=0.473]  
-Epoch: 2/5      100%|####################################| 3576/3576 [07:00<00:00,  8.50batch/s, f1=0.807, loss=0.47] 
+Evaluating...   100%|####################################| 290/290 [00:07<00:00, 38.64batch/s, f1=0.8, loss=0.473]
+Epoch: 2/5      100%|####################################| 3576/3576 [07:00<00:00,  8.50batch/s, f1=0.807, loss=0.47]
 Evaluating...   100%|####################################| 290/290 [00:07<00:00, 39.87batch/s, f1=0.838, loss=0.419]
 Epoch: 3/5      100%|####################################| 3576/3576 [07:01<00:00,  8.48batch/s, f1=0.864, loss=0.348]
 Evaluating...   100%|####################################| 290/290 [00:07<00:00, 39.97batch/s, f1=0.875, loss=0.346]

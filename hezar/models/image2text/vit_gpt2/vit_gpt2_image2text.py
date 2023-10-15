@@ -24,11 +24,7 @@ if is_backend_available(Backends.TRANSFORMERS):
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
-_required_backends = [
-    Backends.TRANSFORMERS,
-    Backends.TOKENIZERS,
-    Backends.PILLOW
-]
+_required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 
 
 @register_model("vit_gpt2_image2text", config_class=ViTGPT2Image2TextConfig)
@@ -36,6 +32,7 @@ class ViTGPT2Image2Text(Model):
     """
     ViT + GPT2 for image to text generation (image captioning)
     """
+
     is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"

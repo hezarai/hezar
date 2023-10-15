@@ -31,12 +31,12 @@ class TextPaddingDataCollator:
     """
 
     def __init__(
-            self,
-            tokenizer: Tokenizer,
-            padding_type: str = "longest",
-            padding_side: str = "right",
-            max_length: int = None,
-            return_tensors: str = "pt",
+        self,
+        tokenizer: Tokenizer,
+        padding_type: str = "longest",
+        padding_side: str = "right",
+        max_length: int = None,
+        return_tensors: str = "pt",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type
@@ -122,13 +122,13 @@ class SequenceLabelingDataCollator:
     """
 
     def __init__(
-            self,
-            tokenizer: Tokenizer,
-            padding_type: str = "longest",
-            padding_side: str = "right",
-            label_pad_token_id: int = -100,
-            max_length: int = None,
-            return_tensors: str = "pt",
+        self,
+        tokenizer: Tokenizer,
+        padding_type: str = "longest",
+        padding_side: str = "right",
+        label_pad_token_id: int = -100,
+        max_length: int = None,
+        return_tensors: str = "pt",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type

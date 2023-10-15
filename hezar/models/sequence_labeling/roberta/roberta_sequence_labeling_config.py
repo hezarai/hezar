@@ -31,4 +31,3 @@ class RobertaSequenceLabelingConfig(ModelConfig):
     use_cache: bool = True
     vocab_size: int = 42000
     prediction_skip_tokens: Tuple[str] = ("<s>", "</s>, <pad>")
-

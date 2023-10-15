@@ -76,7 +76,6 @@ class Trainer:
         lr_scheduler=None,
         **kwargs,
     ):
-
         self.config = config
 
         self.device, self.device_type = self._prepare_device_and_type()
@@ -162,8 +161,10 @@ class Trainer:
                 shuffle=True,
             )
         else:
-            logger.warning("Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
-                           "Setting eval_dataloader to None...")
+            logger.warning(
+                "Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
+                "Setting eval_dataloader to None..."
+            )
             eval_dataloader = None
 
         return train_dataloader, eval_dataloader

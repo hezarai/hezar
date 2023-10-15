@@ -24,11 +24,7 @@ if is_backend_available(Backends.TRANSFORMERS):
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
-_required_backends = [
-    Backends.TRANSFORMERS,
-    Backends.TOKENIZERS,
-    Backends.PILLOW
-]
+_required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 
 
 @register_model("vit_roberta_image2text", config_class=ViTRobertaImage2TextConfig)
@@ -36,6 +32,7 @@ class ViTRobertaImage2Text(Model):
     """
     ViT + RoBERTa for image to text
     """
+
     is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"

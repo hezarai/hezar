@@ -1,11 +1,17 @@
 import os
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 from torch.utils.data import Dataset as TorchDataset
 
 from ...builders import build_dataset
 from ...configs import DatasetConfig
-from ...constants import DEFAULT_DATASET_CONFIG_FILE, HEZAR_CACHE_DIR, RepoType, SplitType, Backends
+from ...constants import (
+    DEFAULT_DATASET_CONFIG_FILE,
+    HEZAR_CACHE_DIR,
+    Backends,
+    RepoType,
+    SplitType,
+)
 from ...utils import verify_dependencies
 
 
