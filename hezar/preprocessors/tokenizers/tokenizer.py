@@ -19,6 +19,7 @@ from ...constants import (
 from ...utils import Logger, convert_batch_dict_dtype, is_backend_available
 from ..preprocessor import Preprocessor
 
+
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import Tokenizer as HFTokenizer
     from tokenizers.decoders import Decoder

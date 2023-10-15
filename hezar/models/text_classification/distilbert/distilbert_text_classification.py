@@ -11,6 +11,7 @@ from ....utils import is_backend_available
 from ...model import Model
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
 

@@ -5,5 +5,4 @@ per-file-ignores=
     *example*.py: F401,F841,I001
     *test*.py: F401, F841
 select = B,C,E,F,W
-lines-after-imports=2
 max-line-length=120

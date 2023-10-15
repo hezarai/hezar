@@ -8,6 +8,7 @@ from ..registry import register_embedding
 from ..utils import is_backend_available
 from .embedding import Embedding, EmbeddingConfig
 
+
 if is_backend_available(Backends.GENSIM):
     from gensim.models import word2vec
 

@@ -1,6 +1,7 @@
 from hezar import Logger, Model
 from hezar.constants import TaskType
 
+
 logger = Logger(__name__)
 
 task_to_example_repo = {

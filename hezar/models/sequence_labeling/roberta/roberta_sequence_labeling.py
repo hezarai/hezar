@@ -11,6 +11,7 @@ from ....utils import is_backend_available
 from ...model import Model
 from .roberta_sequence_labeling_config import RobertaSequenceLabelingConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaModel
 

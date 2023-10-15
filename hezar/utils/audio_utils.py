@@ -9,6 +9,7 @@ from ..constants import Backends
 from .integration_utils import is_backend_available
 from .logging import Logger
 
+
 if is_backend_available(Backends.LIBROSA):
     import librosa
 

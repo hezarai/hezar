@@ -9,6 +9,7 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from .distilbert_config import DistilBERTConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import DistilBertConfig, DistilBertModel
 

@@ -6,6 +6,7 @@ from hezar import (
     build_model,
 )
 
+
 name = "distilbert_sequence_labeling"
 lm_path = "hezarai/bert-base-fa"
 

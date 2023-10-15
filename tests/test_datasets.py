@@ -1,6 +1,7 @@
 from hezar import Dataset, Logger
 from hezar.constants import TaskType
 
+
 logger = Logger(__name__)
 
 task_to_dataset_example_repo = {

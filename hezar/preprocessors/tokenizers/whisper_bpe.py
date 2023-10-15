@@ -8,6 +8,7 @@ from ...registry import register_preprocessor
 from ...utils import Logger, is_backend_available
 from .bpe import BPEConfig, BPETokenizer
 
+
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import processors
 

@@ -6,6 +6,7 @@ from hezar import (
     build_model,
 )
 
+
 name = "roberta_sequence_labeling"
 lm_path = "hezarai/roberta-base-fa"
 

@@ -15,6 +15,7 @@ from ..constants import (
 )
 from ..utils import Logger, get_lib_version, verify_dependencies
 
+
 logger = Logger(__name__)
 
 # The below code is a workaround. Gensim models have this limitation that the models can only be loaded using the same

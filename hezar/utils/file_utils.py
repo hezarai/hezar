@@ -3,6 +3,7 @@ import shutil
 
 from .logging import Logger
 
+
 logger = Logger(__name__)
 
 __all__ = ["gunzip"]

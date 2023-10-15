@@ -25,6 +25,7 @@ from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
 from .trainer_utils import CSVLogger, MetricsTracker, write_to_tensorboard
 
+
 logger = Logger(__name__)
 
 optimizers = {

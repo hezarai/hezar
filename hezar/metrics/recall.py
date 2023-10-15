@@ -8,6 +8,7 @@ from ..constants import Backends, MetricType
 from ..registry import register_metric
 from .metric import Metric
 
+
 _required_backends = [
     Backends.SCIKIT,
 ]

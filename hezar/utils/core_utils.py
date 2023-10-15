@@ -7,6 +7,7 @@ from omegaconf import DictConfig
 
 from .logging import Logger
 
+
 __all__ = [
     "flatten_dict",
     "load_yaml_config",

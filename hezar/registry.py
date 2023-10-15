@@ -37,6 +37,7 @@ from .configs import (
 )
 from .utils import Logger
 
+
 __all__ = [
     "register_model",
     "register_preprocessor",

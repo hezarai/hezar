@@ -7,6 +7,7 @@ from ..constants import Backends, ChannelsAxisSide, ImageType
 from .integration_utils import is_backend_available
 from .logging import Logger
 
+
 logger = Logger(__name__)
 
 if is_backend_available(Backends.PILLOW):

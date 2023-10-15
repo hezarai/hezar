@@ -12,6 +12,7 @@ from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
 from .roberta_lm_config import RobertaLMConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaForMaskedLM
 

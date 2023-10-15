@@ -6,6 +6,7 @@ from ...registry import register_preprocessor
 from ...utils import is_backend_available
 from .tokenizer import Tokenizer, TokenizerConfig
 
+
 if is_backend_available(Backends.TOKENIZERS):
     from tokenizers import Tokenizer as HFTokenizer
     from tokenizers import decoders, models, trainers

@@ -10,6 +10,7 @@ from ...models import Model
 from ...utils import Logger
 from ..trainer import Trainer
 
+
 logger = Logger(__name__)
 
 

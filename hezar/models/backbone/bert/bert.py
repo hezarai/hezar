@@ -9,6 +9,7 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from .bert_config import BERTConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
 

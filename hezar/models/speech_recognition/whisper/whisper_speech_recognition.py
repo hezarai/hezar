@@ -10,6 +10,7 @@ from ...model import Model
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import WhisperConfig, WhisperForConditionalGeneration
 

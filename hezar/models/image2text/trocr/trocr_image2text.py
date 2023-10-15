@@ -10,6 +10,7 @@ from ...model import Model
 from ...model_outputs import Image2TextOutput
 from .trocr_image2text_config import TrOCRImage2TextConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import (
         GenerationConfig,

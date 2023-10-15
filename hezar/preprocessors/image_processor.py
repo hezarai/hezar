@@ -25,6 +25,7 @@ from ..utils import (
 )
 from .preprocessor import Preprocessor
 
+
 _required_backends = [
     Backends.PILLOW,
 ]

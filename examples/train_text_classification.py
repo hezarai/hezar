@@ -7,6 +7,7 @@ from hezar import (
     TrainerConfig,
 )
 
+
 dataset_path = "hezarai/sentiment-dksf"
 base_model_path = "hezarai/bert-base-fa"
 

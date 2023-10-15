@@ -8,6 +8,7 @@ from ....utils import is_backend_available
 from ...model import Model
 from .t5_text_generation_config import T5TextGenerationConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import T5Config, T5ForConditionalGeneration
 

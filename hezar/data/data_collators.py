@@ -4,6 +4,7 @@ import torch
 from ..preprocessors import Tokenizer
 from ..utils import Logger, convert_batch_dict_dtype
 
+
 __all__ = [
     "TextPaddingDataCollator",
     "SequenceLabelingDataCollator",

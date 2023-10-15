@@ -26,6 +26,7 @@ from omegaconf import DictConfig, OmegaConf
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
 from .utils import Logger, get_module_config_class
 
+
 __all__ = [
     "Config",
     "ModelConfig",

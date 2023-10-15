@@ -1,6 +1,7 @@
 from re import sub
 from typing import Dict, List
 
+
 __all__ = [
     "snake_case",
     "permute_dict_list",

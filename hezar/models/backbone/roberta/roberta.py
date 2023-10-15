@@ -9,6 +9,7 @@ from ....registry import register_model
 from ....utils import is_backend_available
 from .roberta_config import RoBERTaConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaModel
 

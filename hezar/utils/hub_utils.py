@@ -5,6 +5,7 @@ from huggingface_hub import HfApi, Repository
 from ..constants import HEZAR_CACHE_DIR, HEZAR_HUB_ID, RepoType
 from ..utils.logging import Logger
 
+
 __all__ = [
     "resolve_pretrained_path",
     "get_local_cache_path",

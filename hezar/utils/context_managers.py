@@ -1,5 +1,6 @@
 from time import perf_counter
 
+
 __all__ = [
     "exec_timer",
 ]

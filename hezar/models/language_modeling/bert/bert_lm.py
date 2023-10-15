@@ -12,6 +12,7 @@ from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
 from .bert_lm_config import BertLMConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertForMaskedLM
 

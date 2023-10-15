@@ -11,6 +11,7 @@ from ....utils import is_backend_available
 from ...model import Model
 from .roberta_text_classification_config import RobertaTextClassificationConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import RobertaConfig, RobertaModel
 

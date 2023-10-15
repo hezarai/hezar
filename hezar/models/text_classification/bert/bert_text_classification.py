@@ -11,6 +11,7 @@ from ....utils import is_backend_available
 from ...model import Model
 from .bert_text_classification_config import BertTextClassificationConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import BertConfig, BertModel
 
