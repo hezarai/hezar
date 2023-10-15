@@ -27,6 +27,7 @@ class BertLM(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
+    loss_fn = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -65,8 +66,7 @@ class BertLM(Model):
         return outputs
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-        criterion = torch.nn.CrossEntropyLoss()
-        loss = criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):

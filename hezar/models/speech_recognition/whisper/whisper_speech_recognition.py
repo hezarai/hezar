@@ -33,6 +33,7 @@ class WhisperSpeechRecognition(Model):
     required_backends = _required_backends
     feature_extractor_name = "whisper_feature_extractor"
     tokenizer_name = "whisper_bpe_tokenizer"
+    loss_fn = "cross_entropy"
 
     def __init__(self, config: WhisperSpeechRecognitionConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -75,8 +76,7 @@ class WhisperSpeechRecognition(Model):
         return outputs
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-        criterion = nn.CrossEntropyLoss()
-        loss = criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
     def generate(

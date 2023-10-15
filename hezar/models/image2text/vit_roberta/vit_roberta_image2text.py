@@ -37,6 +37,7 @@ class ViTRobertaImage2Text(Model):
     required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer = "bpe_tokenizer"
+    loss_fn = "cross_entropy"
 
     def __init__(self, config: ViTRobertaImage2TextConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -73,8 +74,7 @@ class ViTRobertaImage2Text(Model):
         return outputs
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-        criterion = torch.nn.CrossEntropyLoss()
-        loss = criterion(logits.reshape(-1, self.vit_roberta.decoder.config.vocab_size), labels.reshape(-1))
+        loss = self.criterion(logits.reshape(-1, self.vit_roberta.decoder.config.vocab_size), labels.reshape(-1))
         return loss
 
     def generate(self, pixel_values, generation_config=None, **kwargs):

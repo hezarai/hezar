@@ -89,6 +89,20 @@ class RegistryType(str, Enum):
     METRIC = "metric"
 
 
+class LossType(str, Enum):
+    L1 = "l1"
+    NLL = "nll"
+    NLL_2D = "nll_2d"
+    POISSON_NLL = "poisson_nll"
+    GAUSSIAN_NLL = "gaussian_nll"
+    MSE = "mse"
+    BCE = "bce"
+    BCE_WITH_LOGITS = "bce_with_logits"
+    CROSS_ENTROPY = "cross_entropy"
+    TRIPLE_MARGIN = "triple_margin"
+    CTC = "ctc"
+
+
 class SplitType(str, Enum):
     TRAIN = "train"
     EVAL = "eval"
