@@ -3,6 +3,7 @@
 
 _<p align="center"> The all-in-one AI library for Persian_
 <br>
+[![Downloads](https://static.pepy.tech/badge/hezar)](https://pepy.tech/project/hezar) 
 [![PyPI version](https://badge.fury.io/py/hezar.svg)](https://pypi.org/project/hezar/)
 [![Documentation Status](https://github.com/hezarai/hezar/actions/workflows/docs-deploy.yml/badge.svg)](https://hezarai.github.io/hezar/index.html)
 </p>
