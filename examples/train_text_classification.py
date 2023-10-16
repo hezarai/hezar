@@ -3,7 +3,7 @@ from hezar import (
     BertTextClassificationConfig,
     Dataset,
     Preprocessor,
-    TextClassificationTrainer,
+    Trainer,
     TrainerConfig,
 )
 
@@ -27,7 +27,7 @@ train_config = TrainerConfig(
     metrics=["f1", "precision", "accuracy", "recall"],
 )
 
-trainer = TextClassificationTrainer(
+trainer = Trainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,
