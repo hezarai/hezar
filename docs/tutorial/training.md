@@ -14,8 +14,8 @@ First things first, let's import the required stuff.
 from hezar import (
     DistilBertTextClassification,
     DistilBertTextClassificationConfig,
+    Trainer,
     TrainerConfig,
-    TextClassificationTrainer,
     Dataset,
     Preprocessor,
 )
@@ -47,12 +47,14 @@ tokenizer = Preprocessor.load(BASE_MODEL_PATH)
 ```
 
 ## Trainer
-In Hezar, each task has its own trainer but all trainers are almost the same except for loss and metrics computations.
-For this example we have to use `TextClassificationTrainer`.
+Hezar has a general Trainer class that satisfies most of your needs. You can customize almost every single part of it 
+but for now, we stick with the base class `Trainer`. 
 ### Trainer Config
-Define all the training properties in the trainer's config.
+Define all the training properties in the trainer's config. As we're training a text classification model we set the 
+task to `text_classification` in our config. Other parameters are also customizable like below:
 ```python
 train_config = TrainerConfig(
+    task="text_classification",
     device="cuda",
     init_weights_from=BASE_MODEL_PATH,
     batch_size=8,
@@ -72,7 +74,7 @@ train_config = TrainerConfig(
 ### Setup the Trainer
 Now that we have our training config we can setup the Trainer.
 ```python
-trainer = TextClassificationTrainer(
+trainer = Trainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,

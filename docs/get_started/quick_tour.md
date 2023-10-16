@@ -149,8 +149,8 @@ Hezar makes it super easy to train models using out-of-the-box models and datase
 from hezar import (
     BertSequenceLabeling,
     BertSequenceLabelingConfig,
+    Trainer,
     TrainerConfig,
-    SequenceLabelingTrainer,
     Dataset,
     Preprocessor,
 )
@@ -165,6 +165,7 @@ model = BertSequenceLabeling(BertSequenceLabelingConfig(id2label=train_dataset.c
 preprocessor = Preprocessor.load(base_model_path)
 
 train_config = TrainerConfig(
+    task="sequence_labeling",
     device="cuda",
     init_weights_from=base_model_path,
     batch_size=8,
@@ -173,7 +174,7 @@ train_config = TrainerConfig(
     metrics=["seqeval"],
 )
 
-trainer = SequenceLabelingTrainer(
+trainer = Trainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,
