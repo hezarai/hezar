@@ -35,7 +35,7 @@ class AverageMeter:
 
 class MetricsTracker:
     def __init__(self, metrics):
-        self.metrics = metrics
+        self.metrics = metrics or []
         self.trackers = {}
         if len(self.metrics):
             for m in self.metrics.values():
