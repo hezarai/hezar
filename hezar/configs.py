@@ -26,7 +26,6 @@ from omegaconf import DictConfig, OmegaConf
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
 from .utils import Logger, get_module_config_class
 
-
 __all__ = [
     "Config",
     "ModelConfig",
@@ -373,3 +372,12 @@ class TrainerConfig(Config):
     save_freq: int = 1
     checkpoints_dir: str = None
     logs_dir: str = "logs"
+
+    def __post_init__(self):
+        if self.task is None:
+            raise ValueError(f"The parameter `task` is required for `TrainerConfig`!")
+        if self.task not in list(TaskType):
+            raise ValueError(
+                f"Invalid task `{self.task}` passed to `TrainerConfig`. "
+                f"Available options are {[t.value for t in list(TaskType)]}",
+            )
