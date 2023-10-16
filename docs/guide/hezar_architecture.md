@@ -1,4 +1,4 @@
-# Hezar's Architecture
+# Hazer's Architecture
 
 Right from the first lines of code, Hezar was built having **simplicity**, **modularity** and **extensibility** in mind.
 Hezar has a simple yet flexible design pattern that can be seen among most of its main modules. In this guide we
@@ -271,5 +271,20 @@ More specifically, here's a simple summary of the core modules in Hezar:
 - **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
 - **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
 - **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in just 2 lines of code!
-- **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
+- **Trainer**: Trainer is the base class for training almost any model in Hezar or even your own custom models backed by Hezar. The Trainer comes with a lot of features and is also exportable to the Hub!
 - **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
+
+
+## Concept 6: Our Inspirations
+Hezar was built using the best practices we've learned from working with dozens of industry leading open source 
+software in the AI world. Our biggest inspirations are:
+
+- [Transformers](https://github.com/huggingface/transformers) by Hugging Face
+- [Fairseq](https://github.com/facebookresearch/fairseq) by Meta AI
+- [Flair](https://github.com/flairNLP/flair) by FlairAI
+- [ZenML](https://github.com/zenml-io/zenml)
+- [Ludwig](https://github.com/ludwig-ai/ludwig) by Ludwig AI
+- [UniLM](https://github.com/microsoft/unilm) by Microsoft
+- [PyTorch Ignite](https://github.com/pytorch/ignite) by PyTorch
+- [Lightning](https://github.com/Lightning-AI/lightning) by Lightning AI
+- [Hazm](https://github.com/roshan-research/hazm) by Roshan
