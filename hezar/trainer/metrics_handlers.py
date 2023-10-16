@@ -38,6 +38,7 @@ class MetricsHandler:
 
     def _setup_metrics(self, metrics):
         metrics_dict = {}
+        metrics = metrics or []
         if not len(metrics):
             return metrics_dict
         for metric in metrics:
