@@ -246,7 +246,7 @@ More specifically, here's a simple summary of the core modules in Hezar:
 - **Datasets**: Every dataset is a `hezar.data.Dataset` instance which is a PyTorch Dataset implemented specifically for each task that can load the data files from the Hugging Face Hub.
 - **Preprocessors**: All preprocessors are preferably backed by a robust library like Tokenizers, pillow, etc.
 - **Embeddings**: All embeddings are developed on top of Gensim and can be easily loaded from the Hub and used in just 2 lines of code!
-- **Trainers**: Trainers are separated by tasks and come with a lot of features and are also exportable to the Hub!
+- **Trainer**: Trainer is the base class for training almost any model in Hezar or even your own custom models backed by Hezar. The Trainer comes with a lot of features and is also exportable to the Hub!
 - **Metrics**: Metrics are also another configurable and portable modules backed by Scikit-learn, seqeval, etc. and can be easily used in the trainers!
 
 For more info, check the [tutorials](https://hezarai.github.io/hezar/tutorial/)
