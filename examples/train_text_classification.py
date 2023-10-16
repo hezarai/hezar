@@ -3,7 +3,7 @@ from hezar import (
     BertTextClassificationConfig,
     Dataset,
     Preprocessor,
-    TextClassificationTrainer,
+    Trainer,
     TrainerConfig,
 )
 
@@ -18,6 +18,7 @@ model = BertTextClassification(BertTextClassificationConfig(id2label=train_datas
 preprocessor = Preprocessor.load(base_model_path)
 
 train_config = TrainerConfig(
+    task="text_classification",
     device="cuda",
     init_weights_from=base_model_path,
     batch_size=8,
@@ -26,7 +27,7 @@ train_config = TrainerConfig(
     metrics=["f1", "precision", "accuracy", "recall"],
 )
 
-trainer = TextClassificationTrainer(
+trainer = Trainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,

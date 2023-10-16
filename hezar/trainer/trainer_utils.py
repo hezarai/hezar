@@ -3,6 +3,13 @@ import os.path
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
+__all__ = [
+    "AverageMeter",
+    "MetricsTracker",
+    "CSVLogger",
+    "write_to_tensorboard",
+]
+
 
 class AverageMeter:
     """Compute and store the average and current value"""
@@ -35,11 +42,12 @@ class AverageMeter:
 
 class MetricsTracker:
     def __init__(self, metrics):
-        self.metrics = metrics
+        self.metrics = metrics or []
         self.trackers = {}
-        for m in self.metrics.values():
-            for metric_key in m.config.output_keys:
-                self.trackers[metric_key] = AverageMeter(metric_key)
+        if len(self.metrics):
+            for m in self.metrics.values():
+                for metric_key in m.config.output_keys:
+                    self.trackers[metric_key] = AverageMeter(metric_key)
         if "loss" not in self.trackers:
             self.trackers["loss"] = AverageMeter("loss")
 

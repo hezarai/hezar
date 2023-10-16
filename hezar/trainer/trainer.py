@@ -1,3 +1,4 @@
+import inspect
 import os
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple, Union
@@ -9,8 +10,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-from ..builders import build_metric
-from ..configs import MetricConfig, TrainerConfig
+from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
@@ -18,13 +18,22 @@ from ..constants import (
     DEFAULT_TRAINER_SUBFOLDER,
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
+    TaskType,
 )
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
-from .trainer_utils import CSVLogger, MetricsTracker, write_to_tensorboard
-
+from .trainer_utils import CSVLogger, write_to_tensorboard
+from .metrics_handlers import (
+    MetricsHandler,
+    TextClassificationMetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    AudioClassificationMetricHandler,
+    Image2TextMetricHandler,
+    TextGenerationMetricHandler,
+)
 
 logger = Logger(__name__)
 
@@ -36,6 +45,16 @@ optimizers = {
 lr_schedulers = {
     "reduce_on_plateau": torch.optim.lr_scheduler.ReduceLROnPlateau,
     "cosine_lr": torch.optim.lr_scheduler.CosineAnnealingLR,
+}
+
+task_to_metrics_handlers_mapping = {
+    TaskType.TEXT_CLASSIFICATION: TextClassificationMetricsHandler,
+    TaskType.SEQUENCE_LABELING: SequenceLabelingMetricsHandler,
+    TaskType.IMAGE2TEXT: Image2TextMetricHandler,
+    TaskType.SPEECH_RECOGNITION: SpeechRecognitionMetricsHandler,
+    TaskType.AUDIO_CLASSIFICATION: AudioClassificationMetricHandler,
+    TaskType.TEXT_GENERATION: TextGenerationMetricHandler,
+
 }
 
 
@@ -51,6 +70,7 @@ class Trainer:
         eval_dataset (Dataset): Evaluation dataset
         data_collator: Collate function, usually included in the dataset object itself
         preprocessor: Preprocessor object(s)
+        metrics_handler: Optional metrics handler
         optimizer (optim.Optimizer): Model optimizer
         lr_scheduler: Optional learning-rate scheduler
 
@@ -72,6 +92,7 @@ class Trainer:
         eval_dataset: Dataset = None,
         data_collator: Callable = None,
         preprocessor: Union[Preprocessor, PreprocessorsContainer] = None,
+        metrics_handler: MetricsHandler = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
         **kwargs,
@@ -94,8 +115,7 @@ class Trainer:
 
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
 
-        self.metrics = self.setup_metrics()
-        self.metrics_tracker = MetricsTracker(self.metrics)
+        self.metrics_handler = metrics_handler or self._prepare_metrics_handler()
 
         self.tensorboard = SummaryWriter(log_dir=self.config.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.config.logs_dir, csv_filename=self.trainer_csv_log_file)
@@ -196,18 +216,13 @@ class Trainer:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, verbose=True)
         return optimizer, lr_scheduler
 
-    def setup_metrics(self):
-        metrics_dict = {}
-        for metric in self.config.metrics:
-            if isinstance(metric, str):
-                if metric not in self.AVAILABLE_METRICS:
-                    raise ValueError(f"Invalid metric `{metric}`! Available metrics: {self.AVAILABLE_METRICS}")
-                metrics_dict[metric] = build_metric(metric)
-            elif isinstance(metric, MetricConfig):
-                metrics_dict[metric.name] = build_metric(metric.name, config=metric)
-            else:
-                raise ValueError(f"Invalid metric type `{type(metric)}`! Available metrics: {self.AVAILABLE_METRICS}")
-        return metrics_dict
+    def _prepare_metrics_handler(self):
+        metrics_handler_cls = task_to_metrics_handlers_mapping[self.config.task]
+        metrics_handler = metrics_handler_cls(
+            metrics=self.config.metrics,
+            trainer=self,
+        )
+        return metrics_handler
 
     def prepare_input_batch(self, input_batch) -> Dict[str, torch.Tensor]:
         """
@@ -254,35 +269,26 @@ class Trainer:
             )
         return outputs
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs) -> torch.Tensor:
+    def compute_loss(self, model_outputs: Mapping, labels: torch.Tensor, **kwargs) -> torch.Tensor:
         """
-        Perform model forward and compute loss.
+        Compute loss from model outputs
 
         This method must be implemented in other trainers.
 
         Args:
-            logits: Logits from model outputs
+            model_outputs: Logits from model outputs
             labels: Ground truth labels
 
         Returns:
             The loss tensor
         """
-        raise NotImplementedError
+        loss_fn_param_names = set(inspect.signature(self.model.compute_loss).parameters)
+        all_params = {"labels": labels, **model_outputs, **kwargs}
+        loss_fn_params = {k: all_params[k] for k in loss_fn_param_names}
 
-    def compute_metrics(self, predictions, labels, **kwargs) -> Dict[str, float]:
-        """
-        Compute metric values on the predictions and labels. This method must be implemented in derived classes but in
-        case a trainer does not support any metric, this method will output an empty dict so that the training works
-        fine.
+        loss = self.model.compute_loss(**loss_fn_params)
 
-        Args:
-            predictions: A list of all predictions
-            labels: A list of all labels
-
-        Returns:
-            A dictionary of the results for every metric specified by the trainer
-        """
-        return {}
+        return loss
 
     def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
         """
@@ -296,7 +302,7 @@ class Trainer:
         """
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
-            loss = self.compute_loss(outputs["logits"], input_batch["labels"])
+            loss = self.compute_loss(outputs, input_batch["labels"])
 
         self.scaler.scale(loss).backward()
         self.scaler.step(self.optimizer)
@@ -335,7 +341,7 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        self.metrics_tracker.reset()
+        self.metrics_handler.tracker.reset()
         self.model.train()
         with tqdm(
             self.train_dataloader,
@@ -349,16 +355,16 @@ class Trainer:
                 # Training on one batch
                 outputs = self.training_step(input_batch)
                 # Compute metrics
-                training_results = self.compute_metrics(
+                training_results = self.metrics_handler.compute_on_batch(
                     outputs["logits"].detach().cpu().numpy(),
                     input_batch["labels"].detach().cpu().numpy(),
                 )
                 training_results["loss"] = outputs["loss"]
                 # Gather outputs for metrics
-                self.metrics_tracker.update(training_results)
-                iterator.set_postfix(**self.metrics_tracker.avg())
+                self.metrics_handler.tracker.update(training_results)
+                iterator.set_postfix(**self.metrics_handler.tracker.avg())
 
-        return self.metrics_tracker.avg()
+        return self.metrics_handler.tracker.avg()
 
     def evaluate(self):
         """
@@ -367,7 +373,7 @@ class Trainer:
         Returns:
             Evaluation results
         """
-        self.metrics_tracker.reset()
+        self.metrics_handler.tracker.reset()
         self.model.eval()
         with tqdm(
             self.eval_dataloader,
@@ -382,16 +388,16 @@ class Trainer:
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
                     # Compute metrics
-                    evaluation_results = self.compute_metrics(
+                    evaluation_results = self.metrics_handler.compute_on_batch(
                         outputs["logits"].detach().cpu().numpy(),
                         input_batch["labels"].detach().cpu().numpy(),
                     )
                     evaluation_results["loss"] = outputs["loss"]
                     # Gather outputs for metrics
-                    self.metrics_tracker.update(evaluation_results)
-                    iterator.set_postfix(**self.metrics_tracker.avg())
+                    self.metrics_handler.tracker.update(evaluation_results)
+                    iterator.set_postfix(**self.metrics_handler.tracker.avg())
 
-        return self.metrics_tracker.avg()
+        return self.metrics_handler.tracker.avg()
 
     def train(self):
         """
