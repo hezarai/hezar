@@ -18,6 +18,7 @@ model = BertTextClassification(BertTextClassificationConfig(id2label=train_datas
 preprocessor = Preprocessor.load(base_model_path)
 
 train_config = TrainerConfig(
+    task="text_classification",
     device="cuda",
     init_weights_from=base_model_path,
     batch_size=8,
