@@ -26,6 +26,7 @@ from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
 from .trainer_utils import CSVLogger, write_to_tensorboard
 from .metrics_handlers import (
+    MetricsHandler,
     TextClassificationMetricsHandler,
     SequenceLabelingMetricsHandler,
     SpeechRecognitionMetricsHandler,
@@ -69,6 +70,7 @@ class Trainer:
         eval_dataset (Dataset): Evaluation dataset
         data_collator: Collate function, usually included in the dataset object itself
         preprocessor: Preprocessor object(s)
+        metrics_handler: Optional metrics handler
         optimizer (optim.Optimizer): Model optimizer
         lr_scheduler: Optional learning-rate scheduler
 
@@ -90,6 +92,7 @@ class Trainer:
         eval_dataset: Dataset = None,
         data_collator: Callable = None,
         preprocessor: Union[Preprocessor, PreprocessorsContainer] = None,
+        metrics_handler: MetricsHandler = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
         **kwargs,
@@ -112,7 +115,7 @@ class Trainer:
 
         self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
 
-        self.metrics_handler = self._prepare_metrics_handler()
+        self.metrics_handler = metrics_handler or self._prepare_metrics_handler()
 
         self.tensorboard = SummaryWriter(log_dir=self.config.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.config.logs_dir, csv_filename=self.trainer_csv_log_file)
@@ -217,8 +220,7 @@ class Trainer:
         metrics_handler_cls = task_to_metrics_handlers_mapping[self.config.task]
         metrics_handler = metrics_handler_cls(
             metrics=self.config.metrics,
-            model_config=self.model.config,
-            trainer_config=self.config,
+            trainer=self,
         )
         return metrics_handler
 

@@ -31,16 +31,9 @@ class MetricsHandler:
     """
     valid_metrics: List[MetricType]
 
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-        **kwargs,
-    ):
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None, **kwargs):
         self.metrics = self._setup_metrics(metrics)
-        self.model_config = model_config
-        self.trainer_config = trainer_config
+        self.trainer = trainer
         self.tracker = MetricsTracker(self.metrics)
 
     def _setup_metrics(self, metrics):
@@ -75,13 +68,8 @@ class TextClassificationMetricsHandler(MetricsHandler):
         MetricType.F1,
     ]
 
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-    ):
-        super().__init__(metrics=metrics, model_config=model_config, trainer_config=trainer_config)
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
+        super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_on_batch(self, predictions, labels, **kwargs):
         predictions = np.array(predictions).argmax(1).flatten()
@@ -95,26 +83,21 @@ class TextClassificationMetricsHandler(MetricsHandler):
 class SequenceLabelingMetricsHandler(MetricsHandler):
     valid_metrics = [MetricType.SEQEVAL]
 
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-    ):
-        super().__init__(metrics=metrics, model_config=model_config, trainer_config=trainer_config)
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
+        super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_on_batch(self, predictions, labels, **kwargs):
         predictions = np.array(predictions).argmax(2).squeeze()
         labels = np.array(labels).squeeze()
 
         # Remove ignored index (special tokens) and append `B-` in the beginning for seqeval
-        prefix = "" if self.trainer_config.dataset.is_iob_schema else "B-"
+        prefix = "" if self.trainer.train_dataset.config.is_iob_schema else "B-"
         true_predictions = [
-            [f"{prefix}{self.model_config.id2label[p]}" for (p, l) in zip(prediction, label) if l != -100]
+            [f"{prefix}{self.trainer.model.config.id2label[p]}" for (p, l) in zip(prediction, label) if l != -100]
             for prediction, label in zip(predictions, labels)
         ]
         true_labels = [
-            [f"{prefix}{self.model_config.id2label[l]}" for (p, l) in zip(prediction, label) if l != -100]
+            [f"{prefix}{self.trainer.model.config.id2label[l]}" for (p, l) in zip(prediction, label) if l != -100]
             for prediction, label in zip(predictions, labels)
         ]
 
@@ -126,53 +109,32 @@ class SequenceLabelingMetricsHandler(MetricsHandler):
 
 
 class Image2TextMetricHandler(MetricsHandler):
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-    ):
-        super().__init__(metrics=metrics, model_config=model_config, trainer_config=trainer_config)
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
+        super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_on_batch(self, predictions, labels, **kwargs):
         raise NotImplementedError
 
 
 class SpeechRecognitionMetricsHandler(MetricsHandler):
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-    ):
-        super().__init__(metrics=metrics, model_config=model_config, trainer_config=trainer_config)
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
+        super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_on_batch(self, predictions, labels, **kwargs):
         raise NotImplementedError
 
 
 class TextGenerationMetricHandler(MetricsHandler):
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-    ):
-        super().__init__(metrics=metrics, model_config=model_config, trainer_config=trainer_config)
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
+        super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_on_batch(self, predictions, labels, **kwargs):
         raise NotImplementedError
 
 
 class AudioClassificationMetricHandler(MetricsHandler):
-    def __init__(
-        self,
-        metrics: List[Union[str, MetricType, Metric, MetricConfig]],
-        model_config=None,
-        trainer_config=None,
-    ):
-        super().__init__(metrics=metrics, model_config=model_config, trainer_config=trainer_config)
+    def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
+        super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_on_batch(self, predictions, labels, **kwargs):
         raise NotImplementedError
-
