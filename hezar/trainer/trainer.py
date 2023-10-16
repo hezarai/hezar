@@ -269,7 +269,7 @@ class Trainer:
             )
         return outputs
 
-    def compute_loss(self, model_outputs: Union[torch.Tensor, Mapping], labels: torch.Tensor, **kwargs) -> torch.Tensor:
+    def compute_loss(self, model_outputs: Mapping, labels: torch.Tensor, **kwargs) -> torch.Tensor:
         """
         Compute loss from model outputs
 
@@ -283,7 +283,7 @@ class Trainer:
             The loss tensor
         """
         loss_fn_param_names = set(inspect.signature(self.model.compute_loss).parameters)
-        all_params = {**model_outputs, **kwargs} if isinstance(model_outputs, Mapping) else kwargs
+        all_params = {"labels": labels, **model_outputs, **kwargs}
         loss_fn_params = {k: all_params[k] for k in loss_fn_param_names}
 
         loss = self.model.compute_loss(**loss_fn_params)
