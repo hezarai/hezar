@@ -54,10 +54,6 @@ class SequenceLabelingTrainer(Trainer):
         )
         self.criterion = torch.nn.CrossEntropyLoss()
 
-    def compute_loss(self, logits, labels, **kwargs) -> torch.Tensor:
-        loss = self.criterion(logits.view(-1, self.model.config.num_labels), labels.view(-1))
-        return loss
-
     def compute_metrics(self, predictions, labels, **kwargs):
         predictions = np.array(predictions).argmax(2).squeeze()
         labels = np.array(labels).squeeze()

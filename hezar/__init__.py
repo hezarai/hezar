@@ -6,7 +6,7 @@ from .embeddings import *
 from .metrics import *
 from .models import *
 from .preprocessors import *
-from .trainers import *
+from .trainer import *
 from .utils import *
 
 
