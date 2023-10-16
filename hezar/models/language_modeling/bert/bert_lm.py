@@ -27,6 +27,7 @@ class BertLM(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
+    loss_fn = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -55,6 +56,7 @@ class BertLM(Model):
             inputs_embeds=inputs_embeds,
             encoder_hidden_states=encoder_hidden_states,
             encoder_attention_mask=encoder_attention_mask,
+            labels=None,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=True,
@@ -62,6 +64,10 @@ class BertLM(Model):
         outputs["token_ids"] = token_ids  # needed for post-process
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
@@ -85,9 +91,7 @@ class BertLM(Model):
         filled_token_ids = token_ids.cpu().numpy().copy()
         fill_tokens = []
         for batch_i, logits in enumerate(output_logits):
-            masked_index = torch.nonzero(
-                token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False
-            ).flatten()  # noqa
+            masked_index = torch.nonzero(token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False).flatten()  # noqa
             if len(masked_index) > 1:
                 raise ValueError(
                     f"Can't handle multiple `{tokenizer.mask_token}` tokens in the input for {self.__class__.__name__}!"

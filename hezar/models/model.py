@@ -24,18 +24,32 @@ from ..constants import (
     DEFAULT_MODEL_FILE,
     HEZAR_CACHE_DIR,
     Backends,
+    LossType,
 )
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, verify_dependencies
 from .model_outputs import ModelOutput
 
-
 logger = Logger(__name__)
+
+criterions_mapping = {
+    "l1": nn.L1Loss,
+    "nll": nn.NLLLoss,
+    "nll_2d": nn.NLLLoss2d,
+    "poisson_nll": nn.PoissonNLLLoss,
+    "gaussian_nll": nn.GaussianNLLLoss,
+    "mse": nn.MSELoss,
+    "bce": nn.BCELoss,
+    "bce_with_logits": nn.BCEWithLogitsLoss,
+    "cross_entropy": nn.CrossEntropyLoss,
+    "triple_margin": nn.TripletMarginLoss,
+    "ctc": nn.CTCLoss
+}
 
 
 class Model(nn.Module):
     """
-    A base model for all neural-based models in Hezar.
+    Base class for all neural network models in Hezar.
 
     Args:
         config: A dataclass model config
@@ -52,11 +66,22 @@ class Model(nn.Module):
     # Keys to ignore on loading state dicts
     skip_keys_on_load = []
 
+    # Loss function name
+    loss_fn: Union[str, LossType] = LossType.CROSS_ENTROPY
+
     def __init__(self, config: ModelConfig, *args, **kwargs):
         verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
         self._preprocessor = None
+        self._criterion = self._set_criterion(self.loss_fn)
+
+    @staticmethod
+    def _set_criterion(criterion_name: str):
+        if criterion_name not in criterions_mapping:
+            raise ValueError(f"Invalid criterion name `{criterion_name}`. Available: {list(criterions_mapping.keys())}")
+        loss_fn = criterions_mapping[criterion_name]()
+        return loss_fn
 
     @classmethod
     def load(
@@ -267,6 +292,19 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
+    def compute_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """
+        Compute loss on the model outputs against the given labels
+
+        Args:
+            inputs: Input tensor to compute loss on
+            targets: Target tensor
+
+        Returns:
+            Loss tensor
+        """
+        raise NotImplementedError
+
     def generate(self, *model_inputs, **kwargs):
         """
         Generation method for all generative models. Generative models have the `is_generative` attribute set to True.
@@ -438,6 +476,19 @@ class Model(nn.Module):
         Get the model's device. This method is only safe when all weights of the model are on the same device.
         """
         return next(self.parameters()).device
+
+    @property
+    def criterion(self):
+        return self._criterion
+
+    @criterion.setter
+    def criterion(self, value):
+        if isinstance(value, str):
+            self._criterion = self._set_criterion(value)
+        elif isinstance(value, nn.Module):
+            self._criterion = value
+        else:
+            raise ValueError(f"Criterion value must be either a name or a PyTorch `nn.Module`, got {type(value)}!")
 
     @property
     def preprocessor(self) -> PreprocessorsContainer:

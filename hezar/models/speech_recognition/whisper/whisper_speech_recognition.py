@@ -2,6 +2,7 @@ from typing import List, Union
 
 import numpy as np
 import torch
+from torch import nn
 
 from ....constants import Backends
 from ....registry import register_model
@@ -32,6 +33,7 @@ class WhisperSpeechRecognition(Model):
     required_backends = _required_backends
     feature_extractor_name = "whisper_feature_extractor"
     tokenizer_name = "whisper_bpe_tokenizer"
+    loss_fn = "cross_entropy"
 
     def __init__(self, config: WhisperSpeechRecognitionConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -49,7 +51,6 @@ class WhisperSpeechRecognition(Model):
         encoder_outputs=None,
         past_key_values=None,
         decoder_inputs_embeds=None,
-        labels=None,
         use_cache=None,
         output_attentions=None,
         output_hidden_states=None,
@@ -66,13 +67,17 @@ class WhisperSpeechRecognition(Model):
             encoder_outputs=encoder_outputs,
             past_key_values=past_key_values,
             decoder_inputs_embeds=decoder_inputs_embeds,
-            labels=labels,
+            labels=None,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        return loss
 
     def generate(
         self,

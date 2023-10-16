@@ -138,3 +138,5 @@ dmypy.json
 misc/
 runs/
 checkpoints/
+data/
+logs/

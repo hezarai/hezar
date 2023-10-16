@@ -27,6 +27,7 @@ class RobertaLM(Model):
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
+    loss_fn = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -55,12 +56,17 @@ class RobertaLM(Model):
             inputs_embeds=inputs_embeds,
             encoder_hidden_states=encoder_hidden_states,
             encoder_attention_mask=encoder_attention_mask,
+            labels=None,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
         outputs["token_ids"] = token_ids
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):

@@ -37,6 +37,7 @@ class TrOCRImage2Text(Model):
     required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer = "bpe_tokenizer"
+    loss_fn = "cross_entropy"
 
     def __init__(self, config: TrOCRImage2TextConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -52,7 +53,6 @@ class TrOCRImage2Text(Model):
         encoder_outputs=None,
         past_key_values=None,
         decoder_inputs_embeds=None,
-        labels=None,
         use_cache=None,
         output_attentions=None,
         output_hidden_states=None,
@@ -65,13 +65,17 @@ class TrOCRImage2Text(Model):
             encoder_outputs=encoder_outputs,
             past_key_values=past_key_values,
             decoder_inputs_embeds=decoder_inputs_embeds,
-            labels=labels,
+            labels=None,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        loss = self.criterion(logits.reshape(-1, self.trocr.decoder.config.vocab_size), labels.reshape(-1))
+        return loss
 
     def generate(self, pixel_values, generation_config=None, **kwargs):
         if generation_config is None:

@@ -26,6 +26,7 @@ _required_backends = [
 class DistilBertLM(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
+    loss_fn = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -46,6 +47,7 @@ class DistilBertLM(Model):
             attention_mask=attention_mask,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
+            labels=None,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=True,
@@ -54,6 +56,10 @@ class DistilBertLM(Model):
         outputs["token_ids"] = token_ids
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        return loss
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):

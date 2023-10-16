@@ -1,6 +1,7 @@
 from typing import Dict, List, Union
 
 import torch
+import torch.nn as nn
 
 from ....constants import Backends
 from ....registry import register_model
@@ -27,6 +28,7 @@ class T5TextGeneration(Model):
     is_generative = True
     required_backends = _required_backends
     tokenizer_name = "sentencepiece_unigram_tokenizer"
+    loss_fn = "cross_entropy"
 
     def __init__(self, config: T5TextGenerationConfig, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -46,7 +48,6 @@ class T5TextGeneration(Model):
         past_key_values=None,
         inputs_embeds=None,
         decoder_inputs_embeds=None,
-        labels=None,
         use_cache=None,
         output_attentions=None,
         output_hidden_states=None,
@@ -64,13 +65,17 @@ class T5TextGeneration(Model):
             past_key_values=past_key_values,
             inputs_embeds=inputs_embeds,
             decoder_inputs_embeds=decoder_inputs_embeds,
-            labels=labels,
+            labels=None,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
 
         return outputs
+
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        loss = self.criterion(logits.view(-1, logits.size(-1)), labels.view(-1))
+        return loss
 
     def generate(self, token_ids, attention_mask=None, **kwargs):
         input_bs, input_length = token_ids.shape
