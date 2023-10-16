@@ -1,3 +1,3 @@
-from .sequence_labeling import SequenceLabelingTrainer
-from .text_classification import TextClassificationTrainer
 from .trainer import Trainer
+from .trainer_utils import *
+from .metrics_handlers import *
