@@ -38,6 +38,8 @@ class MetricsHandler:
 
     def _setup_metrics(self, metrics):
         metrics_dict = {}
+        if not len(metrics):
+            return metrics_dict
         for metric in metrics:
             if isinstance(metric, str):
                 if metric not in self.valid_metrics:
