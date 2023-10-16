@@ -356,7 +356,7 @@ class TrainerConfig(Config):
 
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.TRAINER)
-    task: TaskType = None
+    task: Union[str, TaskType] = None
     device: str = "cuda"
     init_weights_from: str = None
     dataset_config: Union[DatasetConfig, Dict] = None
