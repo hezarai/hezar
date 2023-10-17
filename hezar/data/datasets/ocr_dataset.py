@@ -97,8 +97,6 @@ class OCRDataset(Dataset):
         invalid_indices = []
         for i, sample in enumerate(list(iter(data))):
             text, path = sample.values()
-            if self.config.reverse_text:
-                text = text[::-1]
             if self._is_label_valid(text):
                 valid_indices.append(i)
             else:
@@ -129,6 +127,8 @@ class OCRDataset(Dataset):
             labels = torch.tensor(token_ids)
         # If split text is not tokenizer-based
         elif self.config.text_split_type == TextSplitType.CHAR_SPLIT:
+            if self.config.reverse_text:
+                text = text[::-1]
             label2id = {v: k for k, v in self.config.id2label.items()}
             labels = [label2id[x] for x in text]
             labels = torch.LongTensor(labels)

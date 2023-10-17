@@ -80,6 +80,8 @@ class CRNNImage2Text(Model):
         for decoded_ids in model_outputs:
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
+            if self.config.reverse_prediction_text:
+                text = text[::-1]
             texts.append(text)
         return Image2TextOutput(texts=texts)
 
