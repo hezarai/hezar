@@ -170,13 +170,18 @@ class Model(nn.Module):
         except RuntimeError:
             compatible_state_dict = OrderedDict()
             src_state_dict = self.state_dict()
+
+            incompatible_keys = []
+
             for (src_key, src_weight), (trg_key, trg_weight) in zip(src_state_dict.items(), state_dict.items()):
                 if src_weight.shape == trg_weight.shape:
                     compatible_state_dict[src_key] = trg_weight
                 else:
-                    compatible_state_dict[trg_key] = trg_weight
+                    # put the source key and weight if trg weight is incompatible
+                    compatible_state_dict[src_key] = src_weight
+                    incompatible_keys.append(src_key)
 
-            missing_keys, incompatible_keys = super().load_state_dict(compatible_state_dict, strict=False)
+            missing_keys, _ = super().load_state_dict(compatible_state_dict, strict=False)
             if len(missing_keys) or len(incompatible_keys):
                 logger.warning(
                     "Partially loading the weights as the model architecture and the given state dict are "
