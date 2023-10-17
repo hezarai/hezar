@@ -355,7 +355,7 @@ class Trainer:
                 # Training on one batch
                 outputs = self.training_step(input_batch)
                 # Compute metrics
-                training_results = self.metrics_handler.compute_on_batch(
+                training_results = self.metrics_handler.compute_metrics(
                     outputs["logits"].detach().cpu().numpy(),
                     input_batch["labels"].detach().cpu().numpy(),
                 )
@@ -388,7 +388,7 @@ class Trainer:
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
                     # Compute metrics
-                    evaluation_results = self.metrics_handler.compute_on_batch(
+                    evaluation_results = self.metrics_handler.compute_metrics(
                         outputs["logits"].detach().cpu().numpy(),
                         input_batch["labels"].detach().cpu().numpy(),
                     )
