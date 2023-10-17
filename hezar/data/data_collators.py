@@ -8,6 +8,7 @@ from ..utils import Logger, convert_batch_dict_dtype
 __all__ = [
     "TextPaddingDataCollator",
     "SequenceLabelingDataCollator",
+    "CharLevelOCRDataCollator",
 ]
 
 logger = Logger(__name__)
@@ -165,3 +166,17 @@ class SequenceLabelingDataCollator:
 
         batch = {k: torch.tensor(v, dtype=torch.int64) for k, v in batch.items()}
         return batch
+
+
+class CharLevelOCRDataCollator:
+    def __init__(self):
+        pass
+
+    def __call__(self, input_batch):
+        if isinstance(input_batch, (list, tuple)) and isinstance(input_batch[0], dict):
+            input_batch = {key: [example[key] for example in input_batch] for key in input_batch[0].keys()}
+        input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"], 0)
+        input_batch["labels"] = torch.cat(input_batch["labels"], 0)
+        input_batch["labels_length"] = torch.cat(input_batch["labels_length"], 0)
+
+        return input_batch
