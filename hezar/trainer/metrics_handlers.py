@@ -29,7 +29,7 @@ class MetricsHandler:
         model_config: Optional model config
         trainer_config: Optional trainer config
     """
-    valid_metrics: List[MetricType]
+    valid_metrics: List[MetricType] = []
 
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None, **kwargs):
         self.metrics = self._setup_metrics(metrics)
@@ -116,7 +116,7 @@ class Image2TextMetricHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        raise NotImplementedError
+        return {}
 
 
 class SpeechRecognitionMetricsHandler(MetricsHandler):
@@ -124,7 +124,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        raise NotImplementedError
+        return {}
 
 
 class TextGenerationMetricHandler(MetricsHandler):
@@ -132,7 +132,7 @@ class TextGenerationMetricHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        raise NotImplementedError
+        return {}
 
 
 class AudioClassificationMetricHandler(MetricsHandler):
@@ -140,4 +140,4 @@ class AudioClassificationMetricHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        raise NotImplementedError
+        return {}
