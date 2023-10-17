@@ -50,6 +50,7 @@ _config_to_type_mapping = {
     "CriterionConfig": ConfigType.CRITERION,
     "MetricConfig": ConfigType.METRIC,
 }
+_type_to_config_mapping = {v: k for k, v in _config_to_type_mapping.items()}
 
 
 @dataclass
@@ -83,6 +84,9 @@ class Config:
         for param, value in self.dict().items():
             if isinstance(getattr(self, param), Enum):
                 setattr(self, param, getattr(self, param).value)
+
+    def __str__(self):
+        return pformat(self.dict())
 
     def __getitem__(self, item):
         try:
@@ -199,6 +203,13 @@ class Config:
         """
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
+
+        for k, v in dict_config.items():
+            if isinstance(v, Dict) and "name" in v and "config_type" in v:
+                config_cls = get_module_config_class(v["name"], v["config_type"])
+                if config_cls is not None:
+                    dict_config[k] = config_cls.from_dict(v)
+
         # Remove class vars to avoid TypeError (unexpected argument)
         [dict_config.pop(k, None) for k in CONFIG_CLASS_VARS]
 
