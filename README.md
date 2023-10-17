@@ -2,10 +2,11 @@
 ![Hezar Logo](hezar.png)
 
 _<p align="center"> The all-in-one AI library for Persian_
-<br>
-[![Downloads](https://static.pepy.tech/badge/hezar)](https://pepy.tech/project/hezar) 
-[![PyPI version](https://badge.fury.io/py/hezar.svg)](https://pypi.org/project/hezar/)
-[![Documentation Status](https://github.com/hezarai/hezar/actions/workflows/docs-deploy.yml/badge.svg)](https://hezarai.github.io/hezar/index.html)
+<br><br>
+![PyPI Version](https://img.shields.io/pypi/v/hezar?color=blue)
+![Pepy Total Downlods](https://img.shields.io/pepy/dt/hezar)
+![PyPI License](https://img.shields.io/pypi/l/hezar)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/hezarai/hezar/.github%2Fworkflows%2Fdocs-deploy.yml?label=Docs)
 </p>
 
 **Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
