@@ -5,7 +5,6 @@ from ....configs import ModelConfig
 
 @dataclass
 class DecoderConfig(ModelConfig):
-    name = "trocr_decoder"
     is_decoder: bool = True
     add_cross_attention: bool = True
     attention_probs_dropout_prob: float = 0.1
@@ -31,7 +30,6 @@ class DecoderConfig(ModelConfig):
 
 @dataclass
 class EncoderConfig(ModelConfig):
-    name = "trocr_encoder"
     hidden_size: int = 768
     num_hidden_layers: int = 12
     num_attention_heads: int = 12
