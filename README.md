@@ -192,7 +192,7 @@ from hezar import (
     BertSequenceLabeling,
     BertSequenceLabelingConfig,
     TrainerConfig,
-    SequenceLabelingTrainer,
+    Trainer,
     Dataset,
     Preprocessor,
 )
@@ -215,7 +215,7 @@ train_config = TrainerConfig(
     metrics=["seqeval"],
 )
 
-trainer = SequenceLabelingTrainer(
+trainer = Trainer(
     config=train_config,
     model=model,
     train_dataset=train_dataset,
