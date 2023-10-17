@@ -95,7 +95,6 @@ class Trainer:
         metrics_handler: MetricsHandler = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
-        **kwargs,
     ):
         self.config = config
 
