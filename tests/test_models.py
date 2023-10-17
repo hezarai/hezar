@@ -9,7 +9,8 @@ task_to_example_repo = {
     TaskType.SEQUENCE_LABELING: "hezarai/bert-fa-pos-lscp-500k",
     TaskType.LANGUAGE_MODELING: "hezarai/bert-base-fa",
     TaskType.SPEECH_RECOGNITION: "hezarai/whisper-small-fa",
-    TaskType.IMAGE2TEXT: "hezarai/trocr-fa-v1",
+    TaskType.IMAGE2TEXT: "hezarai/crnn-base-fa-64x256",
+    TaskType.TEXT_GENERATION: "hezarai/t5-base-fa"
 }
 
 
