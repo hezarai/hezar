@@ -53,19 +53,20 @@ class CRNNImage2Text(Model):
         x, _ = self.rnn2(x)
         x = self.classifier(x)
         x = nn.functional.log_softmax(x, 2)
-        return x
+        outputs = {"logits": x}
+        return outputs
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, labels_lengths: torch.Tensor):
-        labels_lengths = torch.flatten(labels_lengths)
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, labels_length: torch.Tensor):
+        labels_lengths = torch.flatten(labels_length)
         batch_size = logits.size(1)
-        input_lengths = torch.LongTensor([logits.size(0) * batch_size])
+        input_lengths = torch.LongTensor([logits.size(0)] * batch_size)
 
         loss = self.criterion(logits, labels, input_lengths, labels_lengths) / batch_size
 
         return loss
 
     def generate(self, pixel_values, **kwargs):
-        logits = self(pixel_values)
+        logits = self(pixel_values)["logits"]
         decoded = ctc_decode(logits, blank=self.config.blank_id)
         return decoded
 
