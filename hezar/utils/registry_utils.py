@@ -119,6 +119,9 @@ def get_module_config_class(name: str, registry_type: RegistryType):
     """
     registry = _get_registry_from_type(registry_type)
 
+    if name not in registry:
+        return None
+
     config_cls = registry[name].config_class
     return config_cls
 
