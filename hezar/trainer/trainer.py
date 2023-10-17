@@ -302,7 +302,7 @@ class Trainer:
         """
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
-            loss = self.compute_loss(outputs, input_batch["labels"])
+            loss = self.compute_loss(outputs, **input_batch)
 
         self.scaler.scale(loss).backward()
         self.scaler.step(self.optimizer)
@@ -325,7 +325,7 @@ class Trainer:
         """
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
-            loss = self.compute_loss(outputs["logits"], input_batch["labels"])
+            loss = self.compute_loss(outputs, **input_batch)
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 
