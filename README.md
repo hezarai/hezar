@@ -104,7 +104,7 @@ print(transcripts)
 ```python
 from hezar import Model
 # OCR with TrOCR
-model = Model.load("hezarai/trocr-fa-v1")
+model = Model.load("hezarai/trocr-base-fa-v1")
 texts = model.predict(["examples/assets/ocr_example.jpg"])
 print(f"TrOCR Output: {texts}")
 
