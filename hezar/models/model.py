@@ -372,8 +372,8 @@ class Model(nn.Module):
         """
         Perform an end-to-end prediction on raw inputs.
 
-        If the model is a generative model, it has to implement the `generate()` method which will be called instead of
-        `forward()`.
+        If the model is a generative model, it has to implement the `generate()` method too which will be called
+        instead of `forward()`. (`forward()` method is called internally within the `generate()` method)
 
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.

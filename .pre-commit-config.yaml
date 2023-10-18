@@ -1,21 +1,21 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-    -   id: check-merge-conflict
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
-    -   id: detect-private-key
-    -   id: check-added-large-files
-    -   id: check-byte-order-marker
-    -   id: mixed-line-ending
--   repo: https://github.com/PyCQA/isort
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: detect-private-key
+      - id: check-added-large-files
+      - id: check-byte-order-marker
+      - id: mixed-line-ending
+  - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
-    -   id: isort
-        args: ["--profile", "black",
-               "--lines-after-imports", "2"]
--   repo: https://github.com/PyCQA/flake8
+      - id: isort
+        args: [ "--profile", "black",
+                "--lines-after-imports", "2" ]
+  - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
-    -   id: flake8
+      - id: flake8
