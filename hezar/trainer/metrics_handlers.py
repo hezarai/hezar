@@ -4,9 +4,10 @@ import numpy as np
 
 from ..builders import build_metric
 from ..configs import MetricConfig
-from ..metrics import Metric
 from ..constants import MetricType
+from ..metrics import Metric
 from .trainer_utils import MetricsTracker
+
 
 __all__ = [
     "MetricsHandler",

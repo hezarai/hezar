@@ -1,18 +1,19 @@
-from enum import Enum
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
+from enum import Enum
+from typing import Dict
 
 import torch
 from datasets import load_dataset
 
 from ...builders import build_preprocessor
 from ...configs import DatasetConfig
-from ...constants import TaskType, Backends
-from ...preprocessors import Tokenizer, ImageProcessorConfig
+from ...constants import Backends, TaskType
+from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger
 from ..data_collators import CharLevelOCRDataCollator
 from .dataset import Dataset
+
 
 logger = Logger(__name__)
 
@@ -74,7 +75,7 @@ class OCRDataset(Dataset):
                 self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
                 self.data_collator = None
             else:
-                raise ValueError(f"No `tokenizer_path` given although `text_split_type` is set to `tokenize`!")
+                raise ValueError("No `tokenizer_path` given although `text_split_type` is set to `tokenize`!")
         else:
             self.tokenizer = None
             self.data_collator = CharLevelOCRDataCollator()

@@ -2,7 +2,6 @@ from typing import List, Union
 
 import numpy as np
 import torch
-from torch import nn
 
 from ....constants import Backends
 from ....registry import register_model

@@ -1,7 +1,6 @@
 from typing import Dict, List, Union
 
 import torch
-import torch.nn as nn
 
 from ....constants import Backends
 from ....registry import register_model

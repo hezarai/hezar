@@ -30,6 +30,7 @@ from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, verify_dependencies
 from .model_outputs import ModelOutput
 
+
 logger = Logger(__name__)
 
 criterions_mapping = {

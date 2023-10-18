@@ -24,16 +24,17 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
-from .trainer_utils import CSVLogger, write_to_tensorboard
 from .metrics_handlers import (
-    MetricsHandler,
-    TextClassificationMetricsHandler,
-    SequenceLabelingMetricsHandler,
-    SpeechRecognitionMetricsHandler,
     AudioClassificationMetricHandler,
     Image2TextMetricHandler,
+    MetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    TextClassificationMetricsHandler,
     TextGenerationMetricHandler,
 )
+from .trainer_utils import CSVLogger, write_to_tensorboard
+
 
 logger = Logger(__name__)
 
