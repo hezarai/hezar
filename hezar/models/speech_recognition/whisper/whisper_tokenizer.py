@@ -3,10 +3,10 @@ from typing import List
 
 import numpy as np
 
-from ...constants import Backends
-from ...registry import register_preprocessor
-from ...utils import Logger, is_backend_available
-from .bpe import BPEConfig, BPETokenizer
+from ....constants import Backends
+from ....registry import register_preprocessor
+from ....utils import Logger, is_backend_available
+from ....preprocessors import BPEConfig, BPETokenizer
 
 
 if is_backend_available(Backends.TOKENIZERS):

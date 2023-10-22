@@ -5,5 +5,4 @@ from .sentencepiece_unigram import (
     SentencePieceUnigramConfig,
     SentencePieceUnigramTokenizer,
 )
-from .whisper_bpe import WhisperBPEConfig, WhisperBPETokenizer
 from .wordpiece import WordPieceConfig, WordPieceTokenizer

@@ -12,7 +12,7 @@ from ....utils import (
     spectrogram,
     window_function,
 )
-from .audio_feature_extractor import AudioFeatureExtractor, AudioFeatureExtractorConfig
+from ....preprocessors import AudioFeatureExtractor, AudioFeatureExtractorConfig
 
 
 logger = Logger(__name__)
