@@ -68,11 +68,7 @@ class Tokenizer(Preprocessor):
 
     def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
         super().__init__(config, **kwargs)
-        if tokenizer_file is not None:
-            self._tokenizer = self.from_file(tokenizer_file)
-        else:
-            self._tokenizer = self.build()
-
+        self._tokenizer = self.from_file(tokenizer_file) if tokenizer_file is not None else self.build()
         self.special_tokens = self._get_all_special_tokens()
 
     def _get_all_special_tokens(self):
@@ -488,7 +484,7 @@ class Tokenizer(Preprocessor):
         """
         base_vocab = self._tokenizer.get_vocab(with_added_tokens=False)
         full_vocab = self._tokenizer.get_vocab(with_added_tokens=True)
-        added_vocab = {tok: index for tok, index in full_vocab.items() if tok not in base_vocab}
+        added_vocab = {token: index for token, index in full_vocab.items() if token not in base_vocab}
         return added_vocab
 
     def __len__(self) -> int:
