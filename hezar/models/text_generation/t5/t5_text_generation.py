@@ -77,6 +77,7 @@ class T5TextGeneration(Model):
         return loss
 
     def generate(self, token_ids, attention_mask=None, **kwargs):
+        # TODO Merge kwargs into generation config so users can control generation from kwargs
         input_bs, input_length = token_ids.shape
         model_inputs = {"input_ids": token_ids, "attention_mask": attention_mask}
         generation_kwargs = {"min_length": self.config.min_length, "max_length": self.config.max_length}
