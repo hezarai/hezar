@@ -18,7 +18,7 @@ from ..utils import Logger, get_lib_version, verify_dependencies
 
 logger = Logger(__name__)
 
-# The below code is a workaround. Gensim models have this limitation that the models can only be loaded using the same
+# The below code is a workaround. Gensim's models have this limitation that the models can only be loaded using the same
 # gensim & numpy version they were saved with.
 REQUIRED_GENSIM_VERSION = "4.3.2"
 REQUIRED_NUMPY_VERSION = "1.24"

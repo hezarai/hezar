@@ -20,7 +20,7 @@ logger = Logger(__name__)
 _required_backends = [Backends.SCIKIT]
 
 fa_characters = [
-    "آ", "ا", "ب", "پ", "ت", "ث", "ج", "چ", "ه", "خ", "د", "ذ", "ر", "ز", "ژ", "س", "ش",
+    "", "آ", "ا", "ب", "پ", "ت", "ث", "ج", "چ", "ه", "خ", "د", "ذ", "ر", "ز", "ژ", "س", "ش",
     "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ک", "گ", "ل", "م", "ن", "و", "ه", "ی", " "
 ]
 fa_numbers = ["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۰"]
@@ -29,7 +29,7 @@ fa_symbols = ["|", "(", ")", "+", "-", ":", "،", "!", ".", "؛", "=", "%", "؟"
 en_numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 all_characters = fa_characters + fa_numbers + fa_special_characters + fa_symbols + en_numbers
 
-ID2LABEL = {i: char for i, char in enumerate(all_characters)}
+ID2LABEL = dict(enumerate(all_characters))
 
 
 class TextSplitType(str, Enum):

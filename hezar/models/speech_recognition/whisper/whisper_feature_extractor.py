@@ -4,6 +4,7 @@ from typing import List, Union
 import numpy as np
 import torch
 
+from ....preprocessors import AudioFeatureExtractor, AudioFeatureExtractorConfig
 from ....registry import register_preprocessor
 from ....utils import (
     Logger,
@@ -12,7 +13,6 @@ from ....utils import (
     spectrogram,
     window_function,
 )
-from ....preprocessors import AudioFeatureExtractor, AudioFeatureExtractorConfig
 
 
 logger = Logger(__name__)

@@ -8,6 +8,7 @@ from ....utils import is_backend_available
 from ...model import Model
 from .gpt2_text_generation_config import GPT2TextGenerationConfig
 
+
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import (
         GenerationConfig,
