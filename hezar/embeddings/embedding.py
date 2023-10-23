@@ -78,7 +78,7 @@ class Embedding:
         return self.vocab.get(word, -1)
 
     def index2word(self, index):
-        keyed_vocab = dict(self.vocab.items())
+        keyed_vocab = {v: k for k, v in self.vocab.items()}
         return keyed_vocab[index]
 
     def similarity(self, word1: str, word2: str):
