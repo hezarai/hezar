@@ -23,7 +23,6 @@ from hezar import (
 ### Define paths
 Lets define our paths to the datasets, tokenizer, etc.
 ```python
-MODEL_NAME = "distilbert_text_classification"  # model registry name
 DATASET_PATH = "hezarai/sentiment-dksf"  # dataset path on the Hub
 BASE_MODEL_PATH = "hezarai/distilbert-base-fa"  # used as model backbone weights and tokenizer
 ```
@@ -38,7 +37,7 @@ eval_dataset = Dataset.load(DATASET_PATH, split="test", tokenizer_path=BASE_MODE
 Let's build our model along with its tokenizer.
 ### Build the model
 ```python
-model = BertTextClassification(BertTextClassificationConfig(id2label=train_dataset.config.id2label))
+model = DistilBertTextClassification(DistilBertTextClassificationConfig(id2label=train_dataset.config.id2label))
 ```
 ### Load the tokenizer
 The tokenizer can be loaded from the base model path.
@@ -47,10 +46,10 @@ tokenizer = Preprocessor.load(BASE_MODEL_PATH)
 ```
 
 ## Trainer
-Hezar has a general Trainer class that satisfies most of your needs. You can customize almost every single part of it 
-but for now, we stick with the base class `Trainer`. 
+Hezar has a general Trainer class that satisfies most of your needs. You can customize almost every single part of it
+but for now, we stick with the base class `Trainer`.
 ### Trainer Config
-Define all the training properties in the trainer's config. As we're training a text classification model we set the 
+Define all the training properties in the trainer's config. As we're training a text classification model we set the
 task to `text_classification` in our config. Other parameters are also customizable like below:
 ```python
 train_config = TrainerConfig(
@@ -80,7 +79,7 @@ trainer = Trainer(
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,
     data_collator=train_dataset.data_collator,
-    preprocessor=preprocessor,
+    preprocessor=tokenizer,
 )
 ```
 ### Start Training
