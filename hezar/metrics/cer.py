@@ -11,7 +11,7 @@ if is_backend_available(Backends.JIWER):
     import jiwer
     import jiwer.transforms as tr
 
-_DESCRIPTION = "Character Error Rate (CER) using `jiwer`. Commonly used for Speech Recognition systems"
+_DESCRIPTION = "Character Error Rate (CER) using `jiwer`. Commonly used for Speech Recognition and OCR systems"
 
 _required_backends = [
     Backends.JIWER,

@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 
 def _reconstruct(labels, blank=0):
@@ -23,11 +24,14 @@ def greedy_decode(emission_log_prob, blank=0):
 
 def ctc_decode(log_probs, id2label=None, blank=0):
     emission_log_probs = np.transpose(log_probs.cpu().numpy(), (1, 0, 2))
+    batch_size, max_length, _ = emission_log_probs.shape
+
     # size of emission_log_probs: (batch, length, class)
-    decoded_list = []
+    decoded_ids = []
     for emission_log_prob in emission_log_probs:
-        decoded = greedy_decode(emission_log_prob, blank=blank)
+        ids = greedy_decode(emission_log_prob, blank=blank)
         if id2label:
-            decoded = [id2label[label] for label in decoded]
-        decoded_list.append(decoded)
-    return decoded_list
+            ids = [id2label[label] for label in ids]
+        ids.extend([blank] * (max_length - len(ids)))
+        decoded_ids.append(ids)
+    return torch.tensor(decoded_ids)

@@ -1,6 +1,7 @@
 from typing import List, Union
 
 import numpy as np
+import torch
 
 from ..builders import build_metric
 from ..configs import MetricConfig
@@ -113,11 +114,19 @@ class SequenceLabelingMetricsHandler(MetricsHandler):
 
 
 class Image2TextMetricHandler(MetricsHandler):
+    valid_metrics = [MetricType.CER]
+
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        return {}
+        predicted_texts = self.trainer.model.post_process(torch.tensor(predictions))["texts"]
+        labels = self.trainer.model.post_process(torch.tensor(labels))["texts"]
+        results = {}
+        for metric_name, metric in self.metrics.items():
+            x = metric.compute(predicted_texts, labels)
+            results.update(x)
+        return results
 
 
 class SpeechRecognitionMetricsHandler(MetricsHandler):

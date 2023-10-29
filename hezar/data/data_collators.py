@@ -169,14 +169,20 @@ class SequenceLabelingDataCollator:
 
 
 class CharLevelOCRDataCollator:
-    def __init__(self):
-        pass
+    def __init__(self, pad_token_id: int = 0):
+        self.pad_token_id = pad_token_id
 
     def __call__(self, input_batch):
         if isinstance(input_batch, (list, tuple)) and isinstance(input_batch[0], dict):
             input_batch = {key: [example[key] for example in input_batch] for key in input_batch[0].keys()}
         input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"], 0)
-        input_batch["labels"] = torch.cat(input_batch["labels"], 0)
         input_batch["labels_length"] = torch.cat(input_batch["labels_length"], 0)
 
+        max_length = max(map(len, input_batch["labels"]))
+        all_labels = []
+        for labels in input_batch["labels"]:
+            labels = labels.numpy().tolist()
+            labels += [self.pad_token_id] * (max_length - len(labels))
+            all_labels.append(labels)
+        input_batch["labels"] = torch.tensor(all_labels)
         return input_batch

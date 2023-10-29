@@ -56,9 +56,10 @@ class CRNNImage2Text(Model):
         outputs = {"logits": x}
         return outputs
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, labels_length: torch.Tensor):
-        labels_lengths = torch.flatten(labels_length)
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor):
         batch_size = logits.size(1)
+        labels_lengths = torch.LongTensor([len(t) for t in labels])
+        labels = labels.flatten()
         input_lengths = torch.LongTensor([logits.size(0)] * batch_size)
 
         loss = self.criterion(logits, labels, input_lengths, labels_lengths) / batch_size
@@ -67,17 +68,18 @@ class CRNNImage2Text(Model):
 
     def generate(self, pixel_values, **kwargs):
         logits = self(pixel_values)["logits"]
-        decoded = ctc_decode(logits, blank=self.config.blank_id)
-        return decoded
+        output_ids = ctc_decode(logits, blank=self.config.blank_id)
+        return output_ids
 
     def preprocess(self, inputs, **kwargs):
         image_processor = self.preprocessor[self.image_processor]
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, model_outputs, **kwargs):
+    def post_process(self, model_outputs: torch.Tensor, **kwargs):
         texts = []
-        for decoded_ids in model_outputs:
+        generated_ids = model_outputs.cpu().numpy().tolist()
+        for decoded_ids in generated_ids:
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
             if self.config.reverse_prediction_text:

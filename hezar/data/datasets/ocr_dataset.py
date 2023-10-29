@@ -73,7 +73,7 @@ class OCRDataset(Dataset):
         if self.config.text_split_type == TextSplitType.TOKENIZE:
             if self.config.tokenizer_path is not None:
                 self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
-                self.data_collator = None
+                self.data_collator = None  # TODO resolve this in the future.
             else:
                 raise ValueError("No `tokenizer_path` given although `text_split_type` is set to `tokenize`!")
         else:
