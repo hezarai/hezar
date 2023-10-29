@@ -50,6 +50,7 @@ class EncoderConfig(ModelConfig):
 class GenerationConfig:
     bos_token_id: int = 0
     decoder_start_token_id: int = 0
+    return_dict_in_generate: bool = True
     early_stopping: bool = True
     eos_token_id: int = 2
     length_penalty: float = 2.0

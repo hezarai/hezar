@@ -36,7 +36,7 @@ class ViTRobertaImage2Text(Model):
     is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"
-    tokenizer = "bpe_tokenizer"
+    tokenizer_name = "bpe_tokenizer"
     loss_fn_name = "cross_entropy"
 
     def __init__(self, config: ViTRobertaImage2TextConfig, **kwargs):
@@ -93,6 +93,6 @@ class ViTRobertaImage2Text(Model):
         return processed_outputs
 
     def post_process(self, model_outputs, **kwargs):
-        tokenizer = self.preprocessor[self.tokenizer]
+        tokenizer = self.preprocessor[self.tokenizer_name]
         decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
         return Image2TextOutput(texts=decoded_outputs)
