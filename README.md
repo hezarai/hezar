@@ -117,6 +117,18 @@ print(f"CRNN Output: {texts}")
 TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
 CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
+- **Image to Text (License Plate Recognition)**
+```python
+from hezar import Model
+
+model = Model.load("hezarai/crnn-fa-64x256-license-plate-recognition")
+plate_text = model.predict("assets/license_plate_ocr_example.jpg")
+print(plate_text)  # Persian text of mixed numbers and characters might not show correctly in the console
+```
+```
+{'texts': ['۵۷س۷۷۹۷۷']}
+```
+
 
 - **Image to Text (Image Captioning)**
 ```python
