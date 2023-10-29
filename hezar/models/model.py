@@ -307,7 +307,7 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def generate(self, *model_inputs, **kwargs):
+    def generate(self, *model_inputs, **kwargs) -> torch.Tensor:
         """
         Generation method for all generative models. Generative models have the `is_generative` attribute set to True.
         The behavior of this method is usually controlled by `generation` part of the model's config.
@@ -319,17 +319,7 @@ class Model(nn.Module):
         Returns:
             Generated output tensor
         """
-        model_cls_name = self.__class__.__name__
-        if self.is_generative:
-            raise NotImplementedError(
-                f"`{model_cls_name}` is a generative model (`{model_cls_name}.is_generative = True`) "
-                f"but has not implemented the `generate()` method!"
-            )
-        else:
-            raise NotImplementedError(
-                f"`{model_cls_name}` does not seem to be a generative model (`{model_cls_name}.is_generative = False`) "
-                f"hence leaving the `generate` method unimplemented!"
-            )
+        raise NotImplementedError
 
     def preprocess(self, *raw_inputs: Union[Any, List[Any]], **kwargs):
         """

@@ -329,6 +329,9 @@ class Trainer:
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
             loss = self.compute_loss(outputs, **input_batch)
+            if self.model.is_generative and self.config.evaluate_with_generate:
+                generated_ids = self.model.generate(**input_batch)
+                outputs["logits"] = generated_ids
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 
@@ -344,7 +347,7 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        self.metrics_handler.tracker.reset()
+        losses_sum = 0.0
         self.model.train()
         with tqdm(
             self.train_dataloader,
@@ -357,16 +360,12 @@ class Trainer:
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
                 outputs = self.training_step(input_batch)
-                logits = outputs["logits"].detach().cpu().numpy()
-                labels = input_batch["labels"].detach().cpu().numpy()
-                # Compute metrics
-                training_results = self.metrics_handler.compute_metrics(logits, labels)
-                training_results["loss"] = outputs["loss"]
+                losses_sum += outputs["loss"]
                 # Gather outputs for metrics
-                self.metrics_handler.tracker.update(training_results)
-                iterator.set_postfix(**self.metrics_handler.tracker.avg())
+                avg_loss = losses_sum / (step + 1)
+                iterator.set_postfix(loss=avg_loss)
 
-        return self.metrics_handler.tracker.avg()
+        return {"loss": avg_loss}
 
     def evaluate(self):
         """

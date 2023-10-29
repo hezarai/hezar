@@ -376,6 +376,7 @@ class TrainerConfig(Config):
     scheduler: str = None
     batch_size: int = None
     use_amp: bool = False
+    evaluate_with_generate: bool = True
     metrics: List[Union[str, MetricConfig]] = None
     num_epochs: int = None
     save_freq: int = 1
