@@ -9,8 +9,8 @@ Examples:
 
     >>> from hezar import BertLMConfig
     >>> bert_config = BertLMConfig(vocab_size=50000, hidden_size=768)
-    >>> bert_config.save("saved/bert")
-    >>> bert_config.push_to_hub("hezarai/bert-custom")
+    >>> bert_config.save("saved/bert", filename="model_config.yaml")
+    >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
 """
 import os
 import tempfile

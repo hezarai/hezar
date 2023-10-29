@@ -37,7 +37,7 @@ class TrOCRImage2Text(Model):
     required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer = "bpe_tokenizer"
-    loss_fn = "cross_entropy"
+    loss_fn_name = "cross_entropy"
 
     def __init__(self, config: TrOCRImage2TextConfig, **kwargs):
         super().__init__(config, **kwargs)

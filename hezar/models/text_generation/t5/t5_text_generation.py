@@ -27,7 +27,7 @@ class T5TextGeneration(Model):
     is_generative = True
     required_backends = _required_backends
     tokenizer_name = "sentencepiece_unigram_tokenizer"
-    loss_fn = "cross_entropy"
+    loss_fn_name = "cross_entropy"
 
     def __init__(self, config: T5TextGenerationConfig, **kwargs):
         super().__init__(config=config, **kwargs)

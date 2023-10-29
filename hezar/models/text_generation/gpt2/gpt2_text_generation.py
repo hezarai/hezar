@@ -24,7 +24,7 @@ class GPT2TextGeneration(Model):
     is_generative = True
     tokenizer_name = "bpe_tokenizer"
     required_backends = _required_backends
-    loss_fn = "cross_entropy"
+    loss_fn_name = "cross_entropy"
 
     def __init__(self, config: GPT2TextGenerationConfig, **kwargs):
         super().__init__(config, **kwargs)

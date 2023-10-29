@@ -68,14 +68,14 @@ class Model(nn.Module):
     skip_keys_on_load = []
 
     # Loss function name
-    loss_fn: Union[str, LossType] = LossType.CROSS_ENTROPY
+    loss_fn_name: Union[str, LossType] = LossType.CROSS_ENTROPY
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
         self._preprocessor = None
-        self._criterion = self._set_criterion(self.loss_fn)
+        self._criterion = self._set_criterion(self.loss_fn_name)
 
     @staticmethod
     def _set_criterion(criterion_name: str):

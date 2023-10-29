@@ -32,7 +32,7 @@ class WhisperSpeechRecognition(Model):
     required_backends = _required_backends
     feature_extractor_name = "whisper_feature_extractor"
     tokenizer_name = "whisper_bpe_tokenizer"
-    loss_fn = "cross_entropy"
+    loss_fn_name = "cross_entropy"
 
     def __init__(self, config: WhisperSpeechRecognitionConfig, **kwargs):
         super().__init__(config, **kwargs)

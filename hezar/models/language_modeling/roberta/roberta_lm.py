@@ -27,7 +27,7 @@ class RobertaLM(Model):
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
-    loss_fn = "cross_entropy"
+    loss_fn_name = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

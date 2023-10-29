@@ -16,7 +16,7 @@ class CRNNImage2Text(Model):
 
     is_generative = True
     image_processor = "image_processor"
-    loss_fn = "ctc"
+    loss_fn_name = "ctc"
 
     def __init__(self, config: CRNNImage2TextConfig, **kwargs):
         super().__init__(config=config, **kwargs)

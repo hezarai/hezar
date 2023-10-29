@@ -26,7 +26,7 @@ _required_backends = [
 class DistilBertLM(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
-    loss_fn = "cross_entropy"
+    loss_fn_name = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)

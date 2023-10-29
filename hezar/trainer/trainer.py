@@ -267,6 +267,9 @@ class Trainer:
                 f"`input_batch` must be a tensor or a dict-like object containing key/value pairs of tensors, "
                 f"but got {type(input_batch)}"
             )
+        if not isinstance(outputs, Dict):
+            raise ValueError(f"Model outputs must be dict-like not `{type(outputs)}`")
+
         return outputs
 
     def compute_loss(self, model_outputs: Mapping, labels: torch.Tensor, **kwargs) -> torch.Tensor:
@@ -354,11 +357,10 @@ class Trainer:
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
                 outputs = self.training_step(input_batch)
+                logits = outputs["logits"].detach().cpu().numpy()
+                labels = input_batch["labels"].detach().cpu().numpy()
                 # Compute metrics
-                training_results = self.metrics_handler.compute_metrics(
-                    outputs["logits"].detach().cpu().numpy(),
-                    input_batch["labels"].detach().cpu().numpy(),
-                )
+                training_results = self.metrics_handler.compute_metrics(logits, labels)
                 training_results["loss"] = outputs["loss"]
                 # Gather outputs for metrics
                 self.metrics_handler.tracker.update(training_results)
@@ -387,11 +389,10 @@ class Trainer:
                     input_batch = self.prepare_input_batch(input_batch)
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
+                    logits = outputs["logits"].detach().cpu().numpy()
+                    labels = input_batch["labels"].detach().cpu().numpy()
                     # Compute metrics
-                    evaluation_results = self.metrics_handler.compute_metrics(
-                        outputs["logits"].detach().cpu().numpy(),
-                        input_batch["labels"].detach().cpu().numpy(),
-                    )
+                    evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
                     evaluation_results["loss"] = outputs["loss"]
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
