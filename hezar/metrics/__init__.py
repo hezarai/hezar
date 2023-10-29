@@ -1,4 +1,4 @@
-from .metric import Metric  # isort: skip
+from .metric import Metric
 from .accuracy import Accuracy, AccuracyConfig
 from .bleu import BLEU, BLEUConfig
 from .cer import CER, CERConfig

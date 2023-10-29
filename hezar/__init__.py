@@ -1,4 +1,4 @@
-from .registry import *  # isort: skip
+from .registry import *
 from .builders import *
 from .configs import *
 from .data import *

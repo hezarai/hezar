@@ -30,7 +30,13 @@ from .registry import (
 from .utils import snake_case
 
 
-__all__ = ["build_model", "build_dataset", "build_preprocessor", "build_embedding", "build_metric"]
+__all__ = [
+    "build_model",
+    "build_dataset",
+    "build_preprocessor",
+    "build_embedding",
+    "build_metric",
+]
 
 
 def build_model(name: str, config: Optional[ModelConfig] = None, **kwargs):

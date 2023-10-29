@@ -1,4 +1,4 @@
-from .model import Model  # isort: skip
+from .model import Model
 from .audio_classification import *
 from .backbone import *
 from .image2text import *
