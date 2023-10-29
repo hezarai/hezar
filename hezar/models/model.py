@@ -223,7 +223,6 @@ class Model(nn.Module):
         if save_preprocessor:
             if self.preprocessor is not None:
                 self.preprocessor.save(path)
-        return model_save_path
 
     def push_to_hub(
         self,
@@ -253,11 +252,7 @@ class Model(nn.Module):
 
         # save to tmp and prepare for push
         cache_path = tempfile.mkdtemp()
-        model_save_path = self.save(
-            cache_path,
-            filename=filename,
-            config_filename=config_filename,
-        )
+        self.save(cache_path, filename=filename, config_filename=config_filename)
         if commit_message is None:
             commit_message = "Hezar: Upload model and config"
 
@@ -274,8 +269,9 @@ class Model(nn.Module):
                 self.preprocessor.push_to_hub(repo_id, commit_message=commit_message, private=private)
 
         # upload model file
+        weights_path = os.path.join(cache_path, filename)
         upload_file(
-            path_or_fileobj=model_save_path,
+            path_or_fileobj=weights_path,
             path_in_repo=filename,
             repo_id=repo_id,
             commit_message=commit_message,
