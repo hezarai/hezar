@@ -12,7 +12,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install sphinx myst-parser furo sphinx-copybutton
-          pip install hezar
+          pip install --no-deps hezar[all]
       - name: Sphinx build
         run: |
           sphinx-apidoc -e -o docs/source hezar/
