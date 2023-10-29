@@ -7,4 +7,5 @@ from .sequence_labeling import *
 from .speech_recognition import *
 from .text_classification import *
 from .text_detection import *
+from .text_embedding import *
 from .text_generation import *
