@@ -31,7 +31,7 @@ exclude = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-torch = ">=1.10.0,<2.2"
+torch = ">=1.10.0"
 omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
 tokenizers = ">=0.13.0"
