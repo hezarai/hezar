@@ -13,7 +13,6 @@ jobs:
           pip install sphinx myst-parser furo sphinx-copybutton
       - name: Sphinx build
         run: |
-          sphinx-apidoc -e -o docs/source hezar/
           sphinx-build docs _build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
