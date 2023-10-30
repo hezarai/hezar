@@ -4,7 +4,7 @@
 _<p align="center"> The all-in-one AI library for Persian_
 <br><br>
 ![PyPI Version](https://img.shields.io/pypi/v/hezar?color=blue)
-![Pepy Total Downlods](https://img.shields.io/pepy/dt/hezar)
+[![PyPi Downloads](https://static.pepy.tech/badge/hezar)](https://pepy.tech/project/hezar)
 ![PyPI License](https://img.shields.io/pypi/l/hezar)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/hezarai/hezar/.github%2Fworkflows%2Fdocs-deploy.yml?label=docs)
 </p>
