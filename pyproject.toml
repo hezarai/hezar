@@ -30,8 +30,7 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
-torch = ">=1.10.0"
+torch = ">=1.10.0,<2.1.0"
 omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
 tokenizers = ">=0.13.0"
@@ -58,7 +57,7 @@ all = ["gensim", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk"]
 
 [tool.black]
 line-length = 120
-target-version = ['py38', 'py39', 'py310', 'py311']
+target-version = ['py38', 'py39', 'py310']
 
 [tool.ruff]
 ignore = ["C901", "E501", "E741", "W605", "F403", "F405"]
