@@ -19,7 +19,6 @@ from enum import Enum
 from pprint import pformat
 from typing import Dict, List, Optional, Tuple, Union
 
-import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
@@ -34,7 +33,6 @@ __all__ = [
     "TrainerConfig",
     "DatasetConfig",
     "EmbeddingConfig",
-    "CriterionConfig",
     "MetricConfig",
 ]
 
@@ -329,19 +327,6 @@ class EmbeddingConfig(Config):
 
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.EMBEDDING)
-
-
-@dataclass
-class CriterionConfig(Config):
-    """
-    Base dataclass for all criterion configs
-    """
-
-    name: str = field(default=None)
-    config_type: str = field(init=False, default=ConfigType.CRITERION)
-    weight: Optional[torch.Tensor] = None
-    reduce: str = None
-    ignore_index: int = -100
 
 
 @dataclass
