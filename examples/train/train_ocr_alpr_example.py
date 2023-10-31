@@ -1,11 +1,9 @@
-from hezar import (
-    CRNNImage2TextConfig,
-    CRNNImage2Text,
-    TrainerConfig,
-    Trainer,
-    Dataset,
-    Preprocessor,
-)
+from hezar.models import CRNNImage2TextConfig, CRNNImage2Text
+from hezar.preprocessors import Preprocessor
+from hezar.data import Dataset
+from hezar.trainer import Trainer
+from hezar.configs import TrainerConfig
+
 
 base_model_path = "hezarai/crnn-base-fa-64x256"
 

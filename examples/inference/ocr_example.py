@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 
 # model = Model.load("hezarai/trocr-base-fa-v1")  # TrOCR

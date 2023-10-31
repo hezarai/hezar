@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 
 hub_path = "hezarai/bert-fa-pos-lscp-500k"

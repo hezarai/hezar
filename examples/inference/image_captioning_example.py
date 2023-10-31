@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 
 model = Model.load("hezarai/vit-roberta-fa-image-captioning-flickr30k")
