@@ -2,6 +2,7 @@
 Direct importing from hezar's root is no longer supported nor recommended since version 0.32.0. The following is just a
 workaround for backward compatibility. Any class, functions, etc. must be imported from its main submodule under hezar.
 """
+__version__ = "0.31.3"
 
 import warnings
 
