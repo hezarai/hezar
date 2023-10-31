@@ -7,7 +7,6 @@ __all__ = [
     "list_available_preprocessors",
     "list_available_datasets",
     "list_available_metrics",
-    "list_available_trainers",
     "list_available_embeddings",
     "get_registry_point",
     "get_module_class",
@@ -17,39 +16,33 @@ __all__ = [
 
 
 def list_available_models():
-    from ..registry import models_registry
+    registry = _get_registry_from_type(RegistryType.MODEL)
 
-    return sorted(models_registry.keys())
+    return sorted(registry.keys())
 
 
 def list_available_preprocessors():
-    from ..registry import preprocessors_registry
+    registry = _get_registry_from_type(RegistryType.PREPROCESSOR)
 
-    return sorted(preprocessors_registry.keys())
+    return sorted(registry.keys())
 
 
 def list_available_datasets():
-    from ..registry import datasets_registry
+    registry = _get_registry_from_type(RegistryType.DATASET)
 
-    return sorted(datasets_registry.keys())
+    return sorted(registry.keys())
 
 
 def list_available_metrics():
-    from ..registry import metrics_registry
+    registry = _get_registry_from_type(RegistryType.METRIC)
 
-    return sorted(metrics_registry.keys())
-
-
-def list_available_trainers():
-    from ..registry import trainers_registry
-
-    return sorted(trainers_registry.keys())
+    return sorted(registry.keys())
 
 
 def list_available_embeddings():
-    from ..registry import embeddings_registry
+    registry = _get_registry_from_type(RegistryType.EMBEDDING)
 
-    return sorted(embeddings_registry.keys())
+    return sorted(registry.keys())
 
 
 def _get_registry_from_type(registry_type: RegistryType):
@@ -72,11 +65,6 @@ def _get_registry_from_type(registry_type: RegistryType):
         from ..registry import embeddings_registry  # noqa
 
         registry = embeddings_registry
-
-    elif registry_type == RegistryType.TRAINER:
-        from ..registry import trainers_registry  # noqa
-
-        registry = trainers_registry
 
     elif registry_type == RegistryType.METRIC:
         from ..registry import metrics_registry  # noqa

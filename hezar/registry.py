@@ -33,7 +33,6 @@ from .configs import (
     MetricConfig,
     ModelConfig,
     PreprocessorConfig,
-    TrainerConfig,
 )
 from .utils import Logger
 
@@ -44,14 +43,12 @@ __all__ = [
     "register_dataset",
     "register_embedding",
     "register_metric",
-    "register_trainer",
     "Registry",
     "models_registry",
     "preprocessors_registry",
     "datasets_registry",
     "embeddings_registry",
     "metrics_registry",
-    "trainers_registry",
 ]
 
 logger = Logger(__name__)
@@ -69,7 +66,6 @@ preprocessors_registry: Dict[str, Registry] = {}
 datasets_registry: Dict[str, Registry] = {}
 embeddings_registry: Dict[str, Registry] = {}
 metrics_registry: Dict[str, Registry] = {}
-trainers_registry: Dict[str, Registry] = {}
 
 
 def register_model(model_name: str, config_class: Type[ModelConfig], description: str = None):
@@ -190,39 +186,6 @@ def register_embedding(embedding_name: str, config_class: Type[EmbeddingConfig],
             )
 
         embeddings_registry[embedding_name] = Registry(
-            module_class=cls,
-            config_class=config_class,
-            description=description,
-        )
-
-        return cls
-
-    return register
-
-
-def register_trainer(trainer_name: str, config_class: Type[TrainerConfig], description: str = None):
-    """
-    A class decorator that adds the Trainer class and the config class to the `trainers_registry`
-
-    Args:
-        trainer_name: Trainer's registry name e.g, `text_classification_trainer`
-        config_class: Trainer's config class e.g, `TextClassificationTrainerConfig`.
-            This parameter must be the config class itself not a config instance!
-        description: Optional trainer description
-    """
-
-    def register(cls):
-        if trainer_name in trainers_registry:
-            logger.warning(f"Trainer `{trainer_name}` is already registered. Overwriting...")
-
-        if config_class.name != trainer_name:
-            raise ValueError(
-                f"`trainer_name` and `config.name` are not compatible for `{cls.__name__}`\n"
-                f"trainer_name: {trainer_name}\n"
-                f"{config_class.__name__}.name: {config_class.name}"
-            )
-
-        trainers_registry[trainer_name] = Registry(
             module_class=cls,
             config_class=config_class,
             description=description,
