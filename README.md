@@ -51,7 +51,7 @@ Let's walk you through some examples!
 
 - **Text Classification (sentiment analysis, categorization, etc)**
 ```python
-from hezar import Model
+from hezar.models import Model
 
 example = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
 model = Model.load("hezarai/bert-fa-sentiment-dksf")
@@ -204,8 +204,7 @@ Hezar makes it super easy to train models using out-of-the-box models and datase
 ```python
 from hezar.models import BertSequenceLabeling, BertSequenceLabelingConfig
 from hezar.data import Dataset
-from hezar.trainer import Trainer
-from hezar.configs import TrainerConfig
+from hezar.trainer import Trainer, TrainerConfig
 from hezar.preprocessors import Preprocessor
 
 base_model_path = "hezarai/bert-base-fa"
