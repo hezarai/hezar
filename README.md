@@ -1,5 +1,7 @@
 
-![Hezar Logo](https://raw.githubusercontent.com/hezarai/hezar/main/hezar.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/hezarai/hezar/main/hezar.png"/>
+</p>
 
 _<p align="center"> The all-in-one AI library for Persian_
 <br><br>
