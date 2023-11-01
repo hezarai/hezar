@@ -21,7 +21,7 @@ Every model in Hezar, can be pushed to or downloaded from the Hub.
 ### Loading pre-trained models
 Loading a model from Hub is as easy as:
 ```python
-from hezar import Model
+from hezar.models import Model
 
 bert = Model.load("hezarai/bert-base-fa")
 ```
@@ -39,7 +39,7 @@ inference in a single line of code using `Model.predict` method.
 
 A sequence labeling example would be like this:
 ```python
-from hezar import Model
+from hezar.models import Model
 
 pos_model = Model.load("hezarai/bert-fa-pos-lscp-500k")  # Part-of-speech
 inputs = ["شرکت هوش مصنوعی هزار"]
@@ -53,7 +53,7 @@ POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'t
 ### Saving Models
 You can save any model along with its config and preprocessor and other files on disk like:
 ```python
-from hezar import RobertaLM, RobertaLMConfig
+from hezar.models import RobertaLM, RobertaLMConfig
 
 roberta = RobertaLM(RobertaLMConfig(vocab_size=60000))
 roberta.save("my-roberta")
@@ -62,7 +62,7 @@ roberta.save("my-roberta")
 ### Pushing to the Hub
 Every model can be pushed to the Hub.
 ```python
-from hezar import RobertaTextClassification, RobertaTextClassificationConfig
+from hezar.models import RobertaTextClassification, RobertaTextClassificationConfig
 
 roberta = RobertaTextClassification(RobertaTextClassificationConfig(num_labels=2))
 roberta.push_to_hub("arxyzan/roberta-sentiment")
@@ -81,7 +81,8 @@ from dataclasses import dataclass
 
 from torch import Tensor, nn
 
-from hezar import Model, ModelConfig, register_model
+from hezar.models import Model, ModelConfig
+from hezar.registry import register_model
 
 
 @dataclass

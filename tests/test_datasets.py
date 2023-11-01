@@ -1,5 +1,6 @@
-from hezar import Dataset, Logger
 from hezar.constants import TaskType
+from hezar.data import Dataset
+from hezar.utils import Logger
 
 
 logger = Logger(__name__)

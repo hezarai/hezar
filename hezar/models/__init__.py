@@ -1,3 +1,4 @@
+from ..registry import register_model  # noqa
 from .model import Model, ModelConfig  # noqa
 from .audio_classification import *
 from .backbone import *

@@ -1,11 +1,7 @@
-from hezar import (
-    BertSequenceLabeling,
-    BertSequenceLabelingConfig,
-    Dataset,
-    Preprocessor,
-    Trainer,
-    TrainerConfig,
-)
+from hezar.models import BertSequenceLabeling, BertSequenceLabelingConfig
+from hezar.data import Dataset
+from hezar.preprocessors import Preprocessor
+from hezar.trainer import Trainer, TrainerConfig
 
 
 base_model_path = "hezarai/bert-base-fa"

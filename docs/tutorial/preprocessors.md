@@ -11,7 +11,7 @@ Following the common pattern among all modules in Hezar, preprocessors also can 
 **Loading with the corresponding module**<br>
 You can load any preprocessor of any type with its base class like `Tokenizer`, `AudioFeatureExtractor`, etc.
 ```python
-from hezar import Tokenizer, AudioFeatureExtractor, TextNormalizer
+from hezar.preprocessors import Tokenizer, AudioFeatureExtractor, TextNormalizer
 
 tokenizer = Tokenizer.load("hezarai/bert-base-fa")
 normalizer = TextNormalizer.load("hezarai/roberta-base-fa")
@@ -27,7 +27,7 @@ contains single or multiple preprocessors.
 - If path contains multiple preprocessors, the output is a `PreprocessorContainer` which is a dict-like object that holds
 each preprocessor by its registry name.
 ```python
-from hezar import Tokenizer
+from hezar.preprocessors import Tokenizer
 
 tokenizer = Tokenizer.load("hezarai/bert-base-fa")
 print(tokenizer)
@@ -37,7 +37,7 @@ print(tokenizer)
 ```
 
 ```python
-from hezar import Preprocessor
+from hezar.preprocessors import Preprocessor
 
 whisper_preprocessors = Preprocessor.load("hezarai/whisper-small-fa")
 print(whisper_preprocessors)
@@ -56,7 +56,7 @@ PreprocessorsContainer(
 ## Saving & Pushing to the Hub
 Although preprocessor have their own type, they all implement the `load`, `save` and `push_to_hub` methods.
 ```python
-from hezar import TextNormalizer, TextNormalizerConfig
+from hezar.preprocessors import TextNormalizer, TextNormalizerConfig
 
 normalizer = TextNormalizer(TextNormalizerConfig(nfkc=False))
 normalizer.save("my-normalizer")
