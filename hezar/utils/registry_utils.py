@@ -47,26 +47,31 @@ def list_available_embeddings():
 
 def _get_registry_from_type(registry_type: RegistryType):
     if registry_type == RegistryType.MODEL:
+        from ..models import Model  # noqa
         from ..registry import models_registry  # noqa
 
         registry = models_registry
 
     elif registry_type == RegistryType.PREPROCESSOR:
+        from ..preprocessors import Preprocessor  # noqa
         from ..registry import preprocessors_registry  # noqa
 
         registry = preprocessors_registry
 
     elif registry_type == RegistryType.DATASET:
+        from ..data import Dataset  # noqa
         from ..registry import datasets_registry  # noqa
 
         registry = datasets_registry
 
     elif registry_type == RegistryType.EMBEDDING:
+        from ..embeddings import Embedding  # noqa
         from ..registry import embeddings_registry  # noqa
 
         registry = embeddings_registry
 
     elif registry_type == RegistryType.METRIC:
+        from ..metrics import Metric  # noqa
         from ..registry import metrics_registry  # noqa
 
         registry = metrics_registry

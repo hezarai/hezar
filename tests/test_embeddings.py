@@ -1,4 +1,5 @@
-from hezar import Embedding, Logger
+from hezar.embeddings import Embedding
+from hezar.utils import Logger
 
 
 embedding_to_example_repo = {

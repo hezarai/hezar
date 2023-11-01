@@ -1,3 +1,4 @@
+from ..registry import register_metric  # noqa
 from .metric import Metric, MetricConfig  # noqa
 from .accuracy import Accuracy, AccuracyConfig
 from .bleu import BLEU, BLEUConfig
