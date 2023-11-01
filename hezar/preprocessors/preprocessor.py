@@ -5,7 +5,8 @@ from typing import List, Union
 from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
 
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, RegistryType, RepoType, HEZAR_CACHE_DIR
+from ..configs import PreprocessorConfig
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, RegistryType, RepoType
 from ..utils import get_module_class, list_repo_files, verify_dependencies
 
 
@@ -21,7 +22,7 @@ class Preprocessor:
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config: PreprocessorConfig, **kwargs):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
 
         self.config = config.update(kwargs)
@@ -86,8 +87,7 @@ class Preprocessor:
                         hub_or_local_path,
                         filename=f,
                         subfolder=subfolder,
-                        repo_type=RepoType.MODEL,
-                        cache_dir=HEZAR_CACHE_DIR,
+                        repo_type=RepoType.MODEL
                     )
                 config = OmegaConf.load(config_file)
                 name = config.get("name", None)

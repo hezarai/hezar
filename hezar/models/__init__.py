@@ -1,4 +1,4 @@
-from .model import Model
+from .model import Model, ModelConfig  # noqa
 from .audio_classification import *
 from .backbone import *
 from .image2text import *
