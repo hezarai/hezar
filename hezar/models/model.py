@@ -25,9 +25,10 @@ from ..constants import (
     HEZAR_CACHE_DIR,
     Backends,
     LossType,
+    RegistryType,
 )
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, verify_dependencies
+from ..utils import Logger, get_module_class, verify_dependencies
 from .model_outputs import ModelOutput
 
 
@@ -118,16 +119,22 @@ class Model(nn.Module):
         # Load config
         config_filename = config_filename or cls.config_filename
         config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=config_filename)
-        # Build model wih config
-        model = build_model(config.name, config, **kwargs)
-        # Raise a warning if model class is not compatible with the one on the Hub
-        if cls.__name__ != "Model" and cls.__name__ != model.__class__.__name__:
-            logger.warning(
-                f"You attempted to load a Hub model using `{cls.__name__}` "
-                f"but the model in `{hub_or_local_path}` is of type `{model.__class__.__name__}`, "
-                f"So the output model is going to be a `{model.__class__.__name__}` instance!"
-            )
-        model_filename = model_filename or model.model_filename or cls.model_filename
+        # Get the exact model class based on registry name under config.name
+        model_cls = get_module_class(config.name, registry_type=RegistryType.MODEL)
+        # Handle compatibility of model class and the one in the config
+        if cls.__name__ == "Model":
+            # Build model wih config
+            model = build_model(config.name, config, **kwargs)
+        else:
+            if cls.__name__ != model_cls.__name__:
+                logger.warning(
+                    f"You attempted to load a model using `{cls.__name__}` "
+                    f"but the model in `{hub_or_local_path}` is of type `{model_cls.__name__}`, "
+                    f"so the output model will be of type {model_cls.__name__} anyway!"
+                )
+            model = model_cls(config, **kwargs)
+
+        model_filename = model_filename or model_cls.model_filename or cls.model_filename
         # does the path exist locally?
         is_local = load_locally or os.path.isdir(hub_or_local_path)
         if not is_local:
