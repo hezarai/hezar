@@ -115,11 +115,12 @@ model = Model.load("hezarai/crnn-base-fa-64x256")
 texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```
-![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
 ```
 TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
 CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
+
 - **Image to Text (License Plate Recognition)**
 ```python
 from hezar import Model
