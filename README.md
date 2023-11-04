@@ -145,6 +145,7 @@ print(texts)
 {'texts': ['سگی با توپ تنیس در دهانش می دود.']}
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/image_captioning_example.jpg)
+
 We constantly keep working on adding and training new models and this section will hopefully be expanding over time ;)
 ### Word Embeddings
 - **FastText**
