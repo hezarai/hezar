@@ -1,7 +1,7 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from typing import List, Union
+from typing import Dict, List, Union
 
 import torch
 from torch import nn, tanh
@@ -10,6 +10,7 @@ from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
+from ...model_outputs import SequenceLabelingOutput
 from .roberta_sequence_labeling_config import RobertaSequenceLabelingConfig
 
 
@@ -80,6 +81,7 @@ class RobertaSequenceLabeling(Model):
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
             "tokens": kwargs.get("tokens", None),
+            "offsets": kwargs.get("offsets_mapping", None)
         }
         return outputs
 
@@ -107,17 +109,30 @@ class RobertaSequenceLabeling(Model):
         )
         return inputs
 
-    def post_process(self, model_outputs, **kwargs):
-        logits = model_outputs["logits"]
+    def post_process(
+        self,
+        model_outputs: Dict[str, torch.Tensor],
+        return_offsets: bool = False,
+        return_scores: bool = False,
+    ):
+        logits = model_outputs["logits"].softmax(2)
         tokens = model_outputs["tokens"]
-        predictions = logits.argmax(2).cpu()
+        offsets = model_outputs["offsets"]
+        probs, predictions = logits.max(2)
         predictions = [[self.config.id2label[p.item()] for p in prediction] for prediction in predictions]
         outputs = []
-        for tokens_list, prediction in zip(tokens, predictions):
+        for tokens_list, prediction, probs_, offsets_mapping in zip(tokens, predictions, probs, offsets):
             results = []
-            for token, tag in zip(tokens_list, prediction):
+            for token, label, prob, offset in zip(tokens_list, prediction, probs_, offsets_mapping):
                 if token not in self.config.prediction_skip_tokens:
-                    results.append({"token": token, "tag": tag})
+                    token_results = {"token": token, "label": label}
+                    if return_scores:
+                        token_results["score"] = prob
+                    if return_offsets:
+                        start, end = offset
+                        token_results["start"] = start
+                        token_results["end"] = end
+                    results.append(SequenceLabelingOutput(**token_results))
             outputs.append(results)
         return outputs
 

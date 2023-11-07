@@ -1,8 +1,7 @@
 from hezar import Model
 
 
-hub_path = "hezarai/bert-fa-pos-lscp-500k"
-model = Model.load(hub_path)
+model = Model.load("hezarai/bert-fa-pos-lscp-500k")
 inputs = ["سلام بر فارسی زبانان شریف"]
 outputs = model.predict(inputs)
 print(outputs)
