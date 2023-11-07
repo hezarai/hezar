@@ -61,7 +61,7 @@ outputs = model.predict(example)
 print(outputs)
 ```
 ```
-{'labels': ['positive'], 'probs': [0.812910258769989]}
+[[{'label': 'positive', 'score': 0.812910258769989}]]
 ```
 - **Sequence Labeling (POS, NER, etc.)**
 ```python
