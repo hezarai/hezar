@@ -62,9 +62,11 @@ class TextClassificationOutput(ModelOutput):
 
 @dataclass(repr=False)
 class SequenceLabelingOutput(ModelOutput):
-    tokens: Optional[List[List[str]]] = None
-    tags: Optional[List[List[str]]] = None
-    probs: Optional[List[List[float]]] = None
+    token: Optional[List[List[str]]] = None
+    label: Optional[List[List[str]]] = None
+    start: Optional[int] = None
+    end: Optional[int] = None
+    score: Optional[List[List[float]]] = None
 
 
 @dataclass(repr=False)
