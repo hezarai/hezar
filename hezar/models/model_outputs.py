@@ -2,7 +2,7 @@
 Define all model outputs here
 """
 from dataclasses import asdict, dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -17,7 +17,7 @@ class ModelOutput:
         return asdict(self)
 
     def __str__(self):
-        return str(self.dict())
+        return str({k: v for k, v in self.dict().items() if v is not None})
 
     def __repr__(self):
         return str(self)
@@ -72,7 +72,8 @@ class TextGenerationOutput(ModelOutput):
 
 @dataclass(repr=False)
 class SpeechRecognitionOutput(ModelOutput):
-    transcript: Optional[str] = None
+    text: Optional[str] = None
+    chunks: Optional[List[Dict]] = None
 
 
 @dataclass(repr=False)
