@@ -54,8 +54,8 @@ class LanguageModelingOutput(ModelOutput):
 
 @dataclass(repr=False)
 class TextClassificationOutput(ModelOutput):
-    label: Optional[List[str]] = None
-    prob: Optional[List[float]] = None
+    label: Optional[str] = None
+    score: Optional[float] = None
 
 
 @dataclass(repr=False)
