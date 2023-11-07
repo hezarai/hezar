@@ -57,7 +57,7 @@ transcripts = whisper.predict("examples/assets/speech_example.mp3")
 print(transcripts)
 ```
 ```
-{'transcripts': ['و این تنها محدود به محیط کار نیست']}
+[{'text': 'و این تنها محدود به محیط کار نیست'}]
 ```
 - **Image to Text (OCR)**
 ```python
