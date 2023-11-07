@@ -79,17 +79,17 @@ print(f"NER: {ner_outputs}")
 POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
 ```
-- **Language Modeling**
+- **Language Modeling (Mask Filling)**
 ```python
 from hezar import Model
 
 roberta_mlm = Model.load("hezarai/roberta-fa-mlm")
 inputs = ["سلام بچه ها حالتون <mask>"]
-outputs = roberta_mlm.predict(inputs)
+outputs = roberta_mlm.predict(inputs, top_k=1)
 print(outputs)
 ```
 ```
-{'filled_texts': ['سلام بچه ها حالتون چطوره'], 'filled_tokens': [' چطوره']}
+[[{'token': 'چطوره', 'sequence': 'سلام بچه ها حالتون چطوره', 'token_id': 34505, 'score': 0.2230483442544937}]]
 ```
 - **Speech Recognition**
 ```python
