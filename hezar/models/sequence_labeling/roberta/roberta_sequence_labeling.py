@@ -127,7 +127,7 @@ class RobertaSequenceLabeling(Model):
                 if token not in self.config.prediction_skip_tokens:
                     token_results = {"token": token, "label": label}
                     if return_scores:
-                        token_results["score"] = prob
+                        token_results["score"] = prob.item()
                     if return_offsets:
                         start, end = offset
                         token_results["start"] = start
