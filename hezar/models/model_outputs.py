@@ -67,14 +67,14 @@ class SequenceLabelingOutput(ModelOutput):
 
 @dataclass(repr=False)
 class TextGenerationOutput(ModelOutput):
-    generated_text: Optional[List[str]] = None
+    generated_text: Optional[str] = None
 
 
 @dataclass(repr=False)
 class SpeechRecognitionOutput(ModelOutput):
-    transcript: Optional[List[str]] = None
+    transcript: Optional[str] = None
 
 
 @dataclass(repr=False)
 class Image2TextOutput(ModelOutput):
-    text: Optional[List[str]] = None
+    text: Optional[str] = None

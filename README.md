@@ -106,7 +106,7 @@ print(transcripts)
 ```python
 from hezar import Model
 # OCR with TrOCR
-model = Model.load("hezarai/trocr-base-fa-v1")
+model = Model.load("hezarai/trocr-base-fa-v2")
 texts = model.predict(["examples/assets/ocr_example.jpg"])
 print(f"TrOCR Output: {texts}")
 
@@ -116,8 +116,8 @@ texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```
 ```
-TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
-CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
+TrOCR Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
+CRNN Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
 
@@ -130,7 +130,7 @@ plate_text = model.predict("assets/license_plate_ocr_example.jpg")
 print(plate_text)  # Persian text of mixed numbers and characters might not show correctly in the console
 ```
 ```
-{'texts': ['۵۷س۷۷۹۷۷']}
+[{'text': '۵۷س۷۷۹۷۷'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/license_plate_ocr_example.jpg)
 
@@ -143,7 +143,7 @@ texts = model.predict("examples/assets/image_captioning_example.jpg")
 print(texts)
 ```
 ```
-{'texts': ['سگی با توپ تنیس در دهانش می دود.']}
+[{'text': 'سگی با توپ تنیس در دهانش می دود.'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/image_captioning_example.jpg)
 
