@@ -119,6 +119,8 @@ print(f"CRNN Output: {texts}")
 TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
 CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
+
 - **Image to Text (License Plate Recognition)**
 ```python
 from hezar.models import Model
@@ -130,7 +132,7 @@ print(plate_text)  # Persian text of mixed numbers and characters might not show
 ```
 {'texts': ['۵۷س۷۷۹۷۷']}
 ```
-
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/license_plate_ocr_example.jpg)
 
 - **Image to Text (Image Captioning)**
 ```python
@@ -143,6 +145,8 @@ print(texts)
 ```
 {'texts': ['سگی با توپ تنیس در دهانش می دود.']}
 ```
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/image_captioning_example.jpg)
+
 We constantly keep working on adding and training new models and this section will hopefully be expanding over time ;)
 ### Word Embeddings
 - **FastText**

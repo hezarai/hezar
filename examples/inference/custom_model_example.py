@@ -39,7 +39,8 @@ class Perceptron(Model):
         return model_outputs.cpu().numpy()
 
 
-model = Perceptron(PerceptronConfig())
-inputs = [1, 2, 3, 4]
-outputs = model.predict(inputs)
-print(outputs)
+if __name__ == '__main__':
+    model = Perceptron(PerceptronConfig())
+    inputs = [1, 2, 3, 4]
+    outputs = model.predict(inputs)
+    print(outputs)

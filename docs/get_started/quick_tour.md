@@ -2,9 +2,13 @@
 Let's have a quick tour on some of the most important features of Hezar!
 
 ### Models
-There's a bunch of ready to use trained models for different tasks on the Hub. To see all the models see [here](https://huggingface.co/hezarai)!
+There's a bunch of ready to use trained models for different tasks on the Hub!
 
-- **Text classification (sentiment analysis, categorization, etc)**
+**🤗Hugging Face Hub Page**: [https://huggingface.co/hezarai](https://huggingface.co/hezarai)
+
+Let's walk you through some examples!
+
+- **Text Classification (sentiment analysis, categorization, etc)**
 ```python
 from hezar.models import Model
 
@@ -72,6 +76,20 @@ print(f"CRNN Output: {texts}")
 TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
 CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
 ```
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
+
+- **Image to Text (License Plate Recognition)**
+```python
+from hezar import Model
+
+model = Model.load("hezarai/crnn-fa-64x256-license-plate-recognition")
+plate_text = model.predict("assets/license_plate_ocr_example.jpg")
+print(plate_text)  # Persian text of mixed numbers and characters might not show correctly in the console
+```
+```
+{'texts': ['۵۷س۷۷۹۷۷']}
+```
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/license_plate_ocr_example.jpg)
 
 - **Image to Text (Image Captioning)**
 ```python
@@ -84,6 +102,8 @@ print(texts)
 ```
 {'texts': ['سگی با توپ تنیس در دهانش می دود.']}
 ```
+![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/image_captioning_example.jpg)
+
 We constantly keep working on adding and training new models and this section will hopefully be expanding over time ;)
 ### Word Embeddings
 - **FastText**
@@ -131,7 +151,6 @@ print(most_similar)
  {'score': 0.7276, 'word': 'پانصد'},
  {'score': 0.7011, 'word': 'سیصد'}]
 ```
-
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
 ```python
