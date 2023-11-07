@@ -8,7 +8,9 @@ from typing import Dict, List, Optional
 @dataclass
 class ModelOutput:
     """
-    Base class for all model outputs (named based on tasks)
+    Base class for all models' prediction outputs (`model.predict()`/`model.post_process()` outputs).
+
+    Note that prediction outputs must all be a list of `ModelOutput` objects since we consider only batch inferences.
 
     The helper functions in the class enable it to be treated as a mapping or a dict object.
     """
@@ -67,7 +69,7 @@ class SequenceLabelingOutput(ModelOutput):
 
 @dataclass(repr=False)
 class TextGenerationOutput(ModelOutput):
-    generated_text: Optional[str] = None
+    text: Optional[str] = None
 
 
 @dataclass(repr=False)
