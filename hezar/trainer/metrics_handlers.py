@@ -120,11 +120,13 @@ class Image2TextMetricHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predicted_texts = self.trainer.model.post_process(torch.tensor(predictions))["texts"]
-        labels = self.trainer.model.post_process(torch.tensor(labels))["texts"]
+        predictions = self.trainer.model.post_process(torch.tensor(predictions))
+        labels = self.trainer.model.post_process(torch.tensor(labels))
+        predictions = [x["text"] for x in predictions]
+        labels = [x["text"] for x in labels]
         results = {}
         for metric_name, metric in self.metrics.items():
-            x = metric.compute(predicted_texts, labels)
+            x = metric.compute(predictions, labels)
             results.update(x)
         return results
 
