@@ -93,4 +93,5 @@ class BeitRobertaImage2Text(Model):
     def post_process(self, model_outputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
         decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
-        return Image2TextOutput(texts=decoded_outputs)
+        outputs = [Image2TextOutput(text=text) for text in decoded_outputs]
+        return outputs

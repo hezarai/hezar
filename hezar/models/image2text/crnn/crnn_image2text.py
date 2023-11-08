@@ -77,15 +77,15 @@ class CRNNImage2Text(Model):
         return processed_outputs
 
     def post_process(self, model_outputs: torch.Tensor, **kwargs):
-        texts = []
+        outputs = []
         generated_ids = model_outputs.cpu().numpy().tolist()
         for decoded_ids in generated_ids:
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
             if self.config.reverse_prediction_text:
                 text = text[::-1]
-            texts.append(text)
-        return Image2TextOutput(texts=texts)
+            outputs.append(Image2TextOutput(text=text))
+        return outputs
 
 
 class ConvBlock(nn.Module):

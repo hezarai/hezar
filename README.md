@@ -63,7 +63,7 @@ outputs = model.predict(example)
 print(outputs)
 ```
 ```
-{'labels': ['positive'], 'probs': [0.812910258769989]}
+[[{'label': 'positive', 'score': 0.812910258769989}]]
 ```
 - **Sequence Labeling (POS, NER, etc.)**
 ```python
@@ -78,20 +78,20 @@ print(f"POS: {pos_outputs}")
 print(f"NER: {ner_outputs}")
 ```
 ```
-POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'token': 'مصنوعی', 'tag': 'AJe'}, {'token': 'هزار', 'tag': 'NUM'}]]
-NER: [[{'token': 'شرکت', 'tag': 'B-org'}, {'token': 'هوش', 'tag': 'I-org'}, {'token': 'مصنوعی', 'tag': 'I-org'}, {'token': 'هزار', 'tag': 'I-org'}]]
+POS: [[{'token': 'شرکت', 'label': 'Ne'}, {'token': 'هوش', 'label': 'Ne'}, {'token': 'مصنوعی', 'label': 'AJe'}, {'token': 'هزار', 'label': 'NUM'}]]
+NER: [[{'token': 'شرکت', 'label': 'B-org'}, {'token': 'هوش', 'label': 'I-org'}, {'token': 'مصنوعی', 'label': 'I-org'}, {'token': 'هزار', 'label': 'I-org'}]]
 ```
-- **Language Modeling**
+- **Language Modeling (Mask Filling)**
 ```python
 from hezar import Model
 
 roberta_mlm = Model.load("hezarai/roberta-fa-mlm")
 inputs = ["سلام بچه ها حالتون <mask>"]
-outputs = roberta_mlm.predict(inputs)
+outputs = roberta_mlm.predict(inputs, top_k=1)
 print(outputs)
 ```
 ```
-{'filled_texts': ['سلام بچه ها حالتون چطوره'], 'filled_tokens': [' چطوره']}
+[[{'token': 'چطوره', 'sequence': 'سلام بچه ها حالتون چطوره', 'token_id': 34505, 'score': 0.2230483442544937}]]
 ```
 - **Speech Recognition**
 ```python
@@ -102,13 +102,13 @@ transcripts = whisper.predict("examples/assets/speech_example.mp3")
 print(transcripts)
 ```
 ```
-{'transcripts': ['و این تنها محدود به محیط کار نیست']}
+[{'text': 'و این تنها محدود به محیط کار نیست'}]
 ```
 - **Image to Text (OCR)**
 ```python
 from hezar import Model
 # OCR with TrOCR
-model = Model.load("hezarai/trocr-base-fa-v1")
+model = Model.load("hezarai/trocr-base-fa-v2")
 texts = model.predict(["examples/assets/ocr_example.jpg"])
 print(f"TrOCR Output: {texts}")
 
@@ -118,8 +118,8 @@ texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```
 ```
-TrOCR Output: {'texts': [' چه میشه کرد، باید صبر کنیم']}
-CRNN Output: {'texts': ['چه میشه کرد، باید صبر کنیم']}
+TrOCR Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
+CRNN Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
 
@@ -132,7 +132,7 @@ plate_text = model.predict("assets/license_plate_ocr_example.jpg")
 print(plate_text)  # Persian text of mixed numbers and characters might not show correctly in the console
 ```
 ```
-{'texts': ['۵۷س۷۷۹۷۷']}
+[{'text': '۵۷س۷۷۹۷۷'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/license_plate_ocr_example.jpg)
 
@@ -145,7 +145,7 @@ texts = model.predict("examples/assets/image_captioning_example.jpg")
 print(texts)
 ```
 ```
-{'texts': ['سگی با توپ تنیس در دهانش می دود.']}
+[{'text': 'سگی با توپ تنیس در دهانش می دود.'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/image_captioning_example.jpg)
 

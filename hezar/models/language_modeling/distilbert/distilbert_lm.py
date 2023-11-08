@@ -74,29 +74,39 @@ class DistilBertLM(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, model_outputs, **kwargs):
-        output_logits = model_outputs.get("logits", None)
-        token_ids = model_outputs.get("token_ids", None)
+    def post_process(self, model_outputs: dict, top_k=1):
+        output_logits = model_outputs.get("logits")
+        token_ids = model_outputs.get("token_ids")
 
         tokenizer = self.preprocessor[self.tokenizer_name]
+        mask_token_id = tokenizer.mask_token_id
 
-        filled_token_ids = token_ids.cpu().numpy().copy()
-        fill_tokens = []
+        unfilled_token_ids = token_ids.cpu().numpy().copy()
+        outputs = []
         for batch_i, logits in enumerate(output_logits):
-            masked_index = torch.nonzero(
-                token_ids[batch_i] == tokenizer.mask_token_id, as_tuple=False
-            ).flatten()  # noqa
+            masked_index = torch.nonzero(token_ids[batch_i] == mask_token_id, as_tuple=False).flatten()  # noqa
             if len(masked_index) > 1:
                 raise ValueError(
                     f"Can't handle multiple `{tokenizer.mask_token}` tokens in the input for {self.__class__.__name__}!"
                 )
-            fill_token_id = logits[masked_index].argmax().item()
-            filled_token_ids[batch_i, masked_index.item()] = fill_token_id
-            fill_tokens.append(tokenizer.decode([fill_token_id])[0])
+            logits = logits[masked_index]
+            probs = logits.softmax(dim=-1)
+            probs, top_fill_token_ids = probs.topk(top_k)
+            if top_k != 1:
+                probs = probs.squeeze()
+                top_fill_token_ids = top_fill_token_ids.squeeze()
 
-        outputs = LanguageModelingOutput(
-            filled_texts=tokenizer.decode(filled_token_ids),
-            filled_tokens=fill_tokens,
-        )
-
+            row = []
+            for i, (prob, token_id) in enumerate(zip(probs, top_fill_token_ids)):
+                candidate = unfilled_token_ids[batch_i].copy()
+                candidate[masked_index.item()] = token_id
+                row.append(
+                    LanguageModelingOutput(
+                        token=tokenizer.decode([token_id.item()])[0].strip(),
+                        sequence=tokenizer.decode(candidate.tolist())[0],
+                        token_id=token_id.item(),
+                        score=prob.item(),
+                    )
+                )
+            outputs.append(row)
         return outputs
