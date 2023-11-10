@@ -1,11 +1,7 @@
-from hezar import (
-    BertTextClassification,
-    BertTextClassificationConfig,
-    Dataset,
-    Preprocessor,
-    Trainer,
-    TrainerConfig,
-)
+from hezar.models import BertTextClassification, BertTextClassificationConfig
+from hezar.data import Dataset
+from hezar.preprocessors import Preprocessor
+from hezar.trainer import Trainer, TrainerConfig
 
 
 dataset_path = "hezarai/sentiment-dksf"

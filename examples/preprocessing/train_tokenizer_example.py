@@ -1,4 +1,4 @@
-from hezar.preprocessors.tokenizers import (
+from hezar.preprocessors import (
     BPEConfig,
     BPETokenizer,
     SentencePieceBPEConfig,

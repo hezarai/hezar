@@ -1,4 +1,4 @@
-from hezar import Tokenizer
+from hezar.preprocessors import Tokenizer
 
 
 tokenizer = Tokenizer.load(hub_or_local_path="hezarai/roberta-base-fa")

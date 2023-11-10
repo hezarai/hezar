@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 
-from hezar.data.datasets import Dataset
+from hezar.data import Dataset
 
 
 dataset = Dataset.load("hezarai/lscp-pos-500k", tokenizer_path="hezarai/distilbert-base-fa")
