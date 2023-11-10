@@ -15,9 +15,9 @@ __all__ = [
     "TextClassificationMetricsHandler",
     "SequenceLabelingMetricsHandler",
     "SpeechRecognitionMetricsHandler",
-    "AudioClassificationMetricHandler",
+    "AudioClassificationMetricsHandler",
     "Image2TextMetricHandler",
-    "TextGenerationMetricHandler",
+    "TextGenerationMetricsHandler",
 ]
 
 
@@ -120,11 +120,13 @@ class Image2TextMetricHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predicted_texts = self.trainer.model.post_process(torch.tensor(predictions))["texts"]
-        labels = self.trainer.model.post_process(torch.tensor(labels))["texts"]
+        predictions = self.trainer.model.post_process(torch.tensor(predictions))
+        labels = self.trainer.model.post_process(torch.tensor(labels))
+        predictions = [x["text"] for x in predictions]
+        labels = [x["text"] for x in labels]
         results = {}
         for metric_name, metric in self.metrics.items():
-            x = metric.compute(predicted_texts, labels)
+            x = metric.compute(predictions, labels)
             results.update(x)
         return results
 
@@ -137,7 +139,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
         return {}
 
 
-class TextGenerationMetricHandler(MetricsHandler):
+class TextGenerationMetricsHandler(MetricsHandler):
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
@@ -145,7 +147,7 @@ class TextGenerationMetricHandler(MetricsHandler):
         return {}
 
 
-class AudioClassificationMetricHandler(MetricsHandler):
+class AudioClassificationMetricsHandler(MetricsHandler):
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 

@@ -6,6 +6,7 @@ from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
+from ...model_outputs import TextGenerationOutput
 from .gpt2_text_generation_config import GPT2TextGenerationConfig
 
 
@@ -87,4 +88,5 @@ class GPT2TextGeneration(Model):
     def post_process(self, generated_ids: torch.Tensor):
         tokenizer = self.preprocessor[self.tokenizer_name]
         decoded_outputs = tokenizer.decode(generated_ids.cpu().numpy().tolist())
-        return decoded_outputs
+        outputs = [TextGenerationOutput(text=text) for text in decoded_outputs]
+        return outputs

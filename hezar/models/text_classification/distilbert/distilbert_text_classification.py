@@ -10,6 +10,7 @@ from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
+from ...model_outputs import TextClassificationOutput
 from .distilbert_text_classification_config import DistilBertTextClassificationConfig
 
 
@@ -97,24 +98,18 @@ class DistilBertTextClassification(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, model_outputs, return_all_scores=False, **kwargs) -> Dict:
-        logits = model_outputs["logits"]
-        if return_all_scores:
-            predictions = logits
-            predictions_probs = logits.softmax(1)
-            outputs = []
-            for sample_index in range(predictions.shape[0]):
-                sample_outputs = []
-                for label_index, score in enumerate(predictions_probs[sample_index]):
-                    label = self.config.id2label[label_index]
-                    sample_outputs.append({"label": label, "score": score.item()})
-                outputs.append(sample_outputs)
-        else:
-            predictions = logits.argmax(1)
-            predictions_probs = logits.softmax(1).max(1)
-            outputs = {"labels": [], "probs": []}
-            for prediction, prob in zip(predictions, predictions_probs):
-                label = self.config.id2label[prediction.item()]
-                outputs["labels"].append(label)
-                outputs["probs"].append(prob.item())
+    def post_process(self, model_outputs: dict, top_k=1):
+        output_logits = model_outputs["logits"]
+        outputs = []
+        for logits in output_logits:
+            probs = logits.softmax(dim=-1)
+            scores, label_ids = probs.sort(descending=True)
+            row = []
+            for i, (score, label_id) in enumerate(zip(scores, label_ids)):
+                if i == top_k:
+                    break
+                label_str = self.config.id2label[label_id.item()]
+                score = score.item()
+                row.append(TextClassificationOutput(label=label_str, score=score))
+            outputs.append(row)
         return outputs

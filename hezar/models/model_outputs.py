@@ -2,14 +2,15 @@
 Define all model outputs here
 """
 from dataclasses import asdict, dataclass
-from pprint import pformat
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 
 @dataclass
 class ModelOutput:
     """
-    Base class for all model outputs (named based on tasks)
+    Base class for all models' prediction outputs (`model.predict()`/`model.post_process()` outputs).
+
+    Note that prediction outputs must all be a list of `ModelOutput` objects since we consider only batch inferences.
 
     The helper functions in the class enable it to be treated as a mapping or a dict object.
     """
@@ -18,7 +19,10 @@ class ModelOutput:
         return asdict(self)
 
     def __str__(self):
-        return pformat(self.dict())
+        return str({k: v for k, v in self.dict().items() if v is not None})
+
+    def __repr__(self):
+        return str(self)
 
     def __getitem__(self, item):
         try:
@@ -42,35 +46,40 @@ class ModelOutput:
         return self.dict().items()
 
 
-@dataclass
+@dataclass(repr=False)
 class LanguageModelingOutput(ModelOutput):
-    filled_texts: Optional[List[str]] = None
-    filled_tokens: Optional[List[str]] = None
+    token: Optional[int] = None
+    sequence: Optional[str] = None
+    token_id: Optional[str] = None
+    score: Optional[float] = None
 
 
-@dataclass
+@dataclass(repr=False)
 class TextClassificationOutput(ModelOutput):
-    labels: Optional[List[str]] = None
-    probs: Optional[List[float]] = None
+    label: Optional[str] = None
+    score: Optional[float] = None
 
 
-@dataclass
+@dataclass(repr=False)
 class SequenceLabelingOutput(ModelOutput):
-    tokens: Optional[List[List[str]]] = None
-    tags: Optional[List[List[str]]] = None
-    probs: Optional[List[List[float]]] = None
+    token: Optional[List[List[str]]] = None
+    label: Optional[List[List[str]]] = None
+    start: Optional[int] = None
+    end: Optional[int] = None
+    score: Optional[List[List[float]]] = None
 
 
-@dataclass
+@dataclass(repr=False)
 class TextGenerationOutput(ModelOutput):
-    generated_texts: Optional[List[str]] = None
+    text: Optional[str] = None
 
 
-@dataclass
+@dataclass(repr=False)
 class SpeechRecognitionOutput(ModelOutput):
-    transcripts: Optional[List[str]] = None
+    text: Optional[str] = None
+    chunks: Optional[List[Dict]] = None
 
 
-@dataclass
+@dataclass(repr=False)
 class Image2TextOutput(ModelOutput):
-    texts: Optional[List[str]] = None
+    text: Optional[str] = None

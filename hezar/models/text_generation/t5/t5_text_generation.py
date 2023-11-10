@@ -6,6 +6,7 @@ from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model import Model
+from ...model_outputs import TextGenerationOutput
 from .t5_text_generation_config import T5TextGenerationConfig
 
 
@@ -78,14 +79,10 @@ class T5TextGeneration(Model):
 
     def generate(self, token_ids, attention_mask=None, **kwargs):
         # TODO Merge kwargs into generation config so users can control generation from kwargs
-        input_bs, input_length = token_ids.shape
         model_inputs = {"input_ids": token_ids, "attention_mask": attention_mask}
         generation_kwargs = {"min_length": self.config.min_length, "max_length": self.config.max_length}
         output_ids = self.t5.generate(**model_inputs, **generation_kwargs)
-        output_bs = output_ids.shape[0]
-        output_ids = output_ids.reshape(input_bs, output_bs // input_bs, *output_ids.shape[1:])
-        outputs = {"output_ids": output_ids}
-        return outputs
+        return output_ids
 
     def preprocess(self, inputs: Union[str, List[str]], **kwargs):
         if isinstance(inputs, str):
@@ -97,17 +94,8 @@ class T5TextGeneration(Model):
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs
 
-    def post_process(self, model_outputs, **kwargs):
-        records = []
-        tokenizer = self.preprocessor["sentencepiece_unigram_tokenizer"]
-        for output_ids in model_outputs["output_ids"][0]:
-            if isinstance(output_ids, torch.Tensor):
-                output_ids = output_ids.cpu().numpy().tolist()
-            record = {
-                "output_text": tokenizer.decode(
-                    output_ids,
-                    skip_special_tokens=True,
-                )
-            }
-            records.append(record)
-        return records
+    def post_process(self, generated_ids: torch.Tensor, **kwargs):
+        tokenizer = self.preprocessor[self.tokenizer_name]
+        decoded_outputs = tokenizer.decode(generated_ids.cpu().numpy().tolist())
+        outputs = [TextGenerationOutput(text=text) for text in decoded_outputs]
+        return outputs

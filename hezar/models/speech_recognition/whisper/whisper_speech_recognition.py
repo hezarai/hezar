@@ -166,4 +166,5 @@ class WhisperSpeechRecognition(Model):
     def post_process(self, model_outputs, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
         transcripts = tokenizer.decode(model_outputs, decode_with_timestamps=True, skip_special_tokens=True)
-        return SpeechRecognitionOutput(transcripts=transcripts)
+        outputs = [SpeechRecognitionOutput(text=transcript) for transcript in transcripts]
+        return outputs
