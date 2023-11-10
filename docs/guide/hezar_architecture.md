@@ -34,7 +34,7 @@ Let's assume you want to write a new model class called `AwesomeModel`. The firs
 
 ```python
 from dataclasses import dataclass
-from hezar import ModelConfig, Model
+from hezar.models import ModelConfig, Model
 
 
 @dataclass
@@ -66,28 +66,28 @@ snippets:
 
 ```python
 # Load a model
-from hezar import Model
+from hezar.models import Model
 
 roberta_tc = Model.load("hezarai/roberta-fa-sentiment-dksf")  # roberta_tc is a RobertaTextClassification instance
 bert_pos = Model.load("hezarai/bert-fa-pos-lscp-500k")  # bert_pos is a BertSequenceLabeling instance
 whisper_speech = Model.load("hezarai/whisper-small-fa")  # whisper_speech is a WhisperSpeechRecognition instance
 ...
 # Load a dataset
-from hezar import Dataset
+from hezar.data import Dataset
 
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
 ...
 # Load preprocessors
-from hezar import Preprocessor
+from hezar.preprocessors import Preprocessor
 
 wordpiece = Preprocessor.load("hezarai/bert-base-fa")  # A WordPieceTokenizer instance
 whisper_bpe = Preprocessor.load("hezarai/whisper-small-fa")  # A WhisperBPETokenizer instance
 sp_unigram_bpe = Preprocessor.load("hezarai/t5-base-fa")  # A SentencePieceUnigramTokenizer instance
 ...
 # Load embedding
-from hezar import Embedding
+from hezar.embeddings import Embedding
 
 fasttext = Embedding.load("hezarai/fasttext-fa-300")  # A FastText instance
 word2vec = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")  # A Word2Vec instance
@@ -133,7 +133,7 @@ These decorators take two parameters:
 The example below demonstrates registering a model:
 ```python
 ...
-from hezar import Model, ModelConfig, register_model
+from hezar.models import Model, ModelConfig
 
 @dataclass
 class MyBertConfig(ModelConfig):
@@ -178,7 +178,7 @@ print(hezar.list_available_trainers())
 So now it's pretty easy to create modules objects using their `name`! Let's say you want to create a
 BPE tokenizer. You can do it this way:
 ```python
-from hezar import preprocessors_registry
+from hezar.registry import preprocessors_registry
 
 module_cls = preprocessors_registry["bpe_tokenizer"].module_class
 config_cls = preprocessors_registry["bpe_tokenizer"].config_class
@@ -213,7 +213,7 @@ Available builders include:
 
 So why would you need to use builders or registries when you can import everything normally? like below:
 ```python
-from hezar import WhisperSpeechRecognition, WhisperSpeechRecognitionConfig
+from hezar.models import WhisperSpeechRecognition, WhisperSpeechRecognitionConfig
 
 whisper = WhisperSpeechRecognition(WhisperSpeechRecognitionConfig(max_new_tokens=400))
 ```
@@ -276,7 +276,7 @@ More specifically, here's a simple summary of the core modules in Hezar:
 
 
 ## Concept 6: Our Inspirations
-Hezar was built using the best practices we've learned from working with dozens of industry leading open source 
+Hezar was built using the best practices we've learned from working with dozens of industry leading open source
 software in the AI world. Our biggest inspirations are:
 
 - [Transformers](https://github.com/huggingface/transformers) by Hugging Face

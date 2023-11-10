@@ -11,17 +11,13 @@ text and sentiment pairs collected from SnappFood/Digikala user comments.
 First things first, let's import the required stuff.
 
 ```python
-from hezar import (
-    DistilBertTextClassification,
-    DistilBertTextClassificationConfig,
-    Trainer,
-    TrainerConfig,
-    Dataset,
-    Preprocessor,
-)
+from hezar.models import DistilBertTextClassification, DistilBertTextClassificationConfig
+from hezar.data import Dataset
+from hezar.trainer import Trainer, TrainerConfig
+from hezar.preprocessors import Preprocessor
 ```
 ### Define paths
-Lets define our paths to the datasets, tokenizer, etc.
+Let's define our paths to the datasets, tokenizer, etc.
 ```python
 DATASET_PATH = "hezarai/sentiment-dksf"  # dataset path on the Hub
 BASE_MODEL_PATH = "hezarai/distilbert-base-fa"  # used as model backbone weights and tokenizer

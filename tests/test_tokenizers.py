@@ -1,4 +1,5 @@
-from hezar import Logger, Tokenizer
+from hezar.preprocessors import Tokenizer
+from hezar.utils import Logger
 
 
 tokenizer_to_example_repo = {

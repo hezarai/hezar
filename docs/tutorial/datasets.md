@@ -16,7 +16,7 @@ xlsum_dataset = load_dataset("hezarai/xlsum-fa")
 
 ### Load using Hezar Dataset
 ```python
-from hezar import Dataset
+from hezar.data import Dataset
 
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
