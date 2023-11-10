@@ -27,7 +27,6 @@ from .registry import (
     models_registry,
     preprocessors_registry,
 )
-from .utils import snake_case
 
 
 __all__ = [
@@ -143,7 +142,6 @@ def build_metric(name: str, config: Optional[MetricConfig] = None, **kwargs):
     """
     if name not in metrics_registry:
         raise ValueError(f"Unknown metric name: `{name}`!\n" f"Available metric names: {list(metrics_registry.keys())}")
-    name = snake_case(name)
     config = config or metrics_registry[name].config_class()
     metric = metrics_registry[name].module_class(config, **kwargs)
     return metric
