@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 example = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
 model = Model.load("hezarai/distilbert-fa-sentiment-dksf")

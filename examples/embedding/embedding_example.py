@@ -1,4 +1,4 @@
-from hezar import Embedding
+from hezar.embeddings import Embedding
 
 
 embedding_model = Embedding.load("hezarai/word2vec-skipgram-fa-wikipedia")

@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 
 path = "hezarai/roberta-fa-mlm"

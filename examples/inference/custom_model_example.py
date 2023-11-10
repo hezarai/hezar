@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import torch
 from torch import Tensor, nn
 
-from hezar import Model, ModelConfig, register_model
+from hezar.models import Model, ModelConfig, register_model
 
 
 @dataclass

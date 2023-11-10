@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 
 whisper = Model.load("hezarai/whisper-small-fa")
