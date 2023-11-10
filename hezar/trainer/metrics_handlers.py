@@ -15,9 +15,9 @@ __all__ = [
     "TextClassificationMetricsHandler",
     "SequenceLabelingMetricsHandler",
     "SpeechRecognitionMetricsHandler",
-    "AudioClassificationMetricHandler",
+    "AudioClassificationMetricsHandler",
     "Image2TextMetricHandler",
-    "TextGenerationMetricHandler",
+    "TextGenerationMetricsHandler",
 ]
 
 
@@ -139,7 +139,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
         return {}
 
 
-class TextGenerationMetricHandler(MetricsHandler):
+class TextGenerationMetricsHandler(MetricsHandler):
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
@@ -147,7 +147,7 @@ class TextGenerationMetricHandler(MetricsHandler):
         return {}
 
 
-class AudioClassificationMetricHandler(MetricsHandler):
+class AudioClassificationMetricsHandler(MetricsHandler):
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 

@@ -25,13 +25,13 @@ from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger
 from .metrics_handlers import (
-    AudioClassificationMetricHandler,
+    AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
     MetricsHandler,
     SequenceLabelingMetricsHandler,
     SpeechRecognitionMetricsHandler,
     TextClassificationMetricsHandler,
-    TextGenerationMetricHandler,
+    TextGenerationMetricsHandler,
 )
 from .trainer_utils import CSVLogger, write_to_tensorboard
 
@@ -53,16 +53,16 @@ task_to_metrics_handlers_mapping = {
     TaskType.SEQUENCE_LABELING: SequenceLabelingMetricsHandler,
     TaskType.IMAGE2TEXT: Image2TextMetricHandler,
     TaskType.SPEECH_RECOGNITION: SpeechRecognitionMetricsHandler,
-    TaskType.AUDIO_CLASSIFICATION: AudioClassificationMetricHandler,
-    TaskType.TEXT_GENERATION: TextGenerationMetricHandler,
+    TaskType.AUDIO_CLASSIFICATION: AudioClassificationMetricsHandler,
+    TaskType.TEXT_GENERATION: TextGenerationMetricsHandler,
 
 }
 
 
 class Trainer:
     """
-    Base trainer class for training all Hezar models. This class is inherited by other task-specific trainers which
-    implement their own customized functionalities  (`compute_loss()` and `compute_metrics()` in most cases).
+    Base trainer class for training all Hezar models and all tasks. Usually you can use this class as-is, but for special
+    cases you can also override any of the core methods in your own custom Trainer.
 
     Args:
         model ([`Model`] or `torch.nn.Module`): The main model to train and evaluate
