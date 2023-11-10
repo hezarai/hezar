@@ -2,10 +2,10 @@
 Direct importing from hezar's root is no longer supported nor recommended since version 0.33.0. The following is just a
 workaround for backward compatibility. Any class, functions, etc. must be imported from its main submodule under hezar.
 """
+import warnings
+
 
 __version__ = "0.32.1"
-
-import warnings
 
 
 def _warn_on_import(name: str, submodule: str):

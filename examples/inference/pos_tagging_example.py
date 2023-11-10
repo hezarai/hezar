@@ -1,4 +1,4 @@
-from hezar import Model
+from hezar.models import Model
 
 model = Model.load("hezarai/bert-fa-ner-arman")
 inputs = ["شرکت هوش مصنوعی هزار"]
