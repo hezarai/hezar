@@ -80,7 +80,7 @@ CRNN Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 
 - **Image to Text (License Plate Recognition)**
 ```python
-from hezar import Model
+from hezar.models import Model
 
 model = Model.load("hezarai/crnn-fa-64x256-license-plate-recognition")
 plate_text = model.predict("assets/license_plate_ocr_example.jpg")
