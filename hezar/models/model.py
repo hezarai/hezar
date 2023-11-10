@@ -4,7 +4,7 @@ some extra Hezar-specific functionalities and methods e.g, pushing to hub, loadi
 
 Examples:
     >>> # Load from hub
-    >>> from hezar import Model
+    >>> from hezar.models import Model
     >>> model = Model.load("hezarai/bert-base-fa")
 """
 import inspect

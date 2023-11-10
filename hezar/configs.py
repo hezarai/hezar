@@ -4,10 +4,10 @@ as a config container which is an instance of `Config` or its derivatives. A `Co
 auxiliary methods for loading, saving, uploading to the hub and etc.
 
 Examples:
-    >>> from hezar import ModelConfig
+    >>> from hezar.configs import ModelConfig
     >>> config = ModelConfig.load("hezarai/bert-base-fa")
 
-    >>> from hezar import BertLMConfig
+    >>> from hezar.models import BertLMConfig
     >>> bert_config = BertLMConfig(vocab_size=50000, hidden_size=768)
     >>> bert_config.save("saved/bert", filename="model_config.yaml")
     >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
