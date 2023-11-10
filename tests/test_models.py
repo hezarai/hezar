@@ -1,5 +1,6 @@
-from hezar import Logger, Model
 from hezar.constants import TaskType
+from hezar.models import Model
+from hezar.utils import Logger
 
 
 logger = Logger(__name__)
