@@ -6,7 +6,7 @@ from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
 
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, RegistryType, RepoType
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, RegistryType, RepoType, HEZAR_CACHE_DIR
 from ..utils import get_module_class, list_repo_files, verify_dependencies
 
 
@@ -87,7 +87,8 @@ class Preprocessor:
                         hub_or_local_path,
                         filename=f,
                         subfolder=subfolder,
-                        repo_type=RepoType.MODEL
+                        repo_type=RepoType.MODEL,
+                        cache_dir=HEZAR_CACHE_DIR,
                     )
                 config = OmegaConf.load(config_file)
                 name = config.get("name", None)
