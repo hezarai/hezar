@@ -46,9 +46,10 @@ class GPT2TextGeneration(Model):
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
+        **kwargs
     ):
         outputs = self.gpt2(
-            token_ids=token_ids,
+            input_ids=token_ids,
             past_key_values=past_key_values,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
@@ -65,7 +66,7 @@ class GPT2TextGeneration(Model):
         )
         return outputs
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs) -> torch.Tensor:
         labels = labels.to(logits.device)
         # Shift so that tokens < n predict n
         shift_logits = logits[..., :-1, :].contiguous()
