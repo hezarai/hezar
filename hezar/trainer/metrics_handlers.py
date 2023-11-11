@@ -140,7 +140,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
 
 
 class TextGenerationMetricsHandler(MetricsHandler):
-    valid_metrics = [MetricType.ROUGE]
+    valid_metrics = [MetricType.ROUGE, MetricType.BLEU]
 
     def __init__(self, metrics: List[Union[str, MetricType, Metric, MetricConfig]], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
