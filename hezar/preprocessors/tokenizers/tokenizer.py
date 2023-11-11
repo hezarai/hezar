@@ -227,7 +227,7 @@ class Tokenizer(Preprocessor):
         return_token_type_ids: bool = None,
         return_attention_mask: bool = True,
         return_overflowing_tokens: bool = False,
-        return_special_tokens_mask: bool = True,
+        return_special_tokens_mask: bool = False,
         return_offsets_mapping: bool = False,
         return_length: bool = False,
         return_word_ids: bool = False,
