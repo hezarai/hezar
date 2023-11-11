@@ -51,6 +51,7 @@ class TextPaddingDataCollator:
             "tokens": "",
             "special_tokens_mask": 1,
             "attention_mask": 0,
+            "labels": self.tokenizer.pad_token_id,
         }
 
         if padding_type == "longest" and max_length is not None:
@@ -82,10 +83,13 @@ class TextPaddingDataCollator:
             encoded_batch["labels"] = encoded_batch["label"]
             del encoded_batch["label"]
 
-        labels = encoded_batch.pop("labels")
-        input_length = self.max_length or max(len(x) for x in encoded_batch["token_ids"])
+        # labels = encoded_batch.pop("labels")
+        # input_length = self.max_length or max(len(x) for x in encoded_batch["token_ids"])
 
         for field, batch in encoded_batch.items():
+            field_name = "labels" if field == "labels" else "token_ids"
+            input_length = self.max_length or max(len(x) for x in encoded_batch[field_name])
+
             padded_batch = []
             for x in batch:
                 if isinstance(x, torch.Tensor):
@@ -98,7 +102,10 @@ class TextPaddingDataCollator:
                 padded_batch.append(padded_x)
             encoded_batch[field] = padded_batch
 
-        encoded_batch["labels"] = labels
+        # pad labels
+
+
+        # encoded_batch["labels"] = labels
 
         encoded_batch = convert_batch_dict_dtype(encoded_batch, dtype=self.return_tensors)
 
