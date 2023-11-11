@@ -8,3 +8,4 @@ from .precision import Precision, PrecisionConfig
 from .recall import Recall, RecallConfig
 from .seqeval import Seqeval, SeqevalConfig
 from .wer import WER, WERConfig
+from .rouge import ROUGE, ROUGEConfig
