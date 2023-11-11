@@ -6,20 +6,20 @@ from ..constants import Backends, MetricType
 from ..registry import register_metric
 from ..utils import is_backend_available
 
-if is_backend_available(Backends.EVALUATE):
-    import evaluate
+if is_backend_available(Backends.ROUGE):
+    import rouge
 
-_DESCRIPTION = "Rouge estimation using `evaluate`. Commonly used for Text Summarization"
+_DESCRIPTION = "Rouge estimation. Commonly used for Text Summarization"
 
 _required_backends = [
-    Backends.EVALUATE,
+    Backends.ROUGE,
 ]
 
 
 @dataclass
 class ROUGEConfig(MetricConfig):
     name = MetricType.ROUGE
-    use_stemmer: bool = True
+
     output_keys: tuple = ("rouge",)
 
 
@@ -29,6 +29,7 @@ class ROUGE(Metric):
 
     def __init__(self, config: ROUGEConfig, **kwargs):
         super().__init__(config=config, **kwargs)
+        self.rouge = rouge.Rouge()
 
     def compute(
         self,
@@ -39,11 +40,13 @@ class ROUGE(Metric):
         output_keys=None,
         **kwargs,
     ):
-        rouge = evaluate.load("rouge")
-
-        results = rouge.compute(predictions=predictions, references=targets, use_stemmer=self.config.use_stemmer)
+        results = self.rouge.get_scores(predictions, targets)
+        output_result = {}
+        for rouge_key, rouge_metrics in results[0].items():
+            for metric_name, metric_value in rouge_metrics.items():
+                output_result[f"{rouge_key}-{metric_name}"] = metric_value
 
         if output_keys:
-            results = {k: round(v, 4) for k, v in results.items() if k in output_keys}
+            output_result = {k: round(v, 4) for k, v in output_result.items() if k in output_keys}
 
-        return results
+        return output_result
