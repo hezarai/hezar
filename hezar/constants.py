@@ -47,6 +47,7 @@ class Backends(str, Enum):
     NLTK = "nltk"
     SCIKIT = "sklearn"
     SEQEVAL = "seqeval"
+    EVALUATE = "evaluate"
 
     def __str__(self):
         return str(self.value)
@@ -119,6 +120,7 @@ class MetricType(str, Enum):
     CER = "cer"
     WER = "wer"
     BLEU = "bleu"
+    ROUGE = "rouge"
 
 
 class RepoType(str, Enum):
