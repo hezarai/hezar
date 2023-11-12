@@ -48,7 +48,7 @@ class Backends(str, Enum):
     SCIKIT = "sklearn"
     SEQEVAL = "seqeval"
     EVALUATE = "evaluate"
-    ROUGE = "rouge"
+    ROUGE = "rouge_score"
 
     def __str__(self):
         return str(self.value)
