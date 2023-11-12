@@ -7,6 +7,7 @@ from ..utils import Logger, convert_batch_dict_dtype
 
 __all__ = [
     "TextPaddingDataCollator",
+    "TextGenerationDataCollator",
     "SequenceLabelingDataCollator",
     "CharLevelOCRDataCollator",
 ]
@@ -51,7 +52,6 @@ class TextPaddingDataCollator:
             "tokens": "",
             "special_tokens_mask": 1,
             "attention_mask": 0,
-            "labels": self.tokenizer.pad_token_id,
         }
 
         if padding_type == "longest" and max_length is not None:
@@ -83,13 +83,10 @@ class TextPaddingDataCollator:
             encoded_batch["labels"] = encoded_batch["label"]
             del encoded_batch["label"]
 
-        # labels = encoded_batch.pop("labels")
-        # input_length = self.max_length or max(len(x) for x in encoded_batch["token_ids"])
+        labels = encoded_batch.pop("labels")
+        input_length = self.max_length or max(len(x) for x in encoded_batch["token_ids"])
 
         for field, batch in encoded_batch.items():
-            field_name = "labels" if field == "labels" else "token_ids"
-            input_length = self.max_length or max(len(x) for x in encoded_batch[field_name])
-
             padded_batch = []
             for x in batch:
                 if isinstance(x, torch.Tensor):
@@ -102,14 +99,97 @@ class TextPaddingDataCollator:
                 padded_batch.append(padded_x)
             encoded_batch[field] = padded_batch
 
-        # pad labels
-
-
-        # encoded_batch["labels"] = labels
+        encoded_batch["labels"] = labels
 
         encoded_batch = convert_batch_dict_dtype(encoded_batch, dtype=self.return_tensors)
 
         return encoded_batch
+
+
+class TextGenerationDataCollator:
+    """
+    A data collator for text to text generation
+
+    Args:
+        tokenizer: A Hezar tokenizer instance. (only its config is going to be used)
+        padding_type: Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
+         `max_length` cannot be None)
+        padding_side: Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
+         `left`.
+        max_length: If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
+         have this value as length.
+        return_tensors: Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
+         can also be `np` or `list`.
+
+    """
+
+    def __init__(
+        self,
+        tokenizer: Tokenizer,
+        padding_type: str = "longest",
+        padding_side: str = "right",
+        max_length: int = None,
+        max_target_length: int = None,
+        return_tensors: str = "pt",
+    ):
+        self.tokenizer = tokenizer
+        self.padding_type = padding_type
+        self.padding_side = padding_side
+        self.max_length = max_length
+        self.max_target_length = max_target_length
+        self.return_tensors = return_tensors
+
+        self.field_to_pad_id_mapping = {
+            "token_ids": self.tokenizer.pad_token_id,
+            "token_type_ids": self.tokenizer.config.pad_token_type_id,
+            "tokens": "",
+            "special_tokens_mask": 1,
+            "attention_mask": 0,
+            "labels": self.tokenizer.pad_token_id,
+        }
+
+        if padding_type == "longest" and max_length is not None:
+            logger.warning(
+                "You passed `max_length` while also setting `padding_type` to `longest` which are "
+                "incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                "Ignoring `max_length`"
+            )
+            self.max_length = None
+
+    def __call__(self, encoded_batch):
+        """
+        Add padding to every item in the batch
+
+        Args:
+            encoded_batch: A batch dictionary
+
+        Returns:
+            The same batch dictionary but padded
+        """
+        encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
+        permuted_batch = {}
+        for key in encoded_batch[0].keys():
+            stack = [e for item in encoded_batch for e in item[key]]
+            permuted_batch[key] = stack
+
+        encoded_batch = permuted_batch.copy()
+        labels = encoded_batch.pop("labels")
+        labels_batch = {"token_ids": labels}  # workaround: treat labels as token_ids in tokenizer to pad correctly
+        padded_labels = self.tokenizer.pad_encoded_batch(
+            labels_batch,
+            padding=self.padding_type,
+            max_length=self.max_target_length,
+            return_tensors=self.return_tensors,
+        )
+        padded_batch = self.tokenizer.pad_encoded_batch(
+            encoded_batch,
+            padding=self.padding_type,
+            max_length=self.max_length,
+            return_tensors=self.return_tensors,
+        )
+        padded_batch["labels"] = padded_labels["token_ids"]
+
+        return padded_batch
 
 
 class SequenceLabelingDataCollator:
