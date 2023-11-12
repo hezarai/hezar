@@ -7,7 +7,7 @@ from ...constants import TaskType
 from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger
-from ..data_collators import TextPaddingDataCollator
+from ..data_collators import TextGenerationDataCollator
 from .dataset import Dataset
 
 
@@ -25,6 +25,7 @@ class TextSummarizationDatasetConfig(DatasetConfig):
     summary_field: str = None
     title_field: str = None
     max_length: int = None
+    max_target_length: int = None
 
 
 @register_dataset("text_summarization", config_class=TextSummarizationDatasetConfig)
@@ -43,9 +44,10 @@ class TextSummarizationDataset(Dataset):
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self.tokenizer = self._build_tokenizer()
-        self.data_collator = TextPaddingDataCollator(
+        self.data_collator = TextGenerationDataCollator(
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
+            max_target_length=self.config.max_target_length,
             padding_type="max_length" if self.config.max_length else "longest",
         )
 
@@ -103,7 +105,7 @@ class TextSummarizationDataset(Dataset):
             summary,
             return_tensors="pt",
             max_length=self.config.max_length,
-            padding="max_length" if self.config.max_length else "longest",
+            padding="max_length" if self.config.max_target_length else "longest",
             return_attention_mask=True,
         )
 
