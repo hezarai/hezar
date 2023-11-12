@@ -1,15 +1,27 @@
-from hezar.models import GPT2TextGeneration, GPT2TextGenerationConfig
+from hezar.models import T5TextGeneration, T5TextGenerationConfig
 from hezar.data import Dataset
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 
 dataset_path = "hezarai/xlsum-fa"
-base_model_path = "hezarai/gpt2-base-fa"
+base_model_path = "hezarai/t5-base-fa"
 
-train_dataset = Dataset.load(dataset_path, split="train", tokenizer_path=base_model_path)
-eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=base_model_path)
+train_dataset = Dataset.load(
+    dataset_path,
+    split="train",
+    tokenizer_path=base_model_path,
+    max_length=256,
+    max_target_length=256,
+)
+eval_dataset = Dataset.load(
+    dataset_path,
+    split="test",
+    tokenizer_path=base_model_path,
+    max_length=256,
+    max_target_length=256,
+)
 
-model = GPT2TextGeneration(GPT2TextGenerationConfig())
+model = T5TextGeneration(T5TextGenerationConfig())
 preprocessor = Preprocessor.load(base_model_path)
 
 train_config = TrainerConfig(
@@ -19,7 +31,7 @@ train_config = TrainerConfig(
     batch_size=8,
     num_epochs=10,
     checkpoints_dir="checkpoints/",
-    metrics=["bleu", ],
+    metrics=["rouge"],
 )
 
 trainer = Trainer(
