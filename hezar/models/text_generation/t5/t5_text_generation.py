@@ -38,6 +38,7 @@ class T5TextGeneration(Model):
     def forward(
         self,
         token_ids,
+        labels=None,
         attention_mask=None,
         decoder_input_ids=None,
         decoder_attention_mask=None,
@@ -53,6 +54,11 @@ class T5TextGeneration(Model):
         output_hidden_states=None,
         **kwargs,
     ) -> Dict:
+
+        if labels is not None and decoder_input_ids is None and decoder_inputs_embeds is None:
+            # get decoder inputs from shifting lm labels to the right
+            decoder_input_ids = self._shift_right(labels)
+
         outputs = self.t5(
             input_ids=token_ids,
             attention_mask=attention_mask,
@@ -71,7 +77,10 @@ class T5TextGeneration(Model):
             output_hidden_states=output_hidden_states,
         )
 
-        return outputs
+        return dict(outputs)
+
+    def _shift_right(self, input_ids):
+        return self.t5._shift_right(input_ids)
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
         loss = self.criterion(logits.view(-1, logits.size(-1)), labels.view(-1))
