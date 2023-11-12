@@ -64,7 +64,7 @@ class GPT2TextGeneration(Model):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
         )
-        return outputs
+        return dict(outputs)
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
         labels = labels.to(logits.device)
