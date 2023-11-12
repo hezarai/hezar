@@ -4,7 +4,6 @@ import torch
 from ..preprocessors import Tokenizer
 from ..utils import Logger, convert_batch_dict_dtype
 
-
 __all__ = [
     "TextPaddingDataCollator",
     "TextGenerationDataCollator",
@@ -138,15 +137,6 @@ class TextGenerationDataCollator:
         self.max_length = max_length
         self.max_target_length = max_target_length
         self.return_tensors = return_tensors
-
-        self.field_to_pad_id_mapping = {
-            "token_ids": self.tokenizer.pad_token_id,
-            "token_type_ids": self.tokenizer.config.pad_token_type_id,
-            "tokens": "",
-            "special_tokens_mask": 1,
-            "attention_mask": 0,
-            "labels": self.tokenizer.pad_token_id,
-        }
 
         if padding_type == "longest" and max_length is not None:
             logger.warning(
