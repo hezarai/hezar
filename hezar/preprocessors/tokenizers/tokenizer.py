@@ -132,6 +132,7 @@ class Tokenizer(Preprocessor):
         inputs,
         padding: Literal["longest", "max_length"] = None,
         max_length: Optional[int] = None,
+        truncation: bool = True,
         return_tensors: Optional[str] = None,
         skip_keys: list = None,
     ):
@@ -142,6 +143,7 @@ class Tokenizer(Preprocessor):
             inputs: Input batch of encoded tokens
             padding: Padding type, could be one of ["longest", "max_length"]
             max_length: Max input length (only if padding is set to "max_length")
+            truncation: Whether to allow truncation
             return_tensors: The type of tensors to return
             skip_keys: A list of keys to skip padding
 
@@ -179,13 +181,11 @@ class Tokenizer(Preprocessor):
                 )
                 inputs_length = inputs_max_length
             else:
-                # TODO implement truncation if possible and remove this condition
-                if max_length <= inputs_max_length:
+                if max_length < inputs_max_length and not truncation:
                     logger.warning(
                         f"Cannot set max_length to {max_length} "
-                        f"while max input length is {inputs_max_length}!"
-                        f"Falling back to padding='longest' "
-                        f"since truncation is not available yet in Hezar :("
+                        f"while max input length is {inputs_max_length} and `truncation` is `False`"
+                        f"Either set `truncation=True` or increase `max_length`"
                     )
                     inputs_length = inputs_max_length
                 else:
@@ -202,9 +202,12 @@ class Tokenizer(Preprocessor):
             padded_batch = []
             for x in batch:
                 difference = inputs_length - len(x)
-                paddings = [padding_id] * difference
-                padded_x = x + paddings if self.config.padding_direction == "right" else paddings + x
-                padded_batch.append(padded_x)
+                if difference >= 0:
+                    paddings = [padding_id] * difference
+                    padded_x = x + paddings if self.config.padding_direction == "right" else paddings + x
+                    padded_batch.append(padded_x)
+                else:
+                    padded_batch.append(x[:inputs_length])
             inputs[key] = padded_batch
 
         inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors, skip_keys=skip_keys)
