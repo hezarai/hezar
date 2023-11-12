@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .metric import Metric
 from ..configs import MetricConfig
@@ -7,7 +7,7 @@ from ..registry import register_metric
 from ..utils import is_backend_available
 
 if is_backend_available(Backends.ROUGE):
-    import rouge
+    from rouge_score import rouge_scorer, scoring
 
 _DESCRIPTION = "Rouge estimation. Commonly used for Text Summarization"
 
@@ -19,8 +19,10 @@ _required_backends = [
 @dataclass
 class ROUGEConfig(MetricConfig):
     name = MetricType.ROUGE
-
-    output_keys: tuple = ("rouge",)
+    use_stemmer: bool = False
+    use_aggregator: bool = True
+    multi_ref: bool = True
+    output_keys: tuple = ("rouge1", "rouge2", "rougeL", "rougeLsum",)
 
 
 @register_metric("rouge", config_class=ROUGEConfig, description=_DESCRIPTION)
@@ -29,24 +31,36 @@ class ROUGE(Metric):
 
     def __init__(self, config: ROUGEConfig, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.rouge = rouge.Rouge()
+        rouge_types = ["rouge1", "rouge2", "rougeL", "rougeLsum"]
+        self.scorer = rouge_scorer.RougeScorer(
+            rouge_types=rouge_types,
+            use_stemmer=self.config.use_stemmer,
+        )
 
     def compute(
         self,
         predictions=None,
         targets=None,
-        concatenate_texts=None,
+        use_aggregator=None,
         n_decimals=None,
         output_keys=None,
         **kwargs,
     ):
-        results = self.rouge.get_scores(predictions, targets)
-        output_result = {}
-        for rouge_key, rouge_metrics in results[0].items():
-            for metric_name, metric_value in rouge_metrics.items():
-                output_result[f"{rouge_key}-{metric_name}"] = metric_value
+        aggregator = scoring.BootstrapAggregator()
+
+        for ref, pred in zip(targets, predictions):
+            if self.config.multi_ref:
+                score = self.scorer.score_multi(ref, pred)
+            else:
+                score = self.scorer.score(ref, pred)
+
+            aggregator.add_scores(score)
+
+        results = aggregator.aggregate()
+        for key in results:
+            results[key] = results[key].mid.fmeasure
 
         if output_keys:
-            output_result = {k: round(v, 4) for k, v in output_result.items() if k in output_keys}
+            results = {k: round(v, 4) for k, v in results.items() if k in output_keys}
 
-        return output_result
+        return results
