@@ -19,7 +19,7 @@ class GenerationConfig(ModelConfig):
 @dataclass
 class GPT2TextGenerationConfig(ModelConfig):
     name = "gpt2_text_generation"
-    add_cross_attention: bool = True
+    add_cross_attention: bool = False
     vocab_size: int = 42001
     attn_pdrop: float = 0.1
     bos_token_id: int = 5
