@@ -23,7 +23,7 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger
+from ..utils import Logger, sanitize_params_for_fn
 from .metrics_handlers import (
     AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
@@ -234,7 +234,7 @@ class Trainer:
             The proper input batch required by model forward
         """
         # cast to device
-        input_batch = {k: v.to(self.device) for k, v in input_batch.items() if isinstance(v, torch.Tensor)}
+        input_batch = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in input_batch.items()}
         return input_batch
 
     def amp_context_manager(self):
@@ -260,8 +260,9 @@ class Trainer:
         """
         if isinstance(input_batch, torch.Tensor):
             outputs = self.model(input_batch)
-        elif isinstance(input_batch, Mapping):
-            outputs = self.model(**input_batch)
+        elif isinstance(input_batch, Dict):
+            forward_inputs = sanitize_params_for_fn(self.model.forward, input_batch)
+            outputs = self.model(**forward_inputs)
         else:
             raise ValueError(
                 f"`input_batch` must be a tensor or a dict-like object containing key/value pairs of tensors, "
@@ -272,7 +273,7 @@ class Trainer:
 
         return outputs
 
-    def compute_loss(self, model_outputs: Mapping, labels: torch.Tensor, **kwargs) -> torch.Tensor:
+    def compute_loss(self, model_outputs: Dict, labels: torch.Tensor, **kwargs) -> torch.Tensor:
         """
         Compute loss from model outputs
 
@@ -285,11 +286,10 @@ class Trainer:
         Returns:
             The loss tensor
         """
-        loss_fn_param_names = set(inspect.signature(self.model.compute_loss).parameters)
-        all_params = {"labels": labels, **model_outputs, **kwargs}
-        loss_fn_params = {k: all_params[k] for k in loss_fn_param_names}
+        compute_loss_inputs = sanitize_params_for_fn(self.model.compute_loss, model_outputs, **kwargs)
+        compute_loss_inputs["labels"] = labels
 
-        loss = self.model.compute_loss(**loss_fn_params)
+        loss = self.model.compute_loss(**compute_loss_inputs)
 
         return loss
 
@@ -330,7 +330,8 @@ class Trainer:
             outputs = self.forward(input_batch)
             loss = self.compute_loss(outputs, **input_batch)
             if self.model.is_generative and self.config.evaluate_with_generate:
-                generated_ids = self.model.generate(**input_batch)
+                generate_inputs = sanitize_params_for_fn(self.model.generate, input_batch)
+                generated_ids = self.model.generate(**generate_inputs)
                 outputs["logits"] = generated_ids
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
