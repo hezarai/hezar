@@ -54,25 +54,25 @@ class CER(Metric):
         n_decimals = n_decimals or self.config.n_decimals
 
         if concatenate_texts:
-            score = jiwer.compute_measures(
+            score = jiwer.process_words(
                 targets,
                 predictions,
-                truth_transform=self.transform,
+                reference_transform=self.transform,
                 hypothesis_transform=self.transform,
-            )["wer"]
+            ).wer
 
         else:
             incorrect = 0
             total = 0
             for prediction, reference in zip(predictions, targets):
-                measures = jiwer.compute_measures(
+                measures = jiwer.process_words(
                     reference,
                     prediction,
-                    truth_transform=self.transform,
+                    reference_transform=self.transform,
                     hypothesis_transform=self.transform,
                 )
-                incorrect += measures["substitutions"] + measures["deletions"] + measures["insertions"]
-                total += measures["substitutions"] + measures["deletions"] + measures["hits"]
+                incorrect += measures.substitutions + measures.deletions + measures.insertions
+                total += measures.substitutions + measures.deletions + measures.hits
 
             score = incorrect / total
 
