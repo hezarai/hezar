@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 from hezar.models import Model
@@ -45,12 +46,13 @@ class ModelsInferenceTestCase(TestCase):
         )
 
     def test_automatic_speech_recognition(self):
-        inputs = "samples/speech_example.mp3"
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        inputs = os.path.join(dirname, "samples", "speech_example.mp3")
         model = Model.load(TESTABLE_MODELS["automatic-speech-recognition"])
         outputs = model.predict(inputs)
         self.assertEqual(type(outputs), list, INVALID_OUTPUT_TYPE)
         self.assertEqual(len(outputs), 1, INVALID_OUTPUT_SIZE)
-        self.assertEqual(outputs[0].keys(), {"text"}, INVALID_OUTPUT_FIELDS)
+        self.assertEqual(outputs[0].keys(), ["text", "chunks"], INVALID_OUTPUT_FIELDS)
 
     def test_masked_language_modeling(self):
         inputs = ["سلام بچه ها حالتون <mask>"]
@@ -70,20 +72,22 @@ class ModelsInferenceTestCase(TestCase):
         outputs = model.predict(inputs)
         self.assertEqual(type(outputs), list, INVALID_OUTPUT_TYPE)
         self.assertEqual(len(outputs), 1, INVALID_OUTPUT_SIZE)
-        self.assertEqual(outputs[0].keys(), {"text"}, INVALID_OUTPUT_FIELDS)
+        self.assertEqual(outputs[0].keys(), ["text"], INVALID_OUTPUT_FIELDS)
 
     def test_ocr(self):
-        inputs = "samples/ocr_example.jpg"
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        inputs = os.path.join(dirname, "samples", "ocr_example.jpg")
         model = Model.load(TESTABLE_MODELS["ocr"])
         outputs = model.predict(inputs)
         self.assertEqual(type(outputs), list, INVALID_OUTPUT_TYPE)
         self.assertEqual(len(outputs), 1, INVALID_OUTPUT_SIZE)
-        self.assertEqual(outputs[0].keys(), {"text"}, INVALID_OUTPUT_FIELDS)
+        self.assertEqual(outputs[0].keys(), ["text"], INVALID_OUTPUT_FIELDS)
 
     def test_image_captioning(self):
-        inputs = "samples/image_captioning_example.jpg"
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        inputs = os.path.join(dirname, "samples", "image_captioning_example.jpg")
         model = Model.load(TESTABLE_MODELS["image-captioning"])
         outputs = model.predict(inputs)
         self.assertEqual(type(outputs), list, INVALID_OUTPUT_TYPE)
         self.assertEqual(len(outputs), 1, INVALID_OUTPUT_SIZE)
-        self.assertEqual(outputs[0].keys(), {"text"}, INVALID_OUTPUT_FIELDS)
+        self.assertEqual(outputs[0].keys(), ["text"], INVALID_OUTPUT_FIELDS)
