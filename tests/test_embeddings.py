@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from hezar.embeddings import Embedding
 
-
 TESTABLE_EMBEDDINGS = {
     "word2vec-skipgram": "hezarai/word2vec-skipgram-fa-wikipedia",
     "word2vec-cbow": "hezarai/word2vec-cbow-fa-wikipedia",
