@@ -44,14 +44,14 @@ class WER(Metric):
         n_decimals = n_decimals or self.config.n_decimals
 
         if concatenate_texts:
-            score = jiwer.compute_measures(targets, predictions)["wer"]
+            score = jiwer.process_words(targets, predictions).wer
         else:
             incorrect = 0
             total = 0
             for prediction, reference in zip(predictions, targets):
-                measures = jiwer.compute_measures(reference, prediction)
-                incorrect += measures["substitutions"] + measures["deletions"] + measures["insertions"]
-                total += measures["substitutions"] + measures["deletions"] + measures["hits"]
+                measures = jiwer.process_words(reference, prediction)
+                incorrect += measures.substitutions + measures.deletions + measures.insertions
+                total += measures.substitutions + measures.deletions + measures.hits
 
             score = incorrect / total
 
