@@ -20,6 +20,7 @@ class T5TextGenerationConfig(ModelConfig):
     initializer_factor: float = 1.0
     feed_forward_proj: str = "gated-gelu"
     is_encoder_decoder: bool = True
+    tie_word_embeddings: bool = False
     use_cache: bool = True
     pad_token_id: int = 0
     decoder_start_token_id: int = 0
