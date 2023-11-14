@@ -92,6 +92,8 @@ class T5TextGeneration(Model):
         return self.t5._shift_right(input_ids)
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        labels = labels.clone()
+        labels[labels == self.config.pad_token_id] = -100
         loss = self.criterion(logits.view(-1, logits.size(-1)), labels.view(-1))
         return loss
 
@@ -102,12 +104,12 @@ class T5TextGeneration(Model):
         output_ids = self.t5.generate(**model_inputs, **generation_kwargs)
         return output_ids
 
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+    def preprocess(self, inputs: Union[str, List[str]], prefix=None):
         if isinstance(inputs, str):
             inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
+        prefix = prefix or self.config.input_prefix
+        if prefix:
+            inputs = [f"{prefix}{x}" for x in inputs]
         tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
         return inputs

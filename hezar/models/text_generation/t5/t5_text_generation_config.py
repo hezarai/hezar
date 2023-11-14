@@ -26,3 +26,4 @@ class T5TextGenerationConfig(ModelConfig):
     eos_token_id: int = 1
     min_length: int = 0
     max_length: int = 100
+    input_prefix: str = None
