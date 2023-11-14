@@ -35,6 +35,15 @@ class T5TextGeneration(Model):
 
         self.t5 = T5ForConditionalGeneration(T5Config(**self.config))
 
+    def load_state_dict(self, state_dict, **kwargs):
+        """
+        This override is necessary to handle a bug in T5 when loading the embeddings
+        """
+        super().load_state_dict(state_dict)
+        self.t5.shared.weight = torch.nn.Parameter(state_dict["t5.shared.weight"])
+        self.t5.encoder.embed_tokens.weight = torch.nn.Parameter(state_dict["t5.encoder.embed_tokens.weight"])
+        self.t5.decoder.embed_tokens.weight = torch.nn.Parameter(state_dict["t5.decoder.embed_tokens.weight"])
+
     def forward(
         self,
         token_ids,
