@@ -8,6 +8,7 @@ Examples:
     >>> model = Model.load("hezarai/bert-base-fa")
 """
 import inspect
+import re
 import os
 import tempfile
 from collections import OrderedDict
@@ -30,7 +31,6 @@ from ..constants import (
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, get_module_class, verify_dependencies
 from .model_outputs import ModelOutput
-
 
 logger = Logger(__name__)
 
@@ -77,6 +77,12 @@ class Model(nn.Module):
         self.config = config.update(kwargs)
         self._preprocessor = None
         self._criterion = self._set_criterion(self.loss_fn_name)
+
+    def __repr__(self):
+        representation = super().__repr__()
+        pattern = r"\('?_criterion'?\): [^\)]+\)\s*"
+        representation = re.sub(pattern, '', representation)
+        return representation
 
     @staticmethod
     def _set_criterion(criterion_name: str):

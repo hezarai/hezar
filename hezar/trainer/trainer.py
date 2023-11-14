@@ -174,7 +174,7 @@ class Trainer:
         if self.eval_dataset is not None:
             eval_dataloader = DataLoader(
                 dataset=self.eval_dataset,
-                batch_size=self.config.batch_size,
+                batch_size=self.config.eval_batch_size or self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
                 drop_last=True,
