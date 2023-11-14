@@ -370,6 +370,7 @@ class TrainerConfig(Config):
     logs_dir: str = "logs"
 
     def __post_init__(self):
+        super().__post_init__()
         if self.task is None:
             raise ValueError("The parameter `task` is required for `TrainerConfig`!")
         if self.task not in list(TaskType):
