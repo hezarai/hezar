@@ -176,7 +176,6 @@ class CharLevelOCRDataCollator:
         if isinstance(input_batch, (list, tuple)) and isinstance(input_batch[0], dict):
             input_batch = {key: [example[key] for example in input_batch] for key in input_batch[0].keys()}
         input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"], 0)
-        input_batch["labels_length"] = torch.cat(input_batch["labels_length"], 0)
 
         max_length = max(map(len, input_batch["labels"]))
         all_labels = []

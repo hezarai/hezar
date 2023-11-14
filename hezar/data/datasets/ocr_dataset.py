@@ -142,10 +142,8 @@ class OCRDataset(Dataset):
         text, path = self.data[index].values()
         pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"][0]
         labels = self._text_to_tensor(text)
-        labels_length = torch.LongTensor([len(text)])  # For char level models
         inputs = {
             "pixel_values": pixel_values,
             "labels": labels,
-            "labels_length": labels_length,
         }
         return inputs
