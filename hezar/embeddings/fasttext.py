@@ -1,5 +1,4 @@
 import os
-import pprint
 from dataclasses import dataclass
 from typing import List, Literal, Union
 
@@ -112,7 +111,7 @@ class FastText(Embedding):
             raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
         most_similar = self.word_vectors.most_similar(word, topn=top_n)
         most_similar = [{"word": word, "score": f"{score:.4f}"} for word, score in most_similar]
-        return pprint.pformat(most_similar)
+        return most_similar
 
     def get_normed_vectors(self):
         normed_vectors = self.word_vectors.get_normed_vectors()

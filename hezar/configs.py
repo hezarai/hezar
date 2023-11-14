@@ -360,6 +360,7 @@ class TrainerConfig(Config):
     weight_decay: float = 0.0
     scheduler: str = None
     batch_size: int = None
+    eval_batch_size: int = None
     use_amp: bool = False
     evaluate_with_generate: bool = True
     metrics: List[Union[str, MetricConfig]] = None
