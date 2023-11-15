@@ -23,7 +23,7 @@ def greedy_decode(emission_log_prob, blank=0):
 
 
 def ctc_decode(log_probs, id2label=None, blank=0):
-    emission_log_probs = np.transpose(log_probs.cpu().numpy(), (1, 0, 2))
+    emission_log_probs = np.transpose(log_probs.cpu().detach().numpy(), (1, 0, 2))
     batch_size, max_length, _ = emission_log_probs.shape
 
     # size of emission_log_probs: (batch, length, class)
