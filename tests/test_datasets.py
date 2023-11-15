@@ -18,7 +18,7 @@ TASK_TO_TOKENIZER_MAPPING = {
 
 TASK_TO_REQUIRED_FIELDS = {
     "text-classification": ["token_ids", "attention_mask", "labels"],
-    "sequence-labeling": ["token_ids", "attention_mask", "special_tokens_mask", "word_ids", "labels"],
+    "sequence-labeling": ["token_ids", "attention_mask", "word_ids", "labels"],
     "ocr": ["pixel_values", "labels"],
     "text-summarization": ["token_ids", "attention_mask", "labels"],
 }
