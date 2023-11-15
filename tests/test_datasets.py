@@ -78,7 +78,7 @@ class HubDatasetsTestCase(TestCase):
             split="train",
             tokenizer_path=TASK_TO_TOKENIZER_MAPPING["sequence-labeling"]
         )
-        self.assertIsInstance(train_dataset, Dataset, INVALID_DATASET_TYPE)
+        self.assertIsInstance(train_dataset, Dataset, INVALID_DATASET_TYPE.format(type(train_dataset)))
         sample = train_dataset[0]
         self.assertIsInstance(sample, Dict)
         [self.assertIn(x, sample, INVALID_DATASET_FIELDS.format(x)) for x in required_fields]
@@ -88,7 +88,7 @@ class HubDatasetsTestCase(TestCase):
             split="test",
             tokenizer_path=TASK_TO_TOKENIZER_MAPPING["sequence-labeling"]
         )
-        self.assertIsInstance(test_dataset, Dataset, INVALID_DATASET_TYPE)
+        self.assertIsInstance(test_dataset, Dataset, INVALID_DATASET_TYPE.format(type(test_dataset)))
         sample = test_dataset[0]
         self.assertIsInstance(sample, Dict)
         [self.assertIn(x, sample, INVALID_DATASET_FIELDS.format(x)) for x in required_fields]
@@ -120,7 +120,7 @@ class HubDatasetsTestCase(TestCase):
             split="train",
             tokenizer_path=TASK_TO_TOKENIZER_MAPPING["ocr"]
         )
-        self.assertIsInstance(train_dataset, Dataset, INVALID_DATASET_TYPE)
+        self.assertIsInstance(train_dataset, Dataset, INVALID_DATASET_TYPE.format(type(train_dataset)))
         sample = train_dataset[0]
         self.assertIsInstance(sample, Dict)
         [self.assertIn(x, sample, INVALID_DATASET_FIELDS.format(x)) for x in required_fields]
@@ -130,7 +130,7 @@ class HubDatasetsTestCase(TestCase):
             split="test",
             tokenizer_path=TASK_TO_TOKENIZER_MAPPING["ocr"]
         )
-        self.assertIsInstance(test_dataset, Dataset, INVALID_DATASET_TYPE)
+        self.assertIsInstance(test_dataset, Dataset, INVALID_DATASET_TYPE.format(type(test_dataset)))
         sample = test_dataset[0]
         self.assertIsInstance(sample, Dict)
         [self.assertIn(x, sample, INVALID_DATASET_FIELDS.format(x)) for x in required_fields]
@@ -162,7 +162,7 @@ class HubDatasetsTestCase(TestCase):
             split="train",
             tokenizer_path=TASK_TO_TOKENIZER_MAPPING["text-summarization"]
         )
-        self.assertIsInstance(train_dataset, Dataset, INVALID_DATASET_TYPE)
+        self.assertIsInstance(train_dataset, Dataset, INVALID_DATASET_TYPE.format(type(train_dataset)))
         sample = train_dataset[0]
         self.assertIsInstance(sample, Dict)
         [self.assertIn(x, sample, INVALID_DATASET_FIELDS.format(x)) for x in required_fields]
@@ -172,7 +172,7 @@ class HubDatasetsTestCase(TestCase):
             split="test",
             tokenizer_path=TASK_TO_TOKENIZER_MAPPING["text-summarization"]
         )
-        self.assertIsInstance(test_dataset, Dataset, INVALID_DATASET_TYPE)
+        self.assertIsInstance(test_dataset, Dataset, INVALID_DATASET_TYPE.format(type(test_dataset)))
         sample = test_dataset[0]
         self.assertIsInstance(sample, Dict)
         [self.assertIn(x, sample, INVALID_DATASET_FIELDS.format(x)) for x in required_fields]
