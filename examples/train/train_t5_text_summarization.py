@@ -48,4 +48,4 @@ if __name__ == '__main__':
         data_collator=train_dataset.data_collator,
         preprocessor=preprocessor,
     )
-    trainer.evaluate()
+    trainer.train()
