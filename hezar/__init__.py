@@ -5,7 +5,7 @@ workaround for backward compatibility. Any class, functions, etc. must be import
 import warnings
 
 
-__version__ = "0.32.1"
+__version__ = "0.33.0"
 
 
 def _warn_on_import(name: str, submodule: str):
