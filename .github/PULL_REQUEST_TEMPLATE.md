@@ -1,32 +1,36 @@
-# What does this PR do?
+# Pull Request
 
-<!--
-Congratulations! You've made it this far! You're not quite done yet though.
+## Description
+<!-- Provide a brief overview of the changes introduced by this pull request. What problem does it solve? -->
 
-Once merged, your PR is going to appear in the release notes with the title you set, so make sure it's a great title that fully reflects the extent of your awesome contribution.
+## Changes
+<!-- List the specific changes made in this PR. Bullet points are helpful. -->
 
-Then, please replace this with a description of the change and which issue is fixed (if applicable). Please also include relevant motivation and context. List any dependencies (if any) that are required for this change.
+- 
+-
+-
 
-Once you're done, someone will review your PR shortly (see the section "Who can review?" below to tag some potential reviewers). They may suggest changes to make the code even better. If no one reviewed your PR after a week has passed, don't hesitate to post a new comment @-mentioning the same persons---sometimes notifications get lost.
--->
-
-<!-- Remove if not applicable -->
-
-Fixes # (issue)
-
-
-## Before submitting
-- [ ] This PR fixes a typo or improves the docs (you can dismiss the other checks if that's the case).
-- [ ] Did you read the [contributor guideline](https://github.com/hezarai/hezar/blob/main/CONTRIBUTING.md),
-      Pull Request section?
-- [ ] Was this discussed/approved via a GitHub issue? Please add a link
-      to it if that's the case.
-- [ ] Did you make sure to update the documentation with your changes? Here are the
-  [documentation guidelines](https://github.com/hezarai/hezar/tree/main/docs)
-- [ ] Did you write any new necessary tests?
+## Related Issues
+<!-- If this PR is related to any GitHub issues, mention them here with the format `Fixes #123` or `Resolves #456`. -->
 
 
-## Who can review?
+## Checklist
+<!-- Make sure all items in the checklist are completed before submitting the PR. Remove items that are not applicable. -->
 
-Anyone in the community is free to review the PR once the tests have passed. Feel free to tag
-members/contributors who may be interested in your PR.
+- [ ] I have read and followed the project's contributing guidelines.
+- [ ] My code follows the project's coding style.
+- [ ] I have tested my changes thoroughly.
+- [ ] I have updated the documentation if necessary.
+- [ ] All existing tests pass.
+- [ ] I have added new tests to cover my changes.
+- [ ] My changes do not introduce any new warnings or errors.
+
+## Additional Comments
+<!-- Any additional information or context that can help reviewers understand your changes better. -->
+
+## Reviewer Instructions
+<!-- Provide instructions for the reviewers, if there's anything specific they need to focus on or test. -->
+
+## Author's Note
+<!-- Any message or note from the author to the reviewers. -->
+
