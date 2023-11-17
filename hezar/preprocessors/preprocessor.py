@@ -6,7 +6,7 @@ from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
 
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, Backends, RegistryType, RepoType, HEZAR_CACHE_DIR
+from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, HEZAR_CACHE_DIR, Backends, RegistryType, RepoType
 from ..utils import get_module_class, list_repo_files, verify_dependencies
 
 
