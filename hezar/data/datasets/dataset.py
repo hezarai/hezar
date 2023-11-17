@@ -20,23 +20,54 @@ class Dataset(TorchDataset):
     Base class for all datasets in Hezar.
 
     Args:
-        config:
-        **kwargs:
+        config (DatasetConfig): The configuration object for the dataset.
+        **kwargs: Additional keyword arguments.
+
+    Attributes:
+        required_backends (List[Union[str, Backends]]): List of required backends for the dataset.
+        config_filename (str): Default dataset config file name.
+        cache_dir (str): Default cache directory for the dataset.
+
     """
     required_backends: List[Union[str, Backends]] = None
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = HEZAR_CACHE_DIR
 
     def __init__(self, config: DatasetConfig, **kwargs):
+        """
+        Initializes a new dataset instance.
+
+        Args:
+            config (DatasetConfig): The configuration object for the dataset.
+            **kwargs: Additional keyword arguments.
+
+        """
         verify_dependencies(self, self.required_backends)
         self.config = config.update(kwargs)
         self.preprocessor = None
         self.data_collator = None
 
     def __len__(self):
+        """
+        Returns the length of the dataset.
+
+        Raises:
+            NotImplementedError: This method must be implemented in derived classes.
+
+        """
         raise NotImplementedError
 
     def __getitem__(self, index):
+        """
+        Gets a specific item from the dataset.
+
+        Args:
+            index: Index of the item to retrieve.
+
+        Raises:
+            NotImplementedError: This method must be implemented in derived classes.
+
+        """
         raise NotImplementedError
 
     @classmethod
@@ -48,15 +79,16 @@ class Dataset(TorchDataset):
         **kwargs,
     ) -> "Dataset":
         """
-        Load the dataset from hub.
+        Load the dataset from a hub path.
 
         Args:
-            hub_path: Path to dataset from hub or locally
-            config_filename: Dataset config file name
-            split: Dataset split, defaults to "train"
-            **kwargs: Config parameters as keyword arguments
+            hub_path (Union[str, os.PathLike]): Path to dataset from hub or locally.
+            config_filename (Optional[str]): Dataset config file name.
+            split (Optional[Union[str, SplitType]]): Dataset split, defaults to "train".
+            **kwargs: Config parameters as keyword arguments.
 
         Returns:
+            Dataset: An instance of the loaded dataset.
 
         """
         split = split or "train"

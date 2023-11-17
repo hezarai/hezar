@@ -39,8 +39,26 @@ class TextSplitType(str, Enum):
 
 @dataclass
 class OCRDatasetConfig(DatasetConfig):
+    """
+    Configuration class for OCR datasets.
+
+    Args:
+        path (str): Path to the dataset.
+        text_split_type (TextSplitType): Type of text splitting (CHAR_SPLIT or TOKENIZE).
+        tokenizer_path (str): Path to the tokenizer file.
+        id2label (Dict[int, str]): Mapping of label IDs to characters.
+        text_column (str): Column name for text in the dataset.
+        images_paths_column (str): Column name for image paths in the dataset.
+        max_length (int): Maximum length of text.
+        invalid_characters (list): List of invalid characters.
+        reverse_text (bool): Whether to reverse the text.
+        annotation_file (str): Path to the annotation file.
+        test_split_size (float): Size of the test split.
+        image_processor_config (ImageProcessorConfig): Configuration for image processing.
+
+    """
     name = "ocr"
-    task: TaskType = TaskType.IMAGE2TEXT
+    task: TaskType = field(default=TaskType.IMAGE2TEXT, init=False)
     path: str = None
     text_split_type: TextSplitType = TextSplitType.TOKENIZE
     tokenizer_path: str = None  # if left to None, text_split_type must be `char_split`
@@ -63,10 +81,20 @@ class OCRDataset(Dataset):
     OCR dataset supports two types of image to text dataset. One is for tokenizer-based models in which the labels are
     tokens and the other is char-level models in which the labels are separated by character and the converted to ids.
     This behavior is specified by the `text_split_type` in config which can be either `tokenize` or `char_split`.
+
     """
     required_backends = _required_backends
 
     def __init__(self, config: OCRDatasetConfig, split=None, **kwargs):
+        """
+        Initializes a new OCRDataset instance.
+
+        Args:
+            config (OCRDatasetConfig): The configuration object for the dataset.
+            split: Dataset split, defaults to None.
+            **kwargs: Additional keyword arguments.
+
+        """
         super().__init__(config=config, **kwargs)
         self.data = self._load(split)
         self.image_processor = build_preprocessor("image_processor", config=self.config.image_processor_config)
@@ -81,9 +109,26 @@ class OCRDataset(Dataset):
             self.data_collator = CharLevelOCRDataCollator()
 
     def __len__(self):
+        """
+        Returns the length of the dataset.
+
+        Returns:
+            int: The length of the dataset.
+
+        """
         return len(self.data)
 
     def _is_label_valid(self, text):
+        """
+        Check if the label is valid based on the configured maximum length and invalid characters.
+
+        Args:
+            text (str): The text label.
+
+        Returns:
+            bool: True if the label is valid, False otherwise.
+
+        """
         if len(text) > self.config.max_length:
             return False
         for char in text:
@@ -92,6 +137,16 @@ class OCRDataset(Dataset):
         return True
 
     def _load(self, split=None):
+        """
+        Load the dataset and clean up invalid samples.
+
+        Args:
+            split: Dataset split, defaults to None.
+
+        Returns:
+            Dataset: The cleaned dataset.
+
+        """
         data = load_dataset(self.config.path)[split]
         # Cleanup dataset
         valid_indices = []
@@ -111,14 +166,14 @@ class OCRDataset(Dataset):
 
     def _text_to_tensor(self, text):
         """
-        Construct tensor from text. Either tokenize the inputs (if split type is tokenize) or split characters and
-        convert to ids from the `id2label` parameter.
+        Convert text to tensor based on the configured text_split_type.
 
         Args:
-            text: raw text
+            text (str): The raw text.
 
         Returns:
-            output tensor
+            torch.Tensor: The output tensor.
+
         """
         # Tokenize text inputs if text_split_type is set to `tokenize`
         if self.config.text_split_type == TextSplitType.TOKENIZE:
@@ -139,6 +194,16 @@ class OCRDataset(Dataset):
         return labels
 
     def __getitem__(self, index):
+        """
+        Get a specific item from the dataset.
+
+        Args:
+            index: Index of the item to retrieve.
+
+        Returns:
+            dict: The input data.
+
+        """
         text, path = self.data[index].values()
         pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"][0]
         labels = self._text_to_tensor(text)
