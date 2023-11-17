@@ -26,14 +26,16 @@ from ..utils import (
 from .preprocessor import Preprocessor
 
 
+# List of backends required for the image processor
 _required_backends = [
     Backends.PILLOW,
 ]
 
 _DESCRIPTION = r"""
-A general image processor to do all the image transforms in a composable/configurable pipeline
+A general image processor to perform various image transformations in a composable/configurable pipeline.
 """
 
+# Aliases for different image types
 _image_type_aliases = {
     "pt": ImageType.TORCH,
     "pytorch": ImageType.TORCH,
@@ -47,6 +49,9 @@ _image_type_aliases = {
 
 @dataclass
 class ImageProcessorConfig(PreprocessorConfig):
+    """
+    Configuration class for the ImageProcessor.
+    """
     name = "image_processor"
     mean: List[float] = None
     std: List[float] = None
@@ -63,7 +68,7 @@ class ImageProcessorConfig(PreprocessorConfig):
 @register_preprocessor("image_processor", config_class=ImageProcessorConfig, description=_DESCRIPTION)
 class ImageProcessor(Preprocessor):
     """
-    General image processor to perform sequential transforms on the images
+    General image processor to perform sequential transforms on a list of images.
     """
 
     required_backends = _required_backends
@@ -72,6 +77,13 @@ class ImageProcessor(Preprocessor):
     image_processor_config_file = DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE
 
     def __init__(self, config: ImageProcessorConfig, **kwargs):
+        """
+        Initializes the ImageProcessor.
+
+        Args:
+            config (ImageProcessorConfig): Configuration for the image processor.
+            **kwargs: Additional keyword arguments.
+        """
         super().__init__(config, **kwargs)
 
     def __call__(
@@ -89,21 +101,22 @@ class ImageProcessor(Preprocessor):
         **kwargs,
     ):
         """
-        Perform a sequential image processing on a list of input images. You can control the behavior directly from
-        this method's parameters.
+        Perform sequential image processing on a list of input images.
 
         Args:
-            images: A list of input images of types torch, numpy, pillow.
-            mean: Image mean value for normalization
-            std: Image std value for normalization
-            rescale: Scale factor for rescaling the image
-            size: A tuple of (width, height) to resize the images
-            resample: Resample method value based on Image.Resampling
-            return_tensors: The type of the output images
-            **kwargs: Extra parameters
+            images (List): A list of input images of types torch, numpy, pillow.
+            mean (float): Image mean value for normalization.
+            std (float): Image std value for normalization.
+            rescale (float): Scale factor for rescaling the image.
+            size (Tuple[int, int]): Image size tuple (width, height) for resizing.
+            resample (float): Resample method value based on Image.Resampling.
+            mirror (bool): Flag to mirror the images.
+            gray_scale (bool): Flag to convert images to grayscale.
+            return_tensors (str): The type of the output images.
+            **kwargs: Extra parameters.
 
         Returns:
-            The dict of transformed images list
+            dict: Transformed images list.
         """
         mean = mean or self.config.mean
         std = std or self.config.std
@@ -115,6 +128,7 @@ class ImageProcessor(Preprocessor):
 
         if not isinstance(images, Iterable) or isinstance(images, str):
             images = [images]
+
         # Load images if inputs are list of files
         images = [load_image(x, return_type="numpy") if isinstance(x, str) else x for x in images]
 
@@ -140,7 +154,7 @@ class ImageProcessor(Preprocessor):
         if mean is not None and std is not None:
             images = [normalize_image(image, mean=mean, std=std, channel_axis="last") for image in images]
 
-        # transpose channels axis
+        # Transpose channels axis
         images = [transpose_channels_axis_side(image, axis_side="first") for image in images]
 
         # Return images batch dict
@@ -164,6 +178,19 @@ class ImageProcessor(Preprocessor):
         config_filename: str = None,
         **kwargs,
     ) -> "ImageProcessor":
+        """
+        Load an ImageProcessor from a specified path.
+
+        Args:
+            hub_or_local_path: Path to the hub or local location.
+            subfolder (str): Subfolder within the specified path.
+            force_return_dict (bool): Flag to force return as a dictionary.
+            config_filename (str): Configuration filename.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            ImageProcessor: Loaded image processor instance.
+        """
         subfolder = subfolder or cls.preprocessor_subfolder
         config_filename = config_filename or cls.image_processor_config_file
         config = ImageProcessorConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder)
@@ -176,9 +203,16 @@ class ImageProcessor(Preprocessor):
         subfolder=None,
         config_filename=None,
     ):
+        """
+        Save the ImageProcessor configuration.
+
+        Args:
+            path: Path to save the configuration.
+            subfolder (str): Subfolder within the specified path.
+            config_filename (str): Configuration filename.
+        """
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.image_processor_config_file
-
         self.config.save(path, subfolder=subfolder, filename=config_filename)
 
     def push_to_hub(
@@ -189,6 +223,16 @@ class ImageProcessor(Preprocessor):
         private=None,
         config_filename=None
     ):
+        """
+        Push the ImageProcessor configuration to the hub.
+
+        Args:
+            repo_id: ID of the repository.
+            subfolder (str): Subfolder within the repository.
+            commit_message (str): Commit message.
+            private (bool): Flag indicating whether the repository is private.
+            config_filename (str): Configuration filename.
+        """
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.image_processor_config_file
 
