@@ -249,6 +249,15 @@ class AudioFeatureExtractor(Preprocessor):
         subfolder=None,
         config_filename=None,
     ):
+        """
+        Save the feature extractor to the path. This normally is equal to only saving the
+        `feature_extractor_config.yaml` file.
+
+        Args:
+            path: Main path to save the feature extractor files
+            subfolder: Optional subfolder, defaults to `preprocessor`
+            config_filename: Optional config file name, defaults to `feature_extractor_config.yaml`
+        """
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.config_filename
 
@@ -262,6 +271,16 @@ class AudioFeatureExtractor(Preprocessor):
         private=None,
         config_filename=None,
     ):
+        """
+        Push the feature extractor files to a repo on the Hub.
+
+        Args:
+            repo_id: Hub repo id
+            subfolder: Subfolder to save, defaults to `self.preprocessor_subfolder` (`preprocessor`)
+            commit_message: Commit message for the push
+            private: If the repo does not exist already, specify whether the created repo must be private or not
+            config_filename: Config filename, defaults to `self.config_filename` (`feature_extractor_config.yaml`)
+        """
         subfolder = subfolder or self.preprocessor_subfolder
         config_filename = config_filename or self.config_filename
 
@@ -282,9 +301,20 @@ class AudioFeatureExtractor(Preprocessor):
         hub_or_local_path,
         subfolder: str = None,
         config_filename: str = None,
-        force_return_dict: bool = False,
         **kwargs,
     ):
+        """
+        Load a feature extractor from Hub or local path.
+
+        Args:
+            hub_or_local_path: Hub repo id or local path
+            subfolder: Preprocessor subfolder path
+            config_filename: Config file name
+            **kwargs:
+
+        Returns:
+            A AudioFeatureExtractor object
+        """
         subfolder = subfolder or cls.preprocessor_subfolder
         config_filename = config_filename or cls.config_filename
 
