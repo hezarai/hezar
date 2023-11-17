@@ -24,6 +24,13 @@ class AccuracyConfig(MetricConfig):
 
 @register_metric("accuracy", config_class=AccuracyConfig)
 class Accuracy(Metric):
+    """
+    Accuracy metric for numeric arrays backed by Scikit-learn's `accuracy_score`.
+
+    Args:
+        config (AccuracyConfig): Metric config object
+        **kwargs: Extra config parameters passed as kwargs to update the `config`
+    """
     required_backends = _required_backends
 
     def __init__(self, config: AccuracyConfig, **kwargs):
@@ -38,6 +45,20 @@ class Accuracy(Metric):
         n_decimals=None,
         output_keys=None,
     ):
+        """
+        Compute the accuracy score for the given predictions against targets.
+
+        Args:
+            predictions: A list of prediction labels
+            targets: A list of ground truth labels
+            normalize: Whether to normalize the inputs or not
+            sample_weight: Sample weight
+            n_decimals: Floating point decimals for the final score
+            output_keys: Filter the output keys
+
+        Returns:
+            A dictionary of the metric results
+        """
         normalize = normalize or self.config.normalize
         sample_weight = sample_weight or self.config.sample_weight
         n_decimals = n_decimals or self.config.n_decimals

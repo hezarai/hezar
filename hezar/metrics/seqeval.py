@@ -20,6 +20,17 @@ logger = Logger(__name__)
 
 @dataclass
 class SeqevalConfig(MetricConfig):
+    """
+    Configuration class for Seqeval metric.
+
+    Args:
+        name (MetricType): The type of metric, Seqeval in this case.
+        output_keys (tuple): Keys to filter the metric results for output.
+        suffix (bool): Flag to indicate whether the labels have suffixes.
+        mode (Optional[str]): Evaluation mode for seqeval.
+        sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
+        zero_division (Union[str, int]): Strategy for zero-division, default is 0.
+    """
     name = MetricType.SEQEVAL
     output_keys: tuple = ("accuracy", "recall", "precision", "f1")
     suffix: bool = False
@@ -30,6 +41,13 @@ class SeqevalConfig(MetricConfig):
 
 @register_metric("seqeval", config_class=SeqevalConfig)
 class Seqeval(Metric):
+    """
+    Seqeval metric for sequence labeling tasks using `seqeval`.
+
+    Args:
+        config (SeqevalConfig): Metric configuration object.
+        **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
+    """
     required_backends = _required_backends
 
     def __init__(self, config: SeqevalConfig, **kwargs):
@@ -47,6 +65,22 @@ class Seqeval(Metric):
         output_keys=None,
         **kwargs,
     ):
+        """
+        Computes the Seqeval scores for the given predictions against targets.
+
+        Args:
+            predictions: Predicted labels.
+            targets: Ground truth labels.
+            suffix (bool): Flag to indicate whether the labels have suffixes.
+            mode (Optional[str]): Evaluation mode for seqeval.
+            sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
+            zero_division (Union[str, int]): Strategy for zero-division, default is 0.
+            n_decimals (int): Number of decimals for the final score.
+            output_keys (tuple): Filter the output keys.
+
+        Returns:
+            dict: A dictionary of the metric results, with keys specified by `output_keys`.
+        """
         suffix = suffix or self.config.suffix
         mode = mode or self.config.mode
         sample_weight = sample_weight or self.config.sample_weight

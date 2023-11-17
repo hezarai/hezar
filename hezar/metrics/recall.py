@@ -16,6 +16,17 @@ _required_backends = [
 
 @dataclass
 class RecallConfig(MetricConfig):
+    """
+    Configuration class for Recall metric.
+
+    Args:
+        name (MetricType): The type of metric, Recall in this case.
+        pos_label (int): Label of the positive class.
+        average (str): Type of averaging for the recall score.
+        sample_weight (Iterable[float]): Sample weights for the recall score.
+        zero_division (Union[str, float]): Strategy for zero-division, default is 0.0.
+        output_keys (tuple): Keys to filter the metric results for output.
+    """
     name = MetricType.RECALL
     pos_label: int = 1
     average: str = "macro"
@@ -26,6 +37,13 @@ class RecallConfig(MetricConfig):
 
 @register_metric("recall", config_class=RecallConfig)
 class Recall(Metric):
+    """
+    Recall metric for evaluating classification performance using sklearn's `recall_score`.
+
+    Args:
+        config (RecallConfig): Metric configuration object.
+        **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
+    """
     required_backends = _required_backends
 
     def __init__(self, config: RecallConfig, **kwargs):
@@ -43,6 +61,23 @@ class Recall(Metric):
         n_decimals=None,
         output_keys=None,
     ):
+        """
+        Computes the Recall score for the given predictions against targets.
+
+        Args:
+            predictions: Predicted labels.
+            targets: Ground truth labels.
+            labels: List of labels to include in the calculation.
+            pos_label (int): Label of the positive class.
+            average (str): Type of averaging for the recall score.
+            sample_weight (Iterable[float]): Sample weights for the recall score.
+            zero_division (Union[str, float]): Strategy for zero-division, default is 0.0.
+            n_decimals (int): Number of decimals for the final score.
+            output_keys (tuple): Filter the output keys.
+
+        Returns:
+            dict: A dictionary of the metric results, with keys specified by `output_keys`.
+        """
         pos_label = pos_label or self.config.pos_label
         average = average or self.config.average
         sample_weight = sample_weight or self.config.sample_weight
