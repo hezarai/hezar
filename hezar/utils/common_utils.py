@@ -1,12 +1,33 @@
-from re import sub
-from typing import Dict, List, Callable, Union, Mapping
 import inspect
+from re import sub
+from time import perf_counter
+from typing import Callable, Dict, List, Mapping, Union
+
 
 __all__ = [
+    "exec_timer",
     "snake_case",
     "permute_dict_list",
     "sanitize_params_for_fn",
 ]
+
+
+class exec_timer:
+    """
+    A context manager that captures the execution time of all the operations inside it
+
+    Examples:
+        >>> with exec_timer() as timer:
+        >>>     # operations here
+        >>> print(timer.time)
+    """
+
+    def __enter__(self):
+        self.time = perf_counter()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.time = perf_counter() - self.time
 
 
 def snake_case(s):

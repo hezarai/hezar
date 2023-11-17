@@ -1,4 +1,6 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
+
+from omegaconf import DictConfig
 
 from .logging import Logger
 
@@ -6,6 +8,7 @@ from .logging import Logger
 __all__ = [
     "convert_batch_dict_dtype",
     "get_non_numeric_keys",
+    "flatten_dict",
 ]
 
 logger = Logger(__name__)
@@ -76,3 +79,24 @@ def get_non_numeric_keys(d: Dict, batched=True):
             elif isinstance(v[0], str):
                 keys.append(k)
     return keys
+
+
+def flatten_dict(dict_config: Union[Dict, DictConfig]) -> DictConfig:
+    """
+    Flatten a nested Dict/DictConfig object
+
+    Args:
+        dict_config: A Dict/DictConfig object
+
+    Returns:
+        The flattened version of the dict-like object
+    """
+
+    config = DictConfig({})
+    for k, v in dict_config.items():
+        if isinstance(v, (Dict, DictConfig)):
+            config.update(flatten_dict(v))
+        else:
+            config[k] = v
+
+    return config

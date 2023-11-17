@@ -1,12 +1,38 @@
 import gzip
+import json
+import os
 import shutil
+from typing import Union
+
+import omegaconf
 
 from .logging import Logger
 
 
 logger = Logger(__name__)
 
-__all__ = ["gunzip"]
+__all__ = [
+    "gunzip",
+    "load_yaml_config",
+    "load_json_config",
+]
+
+
+def load_yaml_config(path: Union[str, os.PathLike]):
+    """
+    Load yaml file using omegaconf
+    """
+    config = omegaconf.OmegaConf.load(path)
+    return config
+
+
+def load_json_config(path: Union[str, os.PathLike]):
+    """
+    Load json config file
+    """
+    with open(path) as f:
+        config = json.load(f)
+    return config
 
 
 def gunzip(src_path, dest_path):
