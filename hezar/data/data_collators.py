@@ -19,16 +19,15 @@ class TextPaddingDataCollator:
     A data collator that pads a batch of tokenized inputs.
 
     Args:
-        tokenizer: A Hezar tokenizer instance. (only its config is going to be used)
-        padding_type: Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
+        tokenizer (Tokenizer): A Hezar tokenizer instance. (only its config is going to be used)
+        padding_type (str): Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
          `max_length` cannot be None)
-        padding_side: Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
+        padding_side (str): Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
          `left`.
-        max_length: If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
+        max_length (int): If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
          have this value as length.
-        return_tensors: Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
          can also be `np` or `list`.
-
     """
 
     def __init__(
@@ -69,7 +68,7 @@ class TextPaddingDataCollator:
             encoded_batch: A batch dictionary
 
         Returns:
-            The same batch dictionary but padded
+            Dict: The same batch dictionary but padded
         """
         encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
         permuted_batch = {}
@@ -110,16 +109,16 @@ class TextGenerationDataCollator:
     A data collator for text to text generation
 
     Args:
-        tokenizer: A Hezar tokenizer instance. (only its config is going to be used)
-        padding_type: Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
+        tokenizer (Tokenizer): A Hezar tokenizer instance. (only its config is going to be used)
+        padding_type (str): Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
          `max_length` cannot be None)
-        padding_side: Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
+        padding_side (str): Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
          `left`.
-        max_length: If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
+        max_length (int): If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
          have this value as length.
-        return_tensors: Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
+        max_target_length (int): Maximum target length for text generation.
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
          can also be `np` or `list`.
-
     """
 
     def __init__(
@@ -151,10 +150,10 @@ class TextGenerationDataCollator:
         Add padding to every item in the batch
 
         Args:
-            encoded_batch: A batch dictionary
+            encoded_batch (List[Dict]): A batch dictionary
 
         Returns:
-            The same batch dictionary but padded
+            Dict: The same batch dictionary but padded
         """
         encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
         permuted_batch = {}
@@ -187,16 +186,16 @@ class SequenceLabelingDataCollator:
     A data collator for sequence labeling.
 
     Args:
-        tokenizer: A Hezar tokenizer instance. (only its config is going to be used)
-        padding_type: Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
+        tokenizer (Tokenizer): A Hezar tokenizer instance. (only its config is going to be used)
+        padding_type (str): Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
          `max_length` cannot be None)
-        padding_side: Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
+        padding_side (str): Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
          `left`.
-        max_length: If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
+        label_pad_token_id (int): Token ID for padding labels.
+        max_length (int): If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
          have this value as length.
-        return_tensors: Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
          can also be `np` or `list`.
-
     """
 
     def __init__(
@@ -216,6 +215,15 @@ class SequenceLabelingDataCollator:
         self.return_tensors = return_tensors
 
     def __call__(self, encoded_batch):
+        """
+        Add padding to every item in the batch
+
+        Args:
+            encoded_batch (List[Dict]): A batch dictionary
+
+        Returns:
+            Dict: The same batch dictionary but padded
+        """
         label_name = "label" if "label" in encoded_batch[0].keys() else "labels"
         labels = [feature[label_name] for feature in encoded_batch] if label_name in encoded_batch[0].keys() else None
         self.tokenizer.config.padding_direction = self.padding_side
@@ -246,10 +254,26 @@ class SequenceLabelingDataCollator:
 
 
 class CharLevelOCRDataCollator:
+    """
+    A data collator for character-level OCR.
+
+    Args:
+        pad_token_id (int): Token ID for padding characters.
+    """
+
     def __init__(self, pad_token_id: int = 0):
         self.pad_token_id = pad_token_id
 
     def __call__(self, input_batch):
+        """
+        Add padding to character-level OCR data.
+
+        Args:
+            input_batch (Dict): Input batch containing pixel values and labels.
+
+        Returns:
+            Dict: Padded input batch.
+        """
         if isinstance(input_batch, (list, tuple)) and isinstance(input_batch[0], dict):
             input_batch = {key: [example[key] for example in input_batch] for key in input_batch[0].keys()}
         input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"], 0)
