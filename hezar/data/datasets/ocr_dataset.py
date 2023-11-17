@@ -58,7 +58,7 @@ class OCRDatasetConfig(DatasetConfig):
 
     """
     name = "ocr"
-    task: TaskType = field(default=TaskType.IMAGE2TEXT, init=False)
+    task: TaskType = TaskType.IMAGE2TEXT
     path: str = None
     text_split_type: TextSplitType = TextSplitType.TOKENIZE
     tokenizer_path: str = None  # if left to None, text_split_type must be `char_split`

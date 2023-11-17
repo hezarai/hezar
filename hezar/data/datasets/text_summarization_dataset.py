@@ -31,7 +31,7 @@ class TextSummarizationDatasetConfig(DatasetConfig):
     """
 
     name = "text_summarization"
-    task: TaskType = field(default=TaskType.TEXT_GENERATION, init=False)
+    task: TaskType = TaskType.TEXT_GENERATION
     path: str = None
     tokenizer_path: str = None
     prefix: str = None

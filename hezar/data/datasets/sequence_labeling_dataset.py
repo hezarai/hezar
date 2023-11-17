@@ -32,7 +32,7 @@ class SequenceLabelingDatasetConfig(DatasetConfig):
     """
 
     name = "sequence_labeling"
-    task: str = field(default=TaskType.SEQUENCE_LABELING, init=False)
+    task: TaskType = TaskType.SEQUENCE_LABELING
     path: str = None
     tokenizer_path: str = None
     tags_field: str = None

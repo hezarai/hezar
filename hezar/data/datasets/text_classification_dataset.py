@@ -29,7 +29,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
     """
 
     name = "text_classification"
-    task: TaskType = field(default=TaskType.TEXT_CLASSIFICATION, init=False)
+    task: TaskType = TaskType.TEXT_CLASSIFICATION
     path: str = None
     tokenizer_path: str = None
     label_field: str = None
