@@ -20,6 +20,15 @@ _required_backends = [
 
 @dataclass
 class CERConfig(MetricConfig):
+    """
+    Configuration class for CER (Character Error Rate) metric.
+
+    Args:
+        name (MetricType): The type of metric, CER in this case.
+        sentence_delimiter (str): Delimiter for separating sentences in texts.
+        concatenate_texts (bool): Flag to concatenate texts before computing CER.
+        output_keys (tuple): Keys to filter the metric results for output.
+    """
     name = MetricType.CER
     sentence_delimiter: str = " "
     concatenate_texts: bool = False
@@ -28,6 +37,13 @@ class CERConfig(MetricConfig):
 
 @register_metric("cer", config_class=CERConfig, description=_DESCRIPTION)
 class CER(Metric):
+    """
+    CER metric for evaluating Character Error Rate using `jiwer`.
+
+    Args:
+        config (CERConfig): Metric configuration object.
+        **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
+    """
     required_backends = _required_backends
 
     def __init__(self, config: CERConfig, **kwargs):
@@ -50,6 +66,19 @@ class CER(Metric):
         output_keys=None,
         **kwargs,
     ):
+        """
+        Computes the Character Error Rate (CER) for the given predictions against targets.
+
+        Args:
+            predictions: Predicted texts.
+            targets: Ground truth texts.
+            concatenate_texts (bool): Flag to concatenate texts before computing CER.
+            n_decimals (int): Number of decimals for the final score.
+            output_keys (tuple): Filter the output keys.
+
+        Returns:
+            dict: A dictionary of the metric results, with keys specified by `output_keys`.
+        """
         concatenate_texts = concatenate_texts or self.config.concatenate_texts
         n_decimals = n_decimals or self.config.n_decimals
 

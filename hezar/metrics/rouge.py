@@ -1,10 +1,11 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from .metric import Metric
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
 from ..registry import register_metric
 from ..utils import is_backend_available
+from .metric import Metric
+
 
 if is_backend_available(Backends.ROUGE):
     from rouge_score import rouge_scorer, scoring
@@ -18,6 +19,16 @@ _required_backends = [
 
 @dataclass
 class ROUGEConfig(MetricConfig):
+    """
+    Configuration class for ROUGE metric.
+
+    Args:
+        name (MetricType): The type of metric, ROUGE in this case.
+        use_stemmer (bool): Flag to enable stemming when computing ROUGE.
+        use_aggregator (bool): Flag to enable score aggregation for multiple references.
+        multi_ref (bool): Flag to indicate if multiple references are present.
+        output_keys (tuple): Keys to filter the metric results for output.
+    """
     name = MetricType.ROUGE
     use_stemmer: bool = False
     use_aggregator: bool = True
@@ -27,6 +38,13 @@ class ROUGEConfig(MetricConfig):
 
 @register_metric("rouge", config_class=ROUGEConfig, description=_DESCRIPTION)
 class ROUGE(Metric):
+    """
+    ROUGE metric for evaluating text summarization using `rouge_score`.
+
+    Args:
+        config (ROUGEConfig): Metric configuration object.
+        **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
+    """
     required_backends = _required_backends
 
     def __init__(self, config: ROUGEConfig, **kwargs):
@@ -46,6 +64,19 @@ class ROUGE(Metric):
         output_keys=None,
         **kwargs,
     ):
+        """
+        Computes the ROUGE scores for the given predictions against targets.
+
+        Args:
+            predictions: Predicted summaries.
+            targets: Ground truth summaries.
+            use_aggregator (bool): Flag to enable score aggregation for multiple references.
+            n_decimals (int): Number of decimals for the final score.
+            output_keys (tuple): Filter the output keys.
+
+        Returns:
+            dict: A dictionary of the metric results, with keys specified by `output_keys`.
+        """
         aggregator = scoring.BootstrapAggregator()
 
         for ref, pred in zip(targets, predictions):

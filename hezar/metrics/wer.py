@@ -19,6 +19,14 @@ _required_backends = [
 
 @dataclass
 class WERConfig(MetricConfig):
+    """
+    Configuration class for WER metric.
+
+    Args:
+        name (MetricType): The type of metric, WER in this case.
+        concatenate_texts (bool): Flag to indicate whether to concatenate texts before WER calculation.
+        output_keys (tuple): Keys to filter the metric results for output.
+    """
     name = MetricType.WER
     concatenate_texts: bool = False
     output_keys: tuple = ("wer",)
@@ -26,6 +34,13 @@ class WERConfig(MetricConfig):
 
 @register_metric("wer", config_class=WERConfig, description=_DESCRIPTION)
 class WER(Metric):
+    """
+    WER metric for evaluating Word Error Rate using `jiwer`.
+
+    Args:
+        config (WERConfig): Metric configuration object.
+        **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
+    """
     required_backends = _required_backends
 
     def __init__(self, config: WERConfig, **kwargs):
@@ -40,6 +55,19 @@ class WER(Metric):
         output_keys=None,
         **kwargs,
     ):
+        """
+        Computes the WER for the given predictions against targets.
+
+        Args:
+            predictions: Predicted texts.
+            targets: Ground truth texts.
+            concatenate_texts (bool): Flag to indicate whether to concatenate texts before WER calculation.
+            n_decimals (int): Number of decimals for the final score.
+            output_keys (tuple): Filter the output keys.
+
+        Returns:
+            dict: A dictionary of the metric results, with keys specified by `output_keys`.
+        """
         concatenate_texts = concatenate_texts or self.config.concatenate_texts
         n_decimals = n_decimals or self.config.n_decimals
 
