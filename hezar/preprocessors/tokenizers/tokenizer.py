@@ -30,6 +30,28 @@ logger = Logger(__name__)
 
 @dataclass
 class TokenizerConfig(PreprocessorConfig):
+    """
+    Configuration for the Tokenizer.
+
+    Args:
+        max_length (int): Maximum length of the tokenized sequences.
+        truncation_strategy (str): Truncation strategy for tokenization.
+        truncation_direction (str): Truncation direction for tokenization.
+        stride (int): Stride for tokenization.
+        padding_strategy (str): Padding strategy for tokenization.
+        padding_direction (str): Padding direction for tokenization.
+        pad_to_multiple_of (int): Pad to a multiple of this value.
+        pad_token_type_id (int): ID of the padding token type.
+        bos_token (str): Beginning of sequence token.
+        eos_token (str): End of sequence token.
+        unk_token (str): Unknown token.
+        sep_token (str): Separator token.
+        pad_token (str): Padding token.
+        cls_token (str): Classification token.
+        mask_token (str): Mask token.
+        additional_special_tokens (List[str]): Additional special tokens.
+    """
+
     name = "tokenizer"
     max_length: int = None
     truncation_strategy: str = None
@@ -51,12 +73,12 @@ class TokenizerConfig(PreprocessorConfig):
 
 class Tokenizer(Preprocessor):
     """
-    Base tokenizer class. Mostly copied from :class: ~tokenizers.implementations.BaseTokenizer
+    Base tokenizer class. Mostly copied from :class:`~tokenizers.implementations.BaseTokenizer`.
 
     Args:
-        config: A TokenizerConfig instance
-        tokenizer_file: A tokenizer.json file to load the whole tokenizer from
-        **kwargs: Extra config parameters that merge into the main config
+        config (TokenizerConfig): A TokenizerConfig instance.
+        tokenizer_file (str): A tokenizer.json file to load the whole tokenizer from.
+        **kwargs: Extra config parameters that merge into the main config.
     """
 
     required_backends: List[Union[str, Backends]] = []
@@ -67,11 +89,25 @@ class Tokenizer(Preprocessor):
     uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
     def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
+        """
+        Initialize the Tokenizer.
+
+        Args:
+            config (TokenizerConfig): A TokenizerConfig instance.
+            tokenizer_file (str): A tokenizer.json file to load the whole tokenizer from.
+            **kwargs: Extra config parameters that merge into the main config.
+        """
         super().__init__(config, **kwargs)
         self._tokenizer = self.from_file(tokenizer_file) if tokenizer_file is not None else self.build()
         self.special_tokens = self._get_all_special_tokens()
 
     def _get_all_special_tokens(self):
+        """
+        Get a list of all special tokens.
+
+        Returns:
+            List[str]: List of special tokens.
+        """
         _special_tokens = [
             self.config.bos_token,
             self.config.eos_token,
@@ -93,23 +129,39 @@ class Tokenizer(Preprocessor):
 
     @staticmethod
     def from_file(path):
+        """
+        Create a tokenizer from a file.
+
+        Args:
+            path (str): Path to the tokenizer file.
+
+        Returns:
+            HFTokenizer: The created tokenizer.
+        """
         tokenizer = HFTokenizer.from_file(path)
         return tokenizer
 
     def build(self):
+        """
+        Build the tokenizer.
+
+        Returns:
+            HFTokenizer: The built tokenizer.
+        """
         raise NotImplementedError
 
     def encode(self, inputs, is_pretokenized: bool = False, add_special_tokens: bool = True, **kwargs):
         """
-        tokenize a list of inputs(could be raw or tokenized inputs)
+        Tokenize a list of inputs (could be raw or tokenized inputs).
+
         Args:
-            inputs:
-            is_pretokenized: Whether the inputs are already tokenized
+            inputs: List of inputs.
+            is_pretokenized: Whether the inputs are already tokenized.
             add_special_tokens: Whether to add special tokens to the inputs. Defaults to True.
-            **kwargs:
+            **kwargs: Additional keyword arguments.
 
         Returns:
-
+            List[Dict]: List of dictionaries containing tokenized inputs.
         """
         if isinstance(inputs, str):
             inputs = [inputs]
@@ -119,6 +171,17 @@ class Tokenizer(Preprocessor):
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
     def decode(self, ids: List[int], skip_special_tokens: bool = True, **kwargs):
+        """
+        Decode a list of token IDs.
+
+        Args:
+            ids (List[int]): List of token IDs.
+            skip_special_tokens (bool): Whether to skip special tokens during decoding.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            List[str]: List of decoded strings.
+        """
         if isinstance(ids[0], int):
             ids = [ids]
         if isinstance(ids, torch.Tensor):
@@ -134,21 +197,21 @@ class Tokenizer(Preprocessor):
         max_length: Optional[int] = None,
         truncation: bool = True,
         return_tensors: Optional[str] = None,
-        skip_keys: list = None,
+        skip_keys: List = None,
     ):
         """
-        Given a batch of encoded inputs, add padding to all of them so that the inputs are of the same length.
+        Pad a batch of encoded inputs.
 
         Args:
-            inputs: Input batch of encoded tokens
-            padding: Padding type, could be one of ["longest", "max_length"]
-            max_length: Max input length (only if padding is set to "max_length")
-            truncation: Whether to allow truncation
-            return_tensors: The type of tensors to return
-            skip_keys: A list of keys to skip padding
+            inputs: Input batch of encoded tokens.
+            padding (Literal["longest", "max_length"]): Padding type.
+            max_length (Optional[int]): Max input length (only if padding is set to "max_length").
+            truncation (bool): Whether to allow truncation.
+            return_tensors (Optional[str]): The type of tensors to return.
+            skip_keys (List): A list of keys to skip padding.
 
         Returns:
-
+            Dict: Padded inputs.
         """
         if isinstance(inputs, (list, tuple)) and isinstance(inputs[0], Mapping):
             inputs = {key: [example[key] for example in inputs] for key in inputs[0].keys()}
@@ -168,7 +231,7 @@ class Tokenizer(Preprocessor):
             if max_length is not None:
                 logger.warning(
                     "Setting padding='longest' and max_length is not valid. You must set one of them"
-                    "and leave the other as None. Falling back to padding='longest'"
+                    " and leave the other as None. Falling back to padding='longest'"
                 )
 
             inputs_length = inputs_max_length
@@ -534,6 +597,21 @@ class Tokenizer(Preprocessor):
         tokenizer_filename=None,
         **kwargs,
     ) -> "Tokenizer":
+        """
+        Load a tokenizer from a specified path or Hub repository.
+
+        Args:
+            cls: Class reference.
+            hub_or_local_path: Path or Hub repository ID.
+            subfolder: Subfolder containing tokenizer files.
+            config_filename: Tokenizer config filename.
+            tokenizer_filename: Tokenizer filename.
+            **kwargs: Additional arguments.
+
+        Returns:
+            Tokenizer: Loaded tokenizer.
+
+        """
         tokenizer_filename = tokenizer_filename or cls.tokenizer_filename
         config_filename = config_filename or cls.tokenizer_config_filename
         subfolder = subfolder or cls.preprocessor_subfolder
@@ -557,6 +635,15 @@ class Tokenizer(Preprocessor):
         return tokenizer
 
     def save(self, path, save_config=True, pretty=True):
+        """
+        Save the tokenizer and its configuration.
+
+        Args:
+            path (str): Path to save the tokenizer.
+            save_config (bool): Whether to save the configuration.
+            pretty (bool): Whether to format the saved JSON file with indentation.
+
+        """
         os.makedirs(path, exist_ok=True)
         # save config
         if save_config:
