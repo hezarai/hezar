@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from datasets import load_dataset
 
@@ -16,8 +16,22 @@ logger = Logger(__name__)
 
 @dataclass
 class TextSummarizationDatasetConfig(DatasetConfig):
+    """
+    Configuration class for text summarization datasets.
+
+    Args:
+        path (str): Path to the dataset.
+        tokenizer_path (str): Path to the tokenizer file.
+        prefix (str): Prefix for conditional generation.
+        text_field (str): Field name for text in the dataset.
+        summary_field (str): Field name for summary in the dataset.
+        title_field (str): Field name for title in the dataset.
+        max_length (int): Maximum length of text.
+        max_target_length (int): Maximum length of the target summary.
+    """
+
     name = "text_summarization"
-    task: str = TaskType.TEXT_GENERATION
+    task: TaskType = field(default=TaskType.TEXT_GENERATION, init=False)
     path: str = None
     tokenizer_path: str = None
     prefix: str = None
@@ -35,12 +49,21 @@ class TextSummarizationDataset(Dataset):
     As of now this class is intended for datasets existing on the Hub!
 
     Args:
-        config: Dataset config obj
-        split: Which split to use
-        **kwargs: Extra config parameters to assign to the original config
+        config (TextSummarizationDatasetConfig): Dataset config object.
+        split: Which split to use.
+        **kwargs: Extra config parameters to assign to the original config.
     """
 
     def __init__(self, config: TextSummarizationDatasetConfig, split=None, **kwargs):
+        """
+        Initializes a new TextSummarizationDataset instance.
+
+        Args:
+            config (TextSummarizationDatasetConfig): The configuration object for the dataset.
+            split: Dataset split, defaults to None.
+            **kwargs: Additional keyword arguments.
+
+        """
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self.tokenizer = self._build_tokenizer()
@@ -53,19 +76,27 @@ class TextSummarizationDataset(Dataset):
 
     def _load(self, split):
         """
-        Load the dataset
+        Load the dataset.
 
         Args:
-            split: Dataset split
+            split: Dataset split.
 
         Returns:
-            The whole dataset
+            The whole dataset.
+
         """
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
 
     def _build_tokenizer(self):
+        """
+        Build the tokenizer.
+
+        Returns:
+            Tokenizer: The tokenizer.
+
+        """
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
@@ -77,6 +108,13 @@ class TextSummarizationDataset(Dataset):
         return tokenizer
 
     def __len__(self):
+        """
+        Returns the length of the dataset.
+
+        Returns:
+            int: The length of the dataset.
+
+        """
         return len(self.dataset)
 
     def __getitem__(self, index):
@@ -84,10 +122,11 @@ class TextSummarizationDataset(Dataset):
         Tokenize inputs and return a dict containing ids, masks, labels, etc.
 
         Args:
-            index: Sample index
+            index: Sample index.
 
         Returns:
-            A dict of tokenized text data and labels and some extra stuff
+            dict: The input data.
+
         """
         text = self.dataset[index][self.config.text_field]
         if self.config.prefix is not None:

@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from dataclasses import dataclass, field
 
 import torch
 from datasets import load_dataset
@@ -18,10 +17,20 @@ logger = Logger(__name__)
 
 @dataclass
 class TextClassificationDatasetConfig(DatasetConfig):
+    """
+    Configuration class for text classification datasets.
+
+    Args:
+        path (str): Path to the dataset.
+        tokenizer_path (str): Path to the tokenizer file.
+        label_field (str): Field name for labels in the dataset.
+        text_field (str): Field name for text in the dataset.
+        max_length (int): Maximum length of text.
+    """
+
     name = "text_classification"
-    task: str = TaskType.TEXT_CLASSIFICATION
+    task: TaskType = field(default=TaskType.TEXT_CLASSIFICATION, init=False)
     path: str = None
-    normalizers: List[Tuple[str, Dict]] = None
     tokenizer_path: str = None
     label_field: str = None
     text_field: str = None
@@ -35,12 +44,21 @@ class TextClassificationDataset(Dataset):
     As of now this class is intended for datasets existing on the Hub!
 
     Args:
-        config: Dataset config obj
-        split: Which split to use
-        **kwargs: Extra config parameters to assign to the original config
+        config (TextClassificationDatasetConfig): Dataset config object.
+        split: Which split to use.
+        **kwargs: Extra config parameters to assign to the original config.
     """
 
     def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
+        """
+        Initializes a new TextClassificationDataset instance.
+
+        Args:
+            config (TextClassificationDatasetConfig): The configuration object for the dataset.
+            split: Dataset split, defaults to None.
+            **kwargs: Additional keyword arguments.
+
+        """
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
@@ -52,19 +70,27 @@ class TextClassificationDataset(Dataset):
 
     def _load(self, split):
         """
-        Load the dataset
+        Load the dataset.
 
         Args:
-            split: Dataset split
+            split: Dataset split.
 
         Returns:
-            The whole dataset
+            The whole dataset.
+
         """
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
 
     def _build_tokenizer(self):
+        """
+        Build the tokenizer.
+
+        Returns:
+            Tokenizer: The tokenizer.
+
+        """
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
@@ -77,14 +103,21 @@ class TextClassificationDataset(Dataset):
 
     def _extract_labels(self):
         """
-        Extract label names, ids and build dictionaries
+        Extract label names, ids and build dictionaries.
         """
         labels_list = self.dataset.features[self.config.label_field].names
-        self.id2label = self.config.id2label = {k: str(v) for k, v in dict(list(enumerate(labels_list))).items()}
+        self.id2label = self.config.id2label = {k: str(v) for k, v in dict(enumerate(labels_list)).items()}
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(labels_list)
 
     def __len__(self):
+        """
+        Returns the length of the dataset.
+
+        Returns:
+            int: The length of the dataset.
+
+        """
         return len(self.dataset)
 
     def __getitem__(self, index):
@@ -92,10 +125,11 @@ class TextClassificationDataset(Dataset):
         Tokenize inputs and return a dict containing ids, masks, labels, etc.
 
         Args:
-            index: Sample index
+            index: Sample index.
 
         Returns:
-            A dict of tokenized text data and labels and some extra stuff
+            dict: The input data.
+
         """
         text = self.dataset[index][self.config.text_field]
         label = self.dataset[index][self.config.label_field]

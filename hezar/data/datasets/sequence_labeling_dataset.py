@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 
 from datasets import load_dataset
@@ -17,10 +17,23 @@ logger = Logger(__name__)
 
 @dataclass
 class SequenceLabelingDatasetConfig(DatasetConfig):
+    """
+    Configuration class for sequence labeling datasets.
+
+    Args:
+        path (str): Path to the dataset.
+        tokenizer_path (str): Path to the tokenizer file.
+        tags_field (str): Field name for tags in the dataset.
+        tokens_field (str): Field name for tokens in the dataset.
+        max_length (int): Maximum length of tokens.
+        ignore_index (int): Index to ignore in the loss function.
+        label_all_tokens (bool): Whether to label all tokens or just the first token in a word.
+        is_iob_schema (bool): Whether the dataset follows the IOB schema.
+    """
+
     name = "sequence_labeling"
-    task: str = TaskType.SEQUENCE_LABELING
+    task: str = field(default=TaskType.SEQUENCE_LABELING, init=False)
     path: str = None
-    normalizers: List[Tuple[str, Dict]] = None
     tokenizer_path: str = None
     tags_field: str = None
     tokens_field: str = None
@@ -37,12 +50,21 @@ class SequenceLabelingDataset(Dataset):
     As of now this class is intended for datasets existing on the Hub!
 
     Args:
-        config: Dataset config object
-        split: Which split to use
-        **kwargs: Extra config parameters to assign to the original config
+        config (SequenceLabelingDatasetConfig): Dataset config object.
+        split: Which split to use.
+        **kwargs: Extra config parameters to assign to the original config.
     """
 
     def __init__(self, config: SequenceLabelingDatasetConfig, split=None, **kwargs):
+        """
+        Initializes a new SequenceLabelingDataset instance.
+
+        Args:
+            config (SequenceLabelingDatasetConfig): The configuration object for the dataset.
+            split: Dataset split, defaults to None.
+            **kwargs: Additional keyword arguments.
+
+        """
         super().__init__(config, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
@@ -52,19 +74,27 @@ class SequenceLabelingDataset(Dataset):
 
     def _load(self, split):
         """
-        Load the dataset
+        Load the dataset.
 
         Args:
-            split: Dataset split
+            split: Dataset split.
 
         Returns:
-            The whole dataset
+            The whole dataset.
+
         """
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
 
     def _build_tokenizer(self):
+        """
+        Build the tokenizer.
+
+        Returns:
+            Tokenizer: The tokenizer.
+
+        """
         if self.config.tokenizer_path:
             tokenizer = Tokenizer.load(self.config.tokenizer_path)
         else:
@@ -77,17 +107,35 @@ class SequenceLabelingDataset(Dataset):
 
     def _extract_labels(self):
         """
-        Extract label names, ids and build dictionaries
+        Extract label names, ids and build dictionaries.
         """
         tags_list = self.dataset.features[self.config.tags_field].feature.names
-        self.id2label = self.config.id2label = {k: str(v) for k, v in dict(list(enumerate(tags_list))).items()}
+        self.id2label = self.config.id2label = {k: str(v) for k, v in dict(enumerate(tags_list)).items()}
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(tags_list)
 
     def __len__(self):
+        """
+        Returns the length of the dataset.
+
+        Returns:
+            int: The length of the dataset.
+
+        """
         return len(self.dataset)
 
     def _tokenize_and_align(self, tokens, labels):
+        """
+        Tokenize and align tokens and labels.
+
+        Args:
+            tokens: List of tokens.
+            labels: List of labels.
+
+        Returns:
+            dict: Tokenized and aligned inputs.
+
+        """
         tokenized_inputs = self.tokenizer(
             tokens,
             is_split_into_words=True,
@@ -121,10 +169,11 @@ class SequenceLabelingDataset(Dataset):
         Tokenize inputs and return a dict containing ids, masks, labels, etc.
 
         Args:
-            index: Sample index
+            index: Sample index.
 
         Returns:
-            A dict of tokenized text data and labels and some extra stuff
+            dict: The input data.
+
         """
         tokens, tags = self.dataset[index].values()
         inputs = self._tokenize_and_align(tokens, tags)
