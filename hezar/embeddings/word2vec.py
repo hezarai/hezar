@@ -7,7 +7,6 @@ from ..registry import register_embedding
 from ..utils import is_backend_available
 from .embedding import Embedding, EmbeddingConfig
 
-
 if is_backend_available(Backends.GENSIM):
     from gensim.models import word2vec
 
@@ -18,6 +17,25 @@ _required_backends = [
 
 @dataclass
 class Word2VecConfig(EmbeddingConfig):
+    """
+    Configuration class for Word2Vec embeddings.
+
+    Attributes:
+        name (str): Name of the embedding.
+        dataset_path (str): Path to the dataset.
+        vector_size (int): Size of the word vectors.
+        window (int): Window size for context words.
+        alpha (float): Learning rate.
+        min_count (int): Ignores all words with a total frequency lower than this.
+        seed (int): Seed for random number generation.
+        workers (int): Number of workers for training.
+        min_alpha (float): Minimum learning rate.
+        cbow_mean (int): Constant for CBOW. Default is 1.
+        epochs (int): Number of training epochs. Default is 5.
+        train_algorithm (Literal["skipgram", "cbow"]): Training algorithm, either 'skipgram' or 'cbow'.
+        save_format (Literal["binary", "text"]): Format for saving the model, either 'binary' or 'text'.
+    """
+
     name = "word2vec"
     dataset_path: str = None
     vector_size: int = 300
@@ -35,12 +53,34 @@ class Word2VecConfig(EmbeddingConfig):
 
 @register_embedding("word2vec", config_class=Word2VecConfig)
 class Word2Vec(Embedding):
+    """
+    Word2Vec embedding class.
+
+    Attributes:
+        required_backends (List[Union[str, Backends]]): List of required backends.
+    """
+
     required_backends = _required_backends
 
     def __init__(self, config: Word2VecConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
+        """
+        Initialize the Word2Vec embedding.
+
+        Args:
+            config (Word2VecConfig): Configuration object.
+            embedding_file (str): Path to the embedding file.
+            vectors_file (str): Path to the vectors file.
+            **kwargs: Additional keyword arguments.
+        """
         super().__init__(config, embedding_file=embedding_file, vectors_file=vectors_file, **kwargs)
 
     def build(self):
+        """
+        Build the Word2Vec embedding model.
+
+        Returns:
+            gensim.models.Word2Vec: Word2Vec embedding model.
+        """
         embedding_model = word2vec.Word2Vec(
             vector_size=self.config.vector_size,
             window=self.config.window,
@@ -53,6 +93,19 @@ class Word2Vec(Embedding):
         return embedding_model
 
     def from_file(self, embedding_path, vectors_path):
+        """
+        Load the Word2Vec embedding model from file.
+
+        Args:
+            embedding_path (str): Path to the embedding file.
+            vectors_path (str): Path to the vectors file.
+
+        Raises:
+            ValueError: If vectors file is not found.
+
+        Returns:
+            gensim.models.Word2Vec: Loaded Word2Vec embedding model.
+        """
         if not os.path.isfile(vectors_path):
             raise ValueError(
                 f"Could not load or find vectors file at `{vectors_path}`! "
@@ -68,6 +121,13 @@ class Word2Vec(Embedding):
         dataset: List[str],
         epochs: int = 5,
     ):
+        """
+        Train the Word2Vec embedding model.
+
+        Args:
+            dataset (List[str]): List of sentences for training.
+            epochs (int): Number of training epochs.
+        """
         self.model.build_vocab(dataset)
         self.model.train(
             dataset,
@@ -84,6 +144,16 @@ class Word2Vec(Embedding):
         save_config: bool = True,
         config_filename: str = None,
     ):
+        """
+        Save the Word2Vec embedding model to a specified path.
+
+        Args:
+            path (Union[str, os.PathLike]): Path to save the embedding model.
+            filename (str): Name of the embedding file.
+            subfolder (str): Subfolder within the path.
+            save_config (bool): Whether to save the configuration.
+            config_filename (str): Configuration file name.
+        """
         filename = filename or self.filename
         config_filename = config_filename or self.config_filename
         subfolder = subfolder or self.subfolder
@@ -95,6 +165,16 @@ class Word2Vec(Embedding):
         self.model.save(os.path.join(save_dir, filename))
 
     def similarity(self, word1: str, word2: str):
+        """
+        Get the similarity between two words.
+
+        Args:
+            word1 (str): First word.
+            word2 (str): Second word.
+
+        Returns:
+            float: Similarity score.
+        """
         if not isinstance(word1, str) or not isinstance(word2, str):
             raise ValueError(
                 f"`Embedding.similarity()` takes two string objects!\n"
@@ -104,10 +184,29 @@ class Word2Vec(Embedding):
         return similarity
 
     def doesnt_match(self, words: List[str]):
+        """
+        Get the word that doesn't match the others in a list.
+
+        Args:
+            words (List[str]): List of words.
+
+        Returns:
+            str: Word that doesn't match.
+        """
         doesnt_match = self.word_vectors.doesnt_match(words)
         return doesnt_match
 
     def most_similar(self, word: str, top_n: int = 5):
+        """
+        Get the most similar words to a given word.
+
+        Args:
+            word (str): Input word.
+            top_n (int): Number of similar words to retrieve.
+
+        Returns:
+            List[Dict[str, Union[str, float]]]: List of dictionaries containing 'word' and 'score'.
+        """
         if not isinstance(word, str):
             raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
         most_similar = self.word_vectors.most_similar(word, topn=top_n)
@@ -115,17 +214,41 @@ class Word2Vec(Embedding):
         return most_similar
 
     def get_normed_vectors(self):
+        """
+        Get normalized word vectors.
+
+        Returns:
+            Any: Normed word vectors.
+        """
         normed_vectors = self.word_vectors.get_normed_vectors()
         return normed_vectors
 
     @property
     def word_vectors(self):
+        """
+        Get word vectors.
+
+        Returns:
+            gensim.models.keyedvectors.KeyedVectors: Word vectors.
+        """
         return self.model.wv
 
     @property
     def vectors(self):
+        """
+        Get all vectors.
+
+        Returns:
+            numpy.ndarray: All vectors.
+        """
         return self.model.wv.vectors
 
     @property
     def vocab(self):
+        """
+        Get vocabulary.
+
+        Returns:
+            Dict[str, int]: Vocabulary.
+        """
         return self.model.wv.key_to_index

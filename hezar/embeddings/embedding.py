@@ -26,6 +26,12 @@ REQUIRED_NUMPY_VERSION = "1.24"
 
 # Check if the right combo of gensim/numpy versions are installed
 def _verify_gensim_installation():
+    """
+    Verify if the required versions of Gensim and Numpy are installed.
+
+    Raises:
+        ImportError: If the required versions are not installed.
+    """
     if (
         not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION)
         or not get_lib_version("gensim").startswith(REQUIRED_GENSIM_VERSION)
@@ -39,6 +45,12 @@ def _verify_gensim_installation():
 class Embedding:
     """
     Base class for all embeddings.
+
+    Args:
+        config (EmbeddingConfig): An EmbeddingConfig object to construct the embedding.
+        embedding_file (str): Path to the embedding file.
+        vectors_file (str): Path to the vectors file.
+        **kwargs: Extra embedding config parameters passed as keyword arguments.
     """
 
     required_backends: List[Union[str, Backends]] = []
@@ -49,6 +61,15 @@ class Embedding:
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
     def __init__(self, config: EmbeddingConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
+        """
+        Initialize the Embedding object.
+
+        Args:
+            config (EmbeddingConfig): An EmbeddingConfig object to construct the embedding.
+            embedding_file (str): Path to the embedding file.
+            vectors_file (str): Path to the vectors file.
+            **kwargs: Extra embedding config parameters passed as keyword arguments.
+        """
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
         _verify_gensim_installation()
 
@@ -56,41 +77,123 @@ class Embedding:
         self.model = self.from_file(embedding_file, vectors_file) if embedding_file else self.build()
 
     def build(self):
+        """
+        Build the embedding model.
+
+        Raises:
+            NotImplementedError: This method should be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def from_file(self, embedding_path, vectors_path):
+        """
+        Load the embedding model from file.
+
+        Args:
+            embedding_path (str): Path to the embedding file.
+            vectors_path (str): Path to the vectors file.
+
+        Raises:
+            NotImplementedError: This method should be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def __call__(self, inputs: Union[str, List[str]], **kwargs):
+        """
+        Get vectors for input words.
+
+        Args:
+            inputs (Union[str, List[str]]): Input word(s).
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            List: List of word vectors.
+        """
         if isinstance(inputs, str):
             inputs = [inputs]
         vectors = [self.word_vectors[w] for w in inputs]
         return vectors
 
-    def train(
-        self,
-        dataset,
-        epochs,
-    ):
+    def train(self, dataset, epochs):
+        """
+        Train the embedding model on a dataset.
+
+        Args:
+            dataset: The training dataset.
+            epochs: Number of training epochs.
+
+        Raises:
+            NotImplementedError: This method should be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def word2index(self, word):
+        """
+        Get the index of a word in the vocabulary.
+
+        Args:
+            word (str): Input word.
+
+        Returns:
+            int: Index of the word.
+        """
         return self.vocab.get(word, -1)
 
     def index2word(self, index):
+        """
+        Get the word corresponding to a given index.
+
+        Args:
+            index (int): Input index.
+
+        Returns:
+            str: Word corresponding to the index.
+        """
         keyed_vocab = {v: k for k, v in self.vocab.items()}
         return keyed_vocab[index]
 
     def similarity(self, word1: str, word2: str):
+        """
+        Get the similarity between two words.
+
+        Args:
+            word1 (str): First word.
+            word2 (str): Second word.
+
+        Raises:
+            NotImplementedError: This method should be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def doesnt_match(self, words: List[str]):
+        """
+        Get the word that doesn't match the others in a list.
+
+        Args:
+            words (List[str]): List of words.
+
+        Raises:
+            NotImplementedError: This method should be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def most_similar(self, word: str, top_n: int = 5):
+        """
+        Get the most similar words to a given word.
+
+        Args:
+            word (str): Input word.
+            top_n (int): Number of similar words to retrieve.
+
+        Raises:
+            NotImplementedError: This method should be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def get_normed_vectors(self):
+        """
+        Get normalized word vectors.
+        """
         raise NotImplementedError
 
     @classmethod
@@ -103,6 +206,20 @@ class Embedding:
         subfolder=None,
         **kwargs,
     ) -> "Embedding":
+        """
+        Load an embedding model from a local or Hugging Face Hub path.
+
+        Args:
+            hub_or_local_path: Path to the local directory or the Hugging Face Hub repository.
+            config_filename (str): Configuration file name.
+            embedding_file (str): Embedding file name.
+            vectors_file (str): Vectors file name.
+            subfolder (str): Subfolder within the repository.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Embedding: Loaded Embedding object.
+        """
         config_filename = config_filename or cls.config_filename
         embedding_file = embedding_file or cls.filename
         vectors_file = vectors_file or cls.vectors_filename
@@ -147,6 +264,16 @@ class Embedding:
         save_config: bool = True,
         config_filename: str = None,
     ):
+        """
+        Save the embedding model to a specified path.
+
+        Args:
+            path (Union[str, os.PathLike]): Path to save the embedding model.
+            filename (str): Name of the embedding file.
+            subfolder (str): Subfolder within the path.
+            save_config (bool): Whether to save the configuration.
+            config_filename (str): Configuration file name.
+        """
         raise NotImplementedError
 
     def push_to_hub(
@@ -159,6 +286,18 @@ class Embedding:
         config_filename=None,
         private=False,
     ):
+        """
+        Push the embedding model to the Hugging Face Hub.
+
+        Args:
+            repo_id: ID of the Hugging Face Hub repository.
+            commit_message (str): Commit message.
+            subfolder (str): Subfolder within the repository.
+            filename (str): Name of the embedding file.
+            vectors_filename (str): Name of the vectors file.
+            config_filename (str): Configuration file name.
+            private (bool): Whether the repository is private.
+        """
         subfolder = subfolder or self.subfolder
         filename = filename or self.filename
         vectors_filename = vectors_filename or self.vectors_filename
@@ -212,6 +351,12 @@ class Embedding:
         )
 
     def torch_embedding(self):
+        """
+        Convert the embedding model to a PyTorch Embedding layer.
+
+        Returns:
+            torch.nn.Embedding: PyTorch Embedding layer.
+        """
         import torch
 
         weights = torch.FloatTensor(self.vectors)
@@ -221,17 +366,20 @@ class Embedding:
     @property
     def word_vectors(self):
         """
-        Get key:value pairs of word:vector
+        Get key:value pairs of word:vector.
         """
         raise NotImplementedError
 
     @property
     def vectors(self):
         """
-        Get the all vectors array/tensor
+        Get the all vectors array/tensor.
         """
         raise NotImplementedError
 
     @property
     def vocab(self) -> Dict[str, int]:
+        """
+        Get the vocabulary.
+        """
         raise NotImplementedError

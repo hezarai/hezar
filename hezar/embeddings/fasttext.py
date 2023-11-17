@@ -18,6 +18,24 @@ _required_backends = [
 
 @dataclass
 class FastTextConfig(EmbeddingConfig):
+    """
+    Configuration class for FastText embeddings.
+
+    Attributes:
+        name (str): Name of the embedding.
+        dataset_path (str): Path to the dataset.
+        vector_size (int): Size of the word vectors.
+        window (int): Window size for context words.
+        alpha (float): Learning rate.
+        min_count (int): Ignores all words with a total frequency lower than this.
+        seed (int): Seed for random number generation.
+        workers (int): Number of workers for training.
+        min_alpha (float): Minimum learning rate.
+        train_algorithm (Literal["skipgram", "cbow"]): Training algorithm, either 'skipgram' or 'cbow'.
+        cbow_mean (int): Constant for CBOW. Default is 1.
+        epochs (int): Number of training epochs. Default is 5.
+    """
+
     name = "fasttext"
     dataset_path: str = None
     vector_size: int = 300
@@ -34,12 +52,31 @@ class FastTextConfig(EmbeddingConfig):
 
 @register_embedding("fasttext", config_class=FastTextConfig)
 class FastText(Embedding):
+    """
+    FastText embedding class.
+    """
+
     required_backends = _required_backends
 
     def __init__(self, config: FastTextConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
+        """
+        Initialize the FastText embedding.
+
+        Args:
+            config (FastTextConfig): Configuration object.
+            embedding_file (str): Path to the embedding file.
+            vectors_file (str): Path to the vectors file.
+            **kwargs: Additional keyword arguments.
+        """
         super().__init__(config, embedding_file=embedding_file, vectors_file=vectors_file, **kwargs)
 
     def build(self):
+        """
+        Build the FastText embedding model.
+
+        Returns:
+            fasttext.FastText: FastText embedding model.
+        """
         embedding_model = fasttext.FastText(
             vector_size=self.config.vector_size,
             window=self.config.window,
@@ -52,6 +89,16 @@ class FastText(Embedding):
         return embedding_model
 
     def from_file(self, embedding_path, vectors_path):
+        """
+        Load the FastText embedding model from file.
+
+        Args:
+            embedding_path (str): Path to the embedding file.
+            vectors_path (str): Path to the vectors file.
+
+        Returns:
+            fasttext.FastText: Loaded FastText embedding model.
+        """
         if not os.path.isfile(vectors_path):
             raise ValueError(
                 f"Could not load or find vectors file at `{vectors_path}`! "
@@ -67,6 +114,13 @@ class FastText(Embedding):
         dataset: List[str],
         epochs: int = 5,
     ):
+        """
+        Train the FastText embedding model.
+
+        Args:
+            dataset (List[str]): List of sentences for training.
+            epochs (int): Number of training epochs.
+        """
         self.model.build_vocab(dataset)
         self.model.train(
             dataset,
@@ -83,6 +137,16 @@ class FastText(Embedding):
         save_config: bool = True,
         config_filename: str = None,
     ):
+        """
+        Save the FastText embedding model to a specified path.
+
+        Args:
+            path (Union[str, os.PathLike]): Path to save the embedding model.
+            filename (str): Name of the embedding file.
+            subfolder (str): Subfolder within the path.
+            save_config (bool): Whether to save the configuration.
+            config_filename (str): Configuration file name.
+        """
         filename = filename or self.filename
         config_filename = config_filename or self.config_filename
         subfolder = subfolder or self.subfolder
@@ -94,6 +158,16 @@ class FastText(Embedding):
         self.model.save(os.path.join(save_dir, filename))
 
     def similarity(self, word1: str, word2: str):
+        """
+        Get the similarity between two words.
+
+        Args:
+            word1 (str): First word.
+            word2 (str): Second word.
+
+        Returns:
+            float: Similarity score.
+        """
         if not isinstance(word1, str) or not isinstance(word2, str):
             raise ValueError(
                 f"`Embedding.similarity()` takes two string objects!\n"
@@ -103,10 +177,29 @@ class FastText(Embedding):
         return similarity
 
     def doesnt_match(self, words: List[str]):
+        """
+        Get the word that doesn't match the others in a list.
+
+        Args:
+            words (List[str]): List of words.
+
+        Returns:
+            str: Word that doesn't match.
+        """
         doesnt_match = self.word_vectors.doesnt_match(words)
         return doesnt_match
 
     def most_similar(self, word: str, top_n: int = 5):
+        """
+        Get the most similar words to a given word.
+
+        Args:
+            word (str): Input word.
+            top_n (int): Number of similar words to retrieve.
+
+        Returns:
+            List[Dict[str, Union[str, float]]]: List of dictionaries containing 'word' and 'score'.
+        """
         if not isinstance(word, str):
             raise ValueError(f"`word` must be `str`, got `{type(word)}`!")
         most_similar = self.word_vectors.most_similar(word, topn=top_n)
@@ -114,17 +207,29 @@ class FastText(Embedding):
         return most_similar
 
     def get_normed_vectors(self):
+        """
+        Get normalized word vectors.
+        """
         normed_vectors = self.word_vectors.get_normed_vectors()
         return normed_vectors
 
     @property
     def word_vectors(self):
+        """
+        Get word vectors.
+        """
         return self.model.wv
 
     @property
     def vectors(self):
+        """
+        Get all vectors.
+        """
         return self.model.wv.vectors
 
     @property
     def vocab(self):
+        """
+        Get vocabulary.
+        """
         return self.model.wv.key_to_index
