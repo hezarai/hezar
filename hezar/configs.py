@@ -195,7 +195,7 @@ class Config:
     @classmethod
     def from_dict(cls, dict_config: Union[Dict, DictConfig], **kwargs):
         """
-        Load config from a dict-like object
+        Load config from a dict-like object. Nested configs are also properly converted to their classes if possible.
         """
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
