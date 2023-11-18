@@ -8,7 +8,9 @@ test suite complex and require redundant code.
 import pytest
 
 from hezar.data import Dataset
-from hezar.models import Model
+from hezar.models import ModelConfig
+from hezar.builders import build_model
+from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 
 
@@ -85,39 +87,21 @@ tasks_setups = {
 }
 
 
-@pytest.fixture
-def training_setup(request):
-    task = request.param
+@pytest.mark.parametrize("task", tasks_setups.keys())
+def test_trainer(task):
     setup = tasks_setups[task]
 
     # Datasets
-
     train_dataset = Dataset.load(setup["dataset"]["path"], split="train", **setup["dataset"]["config"])
     eval_dataset = Dataset.load(setup["dataset"]["path"], split="test", **setup["dataset"]["config"])
 
     # Model & Preprocessor
-    model = Model.load(setup["model"]["path"])
-    preprocessor = model.preprocessor
+    model_config = ModelConfig.load(setup["model"]["path"])
+    model = build_model(model_config.name, config=model_config)
+    preprocessor = Preprocessor.load(setup["model"]["path"])
 
     # Trainer config
     config = TrainerConfig(**setup["config"])
-
-    return {
-        "config": config,
-        "model": model,
-        "preprocessor": preprocessor,
-        "train_dataset": train_dataset,
-        "eval_dataset": eval_dataset,
-    }
-
-
-@pytest.mark.parametrize("training_setup", tasks_setups.keys(), indirect=True)
-def test_trainer(training_setup):
-    config = training_setup["config"]
-    model = training_setup["model"]
-    preprocessor = training_setup["preprocessor"]
-    train_dataset = training_setup["train_dataset"]
-    eval_dataset = training_setup["eval_dataset"]
 
     trainer = Trainer(
         config=config,

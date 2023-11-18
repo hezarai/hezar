@@ -63,15 +63,9 @@ INVALID_OUTPUT_SIZE = "Model output must be a list of size 1!"
 INVALID_OUTPUT_FIELDS = "Invalid fields in the model outputs!"
 
 
-@pytest.fixture
-def model_params(request):
-    task = request.param
-    return TESTABLE_MODELS[task]
-
-
-@pytest.mark.parametrize("model_params", TESTABLE_MODELS.keys(), indirect=True)
-def test_model_inference(model_params):
-
+@pytest.mark.parametrize("task", TESTABLE_MODELS.keys())
+def test_model_inference(task):
+    model_params = TESTABLE_MODELS[task]
     path = model_params["path"]
     predict_kwargs = model_params["predict_kwargs"]
     output_type_within_batch = model_params["output_type_within_batch"]
