@@ -84,7 +84,7 @@ In order to apply any change to the repo, you have to follow these step:
 8. Run tests and make sure all of them pass. (Skip this step if your changes do not involve codes)
 9. Open a pull request from your fork and the PR template will be automatically loaded to help you do the rest.
 10. Be responsive to feedback and comments during the review process.
-11. Thanks for contributing to the Hezar project.😉❤
+11. Thanks for contributing to the Hezar project.😉❤️
 
 ## License
 
