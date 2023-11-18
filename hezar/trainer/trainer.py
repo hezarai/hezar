@@ -81,7 +81,6 @@ class Trainer:
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
     trainer_csv_log_file = DEFAULT_TRAINER_CSV_LOG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
-    AVAILABLE_METRICS = []
     default_optimizer = "adam"
     default_lr_scheduler = None
 
