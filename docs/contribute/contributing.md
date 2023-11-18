@@ -59,7 +59,7 @@ name there.
 - Use the body to explain what and why a change was made.
 - Do not explain the "how" in the commit message; reserve it for documentation or code.
 - For commits referencing an issue or pull request, write the proper commit subject followed by the reference in parentheses (e.g., "Add NFKC normalizer (#9999)").
-- Reference codes in back quotes (e.g., variable, method(), Class()).
+- Reference codes & paths in back quotes (e.g., `variable`, `method()`, `Class()`, `file.py`).
 - Preferably use the following [gitmoji](https://gitmoji.dev/) compatible codes at the beginning of your commit message:
   - `:bug:`: Fix a bug or issue
   - `:sparkles`: Add feature or improvements
