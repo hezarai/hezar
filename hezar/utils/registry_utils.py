@@ -54,6 +54,8 @@ def _get_registry_from_type(registry_type: RegistryType):
 
     elif registry_type == RegistryType.PREPROCESSOR:
         from ..preprocessors import Preprocessor  # noqa
+        # Also import models since some preprocessors are in their own model module
+        from ..models import Model # noqa
         from ..registry import preprocessors_registry  # noqa
 
         registry = preprocessors_registry
