@@ -1,4 +1,5 @@
 import os
+import pytest
 
 from hezar.models import ModelConfig
 from hezar.preprocessors import Preprocessor
@@ -6,13 +7,55 @@ from hezar.builders import build_model
 
 
 TESTABLE_MODELS = {
-    "automatic-speech-recognition": "hezarai/whisper-small-fa",
-    "fill-mask": "hezarai/roberta-fa-mlm",
-    "image-captioning": "hezarai/vit-roberta-fa-image-captioning-flickr30k",
-    "ocr": "hezarai/crnn-base-fa-64x256",
-    "text-classification": "hezarai/distilbert-fa-sentiment-digikala-snappfood",
-    "text-generation": "hezarai/gpt2-base-fa",
-    "sequence-labeling": "hezarai/bert-fa-pos-lscp-500k",
+    "automatic-speech-recognition": {
+        "path": "hezarai/whisper-small-fa",
+        "inputs": {"type": "file", "value": "samples/speech_example.mp3"},
+        "predict_kwargs": {},
+        "output_type_within_batch": dict,
+        "required_output_keys": {"text", "chunks"}
+    },
+    "fill-mask": {
+        "path": "hezarai/roberta-fa-mlm",
+        "inputs": {"type": "text", "value": "سلام بچه ها حالتون <mask>"},
+        "predict_kwargs": {},
+        "output_type_within_batch": list,
+        "required_output_keys": {"token", "sequence", "token_id", "score"}
+    },
+    "image-captioning": {
+        "path": "hezarai/vit-roberta-fa-image-captioning-flickr30k",
+        "inputs": {"type": "file", "value": "samples/image_captioning_example.jpg"},
+        "predict_kwargs": {},
+        "output_type_within_batch": dict,
+        "required_output_keys": {"text"}
+    },
+    "ocr": {
+        "path": "hezarai/crnn-base-fa-64x256",
+        "inputs": {"type": "file", "value": "samples/ocr_example.jpg"},
+        "predict_kwargs": {},
+        "output_type_within_batch": dict,
+        "required_output_keys": {"text"}
+    },
+    "text-classification": {
+        "path": "hezarai/distilbert-fa-sentiment-digikala-snappfood",
+        "inputs": {"type": "text", "value": "هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"},
+        "predict_kwargs": {"top_k": 2},
+        "output_type_within_batch": list,
+        "required_output_keys": {"label", "score"}
+    },
+    "text-generation": {
+        "path": "hezarai/gpt2-base-fa",
+        "inputs": {"type": "text", "value": "با پیشرفت اخیر هوش مصنوعی در سال های اخیر، "},
+        "predict_kwargs": {},
+        "output_type_within_batch": dict,
+        "required_output_keys": {"text"}
+    },
+    "sequence-labeling": {
+        "path": "hezarai/bert-fa-pos-lscp-500k",
+        "inputs": {"type": "text", "value": "شرکت هوش مصنوعی هزار"},
+        "predict_kwargs": {},
+        "output_type_within_batch": list,
+        "required_output_keys": {"label", "token", "start", "end", "score"}
+    }
 }
 
 INVALID_OUTPUT_TYPE = "Model output must be a batch!"
@@ -20,90 +63,35 @@ INVALID_OUTPUT_SIZE = "Model output must be a list of size 1!"
 INVALID_OUTPUT_FIELDS = "Invalid fields in the model outputs!"
 
 
-def test_text_classification():
-    inputs = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
-    model_config = ModelConfig.load(TESTABLE_MODELS["text-classification"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["text-classification"])
+@pytest.fixture
+def model_params(request):
+    task = request.param
+    return TESTABLE_MODELS[task]
+
+
+@pytest.mark.parametrize("model_params", TESTABLE_MODELS.keys(), indirect=True)
+def test_model_inference(model_params):
+
+    path = model_params["path"]
+    predict_kwargs = model_params["predict_kwargs"]
+    output_type_within_batch = model_params["output_type_within_batch"]
+    required_output_keys = model_params["required_output_keys"]
+
+    if model_params["inputs"]["type"] == "file":
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        inputs = os.path.join(dirname, model_params["inputs"]["value"])
+    else:
+        inputs = model_params["inputs"]["value"]
+
+    model_config = ModelConfig.load(path)
     model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs, top_k=2)
-    assert isinstance(outputs, list)
-    assert len(outputs) == 1
-    assert isinstance(outputs[0], list)
-    assert {k for x in outputs[0] for k in x.keys()} == {"label", "score"}
+    model.preprocessor = Preprocessor.load(path)
 
+    outputs = model.predict(inputs, **predict_kwargs)
 
-def test_sequence_labeling():
-    inputs = ["شرکت هوش مصنوعی هزار"]
-    model_config = ModelConfig.load(TESTABLE_MODELS["sequence-labeling"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["sequence-labeling"])
-    model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs, return_scores=True, return_offsets=True)
-    assert isinstance(outputs, list)
-    assert len(outputs) == 1
-    assert isinstance(outputs[0], list)
-    assert {k for el in outputs[0] for k in el.keys()} == {"label", "token", "start", "end", "score"}
-
-
-def test_automatic_speech_recognition():
-    dirname = os.path.dirname(os.path.abspath(__file__))
-    inputs = os.path.join(dirname, "samples", "speech_example.mp3")
-    model_config = ModelConfig.load(TESTABLE_MODELS["automatic-speech-recognition"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["automatic-speech-recognition"])
-    model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs)
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
-    assert set(outputs[0].keys()) == {"text", "chunks"}, INVALID_OUTPUT_FIELDS
-
-
-def test_masked_language_modeling():
-    inputs = ["سلام بچه ها حالتون <mask>"]
-    model_config = ModelConfig.load(TESTABLE_MODELS["fill-mask"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["fill-mask"])
-    model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs)
-    assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
-    assert len(outputs) == 1, INVALID_OUTPUT_SIZE
-    assert {k for x in outputs[0] for k in x.keys()} == {"token", "sequence", "token_id", "score"}, INVALID_OUTPUT_FIELDS
-
-
-def test_text_generation():
-    inputs = ["با پیشرفت اخیر هوش مصنوعی در سال های اخیر، "]
-    model_config = ModelConfig.load(TESTABLE_MODELS["text-generation"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["text-generation"])
-    model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs)
-    assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
-    assert len(outputs) == 1, INVALID_OUTPUT_SIZE
-    assert set(outputs[0].keys()) == {"text"}, INVALID_OUTPUT_FIELDS
-
-
-def test_ocr():
-    dirname = os.path.dirname(os.path.abspath(__file__))
-    inputs = os.path.join(dirname, "samples", "ocr_example.jpg")
-    model_config = ModelConfig.load(TESTABLE_MODELS["ocr"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["ocr"])
-    model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs)
-    assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
-    assert len(outputs) == 1, INVALID_OUTPUT_SIZE
-    assert set(outputs[0].keys()) == {"text"}, INVALID_OUTPUT_FIELDS
-
-
-def test_image_captioning():
-    dirname = os.path.dirname(os.path.abspath(__file__))
-    inputs = os.path.join(dirname, "samples", "image_captioning_example.jpg")
-    model_config = ModelConfig.load(TESTABLE_MODELS["image-captioning"], filename="model_config.yaml")
-    preprocessor = Preprocessor.load(TESTABLE_MODELS["image-captioning"])
-    model = build_model(model_config.name, config=model_config)
-    model.preprocessor = preprocessor
-    outputs = model.predict(inputs)
-    assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
-    assert len(outputs) == 1, INVALID_OUTPUT_SIZE
-    assert set(outputs[0].keys()) == {"text"}, INVALID_OUTPUT_FIELDS
+    if output_type_within_batch == list:
+        assert {k for el in outputs[0] for k in el.keys()} == required_output_keys
+    elif output_type_within_batch == dict:
+        assert set(outputs[0].keys()) == required_output_keys, INVALID_OUTPUT_FIELDS
