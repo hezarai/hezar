@@ -63,6 +63,7 @@ name there.
 - Preferably use the following [gitmoji](https://gitmoji.dev/) compatible codes at the beginning of your commit message:
   - `:bug:`: Fix a bug or issue
   - `:sparkles`: Add feature or improvements
+  - `:recycle:`: Refactor code (backward compatible refactor)
   - `:memo:`: Add or change docs
   - `:fire:`: Remove code or file
   - `:boom:`: Introduce breaking or backward-incompatible changes
