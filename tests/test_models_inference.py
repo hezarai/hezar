@@ -1,6 +1,9 @@
 import os
 
-from hezar.models import Model
+from hezar.models import ModelConfig
+from hezar.preprocessors import Preprocessor
+from hezar.builders import build_model
+
 
 TESTABLE_MODELS = {
     "automatic-speech-recognition": "hezarai/whisper-small-fa",
@@ -19,7 +22,10 @@ INVALID_OUTPUT_FIELDS = "Invalid fields in the model outputs!"
 
 def test_text_classification():
     inputs = ["هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"]
-    model = Model.load(TESTABLE_MODELS["text-classification"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["text-classification"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["text-classification"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs, top_k=2)
     assert isinstance(outputs, list)
     assert len(outputs) == 1
@@ -29,7 +35,10 @@ def test_text_classification():
 
 def test_sequence_labeling():
     inputs = ["شرکت هوش مصنوعی هزار"]
-    model = Model.load(TESTABLE_MODELS["sequence-labeling"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["sequence-labeling"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["sequence-labeling"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs, return_scores=True, return_offsets=True)
     assert isinstance(outputs, list)
     assert len(outputs) == 1
@@ -40,7 +49,10 @@ def test_sequence_labeling():
 def test_automatic_speech_recognition():
     dirname = os.path.dirname(os.path.abspath(__file__))
     inputs = os.path.join(dirname, "samples", "speech_example.mp3")
-    model = Model.load(TESTABLE_MODELS["automatic-speech-recognition"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["automatic-speech-recognition"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["automatic-speech-recognition"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs)
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
@@ -49,7 +61,10 @@ def test_automatic_speech_recognition():
 
 def test_masked_language_modeling():
     inputs = ["سلام بچه ها حالتون <mask>"]
-    model = Model.load(TESTABLE_MODELS["fill-mask"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["fill-mask"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["fill-mask"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs)
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
@@ -58,7 +73,10 @@ def test_masked_language_modeling():
 
 def test_text_generation():
     inputs = ["با پیشرفت اخیر هوش مصنوعی در سال های اخیر، "]
-    model = Model.load(TESTABLE_MODELS["text-generation"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["text-generation"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["text-generation"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs)
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
@@ -68,7 +86,10 @@ def test_text_generation():
 def test_ocr():
     dirname = os.path.dirname(os.path.abspath(__file__))
     inputs = os.path.join(dirname, "samples", "ocr_example.jpg")
-    model = Model.load(TESTABLE_MODELS["ocr"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["ocr"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["ocr"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs)
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
@@ -78,7 +99,10 @@ def test_ocr():
 def test_image_captioning():
     dirname = os.path.dirname(os.path.abspath(__file__))
     inputs = os.path.join(dirname, "samples", "image_captioning_example.jpg")
-    model = Model.load(TESTABLE_MODELS["image-captioning"])
+    model_config = ModelConfig.load(TESTABLE_MODELS["image-captioning"], filename="model_config.yaml")
+    preprocessor = Preprocessor.load(TESTABLE_MODELS["image-captioning"])
+    model = build_model(model_config.name, config=model_config)
+    model.preprocessor = preprocessor
     outputs = model.predict(inputs)
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
