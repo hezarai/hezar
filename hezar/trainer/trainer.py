@@ -129,6 +129,25 @@ class Trainer:
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
+    
+    def info(self) -> None:
+        print("******************** Training Info ********************")
+        print(f"Task: {self.config.task}")
+        print(f"Model type: {type(self.model).__name__}")
+        print(f"Device(s): {self.device}")
+        print(f"Training Dataset: {self.train_dataset.config.name}")
+        print(f"Eval Dataset: {self.eval_dataset.config.name}")
+        print(f"Optimizer: {self.config.optimizer}")
+        print(f"Initial learning rate: {self.config.learning_rate}")
+        print(f"Learning rate decay: {self.config.weight_decay}")
+        print(f"Epochs: {self.config.num_epochs}")
+        print(f"Batch size: {self.config.batch_size}")
+        print(f"Number of parameters: {sum(p.numel() for p in self.model.parameters())}")
+        print(f"Number of trainable parameters: {sum(p.numel() for p in self.model.parameters() if p.requires_grad)}")
+        print(f"Mixed precision: {next(self.model.parameters()).dtype == torch.float16}")
+        print(f"Metrics: {list(self.metrics_handler.metrics.keys())}")
+        print(f"Checkpoints path: {self.config.checkpoints_dir}")
+        print("*****************************************************")
 
     def _prepare_model(self, model: Model) -> Model:
         """
@@ -403,6 +422,8 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
+        self.info()
+
         for epoch in range(1, self.config.num_epochs + 1):
             print()
             training_results = self.inner_training_loop(epoch)
