@@ -163,14 +163,13 @@ Registry decorators currently include:
 
 To figure out what modules are available in a registry, there are also utils for that:
 ```python
-import hezar
+from hezar import utils
 
-print(hezar.list_available_models())
-print(hezar.list_available_preprocessors())
-print(hezar.list_available_datasets())
-print(hezar.list_available_metrics())
-print(hezar.list_available_embeddings())
-print(hezar.list_available_trainers())
+print(utils.list_available_models())
+print(utils.list_available_preprocessors())
+print(utils.list_available_datasets())
+print(utils.list_available_metrics())
+print(utils.list_available_embeddings())
 ...
 ```
 **Creating Modules from Registry Names**
