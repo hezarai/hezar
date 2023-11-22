@@ -46,8 +46,8 @@ class FastTextConfig(EmbeddingConfig):
     workers: int = 3
     min_alpha: float = 0.0001
     train_algorithm: Literal["skipgram", "cbow"] = "skipgram"
-    cbow_mean = 1
-    epochs = 5
+    cbow_mean: int = 1
+    epochs: int = 5
 
 
 @register_embedding("fasttext", config_class=FastTextConfig)

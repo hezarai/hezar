@@ -45,8 +45,8 @@ class Word2VecConfig(EmbeddingConfig):
     seed: int = 1
     workers: int = 3
     min_alpha: float = 0.0001
-    cbow_mean = 1
-    epochs = 5
+    cbow_mean: int = 1
+    epochs: int = 5
     train_algorithm: Literal["skipgram", "cbow"] = "skipgram"
     save_format: Literal["binary", "text"] = "binary"
 
