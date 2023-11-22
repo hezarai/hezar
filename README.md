@@ -205,8 +205,18 @@ from hezar.data import Dataset
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
+alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1")  # An OCRDataset instance
 ...
 ```
+The returned dataset objects from `load()` are PyTorch Dataset wrappers for specific tasks and can be used by a data loader out-of-the-box!
+
+You can also load Hezar's datasets using 🤗Datasets:
+```python
+from datasets import load_dataset
+
+dataset = load_dataset("hezarai/sentiment-dksf")
+```
+For a full guide on Hezar's datasets, see the [datasets tutorial](https://hezarai.github.io/hezar/tutorial/datasets.html).
 ### Training
 Hezar makes it super easy to train models using out-of-the-box models and datasets provided in the library.
 
@@ -247,11 +257,11 @@ trainer.train()
 
 trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor, trainer files and configs
 ```
-You can actually go way deeper with the trainers. Refer to the [notebooks](notebooks) to see the examples!
+You can actually go way deeper with the Trainer. See more details [here](https://hezarai.github.io/hezar/tutorial/training.html).
 
 ## Going Deeper
 Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks
-without reinventing the wheel, but by being built on top of
+not by reinventing the wheel, but by being built on top of
 **[PyTorch](https://github.com/pytorch/pytorch),
 🤗[Transformers](https://github.com/huggingface/transformers),
 🤗[Tokenizers](https://github.com/huggingface/tokenizers),
