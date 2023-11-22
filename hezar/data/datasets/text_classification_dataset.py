@@ -59,7 +59,7 @@ class TextClassificationDataset(Dataset):
             **kwargs: Additional keyword arguments.
 
         """
-        super().__init__(config, **kwargs)
+        super().__init__(config, split=split, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
         self.tokenizer = self._build_tokenizer()

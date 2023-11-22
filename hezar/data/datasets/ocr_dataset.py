@@ -95,7 +95,7 @@ class OCRDataset(Dataset):
             **kwargs: Additional keyword arguments.
 
         """
-        super().__init__(config=config, **kwargs)
+        super().__init__(config=config, split=split, **kwargs)
         self.data = self._load(split)
         self.image_processor = build_preprocessor("image_processor", config=self.config.image_processor_config)
         if self.config.text_split_type == TextSplitType.TOKENIZE:

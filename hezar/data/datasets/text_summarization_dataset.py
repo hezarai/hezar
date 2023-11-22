@@ -64,7 +64,7 @@ class TextSummarizationDataset(Dataset):
             **kwargs: Additional keyword arguments.
 
         """
-        super().__init__(config, **kwargs)
+        super().__init__(config, split=split, **kwargs)
         self.dataset = self._load(split)
         self.tokenizer = self._build_tokenizer()
         self.data_collator = TextGenerationDataCollator(

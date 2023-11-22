@@ -101,6 +101,7 @@ class Trainer:
         self.device, self.device_type = self._prepare_device_and_type()
         self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
         self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
+        self.is_amp_enabled = self.scaler.is_enabled()
 
         self._set_seed(self.config.seed)
 
@@ -131,23 +132,23 @@ class Trainer:
         random.seed(seed)
     
     def info(self) -> None:
-        print("******************** Training Info ********************")
+        print("\n******************** Training Info ********************")
         print(f"Task: {self.config.task}")
         print(f"Model type: {type(self.model).__name__}")
         print(f"Device(s): {self.device}")
-        print(f"Training Dataset: {self.train_dataset.config.name}")
-        print(f"Eval Dataset: {self.eval_dataset.config.name}")
-        print(f"Optimizer: {self.config.optimizer}")
+        print(f"Training Dataset: `{self.train_dataset.config.path}:{self.train_dataset.split}`")
+        print(f"Eval Dataset: `{self.eval_dataset.config.path}:{self.eval_dataset.split}`")
+        print(f"Optimizer: {self.config.optimizer or self.default_optimizer}")
         print(f"Initial learning rate: {self.config.learning_rate}")
         print(f"Learning rate decay: {self.config.weight_decay}")
         print(f"Epochs: {self.config.num_epochs}")
         print(f"Batch size: {self.config.batch_size}")
         print(f"Number of parameters: {sum(p.numel() for p in self.model.parameters())}")
         print(f"Number of trainable parameters: {sum(p.numel() for p in self.model.parameters() if p.requires_grad)}")
-        print(f"Mixed precision: {next(self.model.parameters()).dtype == torch.float16}")
+        print(f"Mixed precision: {self.is_amp_enabled}")
         print(f"Metrics: {list(self.metrics_handler.metrics.keys())}")
         print(f"Checkpoints path: {self.config.checkpoints_dir}")
-        print("*****************************************************")
+        print("*****************************************************\n")
 
     def _prepare_model(self, model: Model) -> Model:
         """
