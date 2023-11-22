@@ -26,19 +26,15 @@ REQUIRED_NUMPY_VERSION = "1.24"
 
 # Check if the right combo of gensim/numpy versions are installed
 def _verify_gensim_installation():
-    """
-    Verify if the required versions of Gensim and Numpy are installed.
-
-    Raises:
-        ImportError: If the required versions are not installed.
-    """
     if (
         not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION)
         or not get_lib_version("gensim").startswith(REQUIRED_GENSIM_VERSION)
     ):
         raise ImportError(
-            f"The required Gensim version for this version of Hezar is currently {REQUIRED_GENSIM_VERSION} "
-            f"and the required Numpy version for Gensim=={REQUIRED_GENSIM_VERSION} is {REQUIRED_NUMPY_VERSION}"
+            f"The embeddings module in this version of Hezar, requires a combo of numpy>={REQUIRED_NUMPY_VERSION} and "
+            f"gensim=={REQUIRED_GENSIM_VERSION}. Please install them by running: \n"
+            f"`pip install numpy~={REQUIRED_NUMPY_VERSION} gensim=={REQUIRED_GENSIM_VERSION}`\n"
+            f"and make sure to restart your runtime if you're on a notebook environment!"
         )
 
 
@@ -61,15 +57,6 @@ class Embedding:
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
     def __init__(self, config: EmbeddingConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
-        """
-        Initialize the Embedding object.
-
-        Args:
-            config (EmbeddingConfig): An EmbeddingConfig object to construct the embedding.
-            embedding_file (str): Path to the embedding file.
-            vectors_file (str): Path to the vectors file.
-            **kwargs: Extra embedding config parameters passed as keyword arguments.
-        """
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
         _verify_gensim_installation()
 
@@ -79,9 +66,6 @@ class Embedding:
     def build(self):
         """
         Build the embedding model.
-
-        Raises:
-            NotImplementedError: This method should be implemented by subclasses.
         """
         raise NotImplementedError
 
@@ -92,9 +76,6 @@ class Embedding:
         Args:
             embedding_path (str): Path to the embedding file.
             vectors_path (str): Path to the vectors file.
-
-        Raises:
-            NotImplementedError: This method should be implemented by subclasses.
         """
         raise NotImplementedError
 
@@ -121,9 +102,6 @@ class Embedding:
         Args:
             dataset: The training dataset.
             epochs: Number of training epochs.
-
-        Raises:
-            NotImplementedError: This method should be implemented by subclasses.
         """
         raise NotImplementedError
 
@@ -159,9 +137,6 @@ class Embedding:
         Args:
             word1 (str): First word.
             word2 (str): Second word.
-
-        Raises:
-            NotImplementedError: This method should be implemented by subclasses.
         """
         raise NotImplementedError
 
@@ -171,9 +146,6 @@ class Embedding:
 
         Args:
             words (List[str]): List of words.
-
-        Raises:
-            NotImplementedError: This method should be implemented by subclasses.
         """
         raise NotImplementedError
 
@@ -184,9 +156,6 @@ class Embedding:
         Args:
             word (str): Input word.
             top_n (int): Number of similar words to retrieve.
-
-        Raises:
-            NotImplementedError: This method should be implemented by subclasses.
         """
         raise NotImplementedError
 
