@@ -10,9 +10,6 @@ from .integration_utils import is_backend_available
 from .logging import Logger
 
 
-if is_backend_available(Backends.LIBROSA):
-    import librosa
-
 __all__ = [
     "load_audio_files",
     "spectrogram",
@@ -28,9 +25,13 @@ logger = Logger(__name__)
 
 
 def load_audio_files(paths: Union[str, List[str]], sampling_rate: int = 16000):
-    if isinstance(paths, str):
-        paths = [paths]
-    inputs = [librosa.load(x, sr=sampling_rate)[0] for x in paths]
+    if is_backend_available(Backends.LIBROSA):
+        import librosa
+        if isinstance(paths, str):
+            paths = [paths]
+        inputs = [librosa.load(x, sr=sampling_rate)[0] for x in paths]
+    else:
+        raise ImportError(f"`librosa` must be installed to load audio files!")
     return inputs
 
 

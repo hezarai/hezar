@@ -296,8 +296,6 @@ class Trainer:
         """
         Compute loss from model outputs
 
-        This method must be implemented in other trainers.
-
         Args:
             model_outputs: Logits from model outputs
             labels: Ground truth labels
