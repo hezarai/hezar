@@ -33,7 +33,7 @@ class Dataset(TorchDataset):
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = HEZAR_CACHE_DIR
 
-    def __init__(self, config: DatasetConfig, **kwargs):
+    def __init__(self, config: DatasetConfig, split=None, **kwargs):
         """
         Initializes a new dataset instance.
 
@@ -46,6 +46,7 @@ class Dataset(TorchDataset):
         self.config = config.update(kwargs)
         self.preprocessor = None
         self.data_collator = None
+        self.split = split
 
     def __len__(self):
         """
