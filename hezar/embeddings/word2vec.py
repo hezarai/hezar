@@ -56,22 +56,16 @@ class Word2Vec(Embedding):
     """
     Word2Vec embedding class.
 
-    Attributes:
-        required_backends (List[Union[str, Backends]]): List of required backends.
+    Args:
+        config (Word2VecConfig): Configuration object.
+        embedding_file (str): Path to the embedding file.
+        vectors_file (str): Path to the vectors file.
+        **kwargs: Additional config parameters given as keyword arguments.
     """
 
     required_backends = _required_backends
 
     def __init__(self, config: Word2VecConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
-        """
-        Initialize the Word2Vec embedding.
-
-        Args:
-            config (Word2VecConfig): Configuration object.
-            embedding_file (str): Path to the embedding file.
-            vectors_file (str): Path to the vectors file.
-            **kwargs: Additional keyword arguments.
-        """
         super().__init__(config, embedding_file=embedding_file, vectors_file=vectors_file, **kwargs)
 
     def build(self):

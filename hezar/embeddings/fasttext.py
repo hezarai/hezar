@@ -54,20 +54,17 @@ class FastTextConfig(EmbeddingConfig):
 class FastText(Embedding):
     """
     FastText embedding class.
+
+    Args:
+        config (FastTextConfig): Configuration object.
+        embedding_file (str): Path to the embedding file.
+        vectors_file (str): Path to the vectors file.
+        **kwargs: Additional config parameters given as keyword arguments.
     """
 
     required_backends = _required_backends
 
     def __init__(self, config: FastTextConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
-        """
-        Initialize the FastText embedding.
-
-        Args:
-            config (FastTextConfig): Configuration object.
-            embedding_file (str): Path to the embedding file.
-            vectors_file (str): Path to the vectors file.
-            **kwargs: Additional keyword arguments.
-        """
         super().__init__(config, embedding_file=embedding_file, vectors_file=vectors_file, **kwargs)
 
     def build(self):
