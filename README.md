@@ -196,6 +196,7 @@ print(most_similar)
  {'score': 0.7276, 'word': 'پانصد'},
  {'score': 0.7011, 'word': 'سیصد'}]
 ```
+For a full guide on the embeddings module, see the [embeddings tutorial](https://hezarai.github.io/hezar/tutorial/embeddings.html).
 ### Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
 ```python
