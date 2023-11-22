@@ -23,7 +23,7 @@ class ImageToTextDatasetConfig(datasets.BuilderConfig):
         super(ImageToTextDatasetConfig, self).__init__(**kwargs)
 
 
-class PersianLicensePlate(datasets.GeneratorBasedBuilder):
+class Image2TextDatasetName(datasets.GeneratorBasedBuilder):
     BUILDER_CONFIGS = [
         ImageToTextDatasetConfig(
             name="image to text dataset name",
@@ -37,8 +37,8 @@ class PersianLicensePlate(datasets.GeneratorBasedBuilder):
             description=_DESCRIPTION,
             features=datasets.Features(
                 {
-                    "label": datasets.Value("string"),
                     "image_path": datasets.Value("string"),
+                    "label": datasets.Value("string"),
                 }
             ),
             citation=_CITATION,
