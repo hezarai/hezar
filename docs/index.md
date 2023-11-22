@@ -9,8 +9,9 @@ Navigate to the desired section using this table of contents:
 ```{toctree}
 :maxdepth: 2
 
-get_started/index.md
-tutorial/index.md
-guide/index.md
-contribute/index.md
+get_started/index
+tutorial/index
+guide/index
+source/index
+contributing
 ```
