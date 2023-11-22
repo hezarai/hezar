@@ -79,7 +79,7 @@ html_theme_options = {
         {
             "name": "Telegram",
             "url": "https://t.me/hezarai",
-            "html": """<i class="fa-brands fa-telegram fa-2x" style="color: #3881ff;"></i>""",
+            "html": """<i class="fa-brands fa-telegram fa-2x" style="color: #229ed9;"></i>""",
             "class": "",
         },
         {
