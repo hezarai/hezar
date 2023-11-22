@@ -1,5 +1,0 @@
-# Contribute
-
-```{toctree}
-contributing.md
-```

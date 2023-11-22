@@ -32,8 +32,8 @@ just follow the instructions on how you can send a PR.
 
 ### Adding/Improving documents
 
-Have a suggestion to enhance our documentation or want to contribute entirely new sections? We welcome your input!
-Here's how you can get involved:
+Have a suggestion to enhance our documentation or want to contribute entirely new sections? We welcome your input!<br>
+Here's how you can get involved:<br>
 Docs website is deployed here: [https://hezarai.github.io/hezar](https://hezarai.github.io/hezar) and the source for the
 docs are located at the [docs](https://github.com/hezarai/hezar/tree/main/docs) folder in the root of the repo. Feel
 free to apply your changes or add new docs to this section. Notice that docs are written in Markdown format. In case you have
@@ -65,10 +65,11 @@ name there.
   - `:sparkles`: Add feature or improvements
   - `:recycle:`: Refactor code (backward compatible refactor)
   - `:memo:`: Add or change docs
+  - `:pencil2:`: Minor change or improvement
   - `:fire:`: Remove code or file
   - `:boom:`: Introduce breaking or backward-incompatible changes
   - `:bookmark:`: Version release
-  - `:adhesive_bandage:`: Non-critical or minor change
+  - `:adhesive_bandage:`: Non-critical fix
 
 ## Sending a PR
 

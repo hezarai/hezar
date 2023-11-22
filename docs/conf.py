@@ -45,6 +45,11 @@ myst_enable_extensions = [
 suppress_warnings = ["myst.header"]
 
 html_title = "Hezar Documentation"
+html_css_files = [
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css",
+]
 html_theme_options = {
     "source_repository": "https://github.com/hezarai/hezar/",
     "source_branch": "main",
@@ -64,6 +69,26 @@ html_theme_options = {
         "color-toc-background": "#1A1C1E",
         "color-highlight-on-target": "#1A1A1B",
     },
+    "footer_icons": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/hezarai/hezar",
+            "html": """<i class="fa-brands fa-github fa-2x" style="color: #343d4c;"></i>""",
+            "class": "",
+        },
+        {
+            "name": "Telegram",
+            "url": "https://t.me/hezarai",
+            "html": """<i class="fa-brands fa-telegram fa-2x" style="color: #3881ff;"></i>""",
+            "class": "",
+        },
+        {
+            "name": "Hugging Face",
+            "url": "https://huggingface.co/hezarai",
+            "html": """ <img style="width:32px;height:32px;" src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg">""",
+            "class": "",
+        },
+    ],
 }
 
 pygments_style = "emacs"
