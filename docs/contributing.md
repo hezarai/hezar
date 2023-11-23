@@ -1,7 +1,8 @@
-# Contribution Guidelines
+# Contributing to Hezar
+Welcome to Hezar! We greatly appreciate your interest in contributing to this project and helping us make it even more
+valuable to the Persian community. Whether you're a developer, researcher, or enthusiast, your contributions are
+invaluable in helping us grow and improve Hezar.
 
-Thank you for considering contributing to Hezar. We appreciate your interest in making Hezar even more powerful and
-versatile.
 Before you start contributing, please take a moment to review the following guidelines.
 
 ## Code of Conduct
@@ -27,8 +28,7 @@ Include information such as:
 
 Have a great idea for a new feature or improvement? We'd love to hear it. You can open an issue and add your suggestion
 with a clear description and further suggestions on how it can be implemented. Also, if you already can implement it
-yourself,
-just follow the instructions on how you can send a PR.
+yourself, just follow the instructions on how you can send a PR.
 
 ### Adding/Improving documents
 
@@ -90,7 +90,7 @@ In order to apply any change to the repo, you have to follow these step:
 ## License
 
 By contributing to Hezar, you agree that your contributions will be licensed under
-the [MIT License](https://github.com/hezarai/hezar/blob/main/LICENSE).
+the [Apache 2.0 License](https://github.com/hezarai/hezar/blob/main/LICENSE).
 
 We look forward to your contributions and appreciate your efforts in making Hezar a powerful AI tool for the Persian
 community!
