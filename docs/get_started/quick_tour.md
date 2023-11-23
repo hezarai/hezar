@@ -1,7 +1,5 @@
 # Quick Tour
-Let's have a quick tour on some of the most important features of Hezar!
-
-### Models
+## Models
 There's a bunch of ready to use trained models for different tasks on the Hub!
 
 **🤗Hugging Face Hub Page**: [https://huggingface.co/hezarai](https://huggingface.co/hezarai)
@@ -105,7 +103,7 @@ print(texts)
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/image_captioning_example.jpg)
 
 We constantly keep working on adding and training new models and this section will hopefully be expanding over time ;)
-### Word Embeddings
+## Word Embeddings
 - **FastText**
 ```python
 from hezar.embeddings import Embedding
@@ -151,7 +149,8 @@ print(most_similar)
  {'score': 0.7276, 'word': 'پانصد'},
  {'score': 0.7011, 'word': 'سیصد'}]
 ```
-### Datasets
+For a full guide on the embeddings module, see the [embeddings tutorial](https://hezarai.github.io/hezar/tutorial/embeddings.html).
+## Datasets
 You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) like below:
 ```python
 from hezar.data import Dataset
@@ -159,11 +158,21 @@ from hezar.data import Dataset
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
+alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1")  # An OCRDataset instance
 ...
 ```
+The returned dataset objects from `load()` are PyTorch Dataset wrappers for specific tasks and can be used by a data loader out-of-the-box!
 
-### Training
+You can also load Hezar's datasets using 🤗Datasets:
+```python
+from datasets import load_dataset
+
+dataset = load_dataset("hezarai/sentiment-dksf")
+```
+For a full guide on Hezar's datasets, see the [datasets tutorial](https://hezarai.github.io/hezar/tutorial/datasets.html).
+## Training
 Hezar makes it super easy to train models using out-of-the-box models and datasets provided in the library.
+
 ```python
 from hezar.models import BertSequenceLabeling, BertSequenceLabelingConfig
 from hezar.data import Dataset
