@@ -131,13 +131,13 @@ class Trainer:
         np.random.seed(seed)
         random.seed(seed)
     
-    def info(self) -> None:
+    def info(self):
         print("\n******************** Training Info ********************")
         print(f"Task: {self.config.task}")
         print(f"Model type: {type(self.model).__name__}")
         print(f"Device(s): {self.device}")
-        print(f"Training Dataset: `{self.train_dataset.config.path}:{self.train_dataset.split}`")
-        print(f"Eval Dataset: `{self.eval_dataset.config.path}:{self.eval_dataset.split}`")
+        print(f"Training Dataset: `{self.train_dataset.config.path}:{self.train_dataset.split}({len(self.train_dataset)})`")
+        print(f"Eval Dataset: `{self.eval_dataset.config.path}:{self.eval_dataset.split}({len(self.eval_dataset)})`")
         print(f"Optimizer: {self.config.optimizer or self.default_optimizer}")
         print(f"Initial learning rate: {self.config.learning_rate}")
         print(f"Learning rate decay: {self.config.weight_decay}")
