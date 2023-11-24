@@ -58,11 +58,11 @@ class CRNNImage2Text(Model):
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor):
         batch_size = logits.size(1)
-        labels_lengths = torch.LongTensor([len(t) for t in labels])
-        labels = labels.flatten()
+        labels_lengths = torch.count_nonzero(labels, dim=1).flatten()
+        labels = labels[labels != self.config.blank_id]
         input_lengths = torch.LongTensor([logits.size(0)] * batch_size)
 
-        loss = self.criterion(logits, labels, input_lengths, labels_lengths) / batch_size
+        loss = self.criterion(logits, labels, input_lengths, labels_lengths)
 
         return loss
 
