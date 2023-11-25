@@ -521,3 +521,11 @@ class Model(nn.Module):
                 f"or `PreprocessorContainer` instance not `{type(value)}`!"
             )
         self._preprocessor = preprocessor
+
+    @property
+    def num_parameters(self):
+        return sum(p.numel() for p in self.parameters())
+
+    @property
+    def num_trainable_parameters(self):
+        return sum(p.numel() for p in self.parameters() if p.requires_grad)
