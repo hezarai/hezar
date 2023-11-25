@@ -48,6 +48,11 @@ class Dataset(TorchDataset):
         self.data_collator = None
         self.split = split
 
+    def __str__(self):
+        dataset_name = self.config.path or self.config.name
+        dataset_size = len(self)
+        return f"`{dataset_name}:{self.split}`({dataset_size})"
+
     def __len__(self):
         """
         Returns the length of the dataset.
