@@ -368,7 +368,7 @@ class TrainerConfig(Config):
     num_epochs: int = None
     save_freq: int = 1
     checkpoints_dir: str = None
-    logs_dir: str = "logs"
+    logs_dir: str = "./logs"
 
     def __post_init__(self):
         super().__post_init__()

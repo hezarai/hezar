@@ -131,25 +131,6 @@ class Trainer:
         np.random.seed(seed)
         random.seed(seed)
     
-    def info(self):
-        print("\n******************** Training Info ********************")
-        print(f"Task: {self.config.task}")
-        print(f"Model type: {type(self.model).__name__}")
-        print(f"Device(s): {self.device}")
-        print(f"Training Dataset: {self.train_dataset}")
-        print(f"Eval Dataset: {self.eval_dataset}")
-        print(f"Optimizer: {self.config.optimizer or self.default_optimizer}")
-        print(f"Initial learning rate: {self.config.learning_rate}")
-        print(f"Learning rate decay: {self.config.weight_decay}")
-        print(f"Epochs: {self.config.num_epochs}")
-        print(f"Batch size: {self.config.batch_size}")
-        print(f"Number of parameters: {self.model.num_parameters}")
-        print(f"Number of trainable parameters: {self.model.num_trainable_parameters}")
-        print(f"Mixed precision: {self.is_amp_enabled}")
-        print(f"Metrics: {list(self.metrics_handler.metrics.keys())}")
-        print(f"Checkpoints path: {self.config.checkpoints_dir}")
-        print("*****************************************************\n")
-
     def _prepare_model(self, model: Model) -> Model:
         """
         Download the model from HuggingFace Hub if `init_weights_from` is given in the config. Load the model to the
@@ -246,6 +227,7 @@ class Trainer:
     def prepare_input_batch(self, input_batch) -> Dict[str, torch.Tensor]:
         """
         Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
+
         Args:
             input_batch: Raw input batch from the dataloader
 
@@ -258,7 +240,7 @@ class Trainer:
 
     def amp_context_manager(self):
         """
-        A smart context manager for mixed precision.
+        An auto context manager for mixed precision.
 
         Returns:
             A torch autocast context manager
@@ -385,6 +367,27 @@ class Trainer:
 
         return {"loss": avg_loss}
 
+    def print_info(self):
+        print("\n******************** Training Info ********************\n")
+        print(f"  Task: `{self.config.task}`")
+        print(f"  Model: `{type(self.model).__name__}`")
+        print(f"  Init Weights: `{self.config.init_weights_from or 'N/A'}`")
+        print(f"  Device(s): {self.device}")
+        print(f"  Training Dataset: {self.train_dataset}")
+        print(f"  Evaluation Dataset: {self.eval_dataset}")
+        print(f"  Optimizer: {self.config.optimizer or self.default_optimizer}")
+        print(f"  Initial learning rate: {self.config.learning_rate}")
+        print(f"  Learning rate decay: {self.config.weight_decay}")
+        print(f"  Epochs: {self.config.num_epochs}")
+        print(f"  Batch size: {self.config.batch_size}")
+        print(f"  Number of parameters: {self.model.num_parameters}")
+        print(f"  Number of trainable parameters: {self.model.num_trainable_parameters}")
+        print(f"  Mixed precision: {self.is_amp_enabled}")
+        print(f"  Metrics: {list(self.metrics_handler.metrics.keys())}")
+        print(f"  Checkpoints path: {self.config.checkpoints_dir}")
+        print(f"  Logs path: {self.config.logs_dir}")
+        print("\n*****************************************************\n")
+
     def evaluate(self):
         """
         Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
@@ -421,7 +424,7 @@ class Trainer:
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
-        self.info()
+        self.print_info()
 
         for epoch in range(1, self.config.num_epochs + 1):
             print()
