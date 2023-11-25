@@ -317,6 +317,7 @@ class DatasetConfig(Config):
     task: Union[TaskType, List[TaskType]] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
+    path: str = None
 
 
 @dataclass
