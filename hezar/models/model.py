@@ -35,17 +35,17 @@ from .model_outputs import ModelOutput
 logger = Logger(__name__)
 
 criterions_mapping = {
-    "l1": nn.L1Loss,
-    "nll": nn.NLLLoss,
-    "nll_2d": nn.NLLLoss2d,
-    "poisson_nll": nn.PoissonNLLLoss,
-    "gaussian_nll": nn.GaussianNLLLoss,
-    "mse": nn.MSELoss,
-    "bce": nn.BCELoss,
-    "bce_with_logits": nn.BCEWithLogitsLoss,
-    "cross_entropy": nn.CrossEntropyLoss,
-    "triple_margin": nn.TripletMarginLoss,
-    "ctc": nn.CTCLoss
+    LossType.L1: nn.L1Loss,
+    LossType.NLL: nn.NLLLoss,
+    LossType.NLL_2D: nn.NLLLoss2d,
+    LossType.POISSON_NLL: nn.PoissonNLLLoss,
+    LossType.GAUSSIAN_NLL: nn.GaussianNLLLoss,
+    LossType.MSE: nn.MSELoss,
+    LossType.BCE: nn.BCELoss,
+    LossType.BCE_WITH_LOGITS: nn.BCEWithLogitsLoss,
+    LossType.CROSS_ENTROPY: nn.CrossEntropyLoss,
+    LossType.TRIPLE_MARGIN: nn.TripletMarginLoss,
+    LossType.CTC: nn.CTCLoss
 }
 
 
