@@ -34,7 +34,8 @@ def _verify_gensim_installation():
             f"The embeddings module in this version of Hezar, requires a combo of numpy>={REQUIRED_NUMPY_VERSION} and "
             f"gensim=={REQUIRED_GENSIM_VERSION}. Please install them by running: \n"
             f"`pip install numpy~={REQUIRED_NUMPY_VERSION} gensim=={REQUIRED_GENSIM_VERSION}`\n"
-            f"and make sure to restart your runtime if you're on a notebook environment!"
+            f"and make sure to restart your runtime if you're on a notebook environment!\n"
+            f"You can also set `bypass_version_check=True` in the embedding's config so that this error is not raised."
         )
 
 
@@ -58,7 +59,8 @@ class Embedding:
 
     def __init__(self, config: EmbeddingConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
-        _verify_gensim_installation()
+        if not self.config.bypass_version_check:
+            _verify_gensim_installation()
 
         self.config = config.update(kwargs)
         self.model = self.from_file(embedding_file, vectors_file) if embedding_file else self.build()
