@@ -1,5 +1,5 @@
 import inspect
-from re import sub
+import re
 from time import perf_counter
 from typing import Callable, Dict, List, Mapping, Union
 
@@ -7,6 +7,8 @@ from typing import Callable, Dict, List, Mapping, Union
 __all__ = [
     "exec_timer",
     "snake_case",
+    "reverse_string_digits",
+    "is_text_valid",
     "permute_dict_list",
     "sanitize_params_for_fn",
 ]
@@ -31,7 +33,28 @@ class exec_timer:
 
 
 def snake_case(s):
-    return "_".join(sub("([A-Z][a-z]+)", r" \1", sub("([A-Z]+)", r" \1", s.replace("-", " "))).split()).lower()
+    return "_".join(re.sub("([A-Z][a-z]+)", r" \1", re.sub("([A-Z]+)", r" \1", s.replace("-", " "))).split()).lower()
+
+
+def reverse_string_digits(text):
+    """
+    Reverse all digit segments in a given text
+    """
+    # Capture one or more digits followed by any number of non-digits followed by another digit
+    pattern = r"(\d+(?:\D\d+)*)"
+
+    def reverse_match(match):
+        return match.group(1)[::-1]  # Reverse the matched digits and special characters
+
+    return re.sub(pattern, reverse_match, text)
+
+
+def is_text_valid(text, valid_characters):
+    """
+    Given a list of valid characters, check if only those are included in the text
+    """
+    pattern = re.compile(f'^[{re.escape("".join(valid_characters))}]+$')
+    return bool(pattern.match(text))
 
 
 def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
