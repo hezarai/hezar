@@ -10,7 +10,7 @@ from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
-from ...utils import Logger
+from ...utils import Logger, reverse_string_digits, is_text_valid
 from ..data_collators import CharLevelOCRDataCollator
 from .dataset import Dataset
 
@@ -25,7 +25,7 @@ fa_characters = [
 ]
 fa_numbers = ["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۰"]
 fa_special_characters = ["ء", "ؤ", "ئ", "أ", "ّ"]
-fa_symbols = ["|", "(", ")", "+", "-", ":", "،", "!", ".", "؛", "=", "%", "؟"]
+fa_symbols = ["/", "(", ")", "+", "-", ":", "،", "!", ".", "؛", "=", "%", "؟"]
 en_numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 all_characters = fa_characters + fa_numbers + fa_special_characters + fa_symbols + en_numbers
 
@@ -51,7 +51,7 @@ class OCRDatasetConfig(DatasetConfig):
         images_paths_column (str): Column name for image paths in the dataset.
         max_length (int): Maximum length of text.
         invalid_characters (list): List of invalid characters.
-        reverse_text (bool): Whether to reverse the text.
+        reverse_digits (bool): Whether to reverse the digits in text.
         annotation_file (str): Path to the annotation file.
         test_split_size (float): Size of the test split.
         image_processor_config (ImageProcessorConfig): Configuration for image processing.
@@ -68,6 +68,7 @@ class OCRDatasetConfig(DatasetConfig):
     max_length: int = None
     invalid_characters: list = None
     reverse_text: bool = None
+    reverse_digits: bool = None
     annotation_file: str = None
     test_split_size: float = 0.2
     image_processor_config: ImageProcessorConfig = None
@@ -118,24 +119,6 @@ class OCRDataset(Dataset):
         """
         return len(self.data)
 
-    def _is_label_valid(self, text):
-        """
-        Check if the label is valid based on the configured maximum length and invalid characters.
-
-        Args:
-            text (str): The text label.
-
-        Returns:
-            bool: True if the label is valid, False otherwise.
-
-        """
-        if len(text) > self.config.max_length:
-            return False
-        for char in text:
-            if char not in self.config.id2label.values():
-                return False
-        return True
-
     def _load(self, split=None):
         """
         Load the dataset and clean up invalid samples.
@@ -153,7 +136,7 @@ class OCRDataset(Dataset):
         invalid_indices = []
         for i, sample in enumerate(list(iter(data))):
             text, path = sample.values()
-            if self._is_label_valid(text):
+            if len(text) <= self.config.max_length and is_text_valid(text, self.config.id2label.values()):
                 valid_indices.append(i)
             else:
                 invalid_indices.append(i)
@@ -183,8 +166,8 @@ class OCRDataset(Dataset):
             labels = torch.tensor(token_ids)
         # If split text is not tokenizer-based
         elif self.config.text_split_type == TextSplitType.CHAR_SPLIT:
-            if self.config.reverse_text:
-                text = text[::-1]
+            if self.config.reverse_digits:
+                text = reverse_string_digits(text)
             label2id = {v: k for k, v in self.config.id2label.items()}
             labels = [label2id[x] for x in text]
             labels = torch.LongTensor(labels)
