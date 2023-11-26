@@ -354,7 +354,7 @@ class TrainerConfig(Config):
     device: str = "cuda"
     init_weights_from: str = None
     dataset_config: Union[DatasetConfig, Dict] = None
-    num_dataloader_workers: int = 0
+    num_dataloader_workers: int = 4
     seed: int = 42
     optimizer: str = None
     learning_rate: float = 2e-5
