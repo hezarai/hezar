@@ -70,13 +70,14 @@ class Model(nn.Module):
 
     # Loss function name
     loss_fn_name: Union[str, LossType] = LossType.CROSS_ENTROPY
+    loss_fn_kwargs: Dict[str, Any] = {}
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
         self._preprocessor = None
-        self._criterion = self._set_criterion(self.loss_fn_name)
+        self._criterion = self._set_criterion(self.loss_fn_name, **self.loss_fn_kwargs)
 
     def __repr__(self):
         representation = super().__repr__()
@@ -85,10 +86,10 @@ class Model(nn.Module):
         return representation
 
     @staticmethod
-    def _set_criterion(criterion_name: str):
-        if criterion_name not in criterions_mapping:
-            raise ValueError(f"Invalid criterion name `{criterion_name}`. Available: {list(criterions_mapping.keys())}")
-        loss_fn = criterions_mapping[criterion_name]()
+    def _set_criterion(loss_fn_name: str, **loss_fn_kwargs: Dict[str, Any]):
+        if loss_fn_name not in criterions_mapping:
+            raise ValueError(f"Invalid criterion name `{loss_fn_name}`. Available: {list(criterions_mapping.keys())}")
+        loss_fn = criterions_mapping[loss_fn_name](**loss_fn_kwargs)
         return loss_fn
 
     @classmethod
