@@ -2,6 +2,7 @@ import torch
 from torch import nn
 
 from ....registry import register_model
+from ....utils import reverse_string_digits
 from ...model import Model
 from ...model_outputs import Image2TextOutput
 from .crnn_decode_utils import ctc_decode
@@ -17,6 +18,7 @@ class CRNNImage2Text(Model):
     is_generative = True
     image_processor = "image_processor"
     loss_fn_name = "ctc"
+    loss_fn_kwargs = {"zero_infinity": True}
 
     def __init__(self, config: CRNNImage2TextConfig, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -82,8 +84,8 @@ class CRNNImage2Text(Model):
         for decoded_ids in generated_ids:
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
-            if self.config.reverse_prediction_text:
-                text = text[::-1]
+            if self.config.reverse_output_digits:
+                text = reverse_string_digits(text)
             outputs.append(Image2TextOutput(text=text))
         return outputs
 

@@ -16,3 +16,4 @@ class CRNNImage2TextConfig(ModelConfig):
     map2seq_out_dim: int = 64
     rnn_dim: int = 256
     reverse_prediction_text: bool = None
+    reverse_output_digits: bool = None
