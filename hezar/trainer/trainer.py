@@ -375,7 +375,7 @@ class Trainer:
         print(f"  Device(s): {self.device}")
         print(f"  Training Dataset: {self.train_dataset}")
         print(f"  Evaluation Dataset: {self.eval_dataset}")
-        print(f"  Optimizer: {self.config.optimizer or self.default_optimizer}")
+        print(f"  Optimizer: `{self.config.optimizer or self.default_optimizer}`")
         print(f"  Initial learning rate: {self.config.learning_rate}")
         print(f"  Learning rate decay: {self.config.weight_decay}")
         print(f"  Epochs: {self.config.num_epochs}")
@@ -384,8 +384,8 @@ class Trainer:
         print(f"  Number of trainable parameters: {self.model.num_trainable_parameters}")
         print(f"  Mixed precision: {self.is_amp_enabled}")
         print(f"  Metrics: {list(self.metrics_handler.metrics.keys())}")
-        print(f"  Checkpoints path: {self.config.checkpoints_dir}")
-        print(f"  Logs path: {self.config.logs_dir}")
+        print(f"  Checkpoints path: `{self.config.checkpoints_dir}`")
+        print(f"  Logs path: `{self.config.logs_dir}`")
         print("\n*****************************************************\n")
 
     def evaluate(self):
