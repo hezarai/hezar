@@ -23,7 +23,7 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, sanitize_params_for_fn
+from ..utils import Logger, sanitize_function_parameters
 from .metrics_handlers import (
     AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
@@ -262,7 +262,7 @@ class Trainer:
         if isinstance(input_batch, torch.Tensor):
             outputs = self.model(input_batch)
         elif isinstance(input_batch, Dict):
-            forward_inputs = sanitize_params_for_fn(self.model.forward, input_batch)
+            forward_inputs = sanitize_function_parameters(self.model.forward, input_batch)
             outputs = self.model(**forward_inputs)
         else:
             raise ValueError(
@@ -285,7 +285,7 @@ class Trainer:
         Returns:
             The loss tensor
         """
-        compute_loss_inputs = sanitize_params_for_fn(self.model.compute_loss, model_outputs, **kwargs)
+        compute_loss_inputs = sanitize_function_parameters(self.model.compute_loss, model_outputs, **kwargs)
         compute_loss_inputs["labels"] = labels
 
         loss = self.model.compute_loss(**compute_loss_inputs)
@@ -329,7 +329,7 @@ class Trainer:
             outputs = self.forward(input_batch)
             loss = self.compute_loss(outputs, **input_batch)
             if self.model.is_generative and self.config.evaluate_with_generate:
-                generate_inputs = sanitize_params_for_fn(self.model.generate, input_batch)
+                generate_inputs = sanitize_function_parameters(self.model.generate, input_batch)
                 generated_ids = self.model.generate(**generate_inputs)
                 outputs["logits"] = generated_ids
 
@@ -386,7 +386,7 @@ class Trainer:
         print(f"  Metrics: {list(self.metrics_handler.metrics.keys())}")
         print(f"  Checkpoints path: `{self.config.checkpoints_dir}`")
         print(f"  Logs path: `{self.config.logs_dir}`")
-        print("\n*****************************************************\n")
+        print("\n*******************************************************\n")
 
     def evaluate(self):
         """
