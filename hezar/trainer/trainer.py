@@ -233,6 +233,52 @@ class Trainer:
         )
         return metrics_handler
 
+    def _load_from_checkpoint(self, checkpoint: Union[str, bool]):
+        """
+        Load trainer states like model weights, optimizer, etc. from a checkpoint
+
+        Args:
+            checkpoint: Path to checkpoint directory
+        """
+        if isinstance(checkpoint, bool):
+            checkpoints = os.listdir(self.config.checkpoints_dir)
+            if len(checkpoints):
+                checkpoint = max(
+                    [os.path.join(self.config.checkpoints_dir, c) for c in checkpoints], key=os.path.getmtime
+                )
+
+        if os.path.isdir(checkpoint):
+            step = os.path.basename(checkpoint)
+            if step.isdigit():
+                self.current_epoch = int(step) + 1
+            model_path = os.path.join(checkpoint, self.model.model_filename)
+            if os.path.isfile(model_path):
+                self.model.load_state_dict(torch.load(model_path))
+                self.model.to(self.config.device)
+                logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
+            else:
+                raise FileNotFoundError(
+                    f"Could not find `{self.model.model_filename}` at `{os.path.dirname(model_path)}`!\n"
+                )
+        else:
+            logger.warning(
+                f"{checkpoint} does not seem to be a valid checkpoint! Starting from scratch..."
+            )
+
+    def load_csv_logs(self, logs_dir=None):
+        """
+        Load the CSV log file
+        Args:
+            logs_dir: Path to logs directory, defaults to self.config.logs_dir
+
+        Returns:
+            Logs dictionary
+        """
+        logs_dir = logs_dir or self.config.logs_dir
+        csv_path = os.path.join(logs_dir, self.trainer_csv_log_file)
+        logs = pd.read_csv(csv_path)
+        return logs.to_dict()
+
     def prepare_input_batch(self, input_batch) -> Dict[str, torch.Tensor]:
         """
         Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
@@ -429,10 +475,17 @@ class Trainer:
 
         return self.metrics_handler.tracker.avg()
 
-    def train(self):
+    def train(self, resume_from_checkpoint: Union[str, bool] = None):
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
+
+        Args:
+            resume_from_checkpoint: Resume from checkpoint path (if value is a path) or automatically load from the
+            latest checkpoint (if value is True)
         """
+        if resume_from_checkpoint:
+            self._load_from_checkpoint(resume_from_checkpoint)
+
         self.print_info()
 
         for epoch in range(self.current_epoch, self.config.num_epochs + 1):

@@ -3,7 +3,6 @@ import os.path
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
-
 __all__ = [
     "AverageMeter",
     "MetricsTracker",
@@ -74,9 +73,9 @@ class CSVLogger:
         self.df = pd.DataFrame({})
 
     def write(self, logs: dict, step: int):
-        logs = {k: [v] for k, v in logs.items()}
-        row = pd.DataFrame(logs)
-        row.name = step
+        all_logs = {"step": step}
+        all_logs.update({k: [v] for k, v in logs.items()})
+        row = pd.DataFrame(all_logs)
         self.df = pd.concat([self.df, row])
         self.df.to_csv(self.save_path, index=False)
 
