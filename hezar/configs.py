@@ -342,6 +342,7 @@ class MetricConfig(Config):
 
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.METRIC)
+    objective: Literal["maximize", "minimize"] = None
     output_keys: Union[List, Tuple] = None
     n_decimals: int = 4
 
