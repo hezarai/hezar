@@ -1,5 +1,7 @@
-import os.path
+import os
+from dataclasses import dataclass, asdict
 
+from omegaconf import OmegaConf
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
@@ -9,6 +11,55 @@ __all__ = [
     "CSVLogger",
     "write_to_tensorboard",
 ]
+
+
+@dataclass
+class TrainerState:
+    """
+    A Trainer state is a container for holding specific updating values in the training process and is saved when
+    checkpointing.
+
+    Args:
+        epoch: Current epoch, floating decimal represents the percentage of the current epoch completed
+        total_epochs: Total epochs to train the model
+        global_step: Number of the update steps so far, one step is a full training step (one batch)
+        logging_steps: Log every X steps
+        evaluation_steps: Evaluate every X steps
+        best_checkpoint: Path to the best model checkpoint so far
+        experiment_name: Name of the current run/experiment
+    """
+    epoch: float = 1.0
+    total_epochs: int = None
+    global_step: int = 0
+    logging_steps: int = None
+    evaluation_steps: int = None
+    best_checkpoint: str = None
+    experiment_name: str = None
+
+    def update(self, items: dict, **kwargs):
+        items.update(kwargs)
+        for k, v in items.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+
+    def save(self, path, drop_none: bool = False):
+        """
+        Save the state to a .yaml file at `path`
+        """
+        state = asdict(self)
+        if drop_none:
+            state = {k: v for k, v in state.items() if v is not None}
+        OmegaConf.save(state, path)
+
+    @classmethod
+    def load(cls, path):
+        """
+        Load a trainer state from `path`
+        """
+        state_file = OmegaConf.load(path)
+        state_dict = OmegaConf.to_container(state_file)
+        state = cls(**state_dict)
+        return state
 
 
 class AverageMeter:
