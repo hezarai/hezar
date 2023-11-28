@@ -360,10 +360,10 @@ class TrainerConfig(Config):
     dataset_config: Union[DatasetConfig, Dict] = None
     num_dataloader_workers: int = 4
     seed: int = 42
-    optimizer: str = None
+    optimizer: Union[str, OptimizerType] = None
     learning_rate: float = 2e-5
     weight_decay: float = 0.0
-    scheduler: str = None
+    lr_scheduler: Union[str, LRSchedulerType] = None
     batch_size: int = None
     eval_batch_size: int = None
     use_amp: bool = False
