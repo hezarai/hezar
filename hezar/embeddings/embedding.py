@@ -59,6 +59,7 @@ class Embedding:
 
     def __init__(self, config: EmbeddingConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
+        self.config = config.update(kwargs)
         if not self.config.bypass_version_check:
             _verify_gensim_installation()
 
