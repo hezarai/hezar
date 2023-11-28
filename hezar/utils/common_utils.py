@@ -9,6 +9,7 @@ __all__ = [
     "snake_case",
     "reverse_string_digits",
     "is_text_valid",
+    "is_url",
     "permute_dict_list",
     "sanitize_function_parameters",
 ]
@@ -57,6 +58,19 @@ def is_text_valid(text, valid_characters):
     return bool(pattern.match(text))
 
 
+def is_url(text):
+    url_pattern = re.compile(
+        r'^(https?|ftp)://'  # Protocol (http, https, ftp)
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # Domain
+        r'localhost|'  # localhost
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # IPv4
+        r'\[?[A-F0-9]*:[A-F0-9:]+]?)'  # IPv6
+        r'(?::\d+)?'  # Port
+        r'(?:/?\S*)?$', re.IGNORECASE
+    )
+    return bool(re.match(url_pattern, text))
+
+
 def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
     """
     Convert a list of dictionaries to a dictionary of lists
@@ -92,3 +106,4 @@ def sanitize_function_parameters(func: Callable, params: Union[Dict, Mapping], *
     fn_params_names = set(fn_parameters)
     input_params = {p: params[p] for p in fn_params_names if p in params}
     return input_params
+

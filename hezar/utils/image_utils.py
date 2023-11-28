@@ -1,10 +1,13 @@
 from typing import Iterable, Tuple, Union
+from io import BytesIO
 
+import requests
 import numpy as np
 import torch
 
 from ..constants import Backends, ChannelsAxisSide, ImageType
 from .integration_utils import is_backend_available
+from .common_utils import is_url
 from .logging import Logger
 
 
@@ -81,7 +84,10 @@ def load_image(path, return_type: Union[str, ImageType] = ImageType.PILLOW):
     Returns:
         The desired output image of type `PIL.Image` or `numpy.ndarray` or `torch.Tensor`
     """
-    pil_image = Image.open(path).convert("RGB")
+    if is_url(path):
+        pil_image = Image.open(BytesIO(requests.get(path).content)).convert("RGB")
+    else:
+        pil_image = Image.open(path).convert("RGB")
     converted_image = convert_image_type(pil_image, return_type)
     return converted_image
 
