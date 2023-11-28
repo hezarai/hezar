@@ -10,7 +10,7 @@ __all__ = [
     "reverse_string_digits",
     "is_text_valid",
     "permute_dict_list",
-    "sanitize_params_for_fn",
+    "sanitize_function_parameters",
 ]
 
 
@@ -73,13 +73,13 @@ def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
     return d
 
 
-def sanitize_params_for_fn(fn: Callable, params: Union[Dict, Mapping], **kwargs):
+def sanitize_function_parameters(func: Callable, params: Union[Dict, Mapping], **kwargs):
     """
-    Given a dict of parameters or kwargs, you can figure out which ones must be passed to the `fn` based on its
+    Given a dict of parameters or kwargs, you can figure out which ones must be passed to the `func` based on its
     signature.
 
     Args:
-         fn: The function object
+         func: The function object
          params: A dict of parameters with values
          kwargs: Keyword arguments that are merged with `params`
 
@@ -87,7 +87,7 @@ def sanitize_params_for_fn(fn: Callable, params: Union[Dict, Mapping], **kwargs)
         The proper dict of parameters keys and values
     """
     params.update(**kwargs)
-    params_signature = dict(inspect.signature(fn).parameters)
+    params_signature = dict(inspect.signature(func).parameters)
     fn_parameters = {p for p, v in params_signature.items() if v.kind not in (v.VAR_KEYWORD, v.VAR_POSITIONAL)}
     fn_params_names = set(fn_parameters)
     input_params = {p: params[p] for p in fn_params_names if p in params}
