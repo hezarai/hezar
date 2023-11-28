@@ -14,6 +14,7 @@ DEFAULT_MODEL_CONFIG_FILE = "model_config.yaml"
 DEFAULT_TRAINER_SUBFOLDER = "train"
 DEFAULT_TRAINER_CONFIG_FILE = "train_config.yaml"
 DEFAULT_TRAINER_CSV_LOG_FILE = "training_logs.csv"
+DEFAULT_TRAINER_STATE_FILE = "trainer_state.yaml"
 DEFAULT_PREPROCESSOR_SUBFOLDER = "preprocessor"
 DEFAULT_NORMALIZER_CONFIG_FILE = "normalizer_config.yaml"
 DEFAULT_IMAGE_PROCESSOR_CONFIG_FILE = "image_processor_config.yaml"
@@ -103,6 +104,17 @@ class LossType(str, Enum):
     CROSS_ENTROPY = "cross_entropy"
     TRIPLE_MARGIN = "triple_margin"
     CTC = "ctc"
+
+
+class OptimizerType(str, Enum):
+    ADAM = "adam"
+    ADAMW = "adamw"
+    SDG = "sdg"
+
+
+class LRSchedulerType(str, Enum):
+    REDUCE_LR_ON_PLATEAU = "reduce_lr_on_plateau"
+    COSINE_LR = "cosine_lr"
 
 
 class SplitType(str, Enum):
