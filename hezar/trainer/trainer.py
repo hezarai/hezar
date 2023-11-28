@@ -4,6 +4,7 @@ import random
 from typing import Any, Callable, Dict, Mapping, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
@@ -98,40 +99,42 @@ class Trainer:
     ):
         self.config = config
 
-        self.device, self.device_type = self._prepare_device_and_type()
+        self.device, self.device_type = self._setup_device_and_type()
         self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
         self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
         self.is_amp_enabled = self.scaler.is_enabled()
 
         self._set_seed(self.config.seed)
 
-        self.model = self._prepare_model(model)
+        self.model = self._setup_model(model)
         self.model.preprocessor = preprocessor
 
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
-        self.train_dataloader, self.eval_dataloader = self._prepare_dataloaders()
+        self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
 
-        self.optimizer, self.lr_scheduler = self._prepare_optimizers(optimizer, lr_scheduler)
+        self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
-        self.metrics_handler = metrics_handler or self._prepare_metrics_handler()
+        self.metrics_handler = metrics_handler or self._setup_metrics_handler()
 
         self.tensorboard = SummaryWriter(log_dir=self.config.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.config.logs_dir, csv_filename=self.trainer_csv_log_file)
 
-    def _prepare_device_and_type(self) -> Tuple[str, str]:
+        self.current_epoch = 1
+
+    def _setup_device_and_type(self) -> Tuple[str, str]:
         device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
         device_type = "cuda" if "cuda" in device else "cpu"
         return device, device_type
 
     @staticmethod
-    def _set_seed(seed) -> None:
+    def _set_seed(seed):
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
-    
-    def _prepare_model(self, model: Model) -> Model:
+
+    def _setup_model(self, model: Model) -> Model:
         """
         Download the model from HuggingFace Hub if `init_weights_from` is given in the config. Load the model to the
         device and return it.
@@ -153,7 +156,7 @@ class Trainer:
         model.to(self.device)
         return model
 
-    def _prepare_dataloaders(self) -> Tuple[DataLoader, Union[DataLoader, None]]:
+    def _setup_dataloaders(self) -> Tuple[DataLoader, Union[DataLoader, None]]:
         """
         Set up data loaders (train/eval) and return them.
 
@@ -189,7 +192,7 @@ class Trainer:
 
         return train_dataloader, eval_dataloader
 
-    def _prepare_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
+    def _setup_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
         """
         Set up the optimizer and lr scheduler if they're not already given
 
@@ -216,7 +219,13 @@ class Trainer:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, verbose=True)
         return optimizer, lr_scheduler
 
-    def _prepare_metrics_handler(self):
+    def _setup_metrics_handler(self):
+        """
+        Setup MetricsHandler instance for the trainer
+
+        Returns:
+            A MetricsHandler subclass instance based on self.config.task
+        """
         metrics_handler_cls = task_to_metrics_handlers_mapping[self.config.task]
         metrics_handler = metrics_handler_cls(
             metrics=self.config.metrics,
@@ -426,7 +435,7 @@ class Trainer:
         """
         self.print_info()
 
-        for epoch in range(1, self.config.num_epochs + 1):
+        for epoch in range(self.current_epoch, self.config.num_epochs + 1):
             print()
             training_results = self.inner_training_loop(epoch)
             evaluation_results = self.evaluate()
