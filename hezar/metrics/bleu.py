@@ -26,6 +26,7 @@ class BLEUConfig(MetricConfig):
         output_keys (tuple): Keys to filter the metric results for output.
     """
     name = MetricType.BLEU
+    objective: str = "maximize"
     output_keys: tuple = ("bleu",)
 
 

@@ -30,6 +30,7 @@ class ROUGEConfig(MetricConfig):
         output_keys (tuple): Keys to filter the metric results for output.
     """
     name = MetricType.ROUGE
+    objective: str = "maximize"
     use_stemmer: bool = False
     use_aggregator: bool = True
     multi_ref: bool = True

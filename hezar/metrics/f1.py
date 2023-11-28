@@ -27,6 +27,7 @@ class F1Config(MetricConfig):
         output_keys (tuple): Keys to filter the metric results for output.
     """
     name = MetricType.F1
+    objective: str = "maximize"
     pos_label: int = 1
     average: str = "macro"
     sample_weight: Iterable[float] = None

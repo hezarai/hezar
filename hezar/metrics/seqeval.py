@@ -32,6 +32,7 @@ class SeqevalConfig(MetricConfig):
         zero_division (Union[str, int]): Strategy for zero-division, default is 0.
     """
     name = MetricType.SEQEVAL
+    objective: str = "maximize"
     output_keys: tuple = ("accuracy", "recall", "precision", "f1")
     suffix: bool = False
     mode: Optional[str] = None
