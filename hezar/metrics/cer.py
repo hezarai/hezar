@@ -30,6 +30,7 @@ class CERConfig(MetricConfig):
         output_keys (tuple): Keys to filter the metric results for output.
     """
     name = MetricType.CER
+    objective: str = "minimize"
     sentence_delimiter: str = " "
     concatenate_texts: bool = False
     output_keys: tuple = ("cer",)
