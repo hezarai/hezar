@@ -113,7 +113,7 @@ texts = model.predict(["examples/assets/ocr_example.jpg"])
 print(f"TrOCR Output: {texts}")
 
 # OCR with CRNN
-model = Model.load("hezarai/crnn-base-fa-64x256")
+model = Model.load("hezarai/crnn-fa-printed-96-long")
 texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```

@@ -12,7 +12,7 @@ TASK_TO_HUB_MAPPING = {
 TASK_TO_TOKENIZER_MAPPING = {
     "text-classification": "hezarai/bert-base-fa",
     "sequence-labeling": "hezarai/bert-base-fa",
-    "ocr": "hezarai/crnn-base-fa-64x256",
+    "ocr": "hezarai/crnn-fa-printed-96-long",
     "text-summarization": "hezarai/t5-base-fa",
 }
 

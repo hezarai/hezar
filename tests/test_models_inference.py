@@ -29,7 +29,7 @@ TESTABLE_MODELS = {
         "required_output_keys": {"text"}
     },
     "ocr": {
-        "path": "hezarai/crnn-base-fa-64x256",
+        "path": "hezarai/crnn-fa-printed-96-long",
         "inputs": {"type": "file", "value": "samples/ocr_example.jpg"},
         "predict_kwargs": {},
         "output_type_within_batch": dict,

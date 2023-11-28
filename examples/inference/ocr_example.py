@@ -1,7 +1,5 @@
 from hezar.models import Model
 
-
-# model = Model.load("hezarai/trocr-base-fa-v1")  # TrOCR
-model = Model.load("hezarai/crnn-base-fa-64x256")  # CRNN
+model = Model.load("hezarai/crnn-fa-printed-96-long")
 text = model.predict("../assets/ocr_example.jpg")
 print(text)
