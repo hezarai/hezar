@@ -17,12 +17,12 @@ import tempfile
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pprint import pformat
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Literal, Optional, Tuple, Union
 
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType
+from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType, OptimizerType, LRSchedulerType
 from .utils import Logger, get_module_config_class
 
 
@@ -351,14 +351,36 @@ class MetricConfig(Config):
 class TrainerConfig(Config):
     """
     Base dataclass for all trainer configs
+
+    Args:
+        task (str, TaskType): The training task. Must be a valid name from `TaskType`.
+        output_dir (str): Path to the directory to save trainer properties.
+        device (str): Hardware device e.g, `cuda:0`, `cpu`, etc.
+        init_weights_from (str): Path to a model from disk or Hub to load the initial weights from.
+        num_dataloader_workers (int): Number of dataloader workers, defaults to 4 .
+        seed (int): Control determinism of the run by setting a seed value. defaults to 42.
+        optimizer (OptimizerType): Name of the optimizer, available values include properties in `OptimizerType` enum.
+        learning_rate (float): Initial learning rate for the optimizer.
+        weight_decay (float): Optimizer weight decay value.
+        lr_scheduler (LRSchedulerType): Optional learning rate scheduler among `LRSchedulerType` enum.
+        batch_size (int): Training batch size.
+        eval_batch_size (int): Evaluation batch size, defaults to `batch_size` if None.
+        use_amp (bool): Whether to use mixed precision or not.
+        evaluate_with_generate (bool): Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).
+        metrics (List[Union[str, MetricConfig]]): A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.
+        num_epochs (int): Number of total epochs to train the model.
+        save_freq (int): Save the trainer stats and everything every `save_freq` epochs.
+        checkpoints_dir (str): Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
+        logs_dir (str): Path to the logs' folder. The actual log files will be saved under `{output_dir}/{logs_dir}`.
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="trainer")
     config_type: str = field(init=False, default=ConfigType.TRAINER)
-    task: Union[str, TaskType] = None
+    output_dir: str
+    task: Union[str, TaskType]
     device: str = "cuda"
+    num_epochs: int = None
     init_weights_from: str = None
-    dataset_config: Union[DatasetConfig, Dict] = None
     num_dataloader_workers: int = 4
     seed: int = 42
     optimizer: Union[str, OptimizerType] = None
@@ -370,17 +392,17 @@ class TrainerConfig(Config):
     use_amp: bool = False
     evaluate_with_generate: bool = True
     metrics: List[Union[str, MetricConfig]] = None
-    num_epochs: int = None
+    metric_for_best_model: str = "evaluation.loss"
     save_freq: int = 1
-    checkpoints_dir: str = None
-    logs_dir: str = "./logs"
+    checkpoints_dir: str = "checkpoints"
+    logs_dir: str = "logs"
 
     def __post_init__(self):
         super().__post_init__()
-        if self.task is None:
-            raise ValueError("The parameter `task` is required for `TrainerConfig`!")
         if self.task not in list(TaskType):
             raise ValueError(
                 f"Invalid task `{self.task}` passed to `TrainerConfig`. "
                 f"Available options are {[t.value for t in list(TaskType)]}",
             )
+        if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):
+            self.metric_for_best_model = f"evaluation.{self.metric_for_best_model}"
