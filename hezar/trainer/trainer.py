@@ -467,7 +467,7 @@ class Trainer:
         _print_info_line("Output Directory", self.config.output_dir)
         _print_info_line("Task", self.config.task)
         _print_info_line("Model", type(self.model).__name__)
-        _print_info_line("Init Weights", self.config.init_weights_from)
+        _print_info_line("Init Weights", self.config.init_weights_from or "N/A")
         _print_info_line("Device(s)", self.device)
         _print_info_line("Training Dataset", self.train_dataset)
         _print_info_line("Evaluation Dataset", self.eval_dataset)
