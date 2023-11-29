@@ -450,29 +450,40 @@ class Trainer:
         return {"loss": avg_loss}
 
     def print_info(self):
-        def _print_info_line(key, value=""):
-            line = f"{colorize_text(key,Color.BOLD)}: {colorize_text(value, Color.ITALIC)}"
-            return line
-        print(f"\n{colorize_text('******************** Training Info ********************', Color.BOLD)}\n")
-        print(f"  {_print_info_line('Output Directory', f'`{self.config.output_dir}`')}")
-        print(f"  {_print_info_line('Task', f'`{self.config.task}`')}")
-        print(f"  {_print_info_line('Model', f'`{type(self.model).__name__}`')}")
-        print(f"  {_print_info_line('Init Weights', f'{self.config.init_weights_from}`')}")
-        print(f"  {_print_info_line('Device(s)', f'`{self.device}')}`")
-        print(f"  {_print_info_line('Training Dataset', f'{self.train_dataset}')}")
-        print(f"  {_print_info_line('Evaluation Dataset', f'{self.eval_dataset}')}")
-        print(f"  {_print_info_line('Optimizer', f'`{self.config.optimizer or self.default_optimizer}`')}")
-        print(f"  {_print_info_line('Initial Learning Rate', f'{self.config.learning_rate}')}")
-        print(f"  {_print_info_line('Learning Rate Decay', f'{self.config.weight_decay}')}")
-        print(f"  {_print_info_line('Epochs', f'{self.config.num_epochs}')}")
-        print(f"  {_print_info_line('Batch Size', f'{self.config.batch_size}')}")
-        print(f"  {_print_info_line('Number of Parameters', f'{self.model.num_parameters}')}")
-        print(f"  {_print_info_line('Number of Trainable Parameters', f'{self.model.num_trainable_parameters}')}")
-        print(f"  {_print_info_line('Mixed Precision (float16)', f'{self.is_amp_enabled}')}")
-        print(f"  {_print_info_line('Metrics', f'{list(self.metrics_handler.metrics.keys())}')}")
-        print(f"  {_print_info_line('Checkpoints Path', f'`{self.checkpoints_dir}`')}")
-        print(f"  {_print_info_line('Logs Path', f'`{self.logs_dir}`')}")
-        print(f"\n{colorize_text('*******************************************************', Color.BOLD)}\n")
+        """
+        Print training info
+        """
+
+        def _print_info_line(key, value):
+            line = f"  {colorize_text(key, Color.BOLD)}: `{colorize_text(str(value), Color.ITALIC)}`"
+            print(line)
+
+        header = f"{'*' * 20} Training Info {'*' * 20}"
+        footer = "*" * len(header)
+
+        # Header
+        print(f"\n{colorize_text(header, Color.BOLD)}\n")
+        # Info
+        _print_info_line("Output Directory", self.config.output_dir)
+        _print_info_line("Task", self.config.task)
+        _print_info_line("Model", type(self.model).__name__)
+        _print_info_line("Init Weights", self.config.init_weights_from)
+        _print_info_line("Device(s)", self.device)
+        _print_info_line("Training Dataset", self.train_dataset)
+        _print_info_line("Evaluation Dataset", self.eval_dataset)
+        _print_info_line("Optimizer", self.config.optimizer or self.default_optimizer)
+        _print_info_line("Initial Learning Rate", self.config.learning_rate)
+        _print_info_line("Learning Rate Decay", self.config.weight_decay)
+        _print_info_line("Epochs", self.config.num_epochs)
+        _print_info_line("Batch Size", self.config.batch_size)
+        _print_info_line("Number of Parameters", self.model.num_parameters)
+        _print_info_line("Number of Trainable Parameters", self.model.num_trainable_parameters)
+        _print_info_line("Mixed Precision (float16)", self.is_amp_enabled)
+        _print_info_line("Metrics", list(self.metrics_handler.metrics.keys()))
+        _print_info_line("Checkpoints Path", self.checkpoints_dir)
+        _print_info_line("Logs Path", self.logs_dir)
+        # Footer
+        print(f"\n{colorize_text(footer, Color.BOLD)}\n")
 
     def evaluate(self):
         """
