@@ -51,7 +51,7 @@ class Dataset(TorchDataset):
     def __str__(self):
         dataset_name = self.config.path or self.config.name
         dataset_size = len(self)
-        return f"`{dataset_name}:{self.split}`({dataset_size})"
+        return f"{dataset_name}:{self.split}({dataset_size})"
 
     def __len__(self):
         """
