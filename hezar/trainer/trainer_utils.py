@@ -1,15 +1,18 @@
 import os
 from dataclasses import dataclass, asdict
 
+import numpy as np
 from omegaconf import OmegaConf
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
 __all__ = [
+    "TrainerState",
     "AverageMeter",
     "MetricsTracker",
     "CSVLogger",
     "write_to_tensorboard",
+    "resolve_logdir",
 ]
 
 
@@ -20,27 +23,41 @@ class TrainerState:
     checkpointing.
 
     Args:
-        epoch: Current epoch, floating decimal represents the percentage of the current epoch completed
+        epoch: Current epoch number
         total_epochs: Total epochs to train the model
         global_step: Number of the update steps so far, one step is a full training step (one batch)
-        logging_steps: Log every X steps
-        evaluation_steps: Evaluate every X steps
+        metric_for_best_checkpoint: The metric key for choosing the best checkpoint (Also given in the TrainerConfig)
+        best_metric_value: The value of the best checkpoint saved so far
         best_checkpoint: Path to the best model checkpoint so far
-        experiment_name: Name of the current run/experiment
     """
-    epoch: float = 1.0
+    epoch: int = 1
     total_epochs: int = None
     global_step: int = 0
-    logging_steps: int = None
-    evaluation_steps: int = None
+    metric_for_best_checkpoint: str = None
+    best_metric_value: float = None
     best_checkpoint: str = None
-    experiment_name: str = None
 
     def update(self, items: dict, **kwargs):
         items.update(kwargs)
         for k, v in items.items():
             if hasattr(self, k):
                 setattr(self, k, v)
+
+    def update_best_results(self, metric_value, objective, step):
+        if objective == "maximize":
+            operator = np.greater
+        elif objective == "minimize":
+            operator = np.less
+        else:
+            raise ValueError(f"`objective` must be either `maximize` or `minimize`, got `{objective}`!")
+
+        if self.best_metric_value is None:
+            self.best_metric_value = metric_value
+            self.best_checkpoint = step
+
+        elif operator(metric_value, self.best_metric_value):
+            self.best_metric_value = metric_value
+            self.best_checkpoint = step
 
     def save(self, path, drop_none: bool = False):
         """
@@ -49,6 +66,7 @@ class TrainerState:
         state = asdict(self)
         if drop_none:
             state = {k: v for k, v in state.items() if v is not None}
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         OmegaConf.save(state, path)
 
     @classmethod
@@ -134,3 +152,11 @@ class CSVLogger:
 def write_to_tensorboard(writer: SummaryWriter, logs: dict, step: int):
     for metric_name, value in logs.items():
         writer.add_scalar(metric_name, value, step)
+
+
+def resolve_logdir(log_dir) -> str:
+    import socket
+    from datetime import datetime
+
+    current_time = datetime.now().strftime("%b%d_%H-%M-%S")
+    return os.path.join(log_dir, current_time + "_" + socket.gethostname())

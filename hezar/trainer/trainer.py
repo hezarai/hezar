@@ -1,8 +1,8 @@
-import inspect
 import os
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple, Union
 
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import torch
@@ -17,9 +17,12 @@ from ..constants import (
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_CSV_LOG_FILE,
     DEFAULT_TRAINER_SUBFOLDER,
+    DEFAULT_TRAINER_STATE_FILE,
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
     TaskType,
+    OptimizerType,
+    LRSchedulerType,
 )
 from ..data.datasets import Dataset
 from ..models import Model
@@ -34,19 +37,19 @@ from .metrics_handlers import (
     TextClassificationMetricsHandler,
     TextGenerationMetricsHandler,
 )
-from .trainer_utils import CSVLogger, write_to_tensorboard
+from .trainer_utils import TrainerState, CSVLogger, write_to_tensorboard, resolve_logdir
 
 
 logger = Logger(__name__)
 
 optimizers = {
-    "adam": torch.optim.Adam,
-    "adamw": torch.optim.AdamW,
-    "sgd": torch.optim.SGD,
+    OptimizerType.ADAM: torch.optim.Adam,
+    OptimizerType.ADAMW: torch.optim.AdamW,
+    OptimizerType.SDG: torch.optim.SGD,
 }
 lr_schedulers = {
-    "reduce_on_plateau": torch.optim.lr_scheduler.ReduceLROnPlateau,
-    "cosine_lr": torch.optim.lr_scheduler.CosineAnnealingLR,
+    LRSchedulerType.REDUCE_LR_ON_PLATEAU: torch.optim.lr_scheduler.ReduceLROnPlateau,
+    LRSchedulerType.COSINE_LR: torch.optim.lr_scheduler.CosineAnnealingLR,
 }
 
 task_to_metrics_handlers_mapping = {
@@ -56,7 +59,6 @@ task_to_metrics_handlers_mapping = {
     TaskType.SPEECH_RECOGNITION: SpeechRecognitionMetricsHandler,
     TaskType.AUDIO_CLASSIFICATION: AudioClassificationMetricsHandler,
     TaskType.TEXT_GENERATION: TextGenerationMetricsHandler,
-
 }
 
 
@@ -82,6 +84,7 @@ class Trainer:
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
     trainer_csv_log_file = DEFAULT_TRAINER_CSV_LOG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
+    default_trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     default_optimizer = "adam"
     default_lr_scheduler = None
 
@@ -99,29 +102,47 @@ class Trainer:
     ):
         self.config = config
 
+        # Configure device, precision, scaler, etc.
         self.device, self.device_type = self._setup_device_and_type()
         self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
         self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
         self.is_amp_enabled = self.scaler.is_enabled()
 
+        # Set determinism
         self._set_seed(self.config.seed)
 
+        # Setup model and preprocessor(s)
         self.model = self._setup_model(model)
         self.model.preprocessor = preprocessor
 
+        # Configure datasets and data loaders
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
 
+        # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
+        # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
 
-        self.tensorboard = SummaryWriter(log_dir=self.config.logs_dir)
-        self.csv_logger = CSVLogger(logs_dir=self.config.logs_dir, csv_filename=self.trainer_csv_log_file)
+        # Configure checkpoints and logging directories
+        self.logs_dir = os.path.join(self.config.output_dir, self.config.logs_dir)
+        self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
+
+        # Setup logging properties
+        self.tensorboard = SummaryWriter(log_dir=resolve_logdir(self.logs_dir))
+        self.csv_logger = CSVLogger(logs_dir=self.logs_dir, csv_filename=self.trainer_csv_log_file)
 
         self.current_epoch = 1
+
+        # Configure trainer state
+        self.state = TrainerState(
+            epoch=self.current_epoch,
+            total_epochs=self.config.num_epochs,
+            metric_for_best_checkpoint=self.config.metric_for_best_model,
+        )
 
     def _setup_device_and_type(self) -> Tuple[str, str]:
         device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
@@ -194,14 +215,14 @@ class Trainer:
 
     def _setup_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
         """
-        Set up the optimizer and lr scheduler if they're not already given
+        Set up the optimizer and lr lr_scheduler if they're not already given
 
         Args:
             optimizer: If None do nothing and return it, otherwise build it using the train config
             lr_scheduler: If None do nothing and return it, otherwise build it using the train config
 
         Returns:
-            Optimizer and scheduler
+            Optimizer and lr_scheduler
         """
         if optimizer is None:
             optimizer_type = self.config.optimizer or self.default_optimizer
@@ -212,7 +233,7 @@ class Trainer:
             )
 
             if lr_scheduler is None:
-                scheduler_name = self.config.scheduler or self.default_lr_scheduler
+                scheduler_name = self.config.lr_scheduler or self.default_lr_scheduler
                 if scheduler_name is None:
                     lr_scheduler = None
                 else:
@@ -233,24 +254,29 @@ class Trainer:
         )
         return metrics_handler
 
-    def _load_from_checkpoint(self, checkpoint: Union[str, bool]):
+    def load_from_checkpoint(self, checkpoint: Union[str, bool] = True, load_best: bool = False):
         """
         Load trainer states like model weights, optimizer, etc. from a checkpoint
 
         Args:
             checkpoint: Path to checkpoint directory
+            load_best: Whether to load the best checkpoint or not, if False, loads the latest checkpoint
         """
-        if isinstance(checkpoint, bool):
-            checkpoints = os.listdir(self.config.checkpoints_dir)
-            if len(checkpoints):
-                checkpoint = max(
-                    [os.path.join(self.config.checkpoints_dir, c) for c in checkpoints], key=os.path.getmtime
-                )
+        if os.path.isdir(checkpoint) and load_best:
+            logger.warning(f"The `load_best` parameter has no effect when `checkpoint` is a path!")
 
+        self.state = TrainerState.load(os.path.join(self.checkpoints_dir, self.default_trainer_state_file))
+        if isinstance(checkpoint, bool):
+            if load_best:
+                checkpoint = os.path.join(self.checkpoints_dir, str(self.state.best_checkpoint))
+            else:
+                checkpoint = os.path.join(self.checkpoints_dir, str(self.state.epoch))
         if os.path.isdir(checkpoint):
-            step = os.path.basename(checkpoint)
-            if step.isdigit():
-                self.current_epoch = int(step) + 1
+            # Figure out the epoch number
+            epoch = os.path.basename(checkpoint) if os.path.basename(checkpoint).isdigit() else self.state.epoch
+            if str(epoch).isdigit():
+                self.state.epoch = int(epoch)
+            # Load model's state dict
             model_path = os.path.join(checkpoint, self.model.model_filename)
             if os.path.isfile(model_path):
                 self.model.load_state_dict(torch.load(model_path))
@@ -262,7 +288,7 @@ class Trainer:
                 )
         else:
             logger.warning(
-                f"{checkpoint} does not seem to be a valid checkpoint! Starting from scratch..."
+                f"{checkpoint} does not seem to be a valid checkpoint!"
             )
 
     def load_csv_logs(self, logs_dir=None):
@@ -419,6 +445,7 @@ class Trainer:
                 # Gather outputs for metrics
                 avg_loss = losses_sum / (step + 1)
                 iterator.set_postfix(loss=avg_loss)
+                self.state.global_step += 1
 
         return {"loss": avg_loss}
 
@@ -439,8 +466,8 @@ class Trainer:
         print(f"  Number of trainable parameters: {self.model.num_trainable_parameters}")
         print(f"  Mixed precision: {self.is_amp_enabled}")
         print(f"  Metrics: {list(self.metrics_handler.metrics.keys())}")
-        print(f"  Checkpoints path: `{self.config.checkpoints_dir}`")
-        print(f"  Logs path: `{self.config.logs_dir}`")
+        print(f"  Checkpoints path: `{self.checkpoints_dir}`")
+        print(f"  Logs path: `{self.logs_dir}`")
         print("\n*******************************************************\n")
 
     def evaluate(self):
@@ -484,7 +511,13 @@ class Trainer:
             latest checkpoint (if value is True)
         """
         if resume_from_checkpoint:
-            self._load_from_checkpoint(resume_from_checkpoint)
+            self.load_from_checkpoint(resume_from_checkpoint)
+            if self.current_epoch >= self.config.num_epochs:
+                logger.info(
+                    f"Unable to resume from `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` "
+                    f"since it belongs to the ending epoch!"
+                )
+            self.current_epoch = self.state.epoch + 1
 
         self.print_info()
 
@@ -495,36 +528,44 @@ class Trainer:
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step(evaluation_results["loss"])
 
-            current_step_logs = {
-                "step": epoch,
-                "training_results": training_results,
-                "evaluation_results": evaluation_results,
-            }
+            train_logs = {f"train.{metric_name}": value for metric_name, value in training_results.items()}
+            evaluation_logs = {f"evaluation.{metric_name}": value for metric_name, value in evaluation_results.items()}
+            all_logs = {**train_logs, **evaluation_logs}
 
-            self.log(current_step_logs)
+            self.state.epoch = epoch
+            self.state.update_best_results(
+                metric_value=all_logs[self.config.metric_for_best_model],
+                objective=self.metrics_handler.objective,
+                step=epoch,
+            )
 
             # maybe save checkpoint
             if epoch % self.config.save_freq == 0:
-                ckpt_save_path = os.path.join(self.config.checkpoints_dir, str(epoch))
+                ckpt_save_path = os.path.join(self.checkpoints_dir, str(epoch))
                 self.save(ckpt_save_path)
 
-    def log(self, logs: Dict[str, Any]):
+            self.log(train_logs, evaluation_logs, epoch)
+
+        logger.info(f"Training done!")
+
+    def log(self, train_logs: Dict[str, Any], evaluation_logs: Dict[str, Any], step: int):
         """
         Log metrics results
         """
-        step = logs["step"]
-        training_results = logs["training_results"]
-        evaluation_results = logs["evaluation_results"]
-
-        train_logs = {f"train.{metric_name}": value for metric_name, value in training_results.items()}
-        evaluation_logs = {f"evaluation.{metric_name}": value for metric_name, value in evaluation_results.items()}
-
         # Log to tensorboard
         write_to_tensorboard(self.tensorboard, train_logs, step)
         write_to_tensorboard(self.tensorboard, evaluation_logs, step)
 
         # Log to CSV
         self.csv_logger.write({**train_logs, **evaluation_logs}, step)
+
+        # Save trainer state
+        self.state.save(
+            os.path.join(
+                self.checkpoints_dir,
+                self.default_trainer_state_file,
+            )
+        )
 
     def save(
         self,
