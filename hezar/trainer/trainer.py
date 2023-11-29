@@ -2,7 +2,6 @@ import os
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple, Union
 
-from datetime import datetime
 import numpy as np
 import pandas as pd
 import torch
@@ -21,13 +20,14 @@ from ..constants import (
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
     TaskType,
+    Color,
     OptimizerType,
     LRSchedulerType,
 )
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, sanitize_function_parameters
+from ..utils import Logger, sanitize_function_parameters, colorize_text
 from .metrics_handlers import (
     AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
@@ -450,25 +450,29 @@ class Trainer:
         return {"loss": avg_loss}
 
     def print_info(self):
-        print("\n******************** Training Info ********************\n")
-        print(f"  Task: `{self.config.task}`")
-        print(f"  Model: `{type(self.model).__name__}`")
-        print(f"  Init Weights: `{self.config.init_weights_from or 'N/A'}`")
-        print(f"  Device(s): {self.device}")
-        print(f"  Training Dataset: {self.train_dataset}")
-        print(f"  Evaluation Dataset: {self.eval_dataset}")
-        print(f"  Optimizer: `{self.config.optimizer or self.default_optimizer}`")
-        print(f"  Initial learning rate: {self.config.learning_rate}")
-        print(f"  Learning rate decay: {self.config.weight_decay}")
-        print(f"  Epochs: {self.config.num_epochs}")
-        print(f"  Batch size: {self.config.batch_size}")
-        print(f"  Number of parameters: {self.model.num_parameters}")
-        print(f"  Number of trainable parameters: {self.model.num_trainable_parameters}")
-        print(f"  Mixed precision: {self.is_amp_enabled}")
-        print(f"  Metrics: {list(self.metrics_handler.metrics.keys())}")
-        print(f"  Checkpoints path: `{self.checkpoints_dir}`")
-        print(f"  Logs path: `{self.logs_dir}`")
-        print("\n*******************************************************\n")
+        def _print_info_line(key, value=""):
+            line = f"{colorize_text(key,Color.BOLD)}: {colorize_text(value, Color.ITALIC)}"
+            return line
+        print(f"\n{colorize_text('******************** Training Info ********************', Color.BOLD)}\n")
+        print(f"  {_print_info_line('Output Directory', f'`{self.config.output_dir}`')}")
+        print(f"  {_print_info_line('Task', f'`{self.config.task}`')}")
+        print(f"  {_print_info_line('Model', f'`{type(self.model).__name__}`')}")
+        print(f"  {_print_info_line('Init Weights', f'{self.config.init_weights_from}`')}")
+        print(f"  {_print_info_line('Device(s)', f'`{self.device}')}`")
+        print(f"  {_print_info_line('Training Dataset', f'{self.train_dataset}')}")
+        print(f"  {_print_info_line('Evaluation Dataset', f'{self.eval_dataset}')}")
+        print(f"  {_print_info_line('Optimizer', f'`{self.config.optimizer or self.default_optimizer}`')}")
+        print(f"  {_print_info_line('Initial Learning Rate', f'{self.config.learning_rate}')}")
+        print(f"  {_print_info_line('Learning Rate Decay', f'{self.config.weight_decay}')}")
+        print(f"  {_print_info_line('Epochs', f'{self.config.num_epochs}')}")
+        print(f"  {_print_info_line('Batch Size', f'{self.config.batch_size}')}")
+        print(f"  {_print_info_line('Number of Parameters', f'{self.model.num_parameters}')}")
+        print(f"  {_print_info_line('Number of Trainable Parameters', f'{self.model.num_trainable_parameters}')}")
+        print(f"  {_print_info_line('Mixed Precision (float16)', f'{self.is_amp_enabled}')}")
+        print(f"  {_print_info_line('Metrics', f'{list(self.metrics_handler.metrics.keys())}')}")
+        print(f"  {_print_info_line('Checkpoints Path', f'`{self.checkpoints_dir}`')}")
+        print(f"  {_print_info_line('Logs Path', f'`{self.logs_dir}`')}")
+        print(f"\n{colorize_text('*******************************************************', Color.BOLD)}\n")
 
     def evaluate(self):
         """

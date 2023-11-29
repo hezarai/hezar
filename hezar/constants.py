@@ -150,3 +150,17 @@ class ImageType(str, Enum):
 class ChannelsAxisSide(str, Enum):
     FIRST = "first"
     LAST = "last"
+
+
+class Color(str, Enum):
+    HEADER = "\033[95m"
+    NORMAL = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+    ITALIC = "\33[3m"
+    BLUE = "\033[94m"
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    GREY = "\33[90m"
