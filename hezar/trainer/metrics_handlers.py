@@ -37,6 +37,21 @@ class MetricsHandler:
         self.metrics = self._setup_metrics(metrics)
         self.trainer = trainer
         self.tracker = MetricsTracker(self.metrics)
+        self.objective = self._configure_objective()
+
+    def _configure_objective(self):
+        target_metric = self.trainer.config.metric_for_best_model
+        objective_metric = target_metric.split(".")[1] if "." in target_metric else target_metric
+        if "loss" in objective_metric:
+            objective = "minimize"
+        else:
+            if objective_metric not in self.metrics:
+                raise ValueError(
+                    f"{objective_metric} is not a valid metric for this task, "
+                    f"available metrics: {list(self.tracker.trackers.values())}"
+                )
+            objective = self.metrics[objective_metric].config.objective
+        return objective
 
     def _setup_metrics(self, metrics):
         metrics_dict = {}
