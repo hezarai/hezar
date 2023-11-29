@@ -101,7 +101,7 @@ def test_trainer(task):
     preprocessor = Preprocessor.load(setup["model"]["path"])
 
     # Trainer config
-    config = TrainerConfig(**setup["config"])
+    config = TrainerConfig(output_dir="test-tmp-trainer", **setup["config"])
 
     trainer = Trainer(
         config=config,

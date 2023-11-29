@@ -14,12 +14,12 @@ model = BertTextClassification(BertTextClassificationConfig(id2label=train_datas
 preprocessor = Preprocessor.load(base_model_path)
 
 train_config = TrainerConfig(
+    output_dir="bert-fa-sentiment-analysis-dksf",
     task="text_classification",
     device="cuda",
     init_weights_from=base_model_path,
     batch_size=8,
     num_epochs=5,
-    checkpoints_dir="checkpoints/",
     metrics=["f1", "precision", "accuracy", "recall"],
 )
 

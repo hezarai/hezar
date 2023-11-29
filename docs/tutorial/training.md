@@ -49,12 +49,12 @@ Define all the training properties in the trainer's config. As we're training a 
 task to `text_classification` in our config. Other parameters are also customizable like below:
 ```python
 train_config = TrainerConfig(
+    output_dir="distilbert-fa-sentiment-analysis-dksf",
     task="text_classification",
     device="cuda",
     init_weights_from=BASE_MODEL_PATH,
     batch_size=8,
     num_epochs=5,
-    checkpoints_dir="checkpoints/",
     metrics=["f1"],
     num_dataloader_workers=0,
     seed=42,

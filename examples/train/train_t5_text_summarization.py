@@ -30,13 +30,13 @@ if __name__ == '__main__':
     preprocessor = Preprocessor.load(base_model_path)
 
     train_config = TrainerConfig(
+        output_dir="t5-base-fa-xlsum",
         task="text_generation",
         device="cuda",
         init_weights_from=base_model_path,
         batch_size=8,
         eval_batch_size=64,
         num_epochs=10,
-        checkpoints_dir="checkpoints/",
         metrics=["rouge"],
     )
 
