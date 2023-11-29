@@ -3,6 +3,8 @@ import re
 from time import perf_counter
 from typing import Callable, Dict, List, Mapping, Union
 
+from ..constants import Color
+
 
 __all__ = [
     "exec_timer",
@@ -10,6 +12,7 @@ __all__ = [
     "reverse_string_digits",
     "is_text_valid",
     "is_url",
+    "colorize_text",
     "permute_dict_list",
     "sanitize_function_parameters",
 ]
@@ -69,6 +72,13 @@ def is_url(text):
         r'(?:/?\S*)?$', re.IGNORECASE
     )
     return bool(re.match(url_pattern, text))
+
+
+def colorize_text(text, color: Color):
+    """
+    Add colorization codes to the text
+    """
+    return color + text + Color.NORMAL
 
 
 def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
