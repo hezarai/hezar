@@ -32,4 +32,4 @@ trainer = Trainer(
     data_collator=train_dataset.data_collator,
     preprocessor=preprocessor,
 )
-trainer.train(resume_from_checkpoint="crnn-plate-fa-v1/checkpoints/7")
+trainer.train()
