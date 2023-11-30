@@ -74,10 +74,26 @@ def is_url(text):
     return bool(re.match(url_pattern, text))
 
 
-def colorize_text(text, color: Color):
+def colorize_text(text: str, color: Union[str, Color]):
     """
-    Add colorization codes to the text
+    Add colorization codes to the text. The output is the text with surrounding color codes and the colors are applied
+    on the console/terminal output like when using `print()`
     """
+    color_mapping = {
+        "header": Color.HEADER,
+        "normal": Color.NORMAL,
+        "bold": Color.BOLD,
+        "underline": Color.UNDERLINE,
+        "italic": Color.ITALIC,
+        "blue": Color.BLUE,
+        "cyan": Color.CYAN,
+        "green": Color.GREEN,
+        "yellow": Color.YELLOW,
+        "red": Color.RED,
+        "grey": Color.GREY,
+    }
+    if isinstance(color, str):
+        color = color_mapping.get(color.lower(), Color.NORMAL)
     return color + text + Color.NORMAL
 
 

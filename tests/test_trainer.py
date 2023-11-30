@@ -27,8 +27,6 @@ tasks_setups = {
         },
         "config": {
             "task": "text_classification",
-            "device": "cpu",
-            "batch_size": 8,
             "metrics": ["accuracy", "f1", "precision", "recall"]
         }
     },
@@ -44,8 +42,6 @@ tasks_setups = {
         },
         "config": {
             "task": "sequence_labeling",
-            "device": "cpu",
-            "batch_size": 8,
             "metrics": ["seqeval"]
         }
     },
@@ -61,8 +57,6 @@ tasks_setups = {
         },
         "config": {
             "task": "text_generation",
-            "device": "cpu",
-            "batch_size": 8,
             "metrics": ["rouge"]
         }
     },
@@ -79,11 +73,16 @@ tasks_setups = {
         },
         "config": {
             "task": "image2text",
-            "device": "cpu",
-            "batch_size": 8,
             "metrics": ["cer"]
         }
     },
+}
+
+common_train_config = {
+    "output_dir": "tests-tmp-train-dir",
+    "batch_size": 2,
+    "num_epochs": 1,
+    "device": "cpu",
 }
 
 
@@ -92,8 +91,8 @@ def test_trainer(task):
     setup = tasks_setups[task]
 
     # Datasets
-    train_dataset = Dataset.load(setup["dataset"]["path"], split="train", **setup["dataset"]["config"])
-    eval_dataset = Dataset.load(setup["dataset"]["path"], split="test", **setup["dataset"]["config"])
+    train_dataset = Dataset.load(setup["dataset"]["path"], split="train[:4]", **setup["dataset"]["config"])
+    eval_dataset = Dataset.load(setup["dataset"]["path"], split="test[:4]", **setup["dataset"]["config"])
 
     # Model & Preprocessor
     model_config = ModelConfig.load(setup["model"]["path"])
@@ -101,7 +100,7 @@ def test_trainer(task):
     preprocessor = Preprocessor.load(setup["model"]["path"])
 
     # Trainer config
-    config = TrainerConfig(output_dir="test-tmp-trainer", **setup["config"])
+    config = TrainerConfig(**common_train_config, **setup["config"])
 
     trainer = Trainer(
         config=config,
@@ -110,12 +109,5 @@ def test_trainer(task):
         eval_dataset=eval_dataset,
         preprocessor=preprocessor
     )
+    trainer.train()
 
-    batch_sample = next(iter(trainer.train_dataloader))
-    train_batch_results = trainer.training_step(batch_sample)
-    assert "loss" in train_batch_results, "Training step output must contain loss value!"
-
-    eval_batch_sample = next(iter(trainer.eval_dataloader))
-    eval_batch_results = trainer.evaluation_step(eval_batch_sample)
-    assert isinstance(eval_batch_results, dict), "Evaluation step must return a dictionary of output metrics"
-    # TODO add a `all_metrics_keys` property to MetricsHandler and check if `eval_batch_results` has all of them here

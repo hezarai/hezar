@@ -130,7 +130,7 @@ class OCRDataset(Dataset):
             Dataset: The cleaned dataset.
 
         """
-        data = load_dataset(self.config.path)[split]
+        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         # Cleanup dataset
         valid_indices = []
         invalid_indices = []
