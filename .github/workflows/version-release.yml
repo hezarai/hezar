@@ -6,11 +6,14 @@ on:
       - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
 
 jobs:
+  run-tests:
+    name: Trigger tests.yml
+    uses: ./.github/workflows/tests.yml
   github-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
+    needs: run-tests
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v3.5.2
 
