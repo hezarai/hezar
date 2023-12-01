@@ -42,7 +42,7 @@ Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.
 - [Quick Tour](https://hezarai.github.io/hezar/get_started/quick_tour.html)
 - [Tutorials](https://hezarai.github.io/hezar/tutorial/models.html)
 - [Developer Guides](https://hezarai.github.io/hezar/guide/hezar_architecture.html)
-- [Contribution](https://hezarai.github.io/hezar/contribute/contribute_to_hezar.html)
+- [Contribution](https://hezarai.github.io/hezar/contributing.html)
 - [Reference API](https://hezarai.github.io/hezar/source/index.html)
 
 ## Quick Tour
