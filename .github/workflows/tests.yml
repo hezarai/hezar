@@ -23,4 +23,4 @@ jobs:
         pip install pytest
     - name: Run pytest
       run: |
-        pytest --ignore=test_embeddings.py
+        pytest --ignore=tests/test_embeddings.py
