@@ -3,7 +3,7 @@
   <img src="https://raw.githubusercontent.com/hezarai/hezar/main/hezar.png"/>
 </div>
 
-<div align="center"> The all-in-one AI library for Persian </div>
+<div align="center"> The all-in-one AI library for Persian </div> <br>
 
 <div align="center">
 
