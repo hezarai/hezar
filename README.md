@@ -1,17 +1,21 @@
 
-<p align="center">
+<div align="center">
   <img src="https://raw.githubusercontent.com/hezarai/hezar/main/hezar.png"/>
-</p>
+</div>
 
-_<p align="center"> The all-in-one AI library for Persian_
-<br><br>
+<div align="center">
+The all-in-one AI library for Persian
+
 ![PyPI Version](https://img.shields.io/pypi/v/hezar?color=blue)
 [![PyPi Downloads](https://static.pepy.tech/badge/hezar)](https://pepy.tech/project/hezar)
 ![PyPI License](https://img.shields.io/pypi/l/hezar)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/hezarai/hezar/.github%2Fworkflows%2Fdocs-deploy.yml?label=docs)<br>
-[![Static Badge](https://img.shields.io/badge/Hugging_Face_Hub-yellow?label=%F0%9F%A4%97&labelColor=yellow&link=https%3A%2F%2Fhuggingface.co%2Fhezarai)](https://huggingface.co/hezarai)
-[![Static Badge](https://img.shields.io/badge/Telegram_Channel-blue?logo=telegram&link=https%3A%2F%2Ft.me%2Fhezarai)](https://t.me/hezarai)
-</p>
+![GitHub Workflow Status (docs)](https://img.shields.io/github/actions/workflow/status/hezarai/hezar/.github%2Fworkflows%2Fdocs-deploy.yml?label=docs)
+![GitHub Workflow Status (tests)](https://img.shields.io/github/actions/workflow/status/hezarai/hezar/.github%2Fworkflows%2Ftests.yml?label=tests)<br>
+[![Hugging Face Hub](https://img.shields.io/badge/Hugging_Face_Hub-yellow?label=%F0%9F%A4%97&labelColor=yellow&link=https%3A%2F%2Fhuggingface.co%2Fhezarai)](https://huggingface.co/hezarai)
+[![Telegram Channel](https://img.shields.io/badge/Telegram_Channel-blue?logo=telegram&link=https%3A%2F%2Ft.me%2Fhezarai)](https://t.me/hezarai)
+
+</div>
+
 
 **Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
 
