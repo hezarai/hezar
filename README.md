@@ -3,8 +3,9 @@
   <img src="https://raw.githubusercontent.com/hezarai/hezar/main/hezar.png"/>
 </div>
 
+<div align="center"> The all-in-one AI library for Persian </div>
+
 <div align="center">
-The all-in-one AI library for Persian
 
 ![PyPI Version](https://img.shields.io/pypi/v/hezar?color=blue)
 [![PyPi Downloads](https://static.pepy.tech/badge/hezar)](https://pepy.tech/project/hezar)
