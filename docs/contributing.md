@@ -52,24 +52,30 @@ name there.
 - Refrain from sending large new features in a single giant commit.
 
 #### Styling best practices
+
 - Use imperative mood in the subject (e.g., "Add support for ..." not "Adding support or added support") .
 - Keep the subject line short and concise, preferably less than 50 characters.
 - Capitalize the subject line and do not end it with a period.
 - Wrap body lines at 72 characters.
 - Use the body to explain what and why a change was made.
 - Do not explain the "how" in the commit message; reserve it for documentation or code.
-- For commits referencing an issue or pull request, write the proper commit subject followed by the reference in parentheses (e.g., "Add NFKC normalizer (#9999)").
+- For commits referencing an issue or pull request, write the proper commit subject followed by the reference in
+  parentheses (e.g., "Add NFKC normalizer (#9999)").
 - Reference codes & paths in back quotes (e.g., `variable`, `method()`, `Class()`, `file.py`).
 - Preferably use the following [gitmoji](https://gitmoji.dev/) compatible codes at the beginning of your commit message:
-  - `:bug:`: Fix a bug or issue
-  - `:sparkles`: Add feature or improvements
-  - `:recycle:`: Refactor code (backward compatible refactor)
-  - `:memo:`: Add or change docs
-  - `:pencil2:`: Minor change or improvement
-  - `:fire:`: Remove code or file
-  - `:boom:`: Introduce breaking or backward-incompatible changes
-  - `:bookmark:`: Version release
-  - `:adhesive_bandage:`: Non-critical fix
+
+| Emoji Code           | Emoji | Description                                  | Example Commit                                                 |
+|----------------------|-------|----------------------------------------------|----------------------------------------------------------------|
+| `:bug:`              | 🐛    | Fix a bug or issue                           | `:bug: Fix issue with image loading in DataLoader`             |
+| `:sparkles:`         | ✨     | Add feature or improvements                  | `:sparkles: Introduce support for text summarization`          |
+| `:recycle:`          | ♻️    | Refactor code (backward compatible refactor) | `:recycle: Refactor data preprocessing utilities`              |
+| `:memo:`             | 📝    | Add or change docs                           | `:memo: Update documentation for text classification`          |
+| `:pencil2:`          | ✏️    | Minor change or improvement                  | `:pencil2: Improve logging in Trainer`                         |
+| `:fire:`             | 🔥    | Remove code or file                          | `:fire: Remove outdated utility function`                      |
+| `:boom:`             | 💥    | Introduce breaking changes                   | `:boom: Update API, requires modification in existing scripts` |
+| `:test_tube:`        | 🧪    | Test-related changes                         | `:test_tube: Add unit tests for data loading functions`        |
+| `:bookmark:`         | 🔖    | Version release                              | `:bookmark: Release v1.0.0`                                    |
+| `:adhesive_bandage:` | 🩹    | Non-critical fix                             | `:adhesive_bandage: Fix minor issue in BPE tokenizer`          |
 
 ## Sending a PR
 
