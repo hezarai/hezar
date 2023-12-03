@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict
+from typing import Dict, Union
 
 import torch
 from datasets import load_dataset
@@ -60,7 +60,7 @@ class OCRDatasetConfig(DatasetConfig):
     name = "ocr"
     task: TaskType = TaskType.IMAGE2TEXT
     path: str = None
-    text_split_type: TextSplitType = TextSplitType.TOKENIZE
+    text_split_type: Union[str, TextSplitType] = TextSplitType.TOKENIZE
     tokenizer_path: str = None  # if left to None, text_split_type must be `char_split`
     id2label: Dict[int, str] = field(default_factory=lambda: ID2LABEL)
     text_column: str = "label"
