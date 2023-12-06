@@ -298,8 +298,8 @@ Don't forget to check out our contribution guidelines in [CONTRIBUTING.md](CONTR
 
 ## Citation
 If you found this project useful in your work or research please cite it by using this BibTeX entry:
-```cite
-@Misc{hezar2023,
+```bibtex
+@misc{hezar2023,
   title =        {Hezar: The all-in-one AI library for Persian},
   author =       {Aryan Shekarlaban & Pooya Mohammadi Kazaj},
   publisher =    {GitHub},
