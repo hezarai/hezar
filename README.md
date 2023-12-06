@@ -295,3 +295,15 @@ We could really use your help. Any contribution, big or small, would mean a lot 
 let's team up and make Hezar even better together! ❤️
 
 Don't forget to check out our contribution guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) before diving in. Your support is much appreciated!
+
+## Citation
+If you found this project useful in your work or research please cite it by using this BibTeX entry:
+```cite
+@Misc{hezar2023,
+  title =        {Hezar: The all-in-one AI library for Persian},
+  author =       {Aryan Shekarlaban & Pooya Mohammadi Kazaj},
+  publisher =    {GitHub},
+  howpublished = {\url{https://github.com/hezarai/hezar}},
+  year =         {2023}
+}
+```
