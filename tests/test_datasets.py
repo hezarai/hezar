@@ -7,12 +7,14 @@ TASK_TO_HUB_MAPPING = {
     "text-classification": "hezarai/sentiment-dksf",
     "sequence-labeling": "hezarai/lscp-pos-500k",
     "ocr": "hezarai/persian-license-plate-v1",
+    "image-captioning": "hezarai/flickr30k-fa",
     "text-summarization": "hezarai/xlsum-fa",
 }
 TASK_TO_TOKENIZER_MAPPING = {
     "text-classification": "hezarai/bert-base-fa",
     "sequence-labeling": "hezarai/bert-base-fa",
     "ocr": "hezarai/crnn-fa-printed-96-long",
+    "image-captioning": "hezarai/roberta-base-fa",
     "text-summarization": "hezarai/t5-base-fa",
 }
 
@@ -20,6 +22,7 @@ TASK_TO_REQUIRED_FIELDS = {
     "text-classification": ["token_ids", "attention_mask", "labels"],
     "sequence-labeling": ["token_ids", "attention_mask", "word_ids", "labels"],
     "ocr": ["pixel_values", "labels"],
+    "image-captioning": ["pixel_values", "labels"],
     "text-summarization": ["token_ids", "attention_mask", "labels"],
 }
 
