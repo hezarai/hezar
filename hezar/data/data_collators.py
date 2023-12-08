@@ -180,6 +180,48 @@ class TextGenerationDataCollator:
         return padded_batch
 
 
+class ImageCaptioningDataCollator:
+    def __init__(
+        self,
+        tokenizer: Tokenizer,
+        padding_type: str = "longest",
+        padding_side: str = "right",
+        max_length: int = None,
+        max_target_length: int = None,
+        return_tensors: str = "pt",
+    ):
+        self.tokenizer = tokenizer
+        self.padding_type = padding_type
+        self.padding_side = padding_side
+        self.max_length = max_length
+        self.return_tensors = return_tensors
+
+        if padding_type == "longest" and max_length is not None:
+            logger.warning(
+                "You passed `max_length` while also setting `padding_type` to `longest` which are "
+                "incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                "Ignoring `max_length`"
+            )
+            self.max_length = None
+
+    def __call__(self, encoded_batch):
+        encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
+        permuted_batch = {}
+        for key in encoded_batch[0].keys():
+            stack = [e for item in encoded_batch for e in item[key]]
+            permuted_batch[key] = stack
+
+        padded_batch = self.tokenizer.pad_encoded_batch(
+            permuted_batch,
+            padding=self.padding_type,
+            max_length=self.max_length,
+            exclude_keys=["pixel_values"],
+            return_tensors=self.return_tensors,
+        )
+
+        return padded_batch
+
+
 class SequenceLabelingDataCollator:
     """
     A data collator for sequence labeling.
