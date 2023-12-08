@@ -15,8 +15,9 @@ from ...constants import (
     DEFAULT_TOKENIZER_FILE,
     HEZAR_CACHE_DIR,
     Backends,
+    PaddingType,
 )
-from ...utils import Logger, convert_batch_dict_dtype, is_backend_available
+from ...utils import Logger, convert_batch_dict_dtype, pad_batch_items, is_backend_available
 from ..preprocessor import Preprocessor
 
 
@@ -193,22 +194,24 @@ class Tokenizer(Preprocessor):
     def pad_encoded_batch(
         self,
         inputs,
-        padding: Literal["longest", "max_length"] = None,
+        padding: Union[str, PaddingType] = None,
         max_length: Optional[int] = None,
         truncation: bool = True,
         return_tensors: Optional[str] = None,
-        skip_keys: List = None,
+        include_keys: Optional[List[str]] = None,
+        exclude_keys: List = None,
     ):
         """
         Pad a batch of encoded inputs.
 
         Args:
             inputs: Input batch of encoded tokens.
-            padding (Literal["longest", "max_length"]): Padding type.
+            padding (Union[str, PaddingType]): Padding type.
             max_length (Optional[int]): Max input length (only if padding is set to "max_length").
             truncation (bool): Whether to allow truncation.
             return_tensors (Optional[str]): The type of tensors to return.
-            skip_keys (List): A list of keys to skip padding.
+            include_keys: (Optional[List[str]]): Only pad these given set of keys
+            exclude_keys (List): A list of keys to exclude when padding.
 
         Returns:
             Dict: Padded inputs.
@@ -216,64 +219,27 @@ class Tokenizer(Preprocessor):
         if isinstance(inputs, (list, tuple)) and isinstance(inputs[0], Mapping):
             inputs = {key: [example[key] for example in inputs] for key in inputs[0].keys()}
 
-        inputs_max_length = max([len(x) for x in inputs[self.token_ids_name]])
-        # resolve padding and max_length parameters
-        padding = padding or self.config.padding_strategy
+        exclude_keys = exclude_keys or []
+        exclude_keys += self.uncastable_keys  # avoid possible errors
+        inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=exclude_keys)
 
-        if padding is None:
-            if max_length is not None:
-                padding = "max_length"
-            elif max_length is None:
-                logger.warning("Both padding and max_length are None so the inputs cannot be padded!")
-                return inputs
-
-        if padding == "longest":
-            if max_length is not None:
-                logger.warning(
-                    "Setting padding='longest' and max_length is not valid. You must set one of them"
-                    " and leave the other as None. Falling back to padding='longest'"
-                )
-
-            inputs_length = inputs_max_length
-
-        elif padding == "max_length":
-            if max_length is None:
-                logger.warning(
-                    "Setting padding='max_length' but no max_length value is provided in the function "
-                    "parameters nor the tokenizer config! Falling back to padding='longest'"
-                )
-                inputs_length = inputs_max_length
-            else:
-                if max_length < inputs_max_length and not truncation:
-                    logger.warning(
-                        f"Cannot set max_length to {max_length} "
-                        f"while max input length is {inputs_max_length} and `truncation` is `False`"
-                        f"Either set `truncation=True` or increase `max_length`"
-                    )
-                    inputs_length = inputs_max_length
-                else:
-                    inputs_length = max_length
-
-        skip_keys = skip_keys or []
-        skip_keys += self.uncastable_keys  # avoid possible errors
-        inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=skip_keys)
+        include_keys = include_keys or list(inputs.keys())
 
         for key, batch in inputs.items():
-            if key in skip_keys:
+            if key in exclude_keys:
                 continue
-            padding_id = 0 if key == "attention_mask" else self.pad_token_id
-            padded_batch = []
-            for x in batch:
-                difference = inputs_length - len(x)
-                if difference >= 0:
-                    paddings = [padding_id] * difference
-                    padded_x = x + paddings if self.config.padding_direction == "right" else paddings + x
-                    padded_batch.append(padded_x)
-                else:
-                    padded_batch.append(x[:inputs_length])
-            inputs[key] = padded_batch
+            if key in include_keys:
+                pad_id = 0 if key == "attention_mask" else self.pad_token_id
+                padded_ids = pad_batch_items(
+                    inputs[key],
+                    padding_type=padding,
+                    padding_side=self.config.padding_direction,
+                    pad_id=pad_id,
+                    max_length=max_length, truncation=truncation,
+                )
+                inputs[key] = padded_ids
 
-        inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors, skip_keys=skip_keys)
+        inputs = convert_batch_dict_dtype(inputs, dtype=return_tensors, skip_keys=exclude_keys)
 
         return inputs
 

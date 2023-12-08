@@ -1,12 +1,15 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, List, Optional, Literal
 
 from omegaconf import DictConfig
 
 from .logging import Logger
+from ..constants import PaddingType
 
 
 __all__ = [
     "convert_batch_dict_dtype",
+    "resolve_inputs_length_for_padding",
+    "pad_batch_items",
     "get_non_numeric_keys",
     "flatten_dict",
 ]
@@ -58,6 +61,95 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
             except Exception as e:  # noqa
                 logger.warning(f"Could not convert values of `{k}` to type `{dtype}`\n" f"Error: {e}")
     return batch_dict
+
+
+def resolve_inputs_length_for_padding(
+    inputs: List[List[Any]],
+    padding_type: Union[str, PaddingType] = None,
+    max_length: Optional[Union[bool, int]] = None,
+    truncation: Optional[bool] = True,
+):
+    """
+    Resolve final inputs length based on padding_strategy and max_length values
+    """
+    inputs_max_length = max([len(x) for x in inputs])
+    padding = padding_type or "longest"
+
+    # Resolve padding and max_length values first
+    if padding is None:
+        if max_length is not None:
+            padding = "max_length"
+        elif max_length is None:
+            padding = "longest"
+
+    # Now lets resolve any conflicts
+    if padding == "longest":
+        if max_length is not None:
+            logger.warning(
+                "Setting padding='longest' and max_length is not valid. You must set one of them"
+                " and leave the other as None. Falling back to padding='longest'"
+            )
+
+        inputs_length = inputs_max_length
+
+    elif padding == "max_length":
+        if max_length is None:
+            logger.warning(
+                "Setting padding='max_length' but no max_length value is provided! Falling back to padding='longest'"
+            )
+            inputs_length = inputs_max_length
+        else:
+            if max_length < inputs_max_length and not truncation:
+                logger.warning(
+                    f"Cannot set max_length to {max_length} "
+                    f"while max input length is {inputs_max_length} and `truncation` is `False`"
+                    f"Either set `truncation=True` or increase `max_length`"
+                )
+                inputs_length = inputs_max_length
+            else:
+                inputs_length = max_length
+    else:
+        raise ValueError(f"Invalid padding value `{padding}`, expected either `max_length` or `longest`")
+
+    return inputs_length
+
+
+def pad_batch_items(
+    inputs: List[List[Union[int, float]]],
+    padding_type: Union[str, PaddingType] = None,
+    padding_side: Literal["right", "left"] = "right",
+    pad_id: int = 0,
+    max_length: Optional[Union[bool, int]] = None,
+    truncation: Optional[bool] = True,
+):
+    """
+    Given a nested container of unequal sized iterables e.g, batch of token ids, pad them based on padding strategy
+    Args:
+        inputs: A nested iterable of unequal sized iterables (e.g, list of lists)
+        padding_type: Padding strategy, either max_length or longest
+        padding_side: Where to add padding ids, `left` or `right`, defaults to `right`
+        pad_id: Pad token id, defaults to `0`
+        max_length: Max input length after padding, only applicable when padding_strategy == "max_length"
+        truncation: Whether to truncate if an input in the batch is longer than max_length
+
+    Returns:
+        A list of equal sized lists
+    """
+
+    inputs_length = resolve_inputs_length_for_padding(inputs, padding_type=padding_type, max_length=max_length,
+                                                      truncation=truncation)
+
+    padded_inputs = []
+    for ids in inputs:
+        difference = inputs_length - len(ids)
+        if difference > 0:
+            paddings = [pad_id] * difference
+            padded_ids = ids + paddings if padding_side == "right" else paddings + ids
+            padded_inputs.append(padded_ids)
+        else:
+            padded_inputs.append(ids[:inputs_length])
+
+    return padded_inputs
 
 
 def get_non_numeric_keys(d: Dict, batched=True):
