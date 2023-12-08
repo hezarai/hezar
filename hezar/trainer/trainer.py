@@ -455,14 +455,14 @@ class Trainer:
         """
 
         def _print_info_line(key, value):
-            line = f"  {colorize_text(key, 'bold')}: `{colorize_text(str(value), 'green')}`"
+            line = f"  {colorize_text(key, Color.BOLD)}: `{colorize_text(str(value), Color.ITALIC)}`"
             print(line)
 
         header = f"{'*' * 20} Training Info {'*' * 20}"
         footer = "*" * len(header)
 
         # Header
-        print(f"\n{colorize_text(header, 'bold')}\n")
+        print(f"\n{colorize_text(header, Color.BOLD)}\n")
         # Info
         _print_info_line("Output Directory", self.config.output_dir)
         _print_info_line("Task", self.config.task)
@@ -483,7 +483,7 @@ class Trainer:
         _print_info_line("Checkpoints Path", self.checkpoints_dir)
         _print_info_line("Logs Path", self.logs_dir)
         # Footer
-        print(f"\n{colorize_text(footer, 'bold')}\n")
+        print(f"\n{colorize_text(footer, Color.BOLD)}\n")
 
     def evaluate(self):
         """
