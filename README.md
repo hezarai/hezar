@@ -35,8 +35,15 @@ Hezar is available on PyPI and can be installed with pip:
 ```
 pip install hezar
 ```
-You can also install the latest version from the source.
-Clone the repo and execute the following commands:
+Note that Hezar is a collection of models and tools, hence having different installation variants:
+```
+pip install hezar[all]  # For a full installation
+pip install hezar[nlp]  # For NLP
+pip install hezar[vision]  # For computer vision models
+pip install hezar[audio]  # For audio and speech
+pip install hezar[embeddings]  # For word embedding models
+```
+You can also install the latest version from the source:
 ```
 git clone https://github.com/hezarai/hezar.git
 pip install ./hezar
