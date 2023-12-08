@@ -52,8 +52,6 @@ class OCRDatasetConfig(DatasetConfig):
         max_length (int): Maximum length of text.
         invalid_characters (list): List of invalid characters.
         reverse_digits (bool): Whether to reverse the digits in text.
-        annotation_file (str): Path to the annotation file.
-        test_split_size (float): Size of the test split.
         image_processor_config (ImageProcessorConfig): Configuration for image processing.
 
     """
@@ -69,8 +67,6 @@ class OCRDatasetConfig(DatasetConfig):
     invalid_characters: list = None
     reverse_text: bool = None
     reverse_digits: bool = None
-    annotation_file: str = None
-    test_split_size: float = 0.2
     image_processor_config: ImageProcessorConfig = None
 
 
