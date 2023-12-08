@@ -152,6 +152,11 @@ class ChannelsAxisSide(str, Enum):
     LAST = "last"
 
 
+class PaddingType(str, Enum):
+    MAX_LENGTH = "max_length"
+    LONGEST = "longest"
+
+
 class Color(str, Enum):
     HEADER = "\033[95m"
     NORMAL = "\033[0m"
