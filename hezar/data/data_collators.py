@@ -7,6 +7,7 @@ from ..utils import Logger, convert_batch_dict_dtype
 __all__ = [
     "TextPaddingDataCollator",
     "TextGenerationDataCollator",
+    "ImageCaptioningDataCollator",
     "SequenceLabelingDataCollator",
     "CharLevelOCRDataCollator",
 ]
@@ -161,22 +162,20 @@ class TextGenerationDataCollator:
             stack = [e for item in encoded_batch for e in item[key]]
             permuted_batch[key] = stack
 
-        encoded_batch = permuted_batch.copy()
-        labels = encoded_batch.pop("labels")
-        labels_batch = {"token_ids": labels}  # workaround: treat labels as token_ids in tokenizer to pad correctly
-        padded_labels = self.tokenizer.pad_encoded_batch(
-            labels_batch,
+        padded_batch = self.tokenizer.pad_encoded_batch(
+            permuted_batch,
             padding=self.padding_type,
-            max_length=self.max_target_length,
+            max_length=self.max_length,
+            exclude_keys=["labels"],
             return_tensors=self.return_tensors,
         )
         padded_batch = self.tokenizer.pad_encoded_batch(
-            encoded_batch,
+            padded_batch,
             padding=self.padding_type,
-            max_length=self.max_length,
+            max_length=self.max_target_length,
+            include_keys=["labels"],
             return_tensors=self.return_tensors,
         )
-        padded_batch["labels"] = padded_labels["token_ids"]
 
         return padded_batch
 
@@ -238,7 +237,7 @@ class SequenceLabelingDataCollator:
         if labels is None:
             return batch
 
-        batch.pop("word_ids")
+        batch.pop("word_ids", None)
         sequence_length = torch.tensor(batch["token_ids"]).shape[1]
         if self.padding_side == "right":
             batch[label_name] = [
