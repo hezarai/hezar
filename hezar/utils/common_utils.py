@@ -92,7 +92,7 @@ def colorize_text(text: str, color: Union[str, Color]):
         "red": Color.RED,
         "grey": Color.GREY,
     }
-    if isinstance(color, str):
+    if isinstance(color, str) and not hasattr(color, "value"):
         color = color_mapping.get(color.lower(), Color.NORMAL)
     return color + text + Color.NORMAL
 
