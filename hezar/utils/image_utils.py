@@ -1,13 +1,13 @@
-from typing import Iterable, Tuple, Union
 from io import BytesIO
+from typing import Iterable, Tuple, Union
 
-import requests
 import numpy as np
+import requests
 import torch
 
 from ..constants import Backends, ChannelsAxisSide, ImageType
-from .integration_utils import is_backend_available
 from .common_utils import is_url
+from .integration_utils import is_backend_available
 from .logging import Logger
 
 

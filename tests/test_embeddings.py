@@ -1,5 +1,7 @@
-from hezar.embeddings import Embedding
 import pytest
+
+from hezar.embeddings import Embedding
+
 
 TESTABLE_EMBEDDINGS = {
     "word2vec-skipgram": "hezarai/word2vec-skipgram-fa-wikipedia",

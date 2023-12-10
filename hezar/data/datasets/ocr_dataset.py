@@ -10,7 +10,7 @@ from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
-from ...utils import Logger, reverse_string_digits, is_text_valid
+from ...utils import Logger, is_text_valid, reverse_string_digits
 from ..data_collators import CharLevelOCRDataCollator
 from .dataset import Dataset
 

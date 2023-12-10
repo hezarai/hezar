@@ -22,7 +22,7 @@ from typing import Dict, List, Literal, Optional, Tuple, Union
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, TaskType, OptimizerType, LRSchedulerType
+from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, LRSchedulerType, OptimizerType, TaskType
 from .utils import Logger, get_module_config_class
 
 

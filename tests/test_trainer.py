@@ -7,9 +7,9 @@ test suite complex and require redundant code.
 
 import pytest
 
+from hezar.builders import build_model
 from hezar.data import Dataset
 from hezar.models import ModelConfig
-from hezar.builders import build_model
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 

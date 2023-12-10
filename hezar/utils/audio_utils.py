@@ -31,7 +31,7 @@ def load_audio_files(paths: Union[str, List[str]], sampling_rate: int = 16000):
             paths = [paths]
         inputs = [librosa.load(x, sr=sampling_rate)[0] for x in paths]
     else:
-        raise ImportError(f"`librosa` must be installed to load audio files!")
+        raise ImportError("`librosa` must be installed to load audio files!")
     return inputs
 
 

@@ -8,8 +8,8 @@ Examples:
     >>> model = Model.load("hezarai/bert-base-fa")
 """
 import inspect
-import re
 import os
+import re
 import tempfile
 from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
@@ -31,6 +31,7 @@ from ..constants import (
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, get_module_class, verify_dependencies
 from .model_outputs import ModelOutput
+
 
 logger = Logger(__name__)
 

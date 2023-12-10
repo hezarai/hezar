@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any, Callable, Dict, Mapping, Tuple, Union
+from typing import Any, Callable, Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -15,19 +15,18 @@ from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_CSV_LOG_FILE,
-    DEFAULT_TRAINER_SUBFOLDER,
     DEFAULT_TRAINER_STATE_FILE,
+    DEFAULT_TRAINER_SUBFOLDER,
     HEZAR_CACHE_DIR,
     TQDM_BAR_FORMAT,
-    TaskType,
-    Color,
-    OptimizerType,
     LRSchedulerType,
+    OptimizerType,
+    TaskType,
 )
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, sanitize_function_parameters, colorize_text
+from ..utils import Logger, colorize_text, sanitize_function_parameters
 from .metrics_handlers import (
     AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
@@ -37,7 +36,7 @@ from .metrics_handlers import (
     TextClassificationMetricsHandler,
     TextGenerationMetricsHandler,
 )
-from .trainer_utils import TrainerState, CSVLogger, write_to_tensorboard, resolve_logdir
+from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
 
 
 logger = Logger(__name__)
@@ -263,7 +262,7 @@ class Trainer:
             load_best: Whether to load the best checkpoint or not, if False, loads the latest checkpoint
         """
         if os.path.isdir(checkpoint) and load_best:
-            logger.warning(f"The `load_best` parameter has no effect when `checkpoint` is a path!")
+            logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
 
         self.state = TrainerState.load(os.path.join(self.checkpoints_dir, self.default_trainer_state_file))
         if isinstance(checkpoint, bool):
@@ -561,7 +560,7 @@ class Trainer:
 
             self.log(train_logs, evaluation_logs, epoch)
 
-        logger.info(f"Training done!")
+        logger.info("Training done!")
 
     def log(self, train_logs: Dict[str, Any], evaluation_logs: Dict[str, Any], step: int):
         """

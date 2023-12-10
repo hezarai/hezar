@@ -2,7 +2,7 @@ import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Literal, Mapping, Optional, Tuple, Union
+from typing import Dict, List, Mapping, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -17,7 +17,7 @@ from ...constants import (
     Backends,
     PaddingType,
 )
-from ...utils import Logger, convert_batch_dict_dtype, pad_batch_items, is_backend_available
+from ...utils import Logger, convert_batch_dict_dtype, is_backend_available, pad_batch_items
 from ..preprocessor import Preprocessor
 
 

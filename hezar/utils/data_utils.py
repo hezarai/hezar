@@ -1,9 +1,9 @@
-from typing import Any, Dict, Union, List, Optional, Literal
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from omegaconf import DictConfig
 
-from .logging import Logger
 from ..constants import PaddingType
+from .logging import Logger
 
 
 __all__ = [

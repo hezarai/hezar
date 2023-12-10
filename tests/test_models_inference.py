@@ -1,9 +1,10 @@
 import os
+
 import pytest
 
+from hezar.builders import build_model
 from hezar.models import ModelConfig
 from hezar.preprocessors import Preprocessor
-from hezar.builders import build_model
 
 
 TESTABLE_MODELS = {

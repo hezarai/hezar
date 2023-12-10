@@ -1,10 +1,11 @@
 import os
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 
 import numpy as np
-from omegaconf import OmegaConf
 import pandas as pd
+from omegaconf import OmegaConf
 from torch.utils.tensorboard import SummaryWriter
+
 
 __all__ = [
     "TrainerState",

@@ -1,7 +1,10 @@
 from typing import Dict
-from torch.utils.data import DataLoader
-from hezar.data import Dataset
+
 import pytest
+from torch.utils.data import DataLoader
+
+from hezar.data import Dataset
+
 
 TASK_TO_HUB_MAPPING = {
     "text-classification": "hezarai/sentiment-dksf",

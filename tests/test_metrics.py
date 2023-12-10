@@ -1,7 +1,10 @@
 import os
+
 import pytest
-from hezar.utils import list_available_metrics
+
 from hezar.builders import build_metric
+from hezar.utils import list_available_metrics
+
 
 INVALID_OUTPUT_TYPE = "Metric output must be a dictionary!"
 INVALID_FIELDS = "Invalid fields in metric outputs!"
