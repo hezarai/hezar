@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Iterable, Union
+from typing import Iterable
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -42,8 +44,8 @@ class BLEU(Metric):
 
     def compute(
         self,
-        predictions: Union[Iterable[str], str] = None,
-        targets: Union[Iterable[str], str] = None,
+        predictions: Iterable[str] | str = None,
+        targets: Iterable[str] | str = None,
         weights=(0.25, 0.25, 0.25, 0.25),
         n_decimals=None,
         output_keys=None,
@@ -53,8 +55,8 @@ class BLEU(Metric):
         Computes the BLEU score for the given predictions against targets.
 
         Args:
-            predictions (Union[Iterable[str], str]): Predicted sentences or tokens.
-            targets (Union[Iterable[str], str]): Ground truth sentences or tokens.
+            predictions (Iterable[str] | str): Predicted sentences or tokens.
+            targets (Iterable[str] | str): Ground truth sentences or tokens.
             weights (tuple): Weights for n-gram precision, default is (0.25, 0.25, 0.25, 0.25).
             n_decimals (int): Number of decimals for the final score.
             output_keys (tuple): Filter the output keys.

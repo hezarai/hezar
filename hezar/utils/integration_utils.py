@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import importlib.util
 from importlib.metadata import version
-from typing import List, Union
+from typing import List
 
 from ..constants import Backends
 
@@ -25,7 +27,7 @@ def is_backend_available(backend: Backends):
     return importlib.util.find_spec(backend) is not None
 
 
-def verify_dependencies(obj, backends: List[Union[Backends, str]] = None):
+def verify_dependencies(obj, backends: List[Backends | str] = None):
     """
     Check if all the required dependencies are installed or not.
 

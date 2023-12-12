@@ -1,4 +1,6 @@
-from typing import List, Union
+from __future__ import annotations
+
+from typing import List
 
 import numpy as np
 import torch
@@ -85,7 +87,7 @@ class TrOCRImage2Text(Model):
 
         return outputs
 
-    def preprocess(self, inputs: Union[List[str], List[np.ndarray], List["Image"], List[torch.Tensor]], **kwargs):
+    def preprocess(self, inputs: List[str] | List[np.ndarray] | List["Image"] | List[torch.Tensor], **kwargs):
         image_processor = self.preprocessor[self.image_processor]
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs

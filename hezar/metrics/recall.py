@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Iterable, Union
+from typing import Iterable
 
 from sklearn.metrics import recall_score
 
@@ -24,7 +26,7 @@ class RecallConfig(MetricConfig):
         pos_label (int): Label of the positive class.
         average (str): Type of averaging for the recall score.
         sample_weight (Iterable[float]): Sample weights for the recall score.
-        zero_division (Union[str, float]): Strategy for zero-division, default is 0.0.
+        zero_division (str | float): Strategy for zero-division, default is 0.0.
         output_keys (tuple): Keys to filter the metric results for output.
     """
     name = MetricType.RECALL
@@ -32,7 +34,7 @@ class RecallConfig(MetricConfig):
     pos_label: int = 1
     average: str = "macro"
     sample_weight: Iterable[float] = None
-    zero_division: Union[str, float] = 0.0
+    zero_division: str | float = 0.0
     output_keys: tuple = ("recall",)
 
 
@@ -72,7 +74,7 @@ class Recall(Metric):
             pos_label (int): Label of the positive class.
             average (str): Type of averaging for the recall score.
             sample_weight (Iterable[float]): Sample weights for the recall score.
-            zero_division (Union[str, float]): Strategy for zero-division, default is 0.0.
+            zero_division (str | float): Strategy for zero-division, default is 0.0.
             n_decimals (int): Number of decimals for the final score.
             output_keys (tuple): Filter the output keys.
 

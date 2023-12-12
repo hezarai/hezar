@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import os
 import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Tuple, Union
+from typing import Dict, List, Mapping, Optional, Tuple
 
 import numpy as np
 import torch
@@ -82,7 +84,7 @@ class Tokenizer(Preprocessor):
         **kwargs: Extra config parameters that merge into the main config.
     """
 
-    required_backends: List[Union[str, Backends]] = []
+    required_backends: List[str | Backends] = []
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
@@ -194,7 +196,7 @@ class Tokenizer(Preprocessor):
     def pad_encoded_batch(
         self,
         inputs,
-        padding: Union[str, PaddingType] = None,
+        padding: str | PaddingType = None,
         max_length: Optional[int] = None,
         truncation: bool = True,
         return_tensors: Optional[str] = None,
@@ -206,7 +208,7 @@ class Tokenizer(Preprocessor):
 
         Args:
             inputs: Input batch of encoded tokens.
-            padding (Union[str, PaddingType]): Padding type.
+            padding (str | PaddingType): Padding type.
             max_length (Optional[int]): Max input length (only if padding is set to "max_length").
             truncation (bool): Whether to allow truncation.
             return_tensors (Optional[str]): The type of tensors to return.
@@ -245,8 +247,8 @@ class Tokenizer(Preprocessor):
 
     def __call__(
         self,
-        inputs: Union[List[str], List[Tuple[str, str]]],
-        device: Union[str, torch.device] = None,
+        inputs: List[str] | List[Tuple[str, str]],
+        device: str | torch.device = None,
         add_special_tokens: bool = True,
         padding_strategy=None,
         truncation_strategy=None,
@@ -442,13 +444,13 @@ class Tokenizer(Preprocessor):
 
         return encoding_dict
 
-    def convert_tokens_to_ids(self, tokens: Union[str, List[str]]) -> Union[int, List[int]]:
+    def convert_tokens_to_ids(self, tokens: str | List[str]) -> int | List[int]:
         if isinstance(tokens, str):
             tokens = [tokens]
 
         return [self._tokenizer.token_to_id(token) for token in tokens]
 
-    def convert_ids_to_tokens(self, ids: Union[int, List[int]], skip_special_tokens: bool = False):
+    def convert_ids_to_tokens(self, ids: int | List[int], skip_special_tokens: bool = False):
         if isinstance(ids, int):
             ids = [ids]
         tokens = []
@@ -527,7 +529,7 @@ class Tokenizer(Preprocessor):
 
     def get_tokens_from_offsets(
         self,
-        text: Union[str, List[str]],
+        text: str | List[str],
         ids: List[int],
         offsets_mapping: List[Tuple[int, int]],
     ):

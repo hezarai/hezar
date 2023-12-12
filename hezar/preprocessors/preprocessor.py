@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 from collections import OrderedDict
-from typing import List, Union
+from typing import List
 
 from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
@@ -18,7 +20,7 @@ class Preprocessor:
         config: Preprocessor properties
     """
 
-    required_backends: List[Union[str, Backends]] = []
+    required_backends: List[str | Backends] = []
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 

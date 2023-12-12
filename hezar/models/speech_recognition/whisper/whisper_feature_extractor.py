@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List
 
 import numpy as np
 import torch
@@ -59,7 +61,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
 
     def __call__(
         self,
-        raw_speech: Union[np.ndarray, List[float], List[np.ndarray], List[List[float]]],
+        raw_speech: np.ndarray | List[float] | List[np.ndarray] | List[List[float]],
         device: str = None,
         truncation: bool = True,
         pad_to_multiple_of: int = None,

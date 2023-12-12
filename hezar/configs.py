@@ -12,12 +12,14 @@ Examples:
     >>> bert_config.save("saved/bert", filename="model_config.yaml")
     >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
 """
+from __future__ import annotations
+
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pprint import pformat
-from typing import Dict, List, Literal, Optional, Tuple, Union
+from typing import Dict, List, Literal, Optional, Tuple
 
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
@@ -136,7 +138,7 @@ class Config:
     @classmethod
     def load(
         cls,
-        hub_or_local_path: Union[str, os.PathLike],
+        hub_or_local_path: str | os.PathLike,
         filename: Optional[str] = None,
         subfolder: Optional[str] = None,
         repo_type=None,
@@ -193,7 +195,7 @@ class Config:
         return config
 
     @classmethod
-    def from_dict(cls, dict_config: Union[Dict, DictConfig], **kwargs):
+    def from_dict(cls, dict_config: Dict | DictConfig, **kwargs):
         """
         Load config from a dict-like object. Nested configs are also properly converted to their classes if possible.
         """
@@ -215,7 +217,7 @@ class Config:
 
     def save(
         self,
-        save_dir: Union[str, os.PathLike],
+        save_dir: str | os.PathLike,
         filename: str,
         subfolder: Optional[str] = None,
         skip_none_fields: Optional[bool] = True,
@@ -314,7 +316,7 @@ class DatasetConfig(Config):
 
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.DATASET)
-    task: Union[TaskType, List[TaskType]] = field(
+    task: TaskType | List[TaskType] = field(
         default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
     path: str = None
@@ -343,7 +345,7 @@ class MetricConfig(Config):
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.METRIC)
     objective: Literal["maximize", "minimize"] = None
-    output_keys: Union[List, Tuple] = None
+    output_keys: List | Tuple = None
     n_decimals: int = 4
 
 
@@ -367,7 +369,7 @@ class TrainerConfig(Config):
         eval_batch_size (int): Evaluation batch size, defaults to `batch_size` if None.
         use_amp (bool): Whether to use mixed precision or not.
         evaluate_with_generate (bool): Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).
-        metrics (List[Union[str, MetricConfig]]): A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.
+        metrics (List[str | MetricConfig]): A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.
         num_epochs (int): Number of total epochs to train the model.
         save_freq (int): Save the trainer stats and everything every `save_freq` epochs.
         checkpoints_dir (str): Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
@@ -377,21 +379,21 @@ class TrainerConfig(Config):
     name: str = field(init=False, default="trainer")
     config_type: str = field(init=False, default=ConfigType.TRAINER)
     output_dir: str
-    task: Union[str, TaskType]
+    task: str | TaskType
     device: str = "cuda"
     num_epochs: int = None
     init_weights_from: str = None
     num_dataloader_workers: int = 4
     seed: int = 42
-    optimizer: Union[str, OptimizerType] = None
+    optimizer: str | OptimizerType = None
     learning_rate: float = 2e-5
     weight_decay: float = 0.0
-    lr_scheduler: Union[str, LRSchedulerType] = None
+    lr_scheduler: str | LRSchedulerType = None
     batch_size: int = None
     eval_batch_size: int = None
     use_amp: bool = False
     evaluate_with_generate: bool = True
-    metrics: List[Union[str, MetricConfig]] = None
+    metrics: List[str | MetricConfig] = None
     metric_for_best_model: str = "evaluation.loss"
     save_freq: int = 1
     checkpoints_dir: str = "checkpoints"

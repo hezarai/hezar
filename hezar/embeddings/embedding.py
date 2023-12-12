@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from huggingface_hub import HfApi, hf_hub_download
 
@@ -50,7 +52,7 @@ class Embedding:
         **kwargs: Extra embedding config parameters passed as keyword arguments.
     """
 
-    required_backends: List[Union[str, Backends]] = []
+    required_backends: List[str | Backends] = []
 
     filename = DEFAULT_EMBEDDING_FILE
     vectors_filename = f"{filename}.wv.vectors.npy"
@@ -82,12 +84,12 @@ class Embedding:
         """
         raise NotImplementedError
 
-    def __call__(self, inputs: Union[str, List[str]], **kwargs):
+    def __call__(self, inputs: str | List[str], **kwargs):
         """
         Get vectors for input words.
 
         Args:
-            inputs (Union[str, List[str]]): Input word(s).
+            inputs (str | List[str]): Input word(s).
             **kwargs: Additional keyword arguments.
 
         Returns:
@@ -230,7 +232,7 @@ class Embedding:
 
     def save(
         self,
-        path: Union[str, os.PathLike],
+        path: str | os.PathLike,
         filename: str = None,
         subfolder: str = None,
         save_config: bool = True,
@@ -240,7 +242,7 @@ class Embedding:
         Save the embedding model to a specified path.
 
         Args:
-            path (Union[str, os.PathLike]): Path to save the embedding model.
+            path (str | os.PathLike): Path to save the embedding model.
             filename (str): Name of the embedding file.
             subfolder (str): Subfolder within the path.
             save_config (bool): Whether to save the configuration.

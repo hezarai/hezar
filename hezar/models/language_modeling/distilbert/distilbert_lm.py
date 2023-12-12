@@ -1,7 +1,9 @@
 """
 A DistilBERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from typing import List, Union
+from __future__ import annotations
+
+from typing import List
 
 import torch
 
@@ -61,7 +63,7 @@ class DistilBertLM(Model):
         loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+    def preprocess(self, inputs: str | List[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
 

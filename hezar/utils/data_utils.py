@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Literal, Optional, Union
+from __future__ import annotations
+
+from typing import Any, Dict, List, Literal, Optional
 
 from omegaconf import DictConfig
 
@@ -65,8 +67,8 @@ def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip
 
 def resolve_inputs_length_for_padding(
     inputs: List[List[Any]],
-    padding_type: Union[str, PaddingType] = None,
-    max_length: Optional[Union[bool, int]] = None,
+    padding_type: str | PaddingType = None,
+    max_length: Optional[bool | int] = None,
     truncation: Optional[bool] = True,
 ):
     """
@@ -115,11 +117,11 @@ def resolve_inputs_length_for_padding(
 
 
 def pad_batch_items(
-    inputs: List[List[Union[int, float]]],
-    padding_type: Union[str, PaddingType] = None,
+    inputs: List[List[int | float]],
+    padding_type: str | PaddingType = None,
     padding_side: Literal["right", "left"] = "right",
     pad_id: int = 0,
-    max_length: Optional[Union[bool, int]] = None,
+    max_length: Optional[bool | int] = None,
     truncation: Optional[bool] = True,
 ):
     """
@@ -173,7 +175,7 @@ def get_non_numeric_keys(d: Dict, batched=True):
     return keys
 
 
-def flatten_dict(dict_config: Union[Dict, DictConfig]) -> DictConfig:
+def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
     """
     Flatten a nested Dict/DictConfig object
 

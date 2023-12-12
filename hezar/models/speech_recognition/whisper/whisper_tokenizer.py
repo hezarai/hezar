@@ -329,7 +329,7 @@ class WhisperBPETokenizer(BPETokenizer):
         Compute offsets for a given tokenized input
 
         Args:
-            token_ids (`Union[int, List[int], np.ndarray, torch.Tensor, tf.Tensor]`):
+            token_ids:
                 List of tokenized input ids. Can be obtained using the `__call__` method.
             time_precision (`float`, `optional`, defaults to 0.02):
                 The time ratio to convert from token to time.

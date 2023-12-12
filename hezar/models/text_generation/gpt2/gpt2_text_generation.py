@@ -1,4 +1,6 @@
-from typing import List, Union
+from __future__ import annotations
+
+from typing import List
 
 import torch
 
@@ -81,7 +83,7 @@ class GPT2TextGeneration(Model):
         generated_ids = self.gpt2.generate(token_ids, generation_config=generation_config)
         return generated_ids
 
-    def preprocess(self, texts: Union[str, List[str]], **kwargs):
+    def preprocess(self, texts: str | List[str], **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
         inputs = tokenizer(texts, return_tensors="pt", device=self.device)
         return inputs

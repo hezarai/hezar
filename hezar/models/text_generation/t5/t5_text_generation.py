@@ -1,4 +1,6 @@
-from typing import Dict, List, Union
+from __future__ import annotations
+
+from typing import Dict, List
 
 import torch
 
@@ -95,7 +97,7 @@ class T5TextGeneration(Model):
         output_ids = self.t5.generate(**model_inputs, **generation_kwargs)
         return output_ids
 
-    def preprocess(self, inputs: Union[str, List[str]], prefix=None):
+    def preprocess(self, inputs: str | List[str], prefix=None):
         if isinstance(inputs, str):
             inputs = [inputs]
         prefix = prefix or self.config.input_prefix
