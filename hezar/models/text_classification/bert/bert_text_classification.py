@@ -1,7 +1,9 @@
 """
 A BERT model for text classification built using HuggingFace Transformers
 """
-from typing import Dict, List, Union
+from __future__ import annotations
+
+from typing import Dict, List
 
 import torch
 from torch import nn
@@ -104,7 +106,7 @@ class BertTextClassification(Model):
         }
         return outputs
 
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+    def preprocess(self, inputs: str | List[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         if "text_normalizer" in self.preprocessor:

@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import gzip
 import json
 import os
 import shutil
-from typing import Union
 
 import omegaconf
 
@@ -18,7 +19,7 @@ __all__ = [
 ]
 
 
-def load_yaml_config(path: Union[str, os.PathLike]):
+def load_yaml_config(path: str | os.PathLike):
     """
     Load yaml file using omegaconf
     """
@@ -26,7 +27,7 @@ def load_yaml_config(path: Union[str, os.PathLike]):
     return config
 
 
-def load_json_config(path: Union[str, os.PathLike]):
+def load_json_config(path: str | os.PathLike):
     """
     Load json config file
     """

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import inspect
 import re
 from time import perf_counter
-from typing import Callable, Dict, List, Mapping, Union
+from typing import Callable, Dict, List, Mapping
 
 from ..constants import Color
 
@@ -74,7 +76,7 @@ def is_url(text):
     return bool(re.match(url_pattern, text))
 
 
-def colorize_text(text: str, color: Union[str, Color]):
+def colorize_text(text: str, color: str | Color):
     """
     Add colorization codes to the text. The output is the text with surrounding color codes and the colors are applied
     on the console/terminal output like when using `print()`
@@ -113,7 +115,7 @@ def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
     return d
 
 
-def sanitize_function_parameters(func: Callable, params: Union[Dict, Mapping], **kwargs):
+def sanitize_function_parameters(func: Callable, params: Dict | Mapping, **kwargs):
     """
     Given a dict of parameters or kwargs, you can figure out which ones must be passed to the `func` based on its
     signature.

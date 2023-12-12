@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -29,7 +31,7 @@ class SeqevalConfig(MetricConfig):
         suffix (bool): Flag to indicate whether the labels have suffixes.
         mode (Optional[str]): Evaluation mode for seqeval.
         sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
-        zero_division (Union[str, int]): Strategy for zero-division, default is 0.
+        zero_division (str | int): Strategy for zero-division, default is 0.
     """
     name = MetricType.SEQEVAL
     objective: str = "maximize"
@@ -37,7 +39,7 @@ class SeqevalConfig(MetricConfig):
     suffix: bool = False
     mode: Optional[str] = None
     sample_weight: Optional[List[int]] = None
-    zero_division: Union[str, int] = 0
+    zero_division: str | int = 0
 
 
 @register_metric("seqeval", config_class=SeqevalConfig)
@@ -61,7 +63,7 @@ class Seqeval(Metric):
         suffix: bool = None,
         mode: Optional[str] = None,
         sample_weight: Optional[List[int]] = None,
-        zero_division: Union[str, int] = None,
+        zero_division: str | int = None,
         n_decimals: int = None,
         output_keys=None,
         **kwargs,
@@ -75,7 +77,7 @@ class Seqeval(Metric):
             suffix (bool): Flag to indicate whether the labels have suffixes.
             mode (Optional[str]): Evaluation mode for seqeval.
             sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
-            zero_division (Union[str, int]): Strategy for zero-division, default is 0.
+            zero_division (str | int): Strategy for zero-division, default is 0.
             n_decimals (int): Number of decimals for the final score.
             output_keys (tuple): Filter the output keys.
 

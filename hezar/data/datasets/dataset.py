@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import os
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from torch.utils.data import Dataset as TorchDataset
 
@@ -24,12 +26,12 @@ class Dataset(TorchDataset):
         **kwargs: Additional keyword arguments.
 
     Attributes:
-        required_backends (List[Union[str, Backends]]): List of required backends for the dataset.
+        required_backends (List[str | Backends]): List of required backends for the dataset.
         config_filename (str): Default dataset config file name.
         cache_dir (str): Default cache directory for the dataset.
 
     """
-    required_backends: List[Union[str, Backends]] = None
+    required_backends: List[str | Backends] = None
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = HEZAR_CACHE_DIR
 
@@ -79,18 +81,18 @@ class Dataset(TorchDataset):
     @classmethod
     def load(
         cls,
-        hub_path: Union[str, os.PathLike],
+        hub_path: str | os.PathLike,
         config_filename: Optional[str] = None,
-        split: Optional[Union[str, SplitType]] = None,
+        split: Optional[str | SplitType] = None,
         **kwargs,
     ) -> "Dataset":
         """
         Load the dataset from a hub path.
 
         Args:
-            hub_path (Union[str, os.PathLike]): Path to dataset from hub or locally.
+            hub_path (str | os.PathLike): Path to dataset from hub or locally.
             config_filename (Optional[str]): Dataset config file name.
-            split (Optional[Union[str, SplitType]]): Dataset split, defaults to "train".
+            split (Optional[str | SplitType]): Dataset split, defaults to "train".
             **kwargs: Config parameters as keyword arguments.
 
         Returns:

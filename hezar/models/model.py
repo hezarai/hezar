@@ -7,12 +7,14 @@ Examples:
     >>> from hezar.models import Model
     >>> model = Model.load("hezarai/bert-base-fa")
 """
+from __future__ import annotations
+
 import inspect
 import os
 import re
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -58,7 +60,7 @@ class Model(nn.Module):
         config: A dataclass model config
     """
 
-    required_backends: List[Union[Backends, str]] = []
+    required_backends: List[Backends | str] = []
     # Default file names
     model_filename = DEFAULT_MODEL_FILE
     config_filename = DEFAULT_MODEL_CONFIG_FILE
@@ -70,7 +72,7 @@ class Model(nn.Module):
     skip_keys_on_load = []
 
     # Loss function name
-    loss_fn_name: Union[str, LossType] = LossType.CROSS_ENTROPY
+    loss_fn_name: str | LossType = LossType.CROSS_ENTROPY
     loss_fn_kwargs: Dict[str, Any] = {}
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
@@ -96,12 +98,12 @@ class Model(nn.Module):
     @classmethod
     def load(
         cls,
-        hub_or_local_path: Union[str, os.PathLike],
+        hub_or_local_path: str | os.PathLike,
         load_locally: Optional[bool] = False,
         load_preprocessor: Optional[bool] = True,
         model_filename: Optional[str] = None,
         config_filename: Optional[str] = None,
-        save_path: Optional[Union[str, os.PathLike]] = None,
+        save_path: Optional[str | os.PathLike] = None,
         **kwargs,
     ) -> "Model":
         """
@@ -208,7 +210,7 @@ class Model(nn.Module):
 
     def save(
         self,
-        path: Union[str, os.PathLike],
+        path: str | os.PathLike,
         filename: Optional[str] = None,
         save_preprocessor: Optional[bool] = True,
         config_filename: Optional[str] = None,
@@ -336,7 +338,7 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def preprocess(self, *raw_inputs: Union[Any, List[Any]], **kwargs):
+    def preprocess(self, *raw_inputs: Any | List[Any], **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
@@ -349,7 +351,7 @@ class Model(nn.Module):
         """
         return raw_inputs
 
-    def post_process(self, *model_outputs: Union[Dict[str, torch.Tensor], torch.Tensor], **kwargs):
+    def post_process(self, *model_outputs: Dict[str, torch.Tensor] | torch.Tensor, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
@@ -365,11 +367,11 @@ class Model(nn.Module):
     @torch.inference_mode()
     def predict(
         self,
-        inputs: Union[Any, List[Any]],
-        device: Union[str, torch.device] = None,
+        inputs: Any | List[Any],
+        device: str | torch.device = None,
         unpack_forward_inputs: bool = True,
         **kwargs,
-    ) -> Union[Dict, List[Dict], torch.Tensor, Iterable, ModelOutput]:
+    ) -> Dict | List[Dict] | torch.Tensor | Iterable | ModelOutput:
         """
         Perform an end-to-end prediction on raw inputs.
 
@@ -502,7 +504,7 @@ class Model(nn.Module):
         return self._preprocessor
 
     @preprocessor.setter
-    def preprocessor(self, value: Union[Preprocessor, PreprocessorsContainer, List[Preprocessor]]):
+    def preprocessor(self, value: Preprocessor | PreprocessorsContainer | List[Preprocessor]):
         """
         A safe setter method for model's preprocessor. Value must be either a Preprocessor, a list of Preprocessors or
         a PreprocessorsContainer instance.

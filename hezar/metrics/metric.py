@@ -1,4 +1,6 @@
-from typing import Dict, List, Union
+from __future__ import annotations
+
+from typing import Dict, List
 
 from ..configs import MetricConfig
 from ..constants import Backends
@@ -14,7 +16,7 @@ class Metric:
     such a module, is to make sure the metrics are treated the same all over the framework.
     """
 
-    required_backends: Union[List[Union[str, Backends]]] = []
+    required_backends: List[str | Backends] = []
 
     def __init__(self, config: MetricConfig, **kwargs):
         # Check if all the required dependencies are installed

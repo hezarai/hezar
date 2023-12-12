@@ -1,7 +1,9 @@
 """
 Common audio utils taken from `transformers.audio_utils`
 """
-from typing import List, Optional, Union
+from __future__ import annotations
+
+from typing import List, Optional
 
 import numpy as np
 
@@ -24,7 +26,7 @@ __all__ = [
 logger = Logger(__name__)
 
 
-def load_audio_files(paths: Union[str, List[str]], sampling_rate: int = 16000):
+def load_audio_files(paths: str | List[str], sampling_rate: int = 16000):
     if is_backend_available(Backends.LIBROSA):
         import librosa
         if isinstance(paths, str):
@@ -459,7 +461,7 @@ def mel_filter_bank(
     return mel_filters
 
 
-def hertz_to_mel(freq: Union[float, np.ndarray], mel_scale: str = "htk") -> Union[float, np.ndarray]:
+def hertz_to_mel(freq: float | np.ndarray, mel_scale: str = "htk") -> float | np.ndarray:
     """
     Convert frequency from hertz to mels.
 
@@ -493,7 +495,7 @@ def hertz_to_mel(freq: Union[float, np.ndarray], mel_scale: str = "htk") -> Unio
     return mels
 
 
-def mel_to_hertz(mels: Union[float, np.ndarray], mel_scale: str = "htk") -> Union[float, np.ndarray]:
+def mel_to_hertz(mels: float | np.ndarray, mel_scale: str = "htk") -> float | np.ndarray:
     """
     Convert frequency from mels to hertz.
 

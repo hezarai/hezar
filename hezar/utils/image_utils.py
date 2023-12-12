@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from io import BytesIO
-from typing import Iterable, Tuple, Union
+from typing import Iterable, Tuple
 
 import numpy as np
 import requests
@@ -36,8 +38,8 @@ def verify_image_dims(image: np.ndarray):
 
 
 def convert_image_type(
-    image: Union[np.ndarray, "Image", torch.Tensor],
-    target_type: Union[str, ImageType] = ImageType.NUMPY,
+    image: np.ndarray | "Image" | torch.Tensor,
+    target_type: str | ImageType = ImageType.NUMPY,
 ):
     """
     Convert image lib type. Supports numpy array, pillow image and torch tensor.
@@ -73,7 +75,7 @@ def convert_image_type(
     return image
 
 
-def load_image(path, return_type: Union[str, ImageType] = ImageType.PILLOW):
+def load_image(path, return_type: str | ImageType = ImageType.PILLOW):
     """
     Load an image file to a desired return format
 
@@ -92,7 +94,7 @@ def load_image(path, return_type: Union[str, ImageType] = ImageType.PILLOW):
     return converted_image
 
 
-def show_image(image: Union["Image", torch.Tensor, np.ndarray], title: str = "Image"):
+def show_image(image: "Image" | torch.Tensor | np.ndarray, title: str = "Image"):
     """
     Given any type of input image (PIL, numpy, torch), show the image in a window
 
@@ -139,7 +141,7 @@ def resize_image(
     return np_image
 
 
-def mirror_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageType.NUMPY):
+def mirror_image(image: np.ndarray, return_type: str | ImageType = ImageType.NUMPY):
     if not isinstance(image, np.ndarray):
         raise ValueError("image must be a numpy array")
 
@@ -151,7 +153,7 @@ def mirror_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageTy
     return final_image
 
 
-def gray_scale_image(image: np.ndarray, return_type: Union[str, ImageType] = ImageType.NUMPY):
+def gray_scale_image(image: np.ndarray, return_type: str | ImageType = ImageType.NUMPY):
     if not isinstance(image, np.ndarray):
         raise ValueError("image must be a numpy array")
 
@@ -166,9 +168,9 @@ def gray_scale_image(image: np.ndarray, return_type: Union[str, ImageType] = Ima
 
 def normalize_image(
     image: np.ndarray,
-    mean: Union[float, Iterable[float]],
-    std: Union[float, Iterable[float]],
-    channel_axis: Union[str, ChannelsAxisSide] = "first",
+    mean: float | Iterable[float],
+    std:  float | Iterable[float],
+    channel_axis: str | ChannelsAxisSide = "first",
 ):
     verify_image_dims(image)
 
@@ -203,9 +205,9 @@ def find_channels_axis_side(image: np.ndarray, num_channels: int = None):
 
 def transpose_channels_axis_side(
     image: np.ndarray,
-    axis_side: Union[str, ChannelsAxisSide],
+    axis_side:  str | ChannelsAxisSide,
     num_channels: int = None,
-    src_axis_side: Union[str, ChannelsAxisSide] = None,
+    src_axis_side: str | ChannelsAxisSide = None,
 ):
     """
     Convert an image channels axis side from (channels, ...) to (..., channels) or vise versa.

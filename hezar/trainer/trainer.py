@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import random
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -94,7 +96,7 @@ class Trainer:
         train_dataset: Dataset = None,
         eval_dataset: Dataset = None,
         data_collator: Callable = None,
-        preprocessor: Union[Preprocessor, PreprocessorsContainer] = None,
+        preprocessor: Preprocessor | PreprocessorsContainer = None,
         metrics_handler: MetricsHandler = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
@@ -176,7 +178,7 @@ class Trainer:
         model.to(self.device)
         return model
 
-    def _setup_dataloaders(self) -> Tuple[DataLoader, Union[DataLoader, None]]:
+    def _setup_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
         """
         Set up data loaders (train/eval) and return them.
 
@@ -253,7 +255,7 @@ class Trainer:
         )
         return metrics_handler
 
-    def load_from_checkpoint(self, checkpoint: Union[str, bool] = True, load_best: bool = False):
+    def load_from_checkpoint(self, checkpoint: str | bool = True, load_best: bool = False):
         """
         Load trainer states like model weights, optimizer, etc. from a checkpoint
 
@@ -516,7 +518,7 @@ class Trainer:
 
         return self.metrics_handler.tracker.avg()
 
-    def train(self, resume_from_checkpoint: Union[str, bool] = None):
+    def train(self, resume_from_checkpoint: str | bool = None):
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
 

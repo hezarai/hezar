@@ -1,4 +1,6 @@
-from typing import List, Union
+from __future__ import annotations
+
+from typing import List
 
 import numpy as np
 import torch
@@ -151,7 +153,7 @@ class WhisperSpeechRecognition(Model):
     def freeze_encoder(self):
         self.whisper.freeze_encoder()
 
-    def preprocess(self, inputs: Union[str, np.ndarray, List[np.ndarray], List[str]], **kwargs):
+    def preprocess(self, inputs: str | np.ndarray | List[np.ndarray] | List[str], **kwargs):
         if isinstance(inputs, str) or (isinstance(inputs, List) and isinstance(inputs[0], str)):
             inputs = load_audio_files(inputs)
 

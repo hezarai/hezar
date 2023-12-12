@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
-from typing import List, Literal, Union
+from typing import List, Literal
 
 from ..constants import Backends
 from ..registry import register_embedding
@@ -128,7 +130,7 @@ class FastText(Embedding):
 
     def save(
         self,
-        path: Union[str, os.PathLike],
+        path: str | os.PathLike,
         filename: str = None,
         subfolder: str = None,
         save_config: bool = True,
@@ -138,7 +140,7 @@ class FastText(Embedding):
         Save the FastText embedding model to a specified path.
 
         Args:
-            path (Union[str, os.PathLike]): Path to save the embedding model.
+            path (str | os.PathLike): Path to save the embedding model.
             filename (str): Name of the embedding file.
             subfolder (str): Subfolder within the path.
             save_config (bool): Whether to save the configuration.
@@ -195,7 +197,7 @@ class FastText(Embedding):
             top_n (int): Number of similar words to retrieve.
 
         Returns:
-            List[Dict[str, Union[str, float]]]: List of dictionaries containing 'word' and 'score'.
+            List[Dict[str, str | float]]: List of dictionaries containing 'word' and 'score'.
         """
         if not isinstance(word, str):
             raise ValueError(f"`word` must be `str`, got `{type(word)}`!")

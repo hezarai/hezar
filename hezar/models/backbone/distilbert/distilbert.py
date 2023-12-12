@@ -1,7 +1,9 @@
 """
 A DistilBERT base language model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from typing import List, Union
+from __future__ import annotations
+
+from typing import List
 
 from ....constants import Backends
 from ....models import Model
@@ -49,7 +51,7 @@ class DistilBERT(Model):
         )
         return outputs
 
-    def preprocess(self, inputs: Union[str, List[str]], **kwargs):
+    def preprocess(self, inputs: str | List[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         if "text_normalizer" in self.preprocessor:
