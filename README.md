@@ -294,11 +294,10 @@ More specifically, here's a simple summary of the core modules in Hezar:
 For more info, check the [tutorials](https://hezarai.github.io/hezar/tutorial/)
 
 ## Contribution
-Maintaining this robust project is quite a task for our small team of developers. Although the idea isn't super new, 
-putting it into action has been really tough. In fact, Hezar stands as the sole project of its kind in the entire history
-of Persian open source.
+Maintaining Hezar is no cakewalk with just a few of us on board. The concept might not be groundbreaking, but putting it
+into action was a real challenge. In fact, Hezar stands as the biggest Persian open source project of its kind!
 
-We could really use your help. Any contribution, big or small, would mean a lot to us. So, if you're interested,
+Any contribution, big or small, would mean a lot to us. So, if you're interested,
 let's team up and make Hezar even better together! ❤️
 
 Don't forget to check out our contribution guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) before diving in. Your support is much appreciated!
