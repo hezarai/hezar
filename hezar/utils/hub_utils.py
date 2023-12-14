@@ -120,7 +120,7 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
                 for x in f:
                     files.append(f"{r.replace(f'{hub_or_local_path}/', '')}/{x}")
     else:
-        files = HfApi().list_repo_files(hub_or_local_path, repo_type=RepoType.MODEL.value)
+        files = HfApi().list_repo_files(hub_or_local_path, repo_type=str(RepoType.MODEL))
 
     if subfolder is not None:
         files = [x.replace(f"{subfolder}/", "") for x in files if subfolder in x]

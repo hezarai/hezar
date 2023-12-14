@@ -408,7 +408,7 @@ class TrainerConfig(Config):
         if self.task not in list(TaskType):
             raise ValueError(
                 f"Invalid task `{self.task}` passed to `TrainerConfig`. "
-                f"Available options are {[t.value for t in list(TaskType)]}",
+                f"Available options are {TaskType.list()}",
             )
         if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):
             self.metric_for_best_model = f"evaluation.{self.metric_for_best_model}"
