@@ -3,6 +3,7 @@ from typing import Iterable, List, Tuple
 
 import numpy as np
 
+from .preprocessor import Preprocessor
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
 from ..constants import (
@@ -23,8 +24,6 @@ from ..utils import (
     resize_image,
     transpose_channels_axis_side,
 )
-from .preprocessor import Preprocessor
-
 
 # List of backends required for the image processor
 _required_backends = [
@@ -176,6 +175,7 @@ class ImageProcessor(Preprocessor):
         subfolder: str = None,
         force_return_dict: bool = False,
         config_filename: str = None,
+        cache_dir: str = None,
         **kwargs,
     ) -> "ImageProcessor":
         """
@@ -186,6 +186,7 @@ class ImageProcessor(Preprocessor):
             subfolder (str): Subfolder within the specified path.
             force_return_dict (bool): Flag to force return as a dictionary.
             config_filename (str): Configuration filename.
+            cache_dir: Path to cache directory
             **kwargs: Additional keyword arguments.
 
         Returns:
@@ -193,7 +194,12 @@ class ImageProcessor(Preprocessor):
         """
         subfolder = subfolder or cls.preprocessor_subfolder
         config_filename = config_filename or cls.image_processor_config_file
-        config = ImageProcessorConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder)
+        config = ImageProcessorConfig.load(
+            hub_or_local_path,
+            filename=config_filename,
+            subfolder=subfolder,
+            cache_dir=cache_dir,
+        )
         image_processor = build_preprocessor(config.name, config, **kwargs)
         return image_processor
 

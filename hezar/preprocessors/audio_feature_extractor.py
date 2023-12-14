@@ -301,6 +301,7 @@ class AudioFeatureExtractor(Preprocessor):
         hub_or_local_path,
         subfolder: str = None,
         config_filename: str = None,
+        cache_dir: str = None,
         **kwargs,
     ):
         """
@@ -310,6 +311,7 @@ class AudioFeatureExtractor(Preprocessor):
             hub_or_local_path: Hub repo id or local path
             subfolder: Preprocessor subfolder path
             config_filename: Config file name
+            cache_dir: Path to cache directory
             **kwargs:
 
         Returns:
@@ -322,6 +324,7 @@ class AudioFeatureExtractor(Preprocessor):
             hub_or_local_path,
             subfolder=subfolder,
             filename=config_filename,
+            cache_dir=cache_dir,
         )
 
         feature_extractor = build_preprocessor(config.name, config=config, **kwargs)

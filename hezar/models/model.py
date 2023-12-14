@@ -104,6 +104,7 @@ class Model(nn.Module):
         model_filename: Optional[str] = None,
         config_filename: Optional[str] = None,
         save_path: Optional[str | os.PathLike] = None,
+        cache_dir: Optional[str | os.PathLike] = None,
         **kwargs,
     ) -> "Model":
         """
@@ -120,6 +121,7 @@ class Model(nn.Module):
             model_filename: Optional model filename.
             config_filename: Optional config filename
             save_path: Save model to this path after loading
+            cache_dir: Path to cache directory, defaults to `~/.cache/hezar`
 
         Returns:
             The fully loaded Hezar model
@@ -128,7 +130,8 @@ class Model(nn.Module):
         device = None or kwargs.pop("device", None)
         # Load config
         config_filename = config_filename or cls.config_filename
-        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=config_filename)
+        cache_dir = cache_dir or HEZAR_CACHE_DIR
+        config = ModelConfig.load(hub_or_local_path=hub_or_local_path, filename=config_filename, cache_dir=cache_dir)
         # Get the exact model class based on registry name under config.name
         model_cls = get_module_class(config.name, registry_type=RegistryType.MODEL)
         # Handle compatibility of model class and the one in the config
@@ -151,7 +154,7 @@ class Model(nn.Module):
             model_path = hf_hub_download(
                 hub_or_local_path,
                 filename=model_filename,
-                cache_dir=HEZAR_CACHE_DIR,
+                cache_dir=cache_dir,
                 resume_download=True,
             )
         else:
@@ -165,7 +168,7 @@ class Model(nn.Module):
             model.save(save_path)
         # Load the preprocessor(s)
         if load_preprocessor:
-            preprocessor = Preprocessor.load(hub_or_local_path, force_return_dict=True)
+            preprocessor = Preprocessor.load(hub_or_local_path, force_return_dict=True, cache_dir=cache_dir)
             model.preprocessor = preprocessor
         return model
 
