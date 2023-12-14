@@ -33,7 +33,7 @@ class Dataset(TorchDataset):
     """
     required_backends: List[str | Backends] = None
     config_filename = DEFAULT_DATASET_CONFIG_FILE
-    cache_dir = HEZAR_CACHE_DIR
+    cache_dir = os.path.join(HEZAR_CACHE_DIR, "datasets")
 
     def __init__(self, config: DatasetConfig, split=None, **kwargs):
         """
@@ -84,6 +84,7 @@ class Dataset(TorchDataset):
         hub_path: str | os.PathLike,
         config_filename: Optional[str] = None,
         split: Optional[str | SplitType] = None,
+        cache_dir: str = None,
         **kwargs,
     ) -> "Dataset":
         """
@@ -93,6 +94,7 @@ class Dataset(TorchDataset):
             hub_path (str | os.PathLike): Path to dataset from hub or locally.
             config_filename (Optional[str]): Dataset config file name.
             split (Optional[str | SplitType]): Dataset split, defaults to "train".
+            cache_dir (str): Path to cache directory
             **kwargs: Config parameters as keyword arguments.
 
         Returns:
@@ -101,7 +103,14 @@ class Dataset(TorchDataset):
         """
         split = split or "train"
         config_filename = config_filename or cls.config_filename
-        dataset_config = DatasetConfig.load(hub_path, filename=config_filename, repo_type=RepoType.DATASET)
+        if cache_dir is not None:
+            cls.cache_dir = cache_dir
+        dataset_config = DatasetConfig.load(
+            hub_path,
+            filename=config_filename,
+            repo_type=RepoType.DATASET,
+            cache_dir=cls.cache_dir,
+        )
         dataset_config.path = hub_path
         dataset = build_dataset(dataset_config.name, config=dataset_config, split=split, **kwargs)
         return dataset

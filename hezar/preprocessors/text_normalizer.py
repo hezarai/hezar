@@ -91,6 +91,7 @@ class TextNormalizer(Preprocessor):
         hub_or_local_path,
         subfolder=None,
         config_filename=None,
+        cache_dir=None,
         **kwargs
     ) -> "TextNormalizer":
         config_filename = config_filename or cls.normalizer_config_file
@@ -99,6 +100,7 @@ class TextNormalizer(Preprocessor):
             hub_or_local_path,
             filename=config_filename,
             subfolder=subfolder,
+            cache_dir=cache_dir,
         )
         normalizer = build_preprocessor(config.name, config, **kwargs)
         return normalizer
