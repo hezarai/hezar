@@ -67,18 +67,16 @@ class Config:
     config_type: str = field(init=False, default=ConfigType.BASE)
 
     def __post_init__(self):
-        if "name" in self.__annotations__:
-            if self.__dataclass_fields__["name"].init == True:  # noqa
+        # Class variables cannot be init-able
+        for attr in CONFIG_CLASS_VARS:
+            if self.__dataclass_fields__[attr].init == True:  # noqa
                 raise ValueError(
-                    f"The parameter `name` in a config should be either non-initable or unannotated! "
+                    f"The parameter `{attr}` in a config should be either non-initable or unannotated! "
                     f"\nYou should define it as either:\n"
-                    f"`name = {self.name}`"
+                    f"`{attr} = '{getattr(self, attr)}'`"
                     f" or "
-                    f"`name: str = field(default={self.name}, init=False)`"
+                    f"`{attr}: str = field(default='{getattr(self, attr)}', init=False)`"
                 )
-        # If `name` is defined raw, redefine it so that it's registered as a dataclass field
-        elif "name" not in self.__annotations__ and self.name is not None:
-            self.name: str = self.name
 
         # Convert enums to values
         for param, value in self.dict().items():
