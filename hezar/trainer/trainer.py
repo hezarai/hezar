@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import os
 import random
 from typing import Any, Callable, Dict, Tuple, TYPE_CHECKING
@@ -125,11 +126,14 @@ class Trainer:
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
         # Setup accelerated objects if possible
-        if accelerator is None and self.config.use_accelerate and not self.config.use_cpu:
+        if accelerator is None and self.config.distributed and not self.config.use_cpu:
             self.accelerator = self._setup_accelerator()
+            self.scaler = self.accelerator.scaler
             self.device = self.accelerator.device
         else:
             self.accelerator = accelerator
+            enabled = True if self.config.mixed_precision is not None and not self.config.use_cpu else False
+            self.scaler = torch.cuda.amp.GradScaler(enabled=enabled)
 
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
@@ -261,7 +265,8 @@ class Trainer:
             )
         else:
             raise ValueError(
-                f"You set `use_accelerate` in trainer's config but package `accelerate` is not installed!"
+                "The configuration for this trainer requires the package `accelerate` to be installed! "
+                "(config.distributed=True)"
             )
 
         return accelerator
@@ -427,10 +432,11 @@ class Trainer:
 
         if self.accelerator is not None:
             self.accelerator.backward(loss)
+            self.optimizer.step()
         else:
-            loss.backward()
-
-        self.optimizer.step()
+            self.scaler.scale(loss).backward()
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
 
         self.optimizer.zero_grad()
 
