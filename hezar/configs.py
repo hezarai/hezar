@@ -24,9 +24,9 @@ from typing import Dict, List, Literal, Optional, Tuple
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, LRSchedulerType, OptimizerType, TaskType
+from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, LRSchedulerType, OptimizerType, TaskType, \
+    PrecisionType
 from .utils import Logger, get_module_config_class
-
 
 __all__ = [
     "Config",
@@ -392,6 +392,7 @@ class TrainerConfig(Config):
     batch_size: int = None
     eval_batch_size: int = None
     use_amp: bool = False
+    mixed_precision: PrecisionType | str | None = None
     evaluate_with_generate: bool = True
     metrics: List[str | MetricConfig] = None
     metric_for_best_model: str = "evaluation.loss"

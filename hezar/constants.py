@@ -39,6 +39,7 @@ class Backends(str, Enum):
     TRANSFORMERS = "transformers"
     DATASETS = "datasets"
     TOKENIZERS = "tokenizers"
+    ACCELERATE = "accelerate"
     SOUNDFILE = "soundfile"
     LIBROSA = "librosa"
     WANDB = "wandb"
@@ -104,6 +105,13 @@ class LossType(str, Enum):
     CROSS_ENTROPY = "cross_entropy"
     TRIPLE_MARGIN = "triple_margin"
     CTC = "ctc"
+
+
+class PrecisionType(str, Enum):
+    NO = "no"
+    FP8 = "fp8"
+    FP16 = "fp16"
+    BF16 = "bf16"
 
 
 class OptimizerType(str, Enum):
