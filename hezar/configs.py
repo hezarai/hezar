@@ -391,8 +391,9 @@ class TrainerConfig(Config):
     lr_scheduler: str | LRSchedulerType = None
     batch_size: int = None
     eval_batch_size: int = None
-    use_amp: bool = False
+    use_accelerate: bool = True
     mixed_precision: PrecisionType | str | None = None
+    use_cpu: bool = False
     evaluate_with_generate: bool = True
     metrics: List[str | MetricConfig] = None
     metric_for_best_model: str = "evaluation.loss"
