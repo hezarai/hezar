@@ -178,6 +178,7 @@ class Embedding:
         embedding_file=None,
         vectors_file=None,
         subfolder=None,
+        cache_dir=None,
         **kwargs,
     ) -> "Embedding":
         """
@@ -189,6 +190,7 @@ class Embedding:
             embedding_file (str): Embedding file name.
             vectors_file (str): Vectors file name.
             subfolder (str): Subfolder within the repository.
+            cache_dir (str): Path to cache directory
             **kwargs: Additional keyword arguments.
 
         Returns:
@@ -198,8 +200,14 @@ class Embedding:
         embedding_file = embedding_file or cls.filename
         vectors_file = vectors_file or cls.vectors_filename
         subfolder = subfolder or cls.subfolder
+        cache_dir = cache_dir or HEZAR_CACHE_DIR
 
-        config = EmbeddingConfig.load(hub_or_local_path, filename=config_filename, subfolder=subfolder)
+        config = EmbeddingConfig.load(
+            hub_or_local_path,
+            filename=config_filename,
+            subfolder=subfolder,
+            cache_dir=cache_dir,
+        )
 
         if os.path.isdir(hub_or_local_path):
             embedding_path = os.path.join(hub_or_local_path, subfolder, embedding_file)
@@ -209,14 +217,14 @@ class Embedding:
                 hub_or_local_path,
                 filename=embedding_file,
                 subfolder=subfolder,
-                cache_dir=HEZAR_CACHE_DIR,
+                cache_dir=cache_dir,
                 resume_download=True,
             )
             vectors_path = hf_hub_download(
                 hub_or_local_path,
                 filename=vectors_file,
                 subfolder=subfolder,
-                cache_dir=HEZAR_CACHE_DIR,
+                cache_dir=cache_dir,
                 resume_download=True,
             )
 

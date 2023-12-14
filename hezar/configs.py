@@ -27,7 +27,6 @@ from omegaconf import DictConfig, OmegaConf
 from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, LRSchedulerType, OptimizerType, TaskType
 from .utils import Logger, get_module_config_class
 
-
 __all__ = [
     "Config",
     "ModelConfig",
@@ -141,7 +140,8 @@ class Config:
         hub_or_local_path: str | os.PathLike,
         filename: Optional[str] = None,
         subfolder: Optional[str] = None,
-        repo_type=None,
+        repo_type: str = None,
+        cache_dir: str = None,
         **kwargs,
     ) -> "Config":
         """
@@ -152,6 +152,7 @@ class Config:
             filename: Configuration filename
             subfolder: Optional subfolder path where the config is in
             repo_type: Repo type e.g, model, dataset, etc
+            cache_dir: Path to cache directory
             **kwargs: Manual config parameters to override
 
         Returns:
@@ -172,7 +173,7 @@ class Config:
                 hub_or_local_path,
                 filename=filename,
                 subfolder=subfolder,
-                cache_dir=HEZAR_CACHE_DIR,
+                cache_dir=cache_dir or HEZAR_CACHE_DIR,
                 repo_type=repo_type,
             )
         # Load config file and convert to dictionary

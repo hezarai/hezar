@@ -563,6 +563,7 @@ class Tokenizer(Preprocessor):
         subfolder=None,
         config_filename=None,
         tokenizer_filename=None,
+        cache_dir=None,
         **kwargs,
     ) -> "Tokenizer":
         """
@@ -574,6 +575,7 @@ class Tokenizer(Preprocessor):
             subfolder: Subfolder containing tokenizer files.
             config_filename: Tokenizer config filename.
             tokenizer_filename: Tokenizer filename.
+            cache_dir: Path to cache directory
             **kwargs: Additional arguments.
 
         Returns:
@@ -583,10 +585,13 @@ class Tokenizer(Preprocessor):
         tokenizer_filename = tokenizer_filename or cls.tokenizer_filename
         config_filename = config_filename or cls.tokenizer_config_filename
         subfolder = subfolder or cls.preprocessor_subfolder
+        cache_dir = cache_dir or HEZAR_CACHE_DIR
+
         config = TokenizerConfig.load(
             hub_or_local_path,
             filename=config_filename,
             subfolder=subfolder,
+            cache_dir=cache_dir,
         )
 
         if os.path.isdir(hub_or_local_path):
@@ -596,7 +601,7 @@ class Tokenizer(Preprocessor):
                 hub_or_local_path,
                 filename=tokenizer_filename,
                 subfolder=subfolder,
-                cache_dir=HEZAR_CACHE_DIR,
+                cache_dir=cache_dir,
                 resume_download=True,
             )
         tokenizer = build_preprocessor(config.name, config, tokenizer_file=tokenizer_path, **kwargs)

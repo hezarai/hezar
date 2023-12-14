@@ -58,6 +58,7 @@ class Preprocessor:
         hub_or_local_path,
         subfolder: str = None,
         force_return_dict: bool = False,
+        cache_dir: str = None,
         **kwargs
     ):
         """
@@ -72,12 +73,14 @@ class Preprocessor:
             hub_or_local_path: Path to hub or local repo
             subfolder: Subfolder for the preprocessor.
             force_return_dict: Whether to return a dict even if there's only one preprocessor available on the repo
+            cache_dir: Path to cache directory
             **kwargs: Extra kwargs
 
         Returns:
             A Preprocessor subclass or a dict of Preprocessor subclass instances
         """
         subfolder = subfolder or cls.preprocessor_subfolder
+        cache_dir = cache_dir or HEZAR_CACHE_DIR
         preprocessor_files = list_repo_files(hub_or_local_path, subfolder=subfolder)
         preprocessors = PreprocessorsContainer()
         for f in preprocessor_files:
@@ -90,13 +93,13 @@ class Preprocessor:
                         filename=f,
                         subfolder=subfolder,
                         repo_type=RepoType.MODEL,
-                        cache_dir=HEZAR_CACHE_DIR,
+                        cache_dir=cache_dir,
                     )
                 config = OmegaConf.load(config_file)
                 name = config.get("name", None)
                 if name:
                     preprocessor_cls = get_module_class(name, registry_type=RegistryType.PREPROCESSOR)
-                    preprocessor = preprocessor_cls.load(hub_or_local_path, subfolder=subfolder)
+                    preprocessor = preprocessor_cls.load(hub_or_local_path, subfolder=subfolder, cache_dir=cache_dir)
                     preprocessors[name] = preprocessor
                 else:
                     raise ValueError(f"The config file `{config_file}` does not have the property `name`!")
