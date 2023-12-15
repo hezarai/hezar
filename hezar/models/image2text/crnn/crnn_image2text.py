@@ -80,18 +80,18 @@ class CRNNImage2Text(Model):
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, generation_outputs, return_probs=False):
-        generated_ids, probs = generation_outputs
+    def post_process(self, generation_outputs, return_scores=False):
+        generated_ids, scores = generation_outputs
         outputs = []
         generated_ids = generated_ids.cpu().numpy().tolist()
-        probs = probs.cpu().numpy().tolist()
-        for decoded_ids, prob in zip(generated_ids, probs):
+        scores = scores.cpu().numpy().tolist()
+        for decoded_ids, score in zip(generated_ids, scores):
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
             if self.config.reverse_output_digits:
                 text = reverse_string_digits(text)
-            if return_probs:
-                outputs.append(Image2TextOutput(text=text, prob=prob))
+            if return_scores:
+                outputs.append(Image2TextOutput(text=text, score=score))
             else:
                 outputs.append(Image2TextOutput(text=text))
         return outputs

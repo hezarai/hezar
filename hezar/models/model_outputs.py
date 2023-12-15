@@ -83,4 +83,4 @@ class SpeechRecognitionOutput(ModelOutput):
 @dataclass(repr=False)
 class Image2TextOutput(ModelOutput):
     text: Optional[str] = None
-    prob: Optional[str] = None
+    score: Optional[str] = None
