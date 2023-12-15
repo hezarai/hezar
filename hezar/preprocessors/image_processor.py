@@ -3,7 +3,6 @@ from typing import Iterable, List, Tuple
 
 import numpy as np
 
-from .preprocessor import Preprocessor
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
 from ..constants import (
@@ -24,6 +23,8 @@ from ..utils import (
     resize_image,
     transpose_channels_axis_side,
 )
+from .preprocessor import Preprocessor
+
 
 # List of backends required for the image processor
 _required_backends = [
