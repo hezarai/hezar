@@ -46,7 +46,7 @@ class Embedding:
     Base class for all embeddings.
 
     Args:
-        config (EmbeddingConfig): An EmbeddingConfig object to construct the embedding.
+        config: An EmbeddingConfig object to construct the embedding.
         embedding_file (str): Path to the embedding file.
         vectors_file (str): Path to the vectors file.
         **kwargs: Extra embedding config parameters passed as keyword arguments.
