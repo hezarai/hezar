@@ -12,6 +12,16 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from .metrics_handlers import (
+    AudioClassificationMetricsHandler,
+    Image2TextMetricHandler,
+    MetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    TextClassificationMetricsHandler,
+    TextGenerationMetricsHandler,
+)
+from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -29,17 +39,6 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, sanitize_function_parameters
-from .metrics_handlers import (
-    AudioClassificationMetricsHandler,
-    Image2TextMetricHandler,
-    MetricsHandler,
-    SequenceLabelingMetricsHandler,
-    SpeechRecognitionMetricsHandler,
-    TextClassificationMetricsHandler,
-    TextGenerationMetricsHandler,
-)
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
-
 
 logger = Logger(__name__)
 
@@ -114,7 +113,13 @@ class Trainer:
 
         # Setup model and preprocessor(s)
         self.model = self._setup_model(model)
-        self.model.preprocessor = preprocessor
+        if self.model.preprocessor is None:
+            if preprocessor is not None:
+                self.model.preprocessor = preprocessor
+            else:
+                raise ValueError(
+                    "You must set a preprocessor for the model or pass the preprocessor parameter to the Trainer!"
+                )
 
         # Configure datasets and data loaders
         self.train_dataset = train_dataset
