@@ -5,13 +5,12 @@ from typing import List
 import numpy as np
 import torch
 
+from .vit_roberta_image2text_config import ViTRobertaImage2TextConfig
+from ...model import Model
+from ...model_outputs import Image2TextOutput
 from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
-from ...model import Model
-from ...model_outputs import Image2TextOutput
-from .vit_roberta_image2text_config import ViTRobertaImage2TextConfig
-
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import (
@@ -27,6 +26,10 @@ if is_backend_available(Backends.PILLOW):
     from PIL import Image
 
 _required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
+
+
+def build_vision_encoder_decoder_model(encoder, decoder, config=None):
+    return VisionEncoderDecoderModel(config=config, encoder=encoder, decoder=decoder)
 
 
 @register_model("vit_roberta_image2text", config_class=ViTRobertaImage2TextConfig)
@@ -99,3 +102,11 @@ class ViTRobertaImage2Text(Model):
         decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
         outputs = [Image2TextOutput(text=text) for text in decoded_outputs]
         return outputs
+
+    @property
+    def encoder(self):
+        return self.vit_roberta.encoder
+
+    @property
+    def decoder(self):
+        return self.vit_roberta.decoder
