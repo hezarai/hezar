@@ -13,6 +13,7 @@ __all__ = [
     "exists_on_hub",
     "clone_repo",
     "list_repo_files",
+    "get_state_dict_from_hub",
 ]
 
 logger = Logger(__name__)
@@ -126,3 +127,34 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
         files = [x.replace(f"{subfolder}/", "") for x in files if subfolder in x]
 
     return files
+
+
+def get_state_dict_from_hub(hub_id, filename, subfolder=None):
+    """
+    Load a state dict from a repo on the HF Hub. Works on any repo no matter the library.
+
+    Args:
+        hub_id: Path to repo id
+        filename: Weights file name
+        subfolder: Optional subfolder in the repo
+
+    Returns:
+        A PyTorch state dict obj
+    """
+    import torch
+
+    api = HfApi()
+
+    subfolder = subfolder or ""
+
+    # Download or load the cached file
+    weights_file = api.hf_hub_download(
+        repo_id=hub_id,
+        filename=filename,
+        subfolder=subfolder,
+        cache_dir=HEZAR_CACHE_DIR,
+    )
+
+    state_dict = torch.load(weights_file)
+
+    return state_dict
