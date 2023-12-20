@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import os
 import random
 from typing import Any, Callable, Dict, Tuple, TYPE_CHECKING
@@ -114,7 +113,13 @@ class Trainer:
 
         # Setup model and preprocessor(s)
         self.model = self._setup_model(model)
-        self.model.preprocessor = preprocessor
+        if self.model.preprocessor is None:
+            if preprocessor is not None:
+                self.model.preprocessor = preprocessor
+            else:
+                raise ValueError(
+                    "You must set a preprocessor for the model or pass the preprocessor parameter to the Trainer!"
+                )
 
         # Configure datasets and data loaders
         self.train_dataset = train_dataset
@@ -462,7 +467,7 @@ class Trainer:
         if self.model.is_generative and self.config.evaluate_with_generate:
             generate_inputs = sanitize_function_parameters(self.model.generate, input_batch)
             generated_ids = self.model.generate(**generate_inputs)
-            outputs["logits"] = generated_ids
+            outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 

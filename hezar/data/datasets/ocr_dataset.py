@@ -133,15 +133,17 @@ class OCRDataset(Dataset):
         valid_indices = []
         invalid_indices = []
         for i, sample in enumerate(list(iter(data))):
-            text, path = sample.values()
+            path, text = sample.values()
             if len(text) <= self.config.max_length and is_text_valid(text, self.config.id2label.values()):
                 valid_indices.append(i)
             else:
                 invalid_indices.append(i)
         if len(invalid_indices):
             logger.warning(
-                f"Invalid samples found in the dataset! Invalid indices: {invalid_indices}"
+                f"{len(invalid_indices)} invalid samples found in the dataset! "
+                f"Inspect them using the `invalid_data` attribute"
             )
+        self.invalid_data = data.select(invalid_indices)
         data = data.select(valid_indices)
         return data
 
@@ -185,7 +187,7 @@ class OCRDataset(Dataset):
             dict: The input data.
 
         """
-        text, path = self.data[index].values()
+        path, text = self.data[index].values()
         pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"][0]
         labels = self._text_to_tensor(text)
         inputs = {

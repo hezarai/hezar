@@ -188,7 +188,6 @@ class ImageCaptioningDataCollator:
         padding_type: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
-        max_target_length: int = None,
         return_tensors: str = "pt",
     ):
         self.tokenizer = tokenizer
@@ -219,6 +218,7 @@ class ImageCaptioningDataCollator:
             exclude_keys=["pixel_values"],
             return_tensors=self.return_tensors,
         )
+        padded_batch = convert_batch_dict_dtype(padded_batch, dtype="pt")
 
         return padded_batch
 

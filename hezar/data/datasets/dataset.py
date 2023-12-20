@@ -22,7 +22,7 @@ class Dataset(TorchDataset):
     Base class for all datasets in Hezar.
 
     Args:
-        config (DatasetConfig): The configuration object for the dataset.
+        config: The configuration object for the dataset.
         **kwargs: Additional keyword arguments.
 
     Attributes:
@@ -36,14 +36,6 @@ class Dataset(TorchDataset):
     cache_dir = os.path.join(HEZAR_CACHE_DIR, "datasets")
 
     def __init__(self, config: DatasetConfig, split=None, **kwargs):
-        """
-        Initializes a new dataset instance.
-
-        Args:
-            config (DatasetConfig): The configuration object for the dataset.
-            **kwargs: Additional keyword arguments.
-
-        """
         verify_dependencies(self, self.required_backends)
         self.config = config.update(kwargs)
         self.preprocessor = None

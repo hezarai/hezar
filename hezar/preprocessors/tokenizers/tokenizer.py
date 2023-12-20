@@ -79,7 +79,7 @@ class Tokenizer(Preprocessor):
     Base tokenizer class. Mostly copied from :class:`~tokenizers.implementations.BaseTokenizer`.
 
     Args:
-        config (TokenizerConfig): A TokenizerConfig instance.
+        config: A TokenizerConfig instance.
         tokenizer_file (str): A tokenizer.json file to load the whole tokenizer from.
         **kwargs: Extra config parameters that merge into the main config.
     """
@@ -92,14 +92,6 @@ class Tokenizer(Preprocessor):
     uncastable_keys = ["word_ids", "tokens", "offsets_mapping"]
 
     def __init__(self, config: TokenizerConfig, tokenizer_file=None, **kwargs):
-        """
-        Initialize the Tokenizer.
-
-        Args:
-            config (TokenizerConfig): A TokenizerConfig instance.
-            tokenizer_file (str): A tokenizer.json file to load the whole tokenizer from.
-            **kwargs: Extra config parameters that merge into the main config.
-        """
         super().__init__(config, **kwargs)
         self._tokenizer = self.from_file(tokenizer_file) if tokenizer_file is not None else self.build()
         self.special_tokens = self._get_all_special_tokens()

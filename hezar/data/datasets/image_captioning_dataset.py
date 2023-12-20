@@ -3,15 +3,14 @@ from dataclasses import dataclass
 import torch
 from datasets import load_dataset
 
+from .dataset import Dataset
+from ..data_collators import ImageCaptioningDataCollator
 from ...builders import build_preprocessor
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
-from ...utils import Logger
-from ..data_collators import ImageCaptioningDataCollator
-from .dataset import Dataset
-
+from ...utils import Logger, shift_tokens_right
 
 logger = Logger(__name__)
 
@@ -61,7 +60,11 @@ class ImageCaptioningDataset(Dataset):
         self.data = self._load(split)
         self.image_processor = build_preprocessor("image_processor", config=self.config.image_processor_config)
         self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
-        self.data_collator = ImageCaptioningDataCollator(self.tokenizer, max_length=self.config.max_length)
+        self.data_collator = ImageCaptioningDataCollator(
+            self.tokenizer,
+            padding_type="max_length" if self.config.max_length is not None else "longest",
+            max_length=self.config.max_length
+        )
 
     def __len__(self):
         """
@@ -102,8 +105,14 @@ class ImageCaptioningDataset(Dataset):
         token_ids = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)["token_ids"]
         token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
         labels = torch.tensor([token_ids])
+        decoder_input_ids = shift_tokens_right(
+            labels,
+            pad_token_id=self.tokenizer.pad_token_id,
+            decoder_start_token_id=self.tokenizer.bos_token_id,
+        )
         inputs = {
             "pixel_values": pixel_values,
             "labels": labels,
+            "decoder_input_ids": decoder_input_ids
         }
         return inputs

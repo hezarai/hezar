@@ -27,14 +27,14 @@ TESTABLE_MODELS = {
         "inputs": {"type": "file", "value": "samples/image_captioning_example.jpg"},
         "predict_kwargs": {},
         "output_type_within_batch": dict,
-        "required_output_keys": {"text"}
+        "required_output_keys": {"text", "score"}
     },
     "ocr": {
         "path": "hezarai/crnn-fa-printed-96-long",
         "inputs": {"type": "file", "value": "samples/ocr_example.jpg"},
         "predict_kwargs": {},
         "output_type_within_batch": dict,
-        "required_output_keys": {"text"}
+        "required_output_keys": {"text", "score"}
     },
     "text-classification": {
         "path": "hezarai/distilbert-fa-sentiment-digikala-snappfood",

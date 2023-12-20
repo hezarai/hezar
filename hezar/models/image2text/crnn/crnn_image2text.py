@@ -68,25 +68,37 @@ class CRNNImage2Text(Model):
 
         return loss
 
-    def generate(self, pixel_values, **kwargs):
+    def generate(self, pixel_values):
         logits = self(pixel_values)["logits"]
         output_ids = ctc_decode(logits, blank=self.config.blank_id)
-        return output_ids
+        probs, values = logits.permute(1, 0, 2).softmax(2).max(2)
+        mean_probs = probs.mean(1)
+        return {"generated_ids": output_ids, "scores": mean_probs}
 
     def preprocess(self, inputs, **kwargs):
         image_processor = self.preprocessor[self.image_processor]
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, model_outputs: torch.Tensor, **kwargs):
+    def post_process(self, generation_outputs, return_scores=False):
+        if isinstance(generation_outputs, torch.Tensor):
+            generated_ids = generation_outputs
+            scores = torch.tensor(torch.zeros(generated_ids.shape))
+        else:
+            generated_ids, scores = generation_outputs.values()
+
         outputs = []
-        generated_ids = model_outputs.cpu().numpy().tolist()
-        for decoded_ids in generated_ids:
+        generated_ids = generated_ids.cpu().numpy().tolist()
+        scores = scores.cpu().numpy().tolist()
+        for decoded_ids, score in zip(generated_ids, scores):
             chars = [self.config.id2label[id_] for id_ in decoded_ids]
             text = "".join(chars)
             if self.config.reverse_output_digits:
                 text = reverse_string_digits(text)
-            outputs.append(Image2TextOutput(text=text))
+            if return_scores:
+                outputs.append(Image2TextOutput(text=text, score=score))
+            else:
+                outputs.append(Image2TextOutput(text=text))
         return outputs
 
 

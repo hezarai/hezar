@@ -35,7 +35,7 @@ class MetricsHandler:
     """
     valid_metrics: List[MetricType] = []
 
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None, **kwargs):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None, **kwargs):
         self.metrics = self._setup_metrics(metrics)
         self.trainer = trainer
         self.tracker = MetricsTracker(self.metrics)
@@ -90,7 +90,7 @@ class TextClassificationMetricsHandler(MetricsHandler):
         MetricType.F1,
     ]
 
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -105,7 +105,7 @@ class TextClassificationMetricsHandler(MetricsHandler):
 class SequenceLabelingMetricsHandler(MetricsHandler):
     valid_metrics = [MetricType.SEQEVAL]
 
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -131,9 +131,9 @@ class SequenceLabelingMetricsHandler(MetricsHandler):
 
 
 class Image2TextMetricHandler(MetricsHandler):
-    valid_metrics = [MetricType.CER]
+    valid_metrics = [MetricType.CER, MetricType.WER]
 
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -149,7 +149,7 @@ class Image2TextMetricHandler(MetricsHandler):
 
 
 class SpeechRecognitionMetricsHandler(MetricsHandler):
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -159,7 +159,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
 class TextGenerationMetricsHandler(MetricsHandler):
     valid_metrics = [MetricType.ROUGE, MetricType.BLEU]
 
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -175,7 +175,7 @@ class TextGenerationMetricsHandler(MetricsHandler):
 
 
 class AudioClassificationMetricsHandler(MetricsHandler):
-    def __init__(self, metrics: List[str, MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
