@@ -28,10 +28,6 @@ if is_backend_available(Backends.PILLOW):
 _required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 
 
-def build_vision_encoder_decoder_model(encoder, decoder, config=None):
-    return VisionEncoderDecoderModel(config=config, encoder=encoder, decoder=decoder)
-
-
 @register_model("vit_roberta_image2text", config_class=ViTRobertaImage2TextConfig)
 class ViTRobertaImage2Text(Model):
     """
@@ -76,7 +72,7 @@ class ViTRobertaImage2Text(Model):
             output_hidden_states=output_hidden_states,
         )
 
-        return outputs
+        return dict(outputs)
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
         loss = self.criterion(logits.reshape(-1, self.vit_roberta.decoder.config.vocab_size), labels.reshape(-1))
