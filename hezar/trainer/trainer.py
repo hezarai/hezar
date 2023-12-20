@@ -418,7 +418,7 @@ class Trainer:
             if self.model.is_generative and self.config.evaluate_with_generate:
                 generate_inputs = sanitize_function_parameters(self.model.generate, input_batch)
                 generated_ids = self.model.generate(**generate_inputs)
-                outputs["logits"] = generated_ids
+                outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 
