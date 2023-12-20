@@ -5,6 +5,7 @@ For example, a model might need to get its `id2label` config parameter from the 
 test suite complex and require redundant code.
 """
 
+import shutil
 import pytest
 
 from hezar.builders import build_model
@@ -126,4 +127,6 @@ def test_trainer(task):
         preprocessor=preprocessor
     )
     trainer.train()
+
+    shutil.rmtree(config.output_dir)
 

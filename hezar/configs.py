@@ -24,7 +24,15 @@ from typing import Dict, List, Literal, Optional, Tuple
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, LRSchedulerType, OptimizerType, TaskType
+from .constants import (
+    DEFAULT_MODEL_CONFIG_FILE,
+    HEZAR_CACHE_DIR,
+    ConfigType,
+    LRSchedulerType,
+    OptimizerType,
+    PrecisionType,
+    TaskType,
+)
 from .utils import Logger, get_module_config_class
 
 
@@ -82,7 +90,7 @@ class Config:
         # Convert enums to values
         for param, value in self.dict().items():
             if isinstance(getattr(self, param), Enum):
-                setattr(self, param, getattr(self, param).value)
+                setattr(self, param, str(getattr(self, param)))
 
     def __str__(self):
         return pformat(self.dict())
@@ -355,25 +363,46 @@ class TrainerConfig(Config):
     Base dataclass for all trainer configs
 
     Args:
-        task (str, TaskType): The training task. Must be a valid name from `TaskType`.
-        output_dir (str): Path to the directory to save trainer properties.
-        device (str): Hardware device e.g, `cuda:0`, `cpu`, etc.
-        init_weights_from (str): Path to a model from disk or Hub to load the initial weights from.
-        num_dataloader_workers (int): Number of dataloader workers, defaults to 4 .
-        seed (int): Control determinism of the run by setting a seed value. defaults to 42.
-        optimizer (OptimizerType): Name of the optimizer, available values include properties in `OptimizerType` enum.
-        learning_rate (float): Initial learning rate for the optimizer.
-        weight_decay (float): Optimizer weight decay value.
-        lr_scheduler (LRSchedulerType): Optional learning rate scheduler among `LRSchedulerType` enum.
-        batch_size (int): Training batch size.
-        eval_batch_size (int): Evaluation batch size, defaults to `batch_size` if None.
-        use_amp (bool): Whether to use mixed precision or not.
-        evaluate_with_generate (bool): Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).
-        metrics (List[str | MetricConfig]): A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.
-        num_epochs (int): Number of total epochs to train the model.
-        save_freq (int): Save the trainer stats and everything every `save_freq` epochs.
-        checkpoints_dir (str): Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
-        logs_dir (str): Path to the logs' folder. The actual log files will be saved under `{output_dir}/{logs_dir}`.
+        task (str, TaskType):
+            The training task. Must be a valid name from `TaskType`.
+        output_dir (str):
+            Path to the directory to save trainer properties.
+        device (str):
+            Hardware device e.g, `cuda:0`, `cpu`, etc.
+        init_weights_from (str):
+            Path to a model from disk or Hub to load the initial weights from.
+        num_dataloader_workers (int):
+            Number of dataloader workers, defaults to 4 .
+        seed (int):
+            Control determinism of the run by setting a seed value. defaults to 42.
+        optimizer (OptimizerType):
+            Name of the optimizer, available values include properties in `OptimizerType` enum.
+        learning_rate (float):
+            Initial learning rate for the optimizer.
+        weight_decay (float):
+            Optimizer weight decay value.
+        lr_scheduler (LRSchedulerType):
+            Optional learning rate scheduler among `LRSchedulerType` enum.
+        batch_size (int):
+            Training batch size.
+        eval_batch_size (int):
+            Evaluation batch size, defaults to `batch_size` if None.
+        distributed (bool):
+            Whether to use distributed training or not (via the `accelerate` package)
+        mixed_precision (PrecisionType | str):
+            Mixed precision type e.g, fp16, bf16, etc. (disabled by default)
+        evaluate_with_generate (bool):
+            Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).
+        metrics (List[str | MetricConfig]):
+            A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.
+        num_epochs (int):
+            Number of total epochs to train the model.
+        save_freq (int):
+            Save the trainer stats and everything every `save_freq` epochs.
+        checkpoints_dir (str):
+            Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
+        logs_dir (str):
+            Path to the logs' folder. The actual log files will be saved under `{output_dir}/{logs_dir}`.
     """
 
     name: str = field(init=False, default="trainer")
@@ -391,7 +420,9 @@ class TrainerConfig(Config):
     lr_scheduler: str | LRSchedulerType = None
     batch_size: int = None
     eval_batch_size: int = None
-    use_amp: bool = False
+    distributed: bool = True
+    mixed_precision: PrecisionType | str | None = None
+    use_cpu: bool = False
     evaluate_with_generate: bool = True
     metrics: List[str | MetricConfig] = None
     metric_for_best_model: str = "evaluation.loss"
@@ -400,11 +431,16 @@ class TrainerConfig(Config):
     logs_dir: str = "logs"
 
     def __post_init__(self):
+        """
+        Perform some argument sanitization and filtering here to avoid unexpected behavior in the trainer.
+        The need for having this method is that some fields in the Trainer's config have correlations with each other
+        and not controlling them can lead to conflicts.
+        """
         super().__post_init__()
         if self.task not in list(TaskType):
             raise ValueError(
                 f"Invalid task `{self.task}` passed to `TrainerConfig`. "
-                f"Available options are {[t.value for t in list(TaskType)]}",
+                f"Available options are {TaskType.list()}",
             )
         if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):
             self.metric_for_best_model = f"evaluation.{self.metric_for_best_model}"

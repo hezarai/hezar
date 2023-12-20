@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import random
-from typing import Any, Callable, Dict, Tuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -12,6 +12,24 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from ..configs import TrainerConfig
+from ..constants import (
+    DEFAULT_DATASET_CONFIG_FILE,
+    DEFAULT_TRAINER_CONFIG_FILE,
+    DEFAULT_TRAINER_CSV_LOG_FILE,
+    DEFAULT_TRAINER_STATE_FILE,
+    DEFAULT_TRAINER_SUBFOLDER,
+    HEZAR_CACHE_DIR,
+    TQDM_BAR_FORMAT,
+    Backends,
+    LRSchedulerType,
+    OptimizerType,
+    TaskType,
+)
+from ..data.datasets import Dataset
+from ..models import Model
+from ..preprocessors import Preprocessor, PreprocessorsContainer
+from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters
 from .metrics_handlers import (
     AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
@@ -22,23 +40,10 @@ from .metrics_handlers import (
     TextGenerationMetricsHandler,
 )
 from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
-from ..configs import TrainerConfig
-from ..constants import (
-    DEFAULT_DATASET_CONFIG_FILE,
-    DEFAULT_TRAINER_CONFIG_FILE,
-    DEFAULT_TRAINER_CSV_LOG_FILE,
-    DEFAULT_TRAINER_STATE_FILE,
-    DEFAULT_TRAINER_SUBFOLDER,
-    HEZAR_CACHE_DIR,
-    TQDM_BAR_FORMAT,
-    LRSchedulerType,
-    OptimizerType,
-    TaskType,
-)
-from ..data.datasets import Dataset
-from ..models import Model
-from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, colorize_text, sanitize_function_parameters
+
+
+if TYPE_CHECKING:
+    from accelerate import Accelerator
 
 logger = Logger(__name__)
 
@@ -77,7 +82,7 @@ class Trainer:
         metrics_handler: Optional metrics handler
         optimizer (optim.Optimizer): Model optimizer
         lr_scheduler: Optional learning-rate scheduler
-
+        accelerator (Accelerator) : Accelerator object for a customized distributed environment
     """
 
     trainer_subfolder = DEFAULT_TRAINER_SUBFOLDER
@@ -99,14 +104,10 @@ class Trainer:
         metrics_handler: MetricsHandler = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
+        accelerator: "Accelerator" = None,
     ):
         self.config = config
-
-        # Configure device, precision, scaler, etc.
-        self.device, self.device_type = self._setup_device_and_type()
-        self.autocast_dtype = torch.bfloat16 if self.device_type == "cpu" else torch.float16
-        self.scaler = torch.cuda.amp.GradScaler(enabled=self.config.use_amp and self.device_type == "cuda")
-        self.is_amp_enabled = self.scaler.is_enabled()
+        self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
         # Set determinism
         self._set_seed(self.config.seed)
@@ -130,6 +131,16 @@ class Trainer:
         # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
+        # Setup accelerated objects if possible
+        if accelerator is None and self.config.distributed and not self.config.use_cpu:
+            self.accelerator = self._setup_accelerator()
+            self.scaler = self.accelerator.scaler
+            self.device = self.accelerator.device
+        else:
+            self.accelerator = accelerator
+            enabled = True if self.config.mixed_precision is not None and not self.config.use_cpu else False
+            self.scaler = torch.cuda.amp.GradScaler(enabled=enabled)
+
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
 
@@ -149,11 +160,6 @@ class Trainer:
             total_epochs=self.config.num_epochs,
             metric_for_best_checkpoint=self.config.metric_for_best_model,
         )
-
-    def _setup_device_and_type(self) -> Tuple[str, str]:
-        device = self.config.device if "cuda" in self.config.device and torch.cuda.is_available() else "cpu"
-        device_type = "cuda" if "cuda" in device else "cpu"
-        return device, device_type
 
     @staticmethod
     def _set_seed(seed):
@@ -246,6 +252,31 @@ class Trainer:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, verbose=True)
         return optimizer, lr_scheduler
 
+    def _setup_accelerator(self):
+        if is_backend_available(Backends.ACCELERATE):
+            from accelerate import Accelerator
+
+            accelerator = Accelerator(
+                mixed_precision=self.config.mixed_precision,
+                step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
+            )
+            self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
+                accelerator.prepare(
+                    self.model,
+                    self.optimizer,
+                    self.lr_scheduler,
+                    self.train_dataloader,
+                    self.eval_dataloader,
+                )
+            )
+        else:
+            raise ValueError(
+                "The configuration for this trainer requires the package `accelerate` to be installed! "
+                "(config.distributed=True)"
+            )
+
+        return accelerator
+
     def _setup_metrics_handler(self):
         """
         Setup MetricsHandler instance for the trainer
@@ -254,10 +285,7 @@ class Trainer:
             A MetricsHandler subclass instance based on self.config.task
         """
         metrics_handler_cls = task_to_metrics_handlers_mapping[self.config.task]
-        metrics_handler = metrics_handler_cls(
-            metrics=self.config.metrics,
-            trainer=self,
-        )
+        metrics_handler = metrics_handler_cls(metrics=self.config.metrics, trainer=self)  # noqa
         return metrics_handler
 
     def load_from_checkpoint(self, checkpoint: str | bool = True, load_best: bool = False):
@@ -286,7 +314,8 @@ class Trainer:
             model_path = os.path.join(checkpoint, self.model.model_filename)
             if os.path.isfile(model_path):
                 self.model.load_state_dict(torch.load(model_path))
-                self.model.to(self.config.device)
+                if self.accelerator is not None:
+                    self.model = self.accelerator.prepare(self.model)
                 logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
             else:
                 raise FileNotFoundError(
@@ -321,8 +350,10 @@ class Trainer:
         Returns:
             The proper input batch required by model forward
         """
-        # cast to device
-        input_batch = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in input_batch.items()}
+        # Put inputs on device manually if accelerator is not available, otherwise it's taken care of by the accelerator
+        if self.accelerator is None:
+            input_batch = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in input_batch.items()}
+
         return input_batch
 
     def amp_context_manager(self):
@@ -332,7 +363,18 @@ class Trainer:
         Returns:
             A torch autocast context manager
         """
-        return torch.autocast(device_type=self.device_type, dtype=self.autocast_dtype, enabled=self.config.use_amp)
+        if self.accelerator is not None:
+            context_manager = self.accelerator.autocast()
+        else:
+            device_type = "cuda" if "cuda" in self.device else "cpu"
+            dtype = torch.bfloat16 if self.config.mixed_precision == "bf16" else torch.float16
+            enabled = self.config.mixed_precision is not None or self.config.mixed_precision == "no"
+            context_manager = torch.autocast(
+                device_type=device_type,
+                dtype=dtype,
+                enabled=enabled
+            )
+        return context_manager
 
     def forward(self, input_batch):
         """
@@ -391,11 +433,17 @@ class Trainer:
         """
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
-            loss = self.compute_loss(outputs, **input_batch)
 
-        self.scaler.scale(loss).backward()
-        self.scaler.step(self.optimizer)
-        self.scaler.update()
+        loss = self.compute_loss(outputs, **input_batch)
+
+        if self.accelerator is not None:
+            self.accelerator.backward(loss)
+            self.optimizer.step()
+        else:
+            self.scaler.scale(loss).backward()
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
+
         self.optimizer.zero_grad()
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
@@ -414,11 +462,13 @@ class Trainer:
         """
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
-            loss = self.compute_loss(outputs, **input_batch)
-            if self.model.is_generative and self.config.evaluate_with_generate:
-                generate_inputs = sanitize_function_parameters(self.model.generate, input_batch)
-                generated_ids = self.model.generate(**generate_inputs)
-                outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids
+
+        loss = self.compute_loss(outputs, **input_batch)
+
+        if self.model.is_generative and self.config.evaluate_with_generate:
+            generate_inputs = sanitize_function_parameters(self.model.generate, input_batch)
+            generated_ids = self.model.generate(**generate_inputs)
+            outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids
 
         outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
 
@@ -455,42 +505,6 @@ class Trainer:
 
         return {"loss": avg_loss}
 
-    def print_info(self):
-        """
-        Print training info
-        """
-
-        def _print_info_line(key, value):
-            line = f"  {colorize_text(key, 'bold')}: `{colorize_text(str(value), 'italic')}`"
-            print(line)
-
-        header = f"{'*' * 20} Training Info {'*' * 20}"
-        footer = "*" * len(header)
-
-        # Header
-        print(f"\n{colorize_text(header, 'bold')}\n")
-        # Info
-        _print_info_line("Output Directory", self.config.output_dir)
-        _print_info_line("Task", self.config.task)
-        _print_info_line("Model", type(self.model).__name__)
-        _print_info_line("Init Weights", self.config.init_weights_from or "N/A")
-        _print_info_line("Device(s)", self.device)
-        _print_info_line("Training Dataset", self.train_dataset)
-        _print_info_line("Evaluation Dataset", self.eval_dataset)
-        _print_info_line("Optimizer", self.config.optimizer or self.default_optimizer)
-        _print_info_line("Initial Learning Rate", self.config.learning_rate)
-        _print_info_line("Learning Rate Decay", self.config.weight_decay)
-        _print_info_line("Epochs", self.config.num_epochs)
-        _print_info_line("Batch Size", self.config.batch_size)
-        _print_info_line("Number of Parameters", self.model.num_parameters)
-        _print_info_line("Number of Trainable Parameters", self.model.num_trainable_parameters)
-        _print_info_line("Mixed Precision (float16)", self.is_amp_enabled)
-        _print_info_line("Metrics", list(self.metrics_handler.metrics.keys()))
-        _print_info_line("Checkpoints Path", self.checkpoints_dir)
-        _print_info_line("Logs Path", self.logs_dir)
-        # Footer
-        print(f"\n{colorize_text(footer, 'bold')}\n")
-
     def evaluate(self):
         """
         Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
@@ -522,6 +536,42 @@ class Trainer:
                     iterator.set_postfix(**self.metrics_handler.tracker.avg())
 
         return self.metrics_handler.tracker.avg()
+
+    def print_info(self):
+        """
+        Print training info
+        """
+
+        def _print_info_line(key, value):
+            line = f"  {colorize_text(key, 'bold')}: `{colorize_text(str(value), 'italic')}`"
+            print(line)
+
+        header = f"{'*' * 20} Training Info {'*' * 20}"
+        footer = "*" * len(header)
+
+        # Header
+        print(f"\n{colorize_text(header, 'bold')}\n")
+        # Info
+        _print_info_line("Output Directory", self.config.output_dir)
+        _print_info_line("Task", self.config.task)
+        _print_info_line("Model", type(self.model).__name__)
+        _print_info_line("Init Weights", self.config.init_weights_from or "N/A")
+        _print_info_line("Device(s)", self.device)
+        _print_info_line("Training Dataset", self.train_dataset)
+        _print_info_line("Evaluation Dataset", self.eval_dataset)
+        _print_info_line("Optimizer", self.config.optimizer or self.default_optimizer)
+        _print_info_line("Initial Learning Rate", self.config.learning_rate)
+        _print_info_line("Learning Rate Decay", self.config.weight_decay)
+        _print_info_line("Epochs", self.config.num_epochs)
+        _print_info_line("Batch Size", self.config.batch_size)
+        _print_info_line("Number of Parameters", self.model.num_parameters)
+        _print_info_line("Number of Trainable Parameters", self.model.num_trainable_parameters)
+        _print_info_line("Mixed Precision", self.config.mixed_precision or "Full (fp32)")
+        _print_info_line("Metrics", list(self.metrics_handler.metrics.keys()))
+        _print_info_line("Checkpoints Path", self.checkpoints_dir)
+        _print_info_line("Logs Path", self.logs_dir)
+        # Footer
+        print(f"\n{colorize_text(footer, 'bold')}\n")
 
     def train(self, resume_from_checkpoint: str | bool = None):
         """

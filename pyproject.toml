@@ -38,6 +38,7 @@ datasets = ">=2.9.0"
 huggingface_hub = ">=0.12.0"
 tensorboard = ">=2.10.0"
 scikit-learn = ">=1.0.0"
+accelerate = {version="*", optional=true}
 numpy = {version="1.24.*", optional=true}
 gensim = {version="4.3.2", optional=true}
 seqeval = {version=">=1.2.0", optional=true}
@@ -54,7 +55,7 @@ audio = ["soundfile", "librosa", "jiwer"]
 vision = ["pillow"]
 embeddings = ["gensim", "numpy"]
 dev = ["pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"]
-all = ["numpy", "gensim", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk", "rouge_score"]
+all = ["numpy", "gensim", "accelerate", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk", "rouge_score"]
 
 [tool.black]
 line-length = 120

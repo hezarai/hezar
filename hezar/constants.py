@@ -29,7 +29,16 @@ DEFAULT_EMBEDDING_SUBFOLDER = "embedding"
 TQDM_BAR_FORMAT = "{desc:<16}{percentage:3.0f}%|{bar:70}{r_bar}"
 
 
-class Backends(str, Enum):
+class ExplicitEnum(str, Enum):
+    def __str__(self):
+        return self.value
+
+    @classmethod
+    def list(cls):
+        return [x.value for x in cls.__members__.values()]
+
+
+class Backends(ExplicitEnum):
     """
     All required dependency packages and libraries. Note that the values here must be the exact module names used
     for importing, for example if you set PILLOW the value must be `PIL` not `pillow`, `pil`, etc.
@@ -39,6 +48,7 @@ class Backends(str, Enum):
     TRANSFORMERS = "transformers"
     DATASETS = "datasets"
     TOKENIZERS = "tokenizers"
+    ACCELERATE = "accelerate"
     SOUNDFILE = "soundfile"
     LIBROSA = "librosa"
     WANDB = "wandb"
@@ -51,11 +61,8 @@ class Backends(str, Enum):
     EVALUATE = "evaluate"
     ROUGE = "rouge_score"
 
-    def __str__(self):
-        return str(self.value)
 
-
-class TaskType(str, Enum):
+class TaskType(ExplicitEnum):
     AUDIO_CLASSIFICATION = "audio_classification"
     BACKBONE = "backbone"
     IMAGE2TEXT = "image2text"
@@ -67,7 +74,7 @@ class TaskType(str, Enum):
     TEXT_GENERATION = "text_generation"
 
 
-class ConfigType(str, Enum):
+class ConfigType(ExplicitEnum):
     BASE = "base"
     MODEL = "model"
     DATASET = "dataset"
@@ -80,7 +87,7 @@ class ConfigType(str, Enum):
     METRIC = "metric"
 
 
-class RegistryType(str, Enum):
+class RegistryType(ExplicitEnum):
     MODEL = "model"
     DATASET = "dataset"
     PREPROCESSOR = "preprocessor"
@@ -92,7 +99,7 @@ class RegistryType(str, Enum):
     METRIC = "metric"
 
 
-class LossType(str, Enum):
+class LossType(ExplicitEnum):
     L1 = "l1"
     NLL = "nll"
     NLL_2D = "nll_2d"
@@ -106,25 +113,32 @@ class LossType(str, Enum):
     CTC = "ctc"
 
 
-class OptimizerType(str, Enum):
+class PrecisionType(ExplicitEnum):
+    NO = "no"
+    FP8 = "fp8"
+    FP16 = "fp16"
+    BF16 = "bf16"
+
+
+class OptimizerType(ExplicitEnum):
     ADAM = "adam"
     ADAMW = "adamw"
     SDG = "sdg"
 
 
-class LRSchedulerType(str, Enum):
+class LRSchedulerType(ExplicitEnum):
     REDUCE_LR_ON_PLATEAU = "reduce_lr_on_plateau"
     COSINE_LR = "cosine_lr"
 
 
-class SplitType(str, Enum):
+class SplitType(ExplicitEnum):
     TRAIN = "train"
     EVAL = "eval"
     VALID = "validation"
     TEST = "test"
 
 
-class MetricType(str, Enum):
+class MetricType(ExplicitEnum):
     ACCURACY = "accuracy"
     F1 = "f1"
     RECALL = "recall"
@@ -136,28 +150,28 @@ class MetricType(str, Enum):
     ROUGE = "rouge"
 
 
-class RepoType(str, Enum):
+class RepoType(ExplicitEnum):
     DATASET = "dataset"
     MODEL = "model"
 
 
-class ImageType(str, Enum):
+class ImageType(ExplicitEnum):
     NUMPY = "numpy"
     PILLOW = "pillow"
     TORCH = "torch"
 
 
-class ChannelsAxisSide(str, Enum):
+class ChannelsAxisSide(ExplicitEnum):
     FIRST = "first"
     LAST = "last"
 
 
-class PaddingType(str, Enum):
+class PaddingType(ExplicitEnum):
     MAX_LENGTH = "max_length"
     LONGEST = "longest"
 
 
-class Color(str, Enum):
+class Color(ExplicitEnum):
     HEADER = "\033[95m"
     NORMAL = "\033[0m"
     BOLD = "\033[1m"

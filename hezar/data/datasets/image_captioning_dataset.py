@@ -3,14 +3,15 @@ from dataclasses import dataclass
 import torch
 from datasets import load_dataset
 
-from .dataset import Dataset
-from ..data_collators import ImageCaptioningDataCollator
 from ...builders import build_preprocessor
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger, shift_tokens_right
+from ..data_collators import ImageCaptioningDataCollator
+from .dataset import Dataset
+
 
 logger = Logger(__name__)
 

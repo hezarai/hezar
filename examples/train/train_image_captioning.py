@@ -14,9 +14,9 @@ train_config = TrainerConfig(
     output_dir="vit-roberta-fa-image-captioning-flickr30k",
     task="image2text",
     device="cuda",
-    batch_size=16,
+    batch_size=12,
     num_epochs=20,
-    use_amp=True,
+    mixed_precision="fp16",
     metrics=["wer"],
     metric_for_best_model="wer"
 )
