@@ -65,7 +65,7 @@ tasks_setups = {
             "path": "hezarai/persian-license-plate-v1",
             "config": {
                 "max_length": 8,
-                "reverse_text": True,
+                "reverse_digits": True,
             }
         },
         "model": {
