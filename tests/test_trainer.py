@@ -76,6 +76,22 @@ tasks_setups = {
             "metrics": ["cer"]
         }
     },
+    "image-captioning": {
+        "dataset": {
+            "path": "hezarai/flickr30k-fa",
+            "config": {
+                "max_length": 128,
+                "tokenizer_path": "hezarai/vit-roberta-fa-base"
+            }
+        },
+        "model": {
+            "path": "hezarai/vit-roberta-fa-base",
+        },
+        "config": {
+            "task": "image2text",
+            "metrics": ["wer"]
+        }
+    },
 }
 
 common_train_config = {
