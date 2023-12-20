@@ -24,8 +24,15 @@ from typing import Dict, List, Literal, Optional, Tuple
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
 
-from .constants import DEFAULT_MODEL_CONFIG_FILE, HEZAR_CACHE_DIR, ConfigType, LRSchedulerType, OptimizerType, TaskType, \
-    PrecisionType
+from .constants import (
+    DEFAULT_MODEL_CONFIG_FILE,
+    HEZAR_CACHE_DIR,
+    ConfigType,
+    LRSchedulerType,
+    OptimizerType,
+    PrecisionType,
+    TaskType,
+)
 from .utils import Logger, get_module_config_class
 
 

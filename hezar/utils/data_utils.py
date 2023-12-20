@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
 
 from omegaconf import DictConfig
 
 from ..constants import PaddingType
 from .logging import Logger
+
+
+if TYPE_CHECKING:
+    import torch
 
 
 __all__ = [

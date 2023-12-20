@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import random
-from typing import Any, Callable, Dict, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -12,6 +12,24 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from ..configs import TrainerConfig
+from ..constants import (
+    DEFAULT_DATASET_CONFIG_FILE,
+    DEFAULT_TRAINER_CONFIG_FILE,
+    DEFAULT_TRAINER_CSV_LOG_FILE,
+    DEFAULT_TRAINER_STATE_FILE,
+    DEFAULT_TRAINER_SUBFOLDER,
+    HEZAR_CACHE_DIR,
+    TQDM_BAR_FORMAT,
+    Backends,
+    LRSchedulerType,
+    OptimizerType,
+    TaskType,
+)
+from ..data.datasets import Dataset
+from ..models import Model
+from ..preprocessors import Preprocessor, PreprocessorsContainer
+from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters
 from .metrics_handlers import (
     AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
@@ -22,24 +40,7 @@ from .metrics_handlers import (
     TextGenerationMetricsHandler,
 )
 from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
-from ..configs import TrainerConfig
-from ..constants import (
-    DEFAULT_DATASET_CONFIG_FILE,
-    DEFAULT_TRAINER_CONFIG_FILE,
-    DEFAULT_TRAINER_CSV_LOG_FILE,
-    DEFAULT_TRAINER_STATE_FILE,
-    DEFAULT_TRAINER_SUBFOLDER,
-    HEZAR_CACHE_DIR,
-    TQDM_BAR_FORMAT,
-    LRSchedulerType,
-    OptimizerType,
-    TaskType,
-    Backends,
-)
-from ..data.datasets import Dataset
-from ..models import Model
-from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, colorize_text, sanitize_function_parameters, is_backend_available
+
 
 if TYPE_CHECKING:
     from accelerate import Accelerator

@@ -1,16 +1,18 @@
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
 import torch
 
-from .vit_config import ViTConfig
-from ...model import Model
 from ....constants import Backends
 from ....registry import register_model
 from ....utils import is_backend_available
+from ...model import Model
+from .vit_config import ViTConfig
+
 
 if is_backend_available(Backends.TRANSFORMERS):
-    from transformers import ViTModel, ViTConfig as ViTConfig_
+    from transformers import ViTConfig as ViTConfig_
+    from transformers import ViTModel
 
 if is_backend_available(Backends.PILLOW):
     from PIL import Image
