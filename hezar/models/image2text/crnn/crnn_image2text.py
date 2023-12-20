@@ -73,7 +73,7 @@ class CRNNImage2Text(Model):
         output_ids = ctc_decode(logits, blank=self.config.blank_id)
         probs, values = logits.permute(1, 0, 2).softmax(2).max(2)
         mean_probs = probs.mean(1)
-        return output_ids, mean_probs
+        return {"generated_ids": output_ids, "scores": mean_probs}
 
     def preprocess(self, inputs, **kwargs):
         image_processor = self.preprocessor[self.image_processor]
@@ -81,7 +81,12 @@ class CRNNImage2Text(Model):
         return processed_outputs
 
     def post_process(self, generation_outputs, return_scores=False):
-        generated_ids, scores = generation_outputs
+        if isinstance(generation_outputs, torch.Tensor):
+            generated_ids = generation_outputs
+            scores = torch.tensor(torch.zeros(generated_ids.shape))
+        else:
+            generated_ids, scores = generation_outputs.values()
+
         outputs = []
         generated_ids = generated_ids.cpu().numpy().tolist()
         scores = scores.cpu().numpy().tolist()
