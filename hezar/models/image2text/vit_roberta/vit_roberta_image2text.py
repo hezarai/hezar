@@ -93,7 +93,7 @@ class ViTRobertaImage2Text(Model):
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, model_outputs, **kwargs):
+    def post_process(self, model_outputs: torch.Tensor, **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
         decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
         outputs = [Image2TextOutput(text=text) for text in decoded_outputs]
