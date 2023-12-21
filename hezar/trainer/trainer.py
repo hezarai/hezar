@@ -90,8 +90,8 @@ class Trainer:
     trainer_csv_log_file = DEFAULT_TRAINER_CSV_LOG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
     default_trainer_state_file = DEFAULT_TRAINER_STATE_FILE
-    default_optimizer = "adam"
-    default_lr_scheduler = None
+    default_optimizer = OptimizerType.ADAM
+    default_lr_scheduler = LRSchedulerType.REDUCE_LR_ON_PLATEAU
 
     def __init__(
         self,
