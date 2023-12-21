@@ -420,7 +420,11 @@ class TrainerConfig(Config):
     lr_scheduler: str | LRSchedulerType = None
     batch_size: int = None
     eval_batch_size: int = None
-    distributed: bool = True
+    distributed: bool = field(
+        init=False,
+        default=False,
+        metadata={"help": "Distributed training isn't supported yet! We're working hard to solve some bugs rn :("}
+    )
     mixed_precision: PrecisionType | str | None = None
     use_cpu: bool = False
     evaluate_with_generate: bool = True
