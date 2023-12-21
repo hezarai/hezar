@@ -138,7 +138,9 @@ class Trainer:
             self.device = self.accelerator.device
         else:
             self.accelerator = accelerator
-            enabled = True if self.config.mixed_precision is not None and not self.config.use_cpu else False
+            enabled = True if (
+                self.config.mixed_precision is not None and not (self.config.use_cpu or self.device == "cpu")
+            ) else False
             self.scaler = torch.cuda.amp.GradScaler(enabled=enabled)
 
         # Setup metrics handler and inner trackers for the trainer
@@ -367,7 +369,7 @@ class Trainer:
             context_manager = self.accelerator.autocast()
         else:
             device_type = "cuda" if "cuda" in self.device else "cpu"
-            dtype = torch.bfloat16 if self.config.mixed_precision == "bf16" else torch.float16
+            dtype = torch.bfloat16 if self.config.mixed_precision == "bf16" or device_type == "cpu" else torch.float16
             enabled = self.config.mixed_precision is not None or self.config.mixed_precision == "no"
             context_manager = torch.autocast(
                 device_type=device_type,

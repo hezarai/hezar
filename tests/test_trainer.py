@@ -99,7 +99,7 @@ common_train_config = {
     "output_dir": "tests-tmp-train-dir",
     "batch_size": 2,
     "num_epochs": 1,
-    "device": "cpu",
+    "use_cpu": True,
 }
 
 
