@@ -81,7 +81,7 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/flickr30k-fa",
             "config": {
-                "max_length": 128,
+                "max_length": 32,
                 "tokenizer_path": "hezarai/vit-roberta-fa-base"
             }
         },
