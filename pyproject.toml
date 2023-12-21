@@ -16,7 +16,10 @@ readme = ["README.md"]
 keywords = ["packaging", "poetry"]
 documentation = "https://hezarai.github.io/hezar/"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Intended Audience :: Developers",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries :: Python Modules"
@@ -59,7 +62,7 @@ all = ["numpy", "gensim", "accelerate", "seqeval", "jiwer", "soundfile", "libros
 
 [tool.black]
 line-length = 120
-target-version = ['py38', 'py39', 'py310']
+target-version = ['py39', 'py310', 'py311']
 
 [tool.ruff]
 ignore = ["C901", "E501", "E741", "W605", "F403", "F405"]
