@@ -6,6 +6,7 @@ test suite complex and require redundant code.
 """
 
 import shutil
+
 import pytest
 
 from hezar.builders import build_model
