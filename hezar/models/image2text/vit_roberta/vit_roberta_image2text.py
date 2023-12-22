@@ -76,6 +76,7 @@ class ViTRobertaImage2Text(Model):
         return dict(outputs)
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        self.criterion.ignore_index = self.config.decoder["pad_token_id"]
         loss = self.criterion(logits.reshape(-1, self.vit_roberta.decoder.config.vocab_size), labels.reshape(-1))
         return loss
 

@@ -57,7 +57,7 @@ class GenerationConfig:
     max_length: int = 64
     no_repeat_ngram_size: int = 3
     num_beams: int = 4
-    pad_token_id: int = 1
+    pad_token_id: int = 2
 
 
 @dataclass

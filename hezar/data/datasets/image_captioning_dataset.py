@@ -103,9 +103,9 @@ class ImageCaptioningDataset(Dataset):
         """
         path, text = self.data[index].values()
         pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"]
-        token_ids = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)["token_ids"]
-        token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
-        labels = torch.tensor([token_ids])
+        tokenized_inputs = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)
+        labels = torch.tensor([tokenized_inputs["token_ids"]])
+        attention_mask = torch.tensor([tokenized_inputs["attention_mask"]])
         decoder_input_ids = shift_tokens_right(
             labels,
             pad_token_id=self.tokenizer.pad_token_id,
@@ -114,6 +114,7 @@ class ImageCaptioningDataset(Dataset):
         inputs = {
             "pixel_values": pixel_values,
             "labels": labels,
-            "decoder_input_ids": decoder_input_ids
+            "decoder_input_ids": decoder_input_ids,
+            "decoder_attention_mask": attention_mask,
         }
         return inputs
