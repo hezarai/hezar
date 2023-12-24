@@ -14,7 +14,7 @@
 ![GitHub Workflow Status (tests)](https://img.shields.io/github/actions/workflow/status/hezarai/hezar/.github%2Fworkflows%2Ftests.yml?label=tests)<br>
 [![Hugging Face Hub](https://img.shields.io/badge/Hugging_Face_Hub-yellow?label=%F0%9F%A4%97&labelColor=yellow&link=https%3A%2F%2Fhuggingface.co%2Fhezarai)](https://huggingface.co/hezarai)
 [![Telegram Channel](https://img.shields.io/badge/Telegram_Channel-blue?logo=telegram&link=https%3A%2F%2Ft.me%2Fhezarai)](https://t.me/hezarai)
-
+[![Donation](https://img.shields.io/badge/Donate_Us-%23881AE4?logo=githubsponsors)](https://daramet.com/hezarai)
 </div>
 
 
