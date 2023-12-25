@@ -64,7 +64,7 @@ class OCRDatasetConfig(DatasetConfig):
     tokenizer_path: str = None  # if left to None, text_split_type must be `char_split`
     id2label: Dict[int, str] = field(default_factory=lambda: ID2LABEL)
     text_column: str = "label"
-    images_paths_column = "image_path"
+    images_paths_column: str = "image_path"
     max_length: int = None
     invalid_characters: list = None
     reverse_text: bool = None
