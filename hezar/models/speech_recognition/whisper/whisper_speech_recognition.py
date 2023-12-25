@@ -97,7 +97,7 @@ class WhisperSpeechRecognition(Model):
         **kwargs,
     ):
         generation_outputs = self.whisper.generate(
-            inputs=input_features,
+            input_features=input_features,
             generation_config=generation_config,
             logits_processor=logits_processor,
             stopping_criteria=stopping_criteria,
