@@ -7,5 +7,6 @@ Welcome to the developer guide section where you can take a deeper dive into the
 
 hezar_architecture.md
 models_advanced.md
+trainer_in_depth.md
 advanced_training.md
 ```

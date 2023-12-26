@@ -269,7 +269,7 @@ trainer.train()
 
 trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor, trainer files and configs
 ```
-You can actually go way deeper with the Trainer. See more details [here](https://hezarai.github.io/hezar/tutorial/training.html).
+You can actually go way deeper with the Trainer. See more details [here](https://hezarai.github.io/hezar/guide).
 
 ## Going Deeper
 Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks

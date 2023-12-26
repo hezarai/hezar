@@ -107,3 +107,6 @@ etc.
 ```python
 trainer.push_to_hub("arxyzan/distilbert-fa-sentiment-dksf")
 ```
+
+## Advanced concepts
+You can also explore the in-depth Trainer guide [here](../guide/trainer_in_depth.md).
