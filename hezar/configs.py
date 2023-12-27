@@ -187,10 +187,8 @@ class Config:
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
         # Check if config_type in the file and class are equal
-        config_type = config.get("config_type", None)
-        if config_type is None:
-            logger.warning(f"`config_type` parameter in `{filename}` is `None` or does not exist!")
-        elif config_type in _config_to_type_mapping.values():
+        config_type = config.get("config_type", ConfigType.BASE)
+        if config_type in _config_to_type_mapping.values():
             if config_type != cls.config_type:
                 raise ValueError(
                     f"The `config_type` for `{cls.__name__}` is `{cls.config_type}` "
@@ -205,7 +203,7 @@ class Config:
     @classmethod
     def from_dict(cls, dict_config: Dict | DictConfig, **kwargs):
         """
-        Load config from a dict-like object. Nested configs are also properly converted to their classes if possible.
+        Load config from a dict-like object. Nested configs are also recursively converted to their classes if possible.
         """
         # Update config parameters with kwargs
         dict_config.update(**kwargs)
@@ -216,10 +214,9 @@ class Config:
                 if config_cls is not None:
                     dict_config[k] = config_cls.from_dict(v)
 
-        # Remove class vars to avoid TypeError (unexpected argument)
-        [dict_config.pop(k, None) for k in CONFIG_CLASS_VARS]
+        dict_config = {k: v for k, v in dict_config.items() if k in cls.__annotations__ and k not in CONFIG_CLASS_VARS}
 
-        config = cls(**{k: v for k, v in dict_config.items() if k in cls.__annotations__})  # noqa
+        config = cls(**dict_config)  # noqa
 
         return config
 
@@ -369,6 +366,8 @@ class TrainerConfig(Config):
             Path to the directory to save trainer properties.
         device (str):
             Hardware device e.g, `cuda:0`, `cpu`, etc.
+        num_epochs (int):
+            Number of total epochs to train the model.
         init_weights_from (str):
             Path to a model from disk or Hub to load the initial weights from.
         num_dataloader_workers (int):
@@ -395,8 +394,10 @@ class TrainerConfig(Config):
             Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).
         metrics (List[str | MetricConfig]):
             A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.
-        num_epochs (int):
-            Number of total epochs to train the model.
+        metric_for_best_model (str):
+            Reference metric key to watch for determining the best model. Recommended to have a {train. | evaluation.}
+            prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults to
+            `evaluation.{metric_for_best_model}`.
         save_freq (int):
             Save the trainer stats and everything every `save_freq` epochs.
         checkpoints_dir (str):
