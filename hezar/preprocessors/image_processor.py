@@ -174,7 +174,6 @@ class ImageProcessor(Preprocessor):
         cls,
         hub_or_local_path,
         subfolder: str = None,
-        force_return_dict: bool = False,
         config_filename: str = None,
         cache_dir: str = None,
         **kwargs,
@@ -185,7 +184,6 @@ class ImageProcessor(Preprocessor):
         Args:
             hub_or_local_path: Path to the hub or local location.
             subfolder (str): Subfolder within the specified path.
-            force_return_dict (bool): Flag to force return as a dictionary.
             config_filename (str): Configuration filename.
             cache_dir: Path to cache directory
             **kwargs: Additional keyword arguments.
