@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import os
 import tempfile
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from enum import Enum
 from pprint import pformat
 from typing import Dict, List, Literal, Optional, Tuple
@@ -77,8 +77,9 @@ class Config:
 
     def __post_init__(self):
         # Class variables cannot be init-able
+        fields_dict = {f.name: f for f in fields(self)}
         for attr in CONFIG_CLASS_VARS:
-            if self.__dataclass_fields__[attr].init == True:  # noqa
+            if fields_dict[attr].init == True:  # noqa
                 raise ValueError(
                     f"The parameter `{attr}` in a config should be either non-initable or unannotated! "
                     f"\nYou should define it as either:\n"
