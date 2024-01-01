@@ -12,7 +12,7 @@ from ....models import Model
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
-from .roberta_lm_config import RobertaLMConfig
+from .roberta_mask_filling_config import RobertaMaskFillingConfig
 
 
 if is_backend_available(Backends.TRANSFORMERS):
@@ -24,8 +24,8 @@ _required_backends = [
 ]
 
 
-@register_model("roberta_lm", config_class=RobertaLMConfig)
-class RobertaLM(Model):
+@register_model("roberta_mask_filling", config_class=RobertaMaskFillingConfig)
+class RobertaMaskFilling(Model):
     required_backends = _required_backends
     tokenizer_name = "bpe_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
@@ -33,7 +33,7 @@ class RobertaLM(Model):
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.roberta_mlm = RobertaForMaskedLM(RobertaConfig(**self.config))
+        self.roberta_mask_filling = RobertaForMaskedLM(RobertaConfig(**self.config))
 
     def forward(
         self,
@@ -49,7 +49,7 @@ class RobertaLM(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-        outputs = self.roberta_mlm(
+        outputs = self.roberta_mask_filling(
             input_ids=token_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,

@@ -38,9 +38,9 @@ NER: [[{'token': 'شرکت', 'label': 'B-org'}, {'token': 'هوش', 'label': 'I-
 ```python
 from hezar.models import Model
 
-roberta_mlm = Model.load("hezarai/roberta-fa-mlm")
+roberta_mask_filling = Model.load("hezarai/roberta-fa-mask-filling")
 inputs = ["سلام بچه ها حالتون <mask>"]
-outputs = roberta_mlm.predict(inputs, top_k=1)
+outputs = roberta_mask_filling.predict(inputs, top_k=1)
 print(outputs)
 ```
 ```

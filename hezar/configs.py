@@ -7,8 +7,8 @@ Examples:
     >>> from hezar.configs import ModelConfig
     >>> config = ModelConfig.load("hezarai/bert-base-fa")
 
-    >>> from hezar.models import BertLMConfig
-    >>> bert_config = BertLMConfig(vocab_size=50000, hidden_size=768)
+    >>> from hezar.models import BertMaskFillingConfig
+    >>> bert_config = BertMaskFillingConfig(vocab_size=50000, hidden_size=768)
     >>> bert_config.save("saved/bert", filename="model_config.yaml")
     >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
 """

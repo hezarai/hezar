@@ -1,0 +1,2 @@
+from .distilbert_mask_filling import DistilBertMaskFilling
+from .distilbert_mask_filling_config import DistilBertMaskFillingConfig

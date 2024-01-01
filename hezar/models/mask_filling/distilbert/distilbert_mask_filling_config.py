@@ -5,9 +5,9 @@ from ....constants import TaskType
 
 
 @dataclass
-class DistilBertLMConfig(ModelConfig):
-    name = "distilbert_lm"
-    task: str = TaskType.LANGUAGE_MODELING
+class DistilBertMaskFillingConfig(ModelConfig):
+    name = "distilbert_mask_filling"
+    task: str = TaskType.MASK_FILLING
     activation: str = "gelu"
     attention_dropout: float = 0.1
     dim: int = 768

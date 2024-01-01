@@ -5,9 +5,9 @@ from ....constants import TaskType
 
 
 @dataclass
-class RobertaLMConfig(ModelConfig):
-    name = "roberta_lm"
-    task: str = TaskType.LANGUAGE_MODELING
+class RobertaMaskFillingConfig(ModelConfig):
+    name = "roberta_mask_filling"
+    task: str = TaskType.MASK_FILLING
     attention_probs_dropout_prob: float = 0.1
     bos_token_id: int = 0
     eos_token_id: int = 2

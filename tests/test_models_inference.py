@@ -15,8 +15,8 @@ TESTABLE_MODELS = {
         "output_type_within_batch": dict,
         "required_output_keys": {"text", "chunks"}
     },
-    "fill-mask": {
-        "path": "hezarai/roberta-fa-mlm",
+    "mask-filling": {
+        "path": "hezarai/roberta-fa-mask-filling",
         "inputs": {"type": "text", "value": "سلام بچه ها حالتون <mask>"},
         "predict_kwargs": {},
         "output_type_within_batch": list,

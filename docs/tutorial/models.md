@@ -5,15 +5,16 @@ Let's dive into some of the most important ones!
 ## Models Basics
 ### Building Models
 Like any other package, you can import any model from `hezar.models` that you want.
-```python
-from hezar.models import BertLM, BertLMConfig
 
-bert = BertLM(BertLMConfig())
+```python
+from hezar.models import BertMaskFilling, BertMaskFillingConfig
+
+bert = BertMaskFilling(BertMaskFillingConfig())
 ```
 You can also configure the architecture by changing the properties in a model's config like so:
 ```python
-config = BertLMConfig(num_hidden_layers=8, num_attention_heads=8)
-bert = BertLM(config)
+config = BertMaskFillingConfig(num_hidden_layers=8, num_attention_heads=8)
+bert = BertMaskFilling(config)
 ```
 
 Every model in Hezar, can be pushed to or downloaded from the Hub.
@@ -27,8 +28,8 @@ bert = Model.load("hezarai/bert-base-fa")
 ```
 The `load` methods takes the following steps to build the model:
 
-1. Load the config file `model_config.yaml` and figure out the model's class using the `name` config parameter. (`bert_lm` in this snippet)
-2. Build the model with random weights from the corresponding class. (`BertLM` in this snippet)
+1. Load the config file `model_config.yaml` and figure out the model's class using the `name` config parameter. (`bert_mask_filling` in this snippet)
+2. Build the model with random weights from the corresponding class. (`BertMaskFilling` in this snippet)
 3. Download the weights file (`model.pt`) and load the state dict into to the model.
 4. If the path contains any preprocessor, the preprocessor (`WordPieceTokenizer` in this snippet) will be loaded too.
 (You can disable loading preprocessors by setting `Model.load(path, load_preprocessor=False)`)
@@ -52,10 +53,11 @@ POS: [[{'token': 'شرکت', 'tag': 'Ne'}, {'token': 'هوش', 'tag': 'Ne'}, {'t
 
 ### Saving Models
 You can save any model along with its config and preprocessor and other files on disk like:
-```python
-from hezar.models import RobertaLM, RobertaLMConfig
 
-roberta = RobertaLM(RobertaLMConfig(vocab_size=60000))
+```python
+from hezar.models import RobertaMaskFilling, RobertaMaskFillingConfig
+
+roberta = RobertaMaskFilling(RobertaMaskFillingConfig(vocab_size=60000))
 roberta.save("my-roberta")
 ```
 

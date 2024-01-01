@@ -1,6 +1,3 @@
-"""
-A DistilBERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
-"""
 from __future__ import annotations
 
 from typing import List
@@ -12,7 +9,7 @@ from ....models import Model
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
-from .distilbert_lm_config import DistilBertLMConfig
+from .distilbert_mask_filling_config import DistilBertMaskFillingConfig
 
 
 if is_backend_available(Backends.TRANSFORMERS):
@@ -24,15 +21,15 @@ _required_backends = [
 ]
 
 
-@register_model("distilbert_lm", config_class=DistilBertLMConfig)
-class DistilBertLM(Model):
+@register_model("distilbert_mask_filling", config_class=DistilBertMaskFillingConfig)
+class DistilBertMaskFilling(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     loss_fn_name = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.distilbert_mlm = DistilBertForMaskedLM(DistilBertConfig(**self.config))
+        self.distilbert_mask_filling = DistilBertForMaskedLM(DistilBertConfig(**self.config))
 
     def forward(
         self,
@@ -44,7 +41,7 @@ class DistilBertLM(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-        outputs = self.distilbert_mlm(
+        outputs = self.distilbert_mask_filling(
             input_ids=token_ids,
             attention_mask=attention_mask,
             head_mask=head_mask,
