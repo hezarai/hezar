@@ -1,6 +1,3 @@
-"""
-A BERT Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
-"""
 from __future__ import annotations
 
 from typing import List
@@ -12,7 +9,7 @@ from ....models import Model
 from ....registry import register_model
 from ....utils import is_backend_available
 from ...model_outputs import LanguageModelingOutput
-from .bert_lm_config import BertLMConfig
+from .bert_mask_filling_config import BertMaskFillingConfig
 
 
 if is_backend_available(Backends.TRANSFORMERS):
@@ -24,8 +21,8 @@ _required_backends = [
 ]
 
 
-@register_model("bert_lm", config_class=BertLMConfig)
-class BertLM(Model):
+@register_model("bert_mask_filling", config_class=BertMaskFillingConfig)
+class BertMaskFilling(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
@@ -33,7 +30,7 @@ class BertLM(Model):
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
-        self.bert_mlm = BertForMaskedLM(BertConfig(**self.config))
+        self.bert_mask_filling = BertForMaskedLM(BertConfig(**self.config))
 
     def forward(
         self,
@@ -49,7 +46,7 @@ class BertLM(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-        outputs = self.bert_mlm(
+        outputs = self.bert_mask_filling(
             input_ids=token_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,

@@ -67,6 +67,7 @@ class TaskType(ExplicitEnum):
     BACKBONE = "backbone"
     IMAGE2TEXT = "image2text"
     LANGUAGE_MODELING = "language_modeling"
+    MASK_FILLING = "mask_filling"
     SEQUENCE_LABELING = "sequence_labeling"
     SPEECH_RECOGNITION = "speech_recognition"
     TEXT_CLASSIFICATION = "text_classification"

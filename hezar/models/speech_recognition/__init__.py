@@ -1,1 +1,1 @@
-from .whisper import WhisperSpeechRecognition, WhisperSpeechRecognitionConfig
+from .whisper import *

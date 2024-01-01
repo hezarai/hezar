@@ -1,0 +1,2 @@
+from .bert_mask_filling import BertMaskFilling
+from .bert_mask_filling_config import BertMaskFillingConfig

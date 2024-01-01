@@ -7,8 +7,8 @@ Examples:
     >>> # read models registry
     >>> from hezar.registry import models_registry
     >>> print(models_registry)
-    {'distilbert_lm': {'module_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm.DistilBertLM'>,
-    'config_class': <class 'hezar.models.language_modeling.distilbert.distilbert_lm_config.DistilBertLMConfig'>},
+    {'distilbert_mask_filling': {'module_class': <class 'hezar.models.mask_filling.distilbert.distilbert_mask_filling.DistilBertMaskFilling'>,
+    'config_class': <class 'hezar.models.mask_filling.distilbert.distilbert_mask_filling_config.DistilBertMaskFillingConfig'>},
     'description': 'Optional model description here...'}
 
     >>> # add a model class to models_registry

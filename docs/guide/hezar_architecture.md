@@ -198,7 +198,7 @@ These family of functions take 3 main parameters:
 ```python
 from hezar import builders
 
-bert = builders.build_model("bert_lm", hidden_size=768, vocab_size=50000)
+bert = builders.build_model("bert_mask_filling", hidden_size=768, vocab_size=50000)
 sp_bpe = builders.build_preprocessor("sentencepiece_bpe_tokenizer")
 tc_dataset = builders.build_dataset("text_classification", path="hezarai/sentiment-dksf", tokenizer_path="hezarai/bert-base-fa")
 ...

@@ -5,9 +5,9 @@ from ....constants import TaskType
 
 
 @dataclass
-class BertLMConfig(ModelConfig):
-    name = "bert_lm"
-    task: str = TaskType.LANGUAGE_MODELING
+class BertMaskFillingConfig(ModelConfig):
+    name = "bert_mask_filling"
+    task: str = TaskType.MASK_FILLING
     vocab_size: int = 42000
     hidden_size: int = 768
     num_hidden_layers: int = 12
