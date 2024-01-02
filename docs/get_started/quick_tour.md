@@ -34,13 +34,13 @@ print(f"NER: {ner_outputs}")
 POS: [[{'token': 'شرکت', 'label': 'Ne'}, {'token': 'هوش', 'label': 'Ne'}, {'token': 'مصنوعی', 'label': 'AJe'}, {'token': 'هزار', 'label': 'NUM'}]]
 NER: [[{'token': 'شرکت', 'label': 'B-org'}, {'token': 'هوش', 'label': 'I-org'}, {'token': 'مصنوعی', 'label': 'I-org'}, {'token': 'هزار', 'label': 'I-org'}]]
 ```
-- **Language Modeling (Mask Filling)**
+- **Mask Filling**
 ```python
 from hezar.models import Model
 
-roberta_mask_filling = Model.load("hezarai/roberta-fa-mask-filling")
+model = Model.load("hezarai/roberta-fa-mask-filling")
 inputs = ["سلام بچه ها حالتون <mask>"]
-outputs = roberta_mask_filling.predict(inputs, top_k=1)
+outputs = model.predict(inputs, top_k=1)
 print(outputs)
 ```
 ```
@@ -50,8 +50,8 @@ print(outputs)
 ```python
 from hezar.models import Model
 
-whisper = Model.load("hezarai/whisper-small-fa")
-transcripts = whisper.predict("examples/assets/speech_example.mp3")
+model = Model.load("hezarai/whisper-small-fa")
+transcripts = model.predict("examples/assets/speech_example.mp3")
 print(transcripts)
 ```
 ```
