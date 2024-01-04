@@ -253,7 +253,7 @@ to the Hub after saving.
 
 ## Concept 4: Task-based Modeling & Training
 Hezar is a practical library not a framework (it can be though!). That's why we decided to categorize models, trainers,
-datasets, etc. under task names e.g, `speech_recognition`, `language_modeling`, etc. If you've worked with other
+datasets, etc. under task names e.g, `speech_recognition`, `mask_filling`, etc. If you've worked with other
 libraries, this might somewhat seem irrational, but trust us! For most users and usages this fits better!
 
 Currently, all models, trainers and datasets are categorized by task name, but this does not mean that for every task,
