@@ -17,7 +17,6 @@ __all__ = [
     "TextClassificationMetricsHandler",
     "SequenceLabelingMetricsHandler",
     "SpeechRecognitionMetricsHandler",
-    "AudioClassificationMetricsHandler",
     "Image2TextMetricHandler",
     "TextGenerationMetricsHandler",
 ]
@@ -172,11 +171,3 @@ class TextGenerationMetricsHandler(MetricsHandler):
             x = metric.compute(predictions, labels)
             results.update(x)
         return results
-
-
-class AudioClassificationMetricsHandler(MetricsHandler):
-    def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
-        super().__init__(metrics=metrics, trainer=trainer)
-
-    def compute_metrics(self, predictions, labels, **kwargs):
-        return {}
