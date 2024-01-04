@@ -9,12 +9,11 @@ Examples:
 """
 from __future__ import annotations
 
-import inspect
 import os
 import re
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -31,9 +30,7 @@ from ..constants import (
     RegistryType,
 )
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, get_module_class, verify_dependencies
-from .model_outputs import ModelOutput
-
+from ..utils import Logger, get_module_class, verify_dependencies, sanitize_function_parameters
 
 logger = Logger(__name__)
 
@@ -354,7 +351,7 @@ class Model(nn.Module):
         """
         return raw_inputs
 
-    def post_process(self, *model_outputs: Dict[str, torch.Tensor] | torch.Tensor, **kwargs):
+    def post_process(self, *model_outputs: Dict[str, torch.Tensor] | torch.Tensor, **kwargs) -> List[Any]:
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
@@ -374,7 +371,7 @@ class Model(nn.Module):
         device: str | torch.device = None,
         unpack_forward_inputs: bool = True,
         **kwargs,
-    ) -> Dict | List[Dict] | torch.Tensor | Iterable | ModelOutput:
+    ) -> List[Any] | torch.Tensor:
         """
         Perform an end-to-end prediction on raw inputs.
 
@@ -385,13 +382,13 @@ class Model(nn.Module):
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
             device: What device to perform inference on
             unpack_forward_inputs: Whether to unpack forward inputs. Set to False if you want to send preprocess outputs
-             directly to the forward/generate method without unpacking it. Note that this only applies to the cases that
-             the preprocess method's output is a dict-like/mapping object.
+                directly to the `forward/generate` method without unpacking it. Note that this only applies to the cases
+                that the preprocess method's output is a dict-like/mapping object.
             **kwargs: Other arguments for `preprocess`, `forward`, `generate` and `post_process`. each will be passed to
-             the correct method automatically.
+                the correct method automatically.
 
         Returns:
-            Output dict of results
+            Prediction results, each model or task can have its own type and structure
         """
         # Unpack kwargs for each step
         preprocess_kwargs, forward_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
@@ -400,8 +397,7 @@ class Model(nn.Module):
         }
         if len(invalid_kwargs):
             logger.warning(
-                f"Unrecognized arguments {list(invalid_kwargs.keys())} passed to `predict` method for "
-                f"`{self.__class__.__name__}`"
+                f"Unrecognized arguments {list(invalid_kwargs.keys())} passed to `{self.__class__.__name__}.predict()`"
             )
 
         # Put model in eval mode
@@ -419,7 +415,7 @@ class Model(nn.Module):
         inference_fn = self.generate if self.is_generative else self.__call__
 
         # Model inference step (forward for regular models and generate for generative models)
-        if isinstance(model_inputs, Mapping) and unpack_forward_inputs:
+        if isinstance(model_inputs, Dict) and unpack_forward_inputs:
             model_outputs = inference_fn(**model_inputs, **forward_kwargs)
         else:
             model_outputs = inference_fn(model_inputs, **forward_kwargs)
@@ -466,19 +462,9 @@ class Model(nn.Module):
         # Whether to use forward or generate based on model type
         inference_fn = type(self).generate if self.is_generative else type(self).forward
 
-        def _get_positional_kwargs(fn):
-            params = dict(inspect.signature(fn).parameters)
-            params = {k: v for k, v in params.items() if v.default != v.empty}
-            return params
-
-        # Get keyword arguments from the child class (ignore positional arguments)
-        preprocess_kwargs_keys = list(_get_positional_kwargs(type(self).preprocess).keys())
-        post_process_kwargs_keys = list(_get_positional_kwargs(type(self).post_process).keys())
-        forward_kwargs_keys = list(_get_positional_kwargs(inference_fn).keys())
-
-        preprocess_kwargs = {k: kwargs.get(k) for k in preprocess_kwargs_keys if k in kwargs}
-        forward_kwargs = {k: kwargs.get(k) for k in forward_kwargs_keys if k in kwargs}
-        post_process_kwargs = {k: kwargs.get(k) for k in post_process_kwargs_keys if k in kwargs}
+        preprocess_kwargs = sanitize_function_parameters(type(self).preprocess, kwargs)
+        forward_kwargs = sanitize_function_parameters(inference_fn, kwargs)
+        post_process_kwargs = sanitize_function_parameters(type(self).post_process, kwargs)
 
         return preprocess_kwargs, forward_kwargs, post_process_kwargs
 

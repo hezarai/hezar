@@ -18,7 +18,7 @@ TESTABLE_MODELS = {
     "mask-filling": {
         "path": "hezarai/roberta-fa-mask-filling",
         "inputs": {"type": "text", "value": "سلام بچه ها حالتون <mask>"},
-        "predict_kwargs": {},
+        "predict_kwargs": {"top_k": 3},
         "output_type_within_batch": list,
         "required_output_keys": {"token", "sequence", "token_id", "score"}
     },
@@ -32,7 +32,7 @@ TESTABLE_MODELS = {
     "ocr": {
         "path": "hezarai/crnn-fa-printed-96-long",
         "inputs": {"type": "file", "value": "samples/ocr_example.jpg"},
-        "predict_kwargs": {},
+        "predict_kwargs": {"return_scores": True},
         "output_type_within_batch": dict,
         "required_output_keys": {"text", "score"}
     },
@@ -53,7 +53,7 @@ TESTABLE_MODELS = {
     "sequence-labeling": {
         "path": "hezarai/bert-fa-pos-lscp-500k",
         "inputs": {"type": "text", "value": "شرکت هوش مصنوعی هزار"},
-        "predict_kwargs": {},
+        "predict_kwargs": {"return_offsets": True, "return_scores": True},
         "output_type_within_batch": list,
         "required_output_keys": {"label", "token", "start", "end", "score"}
     }
