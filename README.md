@@ -271,6 +271,25 @@ trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor
 ```
 You can actually go way deeper with the Trainer. See more details [here](https://hezarai.github.io/hezar/guide).
 
+## Offline Mode
+Hezar hosts everything on [the HuggingFace Hub](https://huggingface.co/hezarai). When you use the `.load()` method for a model, dataset, etc., it's
+downloaded and saved in the cache (at `~/.cache/hezar`) so next time you try to load the same asset, it uses the cached version
+which works even when offline. But if you want to export assets more explicitly, you can use the `.save()` method to save
+anything anywhere you want on a local path.
+
+```python
+from hezar.models import Model
+
+# Load the online model
+model = Model.load("hezarai/bert-fa-ner-arman")
+# Save the model locally
+save_path = "./weights/bert-fa-ner-arman" 
+model.save(save_path)  # The weights, config, preprocessors, etc. are saved at `./weights/bert-fa-ner-arman`
+# Now you can load the saved model
+local_model = Model.load(save_path)
+```
+Moreover, any class that has `.load()` and `.save()` can be treated the same way.
+
 ## Going Deeper
 Hezar's primary focus is on providing ready to use models (implementations & pretrained weights) for different casual tasks
 not by reinventing the wheel, but by being built on top of
