@@ -31,7 +31,6 @@ from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters
 from .metrics_handlers import (
-    AudioClassificationMetricsHandler,
     Image2TextMetricHandler,
     MetricsHandler,
     SequenceLabelingMetricsHandler,
@@ -62,7 +61,6 @@ task_to_metrics_handlers_mapping = {
     TaskType.SEQUENCE_LABELING: SequenceLabelingMetricsHandler,
     TaskType.IMAGE2TEXT: Image2TextMetricHandler,
     TaskType.SPEECH_RECOGNITION: SpeechRecognitionMetricsHandler,
-    TaskType.AUDIO_CLASSIFICATION: AudioClassificationMetricsHandler,
     TaskType.TEXT_GENERATION: TextGenerationMetricsHandler,
 }
 
