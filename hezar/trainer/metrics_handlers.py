@@ -148,11 +148,21 @@ class Image2TextMetricHandler(MetricsHandler):
 
 
 class SpeechRecognitionMetricsHandler(MetricsHandler):
+    valid_metrics = [MetricType.CER, MetricType.WER]
+
     def __init__(self, metrics: List[str | MetricType | Metric | MetricConfig], trainer=None):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        return {}
+        predictions = self.trainer.model.post_process(torch.tensor(predictions))
+        labels = self.trainer.model.post_process(torch.tensor(labels))
+        predictions = [x["text"] for x in predictions]
+        labels = [x["text"] for x in labels]
+        results = {}
+        for metric_name, metric in self.metrics.items():
+            x = metric.compute(predictions, labels)
+            results.update(x)
+        return results
 
 
 class TextGenerationMetricsHandler(MetricsHandler):
