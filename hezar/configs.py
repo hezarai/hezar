@@ -387,6 +387,8 @@ class TrainerConfig(Config):
             Training batch size.
         eval_batch_size (int):
             Evaluation batch size, defaults to `batch_size` if None.
+        gradient_accumulation_steps (int):
+            Number of updates steps to accumulate before performing a backward/update pass, defaults to 1.
         distributed (bool):
             Whether to use distributed training or not (via the `accelerate` package)
         mixed_precision (PrecisionType | str):
@@ -422,6 +424,7 @@ class TrainerConfig(Config):
     lr_scheduler: str | LRSchedulerType = None
     batch_size: int = None
     eval_batch_size: int = None
+    gradient_accumulation_steps: int = 1
     distributed: bool = field(
         init=False,
         default=False,

@@ -421,6 +421,18 @@ class Trainer:
 
         return loss
 
+    def optimization_step(self):
+        """
+        Perform optimization step
+        """
+        if self.accelerator is not None:
+            self.optimizer.step()
+        else:
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
+
+        self.optimizer.zero_grad()
+
     def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
         """
         Train one batch of data and return loss and model outputs
@@ -434,19 +446,14 @@ class Trainer:
         with self.amp_context_manager():
             outputs = self.forward(input_batch)
 
-        loss = self.compute_loss(outputs, **input_batch)
+        loss = self.compute_loss(outputs, **input_batch) / self.config.gradient_accumulation_steps
 
         if self.accelerator is not None:
             self.accelerator.backward(loss)
-            self.optimizer.step()
         else:
             self.scaler.scale(loss).backward()
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
 
-        self.optimizer.zero_grad()
-
-        outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
+        outputs["loss"] = loss
 
         return outputs
 
@@ -470,7 +477,7 @@ class Trainer:
             generated_ids = self.model.generate(**generate_inputs)
             outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids
 
-        outputs["loss"] = loss.item() if isinstance(loss, torch.Tensor) else loss
+        outputs["loss"] = loss
 
         return outputs
 
@@ -497,8 +504,11 @@ class Trainer:
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
                 outputs = self.training_step(input_batch)
-                losses_sum += outputs["loss"]
+                # Optimizer step
+                if (step + 1) % self.config.gradient_accumulation_steps == 0:
+                    self.optimization_step()
                 # Gather outputs for metrics
+                losses_sum += outputs["loss"].item()
                 avg_loss = losses_sum / (step + 1)
                 iterator.set_postfix(loss=avg_loss)
                 self.state.global_step += 1
@@ -530,7 +540,7 @@ class Trainer:
                     labels = input_batch["labels"].detach().cpu().numpy()
                     # Compute metrics
                     evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
-                    evaluation_results["loss"] = outputs["loss"]
+                    evaluation_results["loss"] = outputs["loss"].item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
                     iterator.set_postfix(**self.metrics_handler.tracker.avg())
