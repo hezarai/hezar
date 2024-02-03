@@ -12,6 +12,15 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from .metrics_handlers import (
+    Image2TextMetricHandler,
+    MetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    TextClassificationMetricsHandler,
+    TextGenerationMetricsHandler,
+)
+from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -30,16 +39,6 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters
-from .metrics_handlers import (
-    Image2TextMetricHandler,
-    MetricsHandler,
-    SequenceLabelingMetricsHandler,
-    SpeechRecognitionMetricsHandler,
-    TextClassificationMetricsHandler,
-    TextGenerationMetricsHandler,
-)
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
-
 
 if TYPE_CHECKING:
     from accelerate import Accelerator
@@ -52,8 +51,16 @@ optimizers = {
     OptimizerType.SDG: torch.optim.SGD,
 }
 lr_schedulers = {
-    LRSchedulerType.REDUCE_LR_ON_PLATEAU: torch.optim.lr_scheduler.ReduceLROnPlateau,
-    LRSchedulerType.COSINE_LR: torch.optim.lr_scheduler.CosineAnnealingLR,
+    LRSchedulerType.LAMBDA: torch.optim.lr_scheduler.LambdaLR,
+    LRSchedulerType.STEP: torch.optim.lr_scheduler.StepLR,
+    LRSchedulerType.MULTI_STEP: torch.optim.lr_scheduler.MultiStepLR,
+    LRSchedulerType.ONE_CYCLE: torch.optim.lr_scheduler.OneCycleLR,
+    LRSchedulerType.LINEAR: torch.optim.lr_scheduler.LinearLR,
+    LRSchedulerType.EXPONENTIAL: torch.optim.lr_scheduler.ExponentialLR,
+    LRSchedulerType.CYCLIC: torch.optim.lr_scheduler.CyclicLR,
+    LRSchedulerType.SEQUENTIAL: torch.optim.lr_scheduler.SequentialLR,
+    LRSchedulerType.POLYNOMIAL: torch.optim.lr_scheduler.PolynomialLR,
+    LRSchedulerType.COSINE_ANEALING: torch.optim.lr_scheduler.CosineAnnealingLR,
 }
 
 task_to_metrics_handlers_mapping = {
@@ -89,7 +96,7 @@ class Trainer:
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
     default_trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     default_optimizer = OptimizerType.ADAM
-    default_lr_scheduler = LRSchedulerType.REDUCE_LR_ON_PLATEAU
+    default_lr_scheduler = None
 
     def __init__(
         self,
@@ -246,10 +253,11 @@ class Trainer:
 
             if lr_scheduler is None:
                 scheduler_name = self.config.lr_scheduler or self.default_lr_scheduler
+                scheduler_kwargs = self.config.lr_scheduler_kwargs or {}
                 if scheduler_name is None:
                     lr_scheduler = None
                 else:
-                    lr_scheduler = lr_schedulers[scheduler_name](optimizer, verbose=True)
+                    lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs, verbose=True)
         return optimizer, lr_scheduler
 
     def _setup_accelerator(self):
@@ -433,6 +441,20 @@ class Trainer:
 
         self.optimizer.zero_grad()
 
+    def lr_scheduler_step(self, metrics=None):
+        """
+        Perform the learning rate scheduling step
+
+        Args:
+            metrics: one or multiple values that the scheduler watches to either perform step function or not. Only
+             works for `ReduceLROnPlateau`.
+        """
+        if self.lr_scheduler is not None:
+            if isinstance(self.lr_scheduler, lr_schedulers[LRSchedulerType.REDUCE_ON_PLATEAU]):
+                self.lr_scheduler.step(metrics)
+            else:
+                self.lr_scheduler.step()
+
     def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
         """
         Train one batch of data and return loss and model outputs
@@ -504,8 +526,8 @@ class Trainer:
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
                 outputs = self.training_step(input_batch)
-                # Optimizer step
-                if (step + 1) % self.config.gradient_accumulation_steps == 0:
+                # Optimization step
+                if (step + 1) % self.config.gradient_accumulation_steps == 0 or step == len(iterator):
                     self.optimization_step()
                 # Gather outputs for metrics
                 losses_sum += outputs["loss"].item()
@@ -558,28 +580,32 @@ class Trainer:
 
         header = f"{'*' * 20} Training Info {'*' * 20}"
         footer = "*" * len(header)
+        info = {
+            "Output Directory": self.config.output_dir,
+            "Task": self.config.task,
+            "Model": type(self.model).__name__,
+            "Init Weights": self.config.init_weights_from or "N/A",
+            "Device(s)": self.device,
+            "Batch Size": self.config.batch_size,
+            "Epochs": self.config.num_epochs,
+            "Training Dataset": self.train_dataset,
+            "Evaluation Dataset": self.eval_dataset,
+            "Optimizer": self.config.optimizer or self.default_optimizer,
+            "Scheduler": self.config.lr_scheduler,
+            "Initial Learning Rate": self.config.learning_rate,
+            "Learning Rate Decay": self.config.weight_decay,
+            "Number of Parameters": self.model.num_parameters,
+            "Number of Trainable Parameters": self.model.num_trainable_parameters,
+            "Mixed Precision": self.config.mixed_precision or "Full (fp32)",
+            "Metrics": list(self.metrics_handler.metrics.keys()),
+            "Checkpoints Path": self.checkpoints_dir,
+            "Logs Path": self.logs_dir,
+        }
 
         # Header
         print(f"\n{colorize_text(header, 'bold')}\n")
         # Info
-        _print_info_line("Output Directory", self.config.output_dir)
-        _print_info_line("Task", self.config.task)
-        _print_info_line("Model", type(self.model).__name__)
-        _print_info_line("Init Weights", self.config.init_weights_from or "N/A")
-        _print_info_line("Device(s)", self.device)
-        _print_info_line("Training Dataset", self.train_dataset)
-        _print_info_line("Evaluation Dataset", self.eval_dataset)
-        _print_info_line("Optimizer", self.config.optimizer or self.default_optimizer)
-        _print_info_line("Initial Learning Rate", self.config.learning_rate)
-        _print_info_line("Learning Rate Decay", self.config.weight_decay)
-        _print_info_line("Epochs", self.config.num_epochs)
-        _print_info_line("Batch Size", self.config.batch_size)
-        _print_info_line("Number of Parameters", self.model.num_parameters)
-        _print_info_line("Number of Trainable Parameters", self.model.num_trainable_parameters)
-        _print_info_line("Mixed Precision", self.config.mixed_precision or "Full (fp32)")
-        _print_info_line("Metrics", list(self.metrics_handler.metrics.keys()))
-        _print_info_line("Checkpoints Path", self.checkpoints_dir)
-        _print_info_line("Logs Path", self.logs_dir)
+        [_print_info_line(k, v) for k, v in info.items()]
         # Footer
         print(f"\n{colorize_text(footer, 'bold')}\n")
 
@@ -604,15 +630,21 @@ class Trainer:
 
         for epoch in range(self.current_epoch, self.config.num_epochs + 1):
             print()
-            training_results = self.inner_training_loop(epoch)
-            evaluation_results = self.evaluate()
-            if self.lr_scheduler is not None:
-                self.lr_scheduler.step(evaluation_results["loss"])
 
+            # Train on the whole train data
+            training_results = self.inner_training_loop(epoch)
+            # Evaluate the model on eval data
+            evaluation_results = self.evaluate()
+
+            # LR scheduler step
+            self.lr_scheduler_step(evaluation_results["loss"])
+
+            # Metrics gathering
             train_logs = {f"train.{metric_name}": value for metric_name, value in training_results.items()}
             evaluation_logs = {f"evaluation.{metric_name}": value for metric_name, value in evaluation_results.items()}
             all_logs = {**train_logs, **evaluation_logs}
 
+            # Update trainer state
             self.state.epoch = epoch
             self.state.update_best_results(
                 metric_value=all_logs[self.config.metric_for_best_model],
