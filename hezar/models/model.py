@@ -30,7 +30,8 @@ from ..constants import (
     RegistryType,
 )
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, get_module_class, verify_dependencies, sanitize_function_parameters
+from ..utils import Logger, get_module_class, sanitize_function_parameters, verify_dependencies
+
 
 logger = Logger(__name__)
 
