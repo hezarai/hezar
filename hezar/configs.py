@@ -1,7 +1,7 @@
 """
 Configs are at the core of Hezar. All core modules like `Model`, `Preprocessor`, `Trainer`, etc. take their parameters
 as a config container which is an instance of `Config` or its derivatives. A `Config` is a Python dataclass with
-auxiliary methods for loading, saving, uploading to the hub and etc.
+auxiliary methods for loading, saving, uploading to the hub, etc.
 
 Examples:
     >>> from hezar.configs import ModelConfig
@@ -19,7 +19,7 @@ import tempfile
 from dataclasses import asdict, dataclass, field, fields
 from enum import Enum
 from pprint import pformat
-from typing import Dict, List, Literal, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
@@ -383,10 +383,14 @@ class TrainerConfig(Config):
             Optimizer weight decay value.
         lr_scheduler (LRSchedulerType):
             Optional learning rate scheduler among `LRSchedulerType` enum.
+        lr_scheduler_kwargs (Dict[str, Any]):
+            LR scheduler instructor kwargs depending on the scheduler type
         batch_size (int):
             Training batch size.
         eval_batch_size (int):
             Evaluation batch size, defaults to `batch_size` if None.
+        gradient_accumulation_steps (int):
+            Number of updates steps to accumulate before performing a backward/update pass, defaults to 1.
         distributed (bool):
             Whether to use distributed training or not (via the `accelerate` package)
         mixed_precision (PrecisionType | str):
@@ -420,8 +424,10 @@ class TrainerConfig(Config):
     learning_rate: float = 2e-5
     weight_decay: float = 0.0
     lr_scheduler: str | LRSchedulerType = None
+    lr_scheduler_kwargs: Dict[str, Any] = None
     batch_size: int = None
     eval_batch_size: int = None
+    gradient_accumulation_steps: int = 1
     distributed: bool = field(
         init=False,
         default=False,

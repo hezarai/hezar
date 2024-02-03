@@ -128,8 +128,18 @@ class OptimizerType(ExplicitEnum):
 
 
 class LRSchedulerType(ExplicitEnum):
-    REDUCE_LR_ON_PLATEAU = "reduce_lr_on_plateau"
-    COSINE_LR = "cosine_lr"
+    CONSTANT = "constant"
+    LAMBDA = "lambda"
+    STEP = "step"
+    REDUCE_ON_PLATEAU = "reduce_on_plateau"
+    MULTI_STEP = "multi_step"
+    ONE_CYCLE = "one_cycle"
+    LINEAR = "linear"
+    EXPONENTIAL = "exponential"
+    CYCLIC = "cyclic"
+    SEQUENTIAL = "sequential"
+    POLYNOMIAL = "polynomial"
+    COSINE_ANEALING = "cosine_anealing"
 
 
 class SplitType(ExplicitEnum):
