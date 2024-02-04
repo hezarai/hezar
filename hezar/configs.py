@@ -108,6 +108,10 @@ class Config:
     def __iter__(self):
         return iter(self.dict())
 
+    @classmethod
+    def fields(cls):
+        return cls.__dataclass_fields__
+
     def dict(self):
         """
         Returns the config object as a dictionary (works on nested dataclasses too)
@@ -137,7 +141,7 @@ class Config:
         """
         d.update(kwargs)
         for k, v in d.items():
-            if k not in self.__annotations__.keys():
+            if k not in self.fields():
                 logger.warning(f"`{str(self.__class__.__name__)}` does not take `{k}` as a config parameter!")
             setattr(self, k, v)
         return self
@@ -215,7 +219,7 @@ class Config:
                 if config_cls is not None:
                     dict_config[k] = config_cls.from_dict(v)
 
-        dict_config = {k: v for k, v in dict_config.items() if k in cls.__annotations__ and k not in CONFIG_CLASS_VARS}
+        dict_config = {k: v for k, v in dict_config.items() if k in cls.fields() and cls.fields()[k].init}
 
         config = cls(**dict_config)  # noqa
 
