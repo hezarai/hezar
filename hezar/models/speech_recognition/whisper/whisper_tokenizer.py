@@ -253,20 +253,28 @@ ADDITIONAL_SPECIAL_TOKENS = [
 @dataclass
 class WhisperBPEConfig(BPEConfig):
     name = "whisper_bpe_tokenizer"
+    max_length: int = 448
+    truncation_strategy: str = "longest_first"
+    truncation_direction: str = "right"
+    stride: int = 0
+    padding_strategy: str = "longest"
+    padding_direction: str = "right"
+    pad_to_multiple_of: int = 0
+    pad_token: str = "<|endoftext|>"
     unk_token: str = "<|endoftext|>"
-    bos_token: str = "<|startoftranscript|>"
+    bos_token: str = "<|endoftext|>"
     eos_token: str = "<|endoftext|>"
     translate_token: str = "<|translate|>"
     transcribe_token: str = "<|transcribe|>"
     notimestamps_token: str = "<|notimestamps|>"
     additional_special_tokens: List = field(default_factory=lambda: ADDITIONAL_SPECIAL_TOKENS)
-    padding_direction: str = "right"
     add_prefix_space: bool = False
     add_bos_token: bool = False
     model_max_length: int = 1024
     language: str = None
     task: str = None
     predict_timestamps: str = False
+    show_progress: bool = True
 
 
 @register_preprocessor("whisper_bpe_tokenizer", config_class=WhisperBPEConfig)
