@@ -80,10 +80,9 @@ def resolve_inputs_length_for_padding(
     Resolve final inputs length based on padding_strategy and max_length values
     """
     inputs_max_length = max([len(x) for x in inputs])
-    padding = padding_type or "longest"
 
     # Resolve padding and max_length values first
-    if padding is None:
+    if padding_type is None:
         if max_length is not None:
             padding = "max_length"
         elif max_length is None:
@@ -143,8 +142,12 @@ def pad_batch_items(
         A list of equal sized lists
     """
 
-    inputs_length = resolve_inputs_length_for_padding(inputs, padding_type=padding_type, max_length=max_length,
-                                                      truncation=truncation)
+    inputs_length = resolve_inputs_length_for_padding(
+        inputs,
+        padding_type=padding_type,
+        max_length=max_length,
+        truncation=truncation,
+    )
 
     padded_inputs = []
     for ids in inputs:
