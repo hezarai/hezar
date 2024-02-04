@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Mapping
+from typing import List, Mapping
 
 import numpy as np
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
-from ..constants import DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE
+from ..constants import DEFAULT_FEATURE_EXTRACTOR_CONFIG_FILE, PaddingType
 from ..utils import convert_batch_dict_dtype
 from .preprocessor import Preprocessor
 
@@ -36,7 +38,7 @@ class AudioFeatureExtractor(Preprocessor):
     def pad(
         self,
         processed_features,
-        padding=None,
+        padding: bool | str | PaddingType = True,
         max_length=None,
         truncation=None,
         pad_to_multiple_of=None,
@@ -58,6 +60,7 @@ class AudioFeatureExtractor(Preprocessor):
         """
         return_attention_mask = return_attention_mask or self.config.return_attention_mask
         padding = padding or self.config.padding
+
         if isinstance(processed_features, (list, tuple)) and isinstance(processed_features[0], Mapping):
             processed_features = {
                 key: np.array([example[key] for example in processed_features]) for key in processed_features[0].keys()
@@ -121,6 +124,7 @@ class AudioFeatureExtractor(Preprocessor):
                 return_attention_mask=return_attention_mask,
             )
             for key, value in outputs.items():
+                value = np.array(value)
                 if key not in batch_outputs:
                     batch_outputs[key] = []
                 if value.dtype is np.dtype(np.float64):
