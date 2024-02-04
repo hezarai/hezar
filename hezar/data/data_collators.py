@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from ..preprocessors import Tokenizer
+from ..preprocessors import Tokenizer, AudioFeatureExtractor
 from ..utils import Logger, convert_batch_dict_dtype
 
 
@@ -9,6 +9,7 @@ __all__ = [
     "TextPaddingDataCollator",
     "TextGenerationDataCollator",
     "ImageCaptioningDataCollator",
+    "SpeechRecognitionDataCollator",
     "SequenceLabelingDataCollator",
     "CharLevelOCRDataCollator",
 ]
@@ -221,6 +222,48 @@ class ImageCaptioningDataCollator:
         padded_batch = convert_batch_dict_dtype(padded_batch, dtype="pt")
 
         return padded_batch
+
+
+class SpeechRecognitionDataCollator:
+    def __init__(
+        self,
+        feature_extractor: AudioFeatureExtractor,
+        tokenizer: Tokenizer,
+        inputs_padding_type: str = "longest",
+        inputs_max_length: int = None,
+        labels_padding_type: str = "longest",
+        labels_max_length: int = None,
+    ):
+        self.feature_extractor = feature_extractor
+        self.tokenizer = tokenizer
+        self.inputs_padding_type = inputs_padding_type
+        self.inputs_max_length = inputs_max_length
+        self.labels_padding_type = labels_padding_type
+        self.labels_max_length = labels_max_length
+
+    def __call__(self, input_batch):
+        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
+        inputs = {}
+        for key in input_batch[0].keys():
+            stack = [e for item in input_batch for e in item[key]]
+            inputs[key] = stack
+
+        inputs = self.tokenizer.pad_encoded_batch(
+            inputs,
+            padding=self.labels_padding_type,
+            max_length=self.labels_max_length,
+            exclude_keys=["input_features"],
+            return_tensors="pt"
+        )
+
+        inputs = self.feature_extractor.pad(
+            inputs,
+            padding=self.inputs_padding_type,
+            max_length=self.inputs_max_length,
+            return_tensors="pt",
+        )
+
+        return inputs
 
 
 class SequenceLabelingDataCollator:
