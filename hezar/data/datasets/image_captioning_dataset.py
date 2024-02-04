@@ -46,14 +46,6 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
 
 @register_dataset("image_captioning", config_class=ImageCaptioningDatasetConfig)
 class ImageCaptioningDataset(Dataset):
-    """
-    General image captioning dataset class.
-
-    Args:
-        config (ImageCaptioningDatasetConfig): The configuration object for the dataset.
-        split: Dataset split, defaults to None.
-        **kwargs: Additional keyword arguments.
-    """
     required_backends = _required_backends
 
     def __init__(self, config: ImageCaptioningDatasetConfig, split=None, **kwargs):
