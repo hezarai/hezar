@@ -468,7 +468,7 @@ class Tokenizer(Preprocessor):
         pad_to_multiple_of: int = None,
         pad_id: int = 0,
         pad_type_id: int = 0,
-        pad_token: str = "[PAD]",
+        pad_token: str = None,
         length: int = None,
     ):
         return self._tokenizer.enable_padding(
