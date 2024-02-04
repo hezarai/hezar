@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import List
 
 import numpy as np
@@ -7,7 +8,7 @@ import torch
 
 from ....constants import Backends
 from ....registry import register_model
-from ....utils import is_backend_available, load_audio_files
+from ....utils import is_backend_available, load_audio_files, shift_tokens_right
 from ...model import Model
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
@@ -52,11 +53,16 @@ class WhisperSpeechRecognition(Model):
         encoder_outputs=None,
         past_key_values=None,
         decoder_inputs_embeds=None,
+        labels=None,
         use_cache=None,
         output_attentions=None,
         output_hidden_states=None,
         **kwargs,
     ):
+        if decoder_input_ids is None or decoder_inputs_embeds is None:
+            decoder_input_ids = shift_tokens_right(
+                labels, self.config.pad_token_id, self.config.decoder_start_token_id
+            )
         outputs = self.whisper(
             input_features=input_features,
             attention_mask=attention_mask,
@@ -68,15 +74,16 @@ class WhisperSpeechRecognition(Model):
             encoder_outputs=encoder_outputs,
             past_key_values=past_key_values,
             decoder_inputs_embeds=decoder_inputs_embeds,
-            labels=None,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
         )
 
-        return outputs
+        return dict(outputs)
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        labels = copy.deepcopy(labels)
+        labels[labels == self.config.pad_token_id] = -100
         loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
