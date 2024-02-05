@@ -52,6 +52,7 @@ tasks_setups = {
             "path": "hezarai/xlsum-fa",
             "config": {
                 "tokenizer_path": "hezarai/t5-base-fa",
+                "max_length": 32
             }
         },
         "model": {
@@ -98,7 +99,7 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/common-voice-13-fa",
             "config": {
-                "labels_max_length": 64,
+                "labels_max_length": 32,
                 "tokenizer_path": "hezarai/whisper-small",
                 "feature_extractor_path": "hezarai/whisper-small"
             }
