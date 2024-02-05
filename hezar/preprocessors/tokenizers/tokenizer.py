@@ -19,7 +19,12 @@ from ...constants import (
     Backends,
     PaddingType,
 )
-from ...utils import Logger, convert_batch_dict_dtype, is_backend_available, pad_batch_items
+from ...utils import (
+    Logger,
+    convert_batch_dict_dtype,
+    is_backend_available,
+    pad_batch_items,
+)
 from ..preprocessor import Preprocessor
 
 
@@ -292,7 +297,8 @@ class Tokenizer(Preprocessor):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        padding_strategy = padding_strategy or self.config.padding_strategy
+        if padding_strategy is None and max_length is not None:
+            padding_strategy = PaddingType.MAX_LENGTH
         truncation_strategy = truncation_strategy or self.config.truncation_strategy
         max_length = max_length or self.config.max_length
         pad_to_multiple_of = pad_to_multiple_of or self.config.pad_to_multiple_of
@@ -362,7 +368,7 @@ class Tokenizer(Preprocessor):
         pad_to_multiple_of: int = None,
     ):
         # Set truncation and padding on the backend tokenizer
-        if truncation_strategy == "no_truncation":
+        if truncation_strategy == "no_truncation" or truncation_strategy is None:
             if self.truncation is not None:
                 self.no_truncation()
         else:
@@ -384,9 +390,8 @@ class Tokenizer(Preprocessor):
                 if self.padding is not None:
                     self.no_padding()
             else:
-                length = max_length if self.config.padding_strategy == "max_length" else None
                 target = {
-                    "length": length,
+                    "length": max_length,
                     "direction": padding_side,
                     "pad_id": self.token_to_id(self.pad_token),
                     "pad_token": self.pad_token,
