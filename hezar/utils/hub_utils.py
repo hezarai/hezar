@@ -1,4 +1,4 @@
-import os.path
+import os
 
 from huggingface_hub import HfApi, Repository
 
@@ -14,6 +14,7 @@ __all__ = [
     "clone_repo",
     "list_repo_files",
     "get_state_dict_from_hub",
+    "clean_cache",
 ]
 
 logger = Logger(__name__)
@@ -158,3 +159,23 @@ def get_state_dict_from_hub(hub_id, filename, subfolder=None):
     state_dict = torch.load(weights_file)
 
     return state_dict
+
+
+def clean_cache(cache_dir: str = None, delay: int = 10):
+    """
+    Clean the whole cache directory of Hezar
+
+    Args:
+        cache_dir: Optionally provide the cache dir path or the default cache dir will be used otherwise.
+        delay: How many seconds to wait before performing the deletion action
+    """
+    import shutil
+    import time
+
+    cache_dir = cache_dir or HEZAR_CACHE_DIR
+
+    logger.warning(f"Attempting to delete the files in `{cache_dir}` in {delay} seconds...")
+    time.sleep(delay)
+
+    shutil.rmtree(cache_dir)
+    logger.info(f"Successfully deleted `{cache_dir}`!")
