@@ -1,10 +1,13 @@
+import os
 from typing import Dict
 
 import pytest
 from torch.utils.data import DataLoader
 
 from hezar.data import Dataset
+from hezar.utils import clean_cache
 
+CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 DATASETS_MAPPING = {
     "text-classification": {
@@ -99,3 +102,7 @@ def test_load_dataset(task):
 
     assert isinstance(train_batch, Dict), INVALID_BATCH_TYPE.format(type(train_batch))
     assert isinstance(test_batch, Dict), INVALID_BATCH_TYPE.format(type(test_batch))
+
+    # Clean cache so that CI environment does not run out of space
+    if CI_MODE == "TRUE":
+        clean_cache(delay=1)
