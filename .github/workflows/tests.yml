@@ -23,4 +23,4 @@ jobs:
         pip install pytest
     - name: Run pytest
       run: |
-        CI_MODE=TRUE pytest tests/
+        CI_MODE=TRUE pytest -v tests/
