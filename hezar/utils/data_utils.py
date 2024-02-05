@@ -84,12 +84,12 @@ def resolve_inputs_length_for_padding(
     # Resolve padding and max_length values first
     if padding_type is None:
         if max_length is not None:
-            padding = "max_length"
-        elif max_length is None:
-            padding = "longest"
+            padding_type = "max_length"
+        else:
+            padding_type = "longest"
 
     # Now lets resolve any conflicts
-    if padding == "longest":
+    if padding_type == "longest":
         if max_length is not None:
             logger.warning(
                 "Setting padding='longest' and max_length is not valid. You must set one of them"
@@ -98,7 +98,7 @@ def resolve_inputs_length_for_padding(
 
         inputs_length = inputs_max_length
 
-    elif padding == "max_length":
+    elif padding_type == "max_length":
         if max_length is None:
             logger.warning(
                 "Setting padding='max_length' but no max_length value is provided! Falling back to padding='longest'"
@@ -115,7 +115,7 @@ def resolve_inputs_length_for_padding(
             else:
                 inputs_length = max_length
     else:
-        raise ValueError(f"Invalid padding value `{padding}`, expected either `max_length` or `longest`")
+        raise ValueError(f"Invalid padding value `{padding_type}`, expected either `max_length` or `longest`")
 
     return inputs_length
 
