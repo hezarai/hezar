@@ -51,7 +51,7 @@ class SpeechRecognitionDataset(Dataset):
         )
 
     def _load(self, split):
-        data = load_from_disk(self.config.path)[split]
+        data = load_dataset(self.config.path, split=split)
         data = data.cast_column(self.config.audio_column, Audio(sampling_rate=self.config.sampling_rate))
         return data
 
