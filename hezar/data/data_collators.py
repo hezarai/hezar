@@ -229,9 +229,9 @@ class SpeechRecognitionDataCollator:
         self,
         feature_extractor: AudioFeatureExtractor,
         tokenizer: Tokenizer,
-        inputs_padding_type: str = "longest",
+        inputs_padding_type: str = None,
         inputs_max_length: int = None,
-        labels_padding_type: str = "longest",
+        labels_padding_type: str = None,
         labels_max_length: int = None,
     ):
         self.feature_extractor = feature_extractor
