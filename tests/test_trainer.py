@@ -5,6 +5,7 @@ For example, a model might need to get its `id2label` config parameter from the 
 test suite complex and require redundant code.
 """
 
+import os
 import shutil
 
 import pytest
@@ -14,6 +15,10 @@ from hezar.data import Dataset
 from hezar.models import ModelConfig
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
+from hezar.utils import clean_cache
+
+
+CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 
 tasks_setups = {
@@ -149,4 +154,8 @@ def test_trainer(task):
     trainer.train()
 
     shutil.rmtree(config.output_dir, ignore_errors=True)
+
+    # Clean cache so that CI environment does not run out of space
+    if CI_MODE == "TRUE":
+        clean_cache()
 
