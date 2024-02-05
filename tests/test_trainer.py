@@ -147,5 +147,5 @@ def test_trainer(task):
     )
     trainer.train()
 
-    shutil.rmtree(config.output_dir)
+    shutil.rmtree(config.output_dir, ignore_errors=True)
 
