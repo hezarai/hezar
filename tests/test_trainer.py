@@ -94,6 +94,23 @@ tasks_setups = {
             "metrics": ["wer"]
         }
     },
+    "speech-recognition": {
+        "dataset": {
+            "path": "hezarai/common-voice-13-fa",
+            "config": {
+                "labels_max_length": 64,
+                "tokenizer_path": "hezarai/whisper-small",
+                "feature_extractor_path": "hezarai/whisper-small"
+            }
+        },
+        "model": {
+            "path": "hezarai/whisper-small"
+        },
+        "config": {
+            "task": "speech_recognition",
+            "metrics": ["wer", "cer"]
+        }
+    }
 }
 
 common_train_config = {

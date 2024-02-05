@@ -12,6 +12,7 @@ TASK_TO_HUB_MAPPING = {
     "ocr": "hezarai/persian-license-plate-v1",
     "image-captioning": "hezarai/flickr30k-fa",
     "text-summarization": "hezarai/xlsum-fa",
+    "speech-recognition": "hezarai/common-voice-13-fa"
 }
 TASK_TO_TOKENIZER_MAPPING = {
     "text-classification": "hezarai/bert-base-fa",
@@ -19,6 +20,7 @@ TASK_TO_TOKENIZER_MAPPING = {
     "ocr": "hezarai/crnn-fa-printed-96-long",
     "image-captioning": "hezarai/roberta-base-fa",
     "text-summarization": "hezarai/t5-base-fa",
+    "speech-recognition": "hezarai/whisper-small-fa"
 }
 
 TASK_TO_REQUIRED_FIELDS = {
@@ -27,6 +29,7 @@ TASK_TO_REQUIRED_FIELDS = {
     "ocr": ["pixel_values", "labels"],
     "image-captioning": ["pixel_values", "labels"],
     "text-summarization": ["token_ids", "attention_mask", "labels"],
+    "speech-recognition": ["input_features", "labels"]
 }
 
 INVALID_DATASET_TYPE = "Dataset instance must be of type `Dataset`, got `{}`!"
