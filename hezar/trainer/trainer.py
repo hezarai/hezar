@@ -152,11 +152,11 @@ class Trainer:
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
 
         # Configure checkpoints and logging directories
-        self.logs_dir = os.path.join(self.config.output_dir, self.config.logs_dir)
+        self.logs_dir = resolve_logdir(os.path.join(self.config.output_dir, self.config.logs_dir))
         self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
 
         # Setup logging properties
-        self.tensorboard = SummaryWriter(log_dir=resolve_logdir(self.logs_dir))
+        self.tensorboard = SummaryWriter(log_dir=self.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.logs_dir, csv_filename=self.trainer_csv_log_file)
 
         self.current_epoch = 1
@@ -166,6 +166,7 @@ class Trainer:
             epoch=self.current_epoch,
             total_epochs=self.config.num_epochs,
             metric_for_best_checkpoint=self.config.metric_for_best_model,
+            logs_dir=self.tensorboard.log_dir,
         )
 
     @staticmethod

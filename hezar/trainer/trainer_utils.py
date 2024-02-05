@@ -30,6 +30,7 @@ class TrainerState:
         metric_for_best_checkpoint: The metric key for choosing the best checkpoint (Also given in the TrainerConfig)
         best_metric_value: The value of the best checkpoint saved so far
         best_checkpoint: Path to the best model checkpoint so far
+        logs_dir: Path to the logs directory
     """
     epoch: int = 1
     total_epochs: int = None
@@ -37,6 +38,7 @@ class TrainerState:
     metric_for_best_checkpoint: str = None
     best_metric_value: float = None
     best_checkpoint: str = None
+    logs_dir: str = None
 
     def update(self, items: dict, **kwargs):
         items.update(kwargs)
