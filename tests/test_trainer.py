@@ -88,7 +88,7 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/flickr30k-fa",
             "config": {
-                "max_length": 32,
+                "max_length": 16,
                 "tokenizer_path": "hezarai/vit-roberta-fa-base"
             }
         },
@@ -104,7 +104,7 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/common-voice-13-fa",
             "config": {
-                "labels_max_length": 32,
+                "labels_max_length": 16,
                 "tokenizer_path": "hezarai/whisper-small",
                 "feature_extractor_path": "hezarai/whisper-small"
             }
@@ -124,6 +124,7 @@ common_train_config = {
     "batch_size": 2,
     "num_epochs": 1,
     "use_cpu": True,
+    "mixed_precision": "fp16",
     "gradient_accumulation_steps": 2
 }
 
