@@ -97,6 +97,7 @@ tasks_setups = {
         },
         "config": {
             "task": "image2text",
+            "mixed_precision": "fp16",
             "metrics": ["wer"]
         }
     },
@@ -114,6 +115,7 @@ tasks_setups = {
         },
         "config": {
             "task": "speech_recognition",
+            "mixed_precision": "fp16",
             "metrics": ["wer", "cer"]
         }
     }
@@ -124,7 +126,6 @@ common_train_config = {
     "batch_size": 2,
     "num_epochs": 1,
     "use_cpu": True,
-    "mixed_precision": "fp16",
     "gradient_accumulation_steps": 2
 }
 
