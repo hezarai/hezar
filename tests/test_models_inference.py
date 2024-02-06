@@ -5,6 +5,9 @@ import pytest
 from hezar.builders import build_model
 from hezar.models import ModelConfig
 from hezar.preprocessors import Preprocessor
+from hezar.utils import clean_cache
+
+CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 
 TESTABLE_MODELS = {
@@ -90,3 +93,6 @@ def test_model_inference(task):
         assert {k for el in outputs[0] for k in el.keys()} == required_output_keys
     elif output_type_within_batch == dict:
         assert set(outputs[0].keys()) == required_output_keys, INVALID_OUTPUT_FIELDS
+
+    if CI_MODE == "TRUE":
+        clean_cache(delay=1)
