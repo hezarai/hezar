@@ -11,7 +11,7 @@ CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 
 TESTABLE_MODELS = {
-    "automatic-speech-recognition": {
+    "speech-recognition": {
         "path": "hezarai/whisper-small-fa",
         "inputs": {"type": "file", "value": "samples/speech_example.mp3"},
         "predict_kwargs": {},
@@ -40,7 +40,7 @@ TESTABLE_MODELS = {
         "required_output_keys": {"text", "score"}
     },
     "text-classification": {
-        "path": "hezarai/distilbert-fa-sentiment-digikala-snappfood",
+        "path": "hezarai/distilbert-fa-sentiment-dksf",
         "inputs": {"type": "text", "value": "هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"},
         "predict_kwargs": {"top_k": 2},
         "output_type_within_batch": list,
