@@ -125,7 +125,6 @@ common_train_config = {
     "output_dir": "tests-tmp-train-dir",
     "batch_size": 2,
     "num_epochs": 1,
-    "use_cpu": True,
     "gradient_accumulation_steps": 2
 }
 
