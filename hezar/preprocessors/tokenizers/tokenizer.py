@@ -386,20 +386,20 @@ class Tokenizer(Preprocessor):
             if current != target:
                 self.enable_truncation(**target)
 
-            if padding_strategy == "no_padding":
-                if self.padding is not None:
-                    self.no_padding()
-            else:
-                target = {
-                    "length": max_length,
-                    "direction": padding_side,
-                    "pad_id": self.token_to_id(self.pad_token),
-                    "pad_token": self.pad_token,
-                    "pad_type_id": self.config.pad_token_type_id,
-                    "pad_to_multiple_of": pad_to_multiple_of,
-                }
-                if self.padding != target:
-                    self.enable_padding(**target)
+        if padding_strategy == "no_padding":
+            if self.padding is not None:
+                self.no_padding()
+        else:
+            target = {
+                "length": max_length if padding_strategy == PaddingType.MAX_LENGTH else None,
+                "direction": padding_side,
+                "pad_id": self.token_to_id(self.pad_token),
+                "pad_token": self.pad_token,
+                "pad_type_id": self.config.pad_token_type_id,
+                "pad_to_multiple_of": pad_to_multiple_of,
+            }
+            if self.padding != target:
+                self.enable_padding(**target)
 
     def _convert_encodings(
         self,
