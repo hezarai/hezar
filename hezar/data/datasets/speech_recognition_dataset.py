@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from datasets import Audio, load_dataset, load_from_disk
+from datasets import Audio, load_dataset
 
 from .dataset import Dataset
 from ..data_collators import SpeechRecognitionDataCollator
@@ -51,7 +51,7 @@ class SpeechRecognitionDataset(Dataset):
         )
 
     def _load(self, split):
-        data = load_dataset(self.config.path, split=split)
+        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         data = data.cast_column(self.config.audio_column, Audio(sampling_rate=self.config.sampling_rate))
         return data
 
