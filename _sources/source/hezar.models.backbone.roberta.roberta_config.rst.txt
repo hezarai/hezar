@@ -1,0 +1,7 @@
+hezar.models.backbone.roberta.roberta\_config module
+====================================================
+
+.. automodule:: hezar.models.backbone.roberta.roberta_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

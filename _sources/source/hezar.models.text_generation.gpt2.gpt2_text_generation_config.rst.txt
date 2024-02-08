@@ -1,0 +1,7 @@
+hezar.models.text\_generation.gpt2.gpt2\_text\_generation\_config module
+========================================================================
+
+.. automodule:: hezar.models.text_generation.gpt2.gpt2_text_generation_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

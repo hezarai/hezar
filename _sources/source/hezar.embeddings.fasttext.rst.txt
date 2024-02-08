@@ -1,0 +1,7 @@
+hezar.embeddings.fasttext module
+================================
+
+.. automodule:: hezar.embeddings.fasttext
+   :members:
+   :undoc-members:
+   :show-inheritance:

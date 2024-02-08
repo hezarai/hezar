@@ -1,0 +1,7 @@
+hezar.preprocessors.preprocessor module
+=======================================
+
+.. automodule:: hezar.preprocessors.preprocessor
+   :members:
+   :undoc-members:
+   :show-inheritance:

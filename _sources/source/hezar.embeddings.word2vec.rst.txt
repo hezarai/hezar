@@ -1,0 +1,7 @@
+hezar.embeddings.word2vec module
+================================
+
+.. automodule:: hezar.embeddings.word2vec
+   :members:
+   :undoc-members:
+   :show-inheritance:

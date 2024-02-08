@@ -1,0 +1,7 @@
+hezar.metrics.metric module
+===========================
+
+.. automodule:: hezar.metrics.metric
+   :members:
+   :undoc-members:
+   :show-inheritance:

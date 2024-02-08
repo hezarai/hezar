@@ -1,0 +1,7 @@
+hezar.models.text\_classification.distilbert.distilbert\_text\_classification\_config module
+============================================================================================
+
+.. automodule:: hezar.models.text_classification.distilbert.distilbert_text_classification_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

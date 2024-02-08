@@ -1,0 +1,19 @@
+hezar.models.backbone.bert package
+==================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.backbone.bert.bert
+   hezar.models.backbone.bert.bert_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.backbone.bert
+   :members:
+   :undoc-members:
+   :show-inheritance:

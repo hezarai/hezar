@@ -1,0 +1,7 @@
+hezar.data.datasets.speech\_recognition\_dataset module
+=======================================================
+
+.. automodule:: hezar.data.datasets.speech_recognition_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

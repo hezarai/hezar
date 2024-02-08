@@ -1,0 +1,20 @@
+hezar.models.image2text.crnn package
+====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.image2text.crnn.crnn_decode_utils
+   hezar.models.image2text.crnn.crnn_image2text
+   hezar.models.image2text.crnn.crnn_image2text_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.image2text.crnn
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+hezar.preprocessors.image\_processor module
+===========================================
+
+.. automodule:: hezar.preprocessors.image_processor
+   :members:
+   :undoc-members:
+   :show-inheritance:

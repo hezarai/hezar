@@ -1,0 +1,7 @@
+hezar.models.backbone.bert.bert module
+======================================
+
+.. automodule:: hezar.models.backbone.bert.bert
+   :members:
+   :undoc-members:
+   :show-inheritance:
