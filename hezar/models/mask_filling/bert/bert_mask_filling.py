@@ -8,7 +8,7 @@ from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
 from ....utils import is_backend_available
-from ...model_outputs import LanguageModelingOutput
+from ...model_outputs import MaskFillingOutput
 from .bert_mask_filling_config import BertMaskFillingConfig
 
 
@@ -108,7 +108,7 @@ class BertMaskFilling(Model):
                 candidate = unfilled_token_ids[batch_i].copy()
                 candidate[masked_index.item()] = token_id
                 row.append(
-                    LanguageModelingOutput(
+                    MaskFillingOutput(
                         token=tokenizer.decode([token_id.item()])[0].strip(),
                         sequence=tokenizer.decode(candidate.tolist())[0],
                         token_id=token_id.item(),

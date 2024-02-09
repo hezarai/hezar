@@ -47,7 +47,7 @@ class ModelOutput:
 
 
 @dataclass(repr=False)
-class LanguageModelingOutput(ModelOutput):
+class MaskFillingOutput(ModelOutput):
     token: Optional[int] = None
     sequence: Optional[str] = None
     token_id: Optional[str] = None
