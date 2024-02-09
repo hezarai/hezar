@@ -25,6 +25,7 @@ tasks_setups = {
     "text_classification": {
         "dataset": {
             "path": "hezarai/sentiment-dksf",
+            "num_samples": 4,
             "config": {
                 "tokenizer_path": "hezarai/bert-base-fa",
             }
@@ -40,6 +41,7 @@ tasks_setups = {
     "sequence_labeling": {
         "dataset": {
             "path": "hezarai/lscp-pos-500k",
+            "num_samples": 4,
             "config": {
                 "tokenizer_path": "hezarai/bert-base-fa",
             }
@@ -55,6 +57,7 @@ tasks_setups = {
     "text_summarization": {
         "dataset": {
             "path": "hezarai/xlsum-fa",
+            "num_samples": 4,
             "config": {
                 "tokenizer_path": "hezarai/t5-base-fa",
                 "max_length": 32
@@ -71,6 +74,7 @@ tasks_setups = {
     "ocr": {
         "dataset": {
             "path": "hezarai/persian-license-plate-v1",
+            "num_samples": 4,
             "config": {
                 "max_length": 8,
                 "reverse_digits": True,
@@ -87,6 +91,7 @@ tasks_setups = {
     "image-captioning": {
         "dataset": {
             "path": "hezarai/flickr30k-fa",
+            "num_samples": 2,
             "config": {
                 "max_length": 16,
                 "tokenizer_path": "hezarai/vit-roberta-fa-base"
@@ -104,6 +109,7 @@ tasks_setups = {
     "speech-recognition": {
         "dataset": {
             "path": "hezarai/common-voice-13-fa",
+            "num_samples": 2,
             "config": {
                 "labels_max_length": 16,
                 "tokenizer_path": "hezarai/whisper-small",
@@ -117,7 +123,7 @@ tasks_setups = {
             "task": "speech_recognition",
             "mixed_precision": "fp16",
             "metrics": ["wer", "cer"]
-        }
+        },
     }
 }
 
@@ -132,10 +138,11 @@ common_train_config = {
 @pytest.mark.parametrize("task", tasks_setups.keys())
 def test_trainer(task):
     setup = tasks_setups[task]
+    num_samples = setup["dataset"]["num_samples"]
 
     # Datasets
-    train_dataset = Dataset.load(setup["dataset"]["path"], split="train[:4]", **setup["dataset"]["config"])
-    eval_dataset = Dataset.load(setup["dataset"]["path"], split="test[:4]", **setup["dataset"]["config"])
+    train_dataset = Dataset.load(setup["dataset"]["path"], split=f"train[:{num_samples}]", **setup["dataset"]["config"])
+    eval_dataset = Dataset.load(setup["dataset"]["path"], split=f"test[:{num_samples}]", **setup["dataset"]["config"])
 
     # Model & Preprocessor
     model_config = ModelConfig.load(setup["model"]["path"])
