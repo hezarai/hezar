@@ -423,6 +423,8 @@ class TrainerConfig(Config):
     num_epochs: int = None
     init_weights_from: str = None
     num_dataloader_workers: int = 0
+    dataloader_drop_last: bool = False
+    dataloader_shuffle: bool = True
     seed: int = 42
     optimizer: str | OptimizerType = None
     learning_rate: float = 2e-5

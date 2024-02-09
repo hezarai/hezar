@@ -94,7 +94,7 @@ class Trainer:
     trainer_config_file = DEFAULT_TRAINER_CONFIG_FILE
     trainer_csv_log_file = DEFAULT_TRAINER_CSV_LOG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
-    default_trainer_state_file = DEFAULT_TRAINER_STATE_FILE
+    trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
 
@@ -210,8 +210,8 @@ class Trainer:
                 batch_size=self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
-                drop_last=True,
-                shuffle=True,
+                drop_last=self.config.dataloader_drop_last,
+                shuffle=self.config.dataloader_shuffle,
             )
         else:
             raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
@@ -221,8 +221,8 @@ class Trainer:
                 batch_size=self.config.eval_batch_size or self.config.batch_size,
                 collate_fn=self.data_collator,
                 num_workers=self.config.num_dataloader_workers,
-                drop_last=True,
-                shuffle=True,
+                drop_last=self.config.dataloader_drop_last,
+                shuffle=self.config.dataloader_shuffle,
             )
         else:
             logger.warning(
@@ -308,7 +308,7 @@ class Trainer:
         if os.path.isdir(checkpoint) and load_best:
             logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
 
-        self.state = TrainerState.load(os.path.join(self.checkpoints_dir, self.default_trainer_state_file))
+        self.state = TrainerState.load(os.path.join(self.checkpoints_dir, self.trainer_state_file))
         if isinstance(checkpoint, bool):
             if load_best:
                 checkpoint = os.path.join(self.checkpoints_dir, str(self.state.best_checkpoint))
@@ -344,7 +344,7 @@ class Trainer:
         Returns:
             Logs dictionary
         """
-        logs_dir = logs_dir or self.config.logs_dir
+        logs_dir = logs_dir or self.logs_dir
         csv_path = os.path.join(logs_dir, self.trainer_csv_log_file)
         logs = pd.read_csv(csv_path)
         return logs.to_dict()
@@ -677,7 +677,7 @@ class Trainer:
         self.state.save(
             os.path.join(
                 self.checkpoints_dir,
-                self.default_trainer_state_file,
+                self.trainer_state_file,
             )
         )
 
@@ -709,7 +709,13 @@ class Trainer:
 
         self.config.save(path, filename=config_filename, subfolder=subfolder)
         self.model.save(path, filename=model_filename, config_filename=model_config_filename)
-        self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
+        if isinstance(self.train_dataset, Dataset):
+            self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
+        else:
+            logger.warning(
+                f"The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
+                f" will be saved!"
+            )
 
     def push_to_hub(
         self,
