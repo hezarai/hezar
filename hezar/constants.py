@@ -58,7 +58,6 @@ class Backends(ExplicitEnum):
     NLTK = "nltk"
     SCIKIT = "sklearn"
     SEQEVAL = "seqeval"
-    EVALUATE = "evaluate"
     ROUGE = "rouge_score"
 
 

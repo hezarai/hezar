@@ -38,7 +38,7 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters
+from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters, verify_dependencies
 
 if TYPE_CHECKING:
     from accelerate import Accelerator
@@ -97,6 +97,7 @@ class Trainer:
     trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
+    _required_backends = []
 
     def __init__(
         self,
@@ -111,6 +112,9 @@ class Trainer:
         lr_scheduler=None,
         accelerator: "Accelerator" = None,
     ):
+        # Check if all required dependencies are installed
+        verify_dependencies(self._required_backends)
+
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
