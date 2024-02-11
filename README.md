@@ -218,6 +218,8 @@ sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificati
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
 alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1")  # An OCRDataset instance
+flickr30k_dataset = Dataset.load("hezarai/flickr30k-fa")  # An ImageCaptioningDataset instance
+commonvoice_dataset = Dataset.load("hezarai/common-voice-13-fa")  # A SpeechRecognitionDataset instance
 ...
 ```
 The returned dataset objects from `load()` are PyTorch Dataset wrappers for specific tasks and can be used by a data loader out-of-the-box!
