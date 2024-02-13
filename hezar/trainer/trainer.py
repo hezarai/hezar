@@ -10,7 +10,6 @@ import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
 
 from .metrics_handlers import (
     Image2TextMetricHandler,
@@ -20,7 +19,7 @@ from .metrics_handlers import (
     TextClassificationMetricsHandler,
     TextGenerationMetricsHandler,
 )
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
+from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard, get_distributed_logger
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -40,8 +39,11 @@ from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters, verify_dependencies
 
-if TYPE_CHECKING:
+if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
+    from accelerate.utils import tqdm
+else:
+    raise ImportError(f"The package `accelerate` needs to be installed to use `Trainer`!")
 
 logger = Logger(__name__)
 
@@ -97,7 +99,7 @@ class Trainer:
     trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
-    _required_backends = []
+    _required_backends = [Backends.ACCELERATE]
 
     def __init__(
         self,
@@ -110,11 +112,15 @@ class Trainer:
         metrics_handler: MetricsHandler = None,
         optimizer: torch.optim.Optimizer = None,
         lr_scheduler=None,
-        accelerator: "Accelerator" = None,
+        accelerator: Accelerator = None,
     ):
         # Check if all required dependencies are installed
         verify_dependencies(self._required_backends)
 
+        # Setup logger
+        self.logger = get_distributed_logger(__name__)
+
+        # Configuration
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
@@ -141,16 +147,11 @@ class Trainer:
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
         # Setup accelerated objects if possible
-        if accelerator is None and self.config.distributed and not self.config.use_cpu:
+        self.accelerator = accelerator
+        if self.accelerator is None and self.config.distributed and not self.config.use_cpu:
             self.accelerator = self._setup_accelerator()
             self.scaler = self.accelerator.scaler
             self.device = self.accelerator.device
-        else:
-            self.accelerator = accelerator
-            enabled = True if (
-                self.config.mixed_precision is not None and not (self.config.use_cpu or self.device == "cpu")
-            ) else False
-            self.scaler = torch.cuda.amp.GradScaler(enabled=enabled)
 
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
@@ -197,8 +198,7 @@ class Trainer:
                     cache_dir=HEZAR_CACHE_DIR,
                     resume_download=True,
                 )
-            model.load_state_dict(torch.load(model_path, map_location="cpu"))
-        model.to(self.device)
+            model.load_state_dict(torch.load(model_path))
         return model
 
     def _setup_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
@@ -229,7 +229,7 @@ class Trainer:
                 shuffle=self.config.dataloader_shuffle,
             )
         else:
-            logger.warning(
+            self.logger.warning(
                 "Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
                 "Setting eval_dataloader to None..."
             )
@@ -266,27 +266,19 @@ class Trainer:
         return optimizer, lr_scheduler
 
     def _setup_accelerator(self):
-        if is_backend_available(Backends.ACCELERATE):
-            from accelerate import Accelerator
-
-            accelerator = Accelerator(
-                mixed_precision=self.config.mixed_precision,
-                step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
+        accelerator = Accelerator(
+            mixed_precision=self.config.mixed_precision,
+            step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
+        )
+        self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
+            accelerator.prepare(
+                self.model,
+                self.optimizer,
+                self.lr_scheduler,
+                self.train_dataloader,
+                self.eval_dataloader,
             )
-            self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
-                accelerator.prepare(
-                    self.model,
-                    self.optimizer,
-                    self.lr_scheduler,
-                    self.train_dataloader,
-                    self.eval_dataloader,
-                )
-            )
-        else:
-            raise ValueError(
-                "The configuration for this trainer requires the package `accelerate` to be installed! "
-                "(config.distributed=True)"
-            )
+        )
 
         return accelerator
 
@@ -310,7 +302,7 @@ class Trainer:
             load_best: Whether to load the best checkpoint or not, if False, loads the latest checkpoint
         """
         if os.path.isdir(checkpoint) and load_best:
-            logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
+            self.logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
 
         self.state = TrainerState.load(os.path.join(self.checkpoints_dir, self.trainer_state_file))
         if isinstance(checkpoint, bool):
@@ -327,15 +319,14 @@ class Trainer:
             model_path = os.path.join(checkpoint, self.model.model_filename)
             if os.path.isfile(model_path):
                 self.model.load_state_dict(torch.load(model_path))
-                if self.accelerator is not None:
-                    self.model = self.accelerator.prepare(self.model)
-                logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
+                self.model = self.accelerator.prepare(self.model)
+                self.logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
             else:
                 raise FileNotFoundError(
                     f"Could not find `{self.model.model_filename}` at `{os.path.dirname(model_path)}`!\n"
                 )
         else:
-            logger.warning(
+            self.logger.warning(
                 f"{checkpoint} does not seem to be a valid checkpoint!"
             )
 
@@ -368,26 +359,6 @@ class Trainer:
             input_batch = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in input_batch.items()}
 
         return input_batch
-
-    def amp_context_manager(self):
-        """
-        An auto context manager for mixed precision.
-
-        Returns:
-            A torch autocast context manager
-        """
-        if self.accelerator is not None:
-            context_manager = self.accelerator.autocast()
-        else:
-            device_type = "cuda" if "cuda" in self.device else "cpu"
-            dtype = torch.bfloat16 if self.config.mixed_precision == "bf16" or device_type == "cpu" else torch.float16
-            enabled = self.config.mixed_precision is not None or self.config.mixed_precision == "no"
-            context_manager = torch.autocast(
-                device_type=device_type,
-                dtype=dtype,
-                enabled=enabled
-            )
-        return context_manager
 
     def forward(self, input_batch):
         """
@@ -438,12 +409,7 @@ class Trainer:
         """
         Perform optimization step
         """
-        if self.accelerator is not None:
-            self.optimizer.step()
-        else:
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
-
+        self.optimizer.step()
         self.optimizer.zero_grad()
 
     def lr_scheduler_step(self, metrics=None):
@@ -470,15 +436,12 @@ class Trainer:
         Returns:
             Train step outputs including loss, logits, etc.
         """
-        with self.amp_context_manager():
+        with self.accelerator.autocast():
             outputs = self.forward(input_batch)
 
         loss = self.compute_loss(outputs, **input_batch) / self.config.gradient_accumulation_steps
 
-        if self.accelerator is not None:
-            self.accelerator.backward(loss)
-        else:
-            self.scaler.scale(loss).backward()
+        self.accelerator.backward(loss)
 
         outputs["loss"] = loss
 
@@ -494,7 +457,7 @@ class Trainer:
         Returns:
             Evaluation step outputs including loss, logits, etc.
         """
-        with self.amp_context_manager():
+        with self.accelerator.autocast():
             outputs = self.forward(input_batch)
 
         loss = self.compute_loss(outputs, **input_batch)
@@ -521,6 +484,7 @@ class Trainer:
         losses_sum = 0.0
         self.model.train()
         with tqdm(
+            True,
             self.train_dataloader,
             unit="batch",
             desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
@@ -552,6 +516,7 @@ class Trainer:
         self.metrics_handler.tracker.reset()
         self.model.eval()
         with tqdm(
+            True,
             self.eval_dataloader,
             unit="batch",
             desc="Evaluating... ",
@@ -625,15 +590,17 @@ class Trainer:
         if resume_from_checkpoint:
             self.load_from_checkpoint(resume_from_checkpoint)
             if self.current_epoch >= self.config.num_epochs:
-                logger.info(
+                self.logger.info(
                     f"Unable to resume from `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` "
                     f"since it belongs to the ending epoch!"
                 )
             self.current_epoch = self.state.epoch + 1
 
-        self.print_info()
+        if self.accelerator.is_local_main_process():
+            self.print_info()
 
         for epoch in range(self.current_epoch, self.config.num_epochs + 1):
+
             print()
 
             # Train on the whole train data
@@ -664,7 +631,7 @@ class Trainer:
 
             self.log(train_logs, evaluation_logs, epoch)
 
-        logger.info("Training done!")
+        self.logger.info("Training done!")
 
     def log(self, train_logs: Dict[str, Any], evaluation_logs: Dict[str, Any], step: int):
         """
@@ -716,7 +683,7 @@ class Trainer:
         if isinstance(self.train_dataset, Dataset):
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         else:
-            logger.warning(
+            self.logger.warning(
                 f"The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
                 f" will be saved!"
             )
