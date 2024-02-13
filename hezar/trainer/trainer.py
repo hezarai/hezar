@@ -148,10 +148,23 @@ class Trainer:
 
         # Setup accelerated objects if possible
         self.accelerator = accelerator
-        if self.accelerator is None and self.config.distributed and not self.config.use_cpu:
-            self.accelerator = self._setup_accelerator()
-            self.scaler = self.accelerator.scaler
-            self.device = self.accelerator.device
+        if self.accelerator is None:
+            self.accelerator = Accelerator(
+                mixed_precision=self.config.mixed_precision,
+                cpu=self.config.use_cpu,
+                step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
+                gradient_accumulation_steps=self.config.gradient_accumulation_steps,
+            )
+
+        self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
+            accelerator.prepare(
+                self.model,
+                self.optimizer,
+                self.lr_scheduler,
+                self.train_dataloader,
+                self.eval_dataloader,
+            )
+        )
 
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
@@ -264,23 +277,6 @@ class Trainer:
                 else:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs, verbose=True)
         return optimizer, lr_scheduler
-
-    def _setup_accelerator(self):
-        accelerator = Accelerator(
-            mixed_precision=self.config.mixed_precision,
-            step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
-        )
-        self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
-            accelerator.prepare(
-                self.model,
-                self.optimizer,
-                self.lr_scheduler,
-                self.train_dataloader,
-                self.eval_dataloader,
-            )
-        )
-
-        return accelerator
 
     def _setup_metrics_handler(self):
         """
@@ -439,7 +435,7 @@ class Trainer:
         with self.accelerator.autocast():
             outputs = self.forward(input_batch)
 
-        loss = self.compute_loss(outputs, **input_batch) / self.config.gradient_accumulation_steps
+        loss = self.compute_loss(outputs, **input_batch)
 
         self.accelerator.backward(loss)
 
@@ -494,9 +490,9 @@ class Trainer:
             for step, input_batch in enumerate(iterator):
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
-                outputs = self.training_step(input_batch)
-                # Optimization step
-                if (step + 1) % self.config.gradient_accumulation_steps == 0 or step == len(iterator):
+                with self.accelerator.accumulate(self.model):
+                    outputs = self.training_step(input_batch)
+                    # Optimization step
                     self.optimization_step()
                 # Gather outputs for metrics
                 losses_sum += outputs["loss"].item()
@@ -531,6 +527,7 @@ class Trainer:
                     logits = outputs["logits"].detach().cpu().numpy()
                     labels = input_batch["labels"].detach().cpu().numpy()
                     # Compute metrics
+                    logits, labels = self.accelerator.gather_for_metrics((logits, labels))
                     evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
                     evaluation_results["loss"] = outputs["loss"].item()
                     # Gather outputs for metrics
