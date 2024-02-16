@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import os
 import random
-from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, Tuple
 
 import numpy as np
 import pandas as pd
 import torch
+from tqdm.auto import tqdm
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -41,7 +42,6 @@ from ..utils import Logger, colorize_text, is_backend_available, sanitize_functi
 
 if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
-    from accelerate.utils import tqdm
 else:
     raise ImportError(f"The package `accelerate` needs to be installed to use `Trainer`!")
 
@@ -157,7 +157,7 @@ class Trainer:
             )
 
         self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
-            accelerator.prepare(
+            self.accelerator.prepare(
                 self.model,
                 self.optimizer,
                 self.lr_scheduler,
@@ -480,12 +480,12 @@ class Trainer:
         losses_sum = 0.0
         self.model.train()
         with tqdm(
-            True,
             self.train_dataloader,
             unit="batch",
             desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
+            disable=not self.accelerator.is_local_main_process,
         ) as iterator:
             for step, input_batch in enumerate(iterator):
                 input_batch = self.prepare_input_batch(input_batch)
@@ -512,24 +512,23 @@ class Trainer:
         self.metrics_handler.tracker.reset()
         self.model.eval()
         with tqdm(
-            True,
             self.eval_dataloader,
             unit="batch",
             desc="Evaluating... ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
+            disable=not self.accelerator.is_local_main_process,
         ) as iterator:
             with torch.inference_mode():
                 for step, input_batch in enumerate(iterator):
                     input_batch = self.prepare_input_batch(input_batch)
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
-                    logits = outputs["logits"].detach().cpu().numpy()
-                    labels = input_batch["labels"].detach().cpu().numpy()
+                    logits = self.accelerator.gather(outputs["logits"]).detach().cpu().numpy()
+                    labels = self.accelerator.gather(input_batch["labels"]).detach().cpu().numpy()
                     # Compute metrics
-                    logits, labels = self.accelerator.gather_for_metrics((logits, labels))
                     evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
-                    evaluation_results["loss"] = outputs["loss"].item()
+                    evaluation_results["loss"] = self.accelerator.gather(outputs["loss"]).item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
                     iterator.set_postfix(**self.metrics_handler.tracker.avg())
@@ -593,12 +592,12 @@ class Trainer:
                 )
             self.current_epoch = self.state.epoch + 1
 
-        if self.accelerator.is_local_main_process():
+        if self.accelerator.is_local_main_process:
             self.print_info()
 
         for epoch in range(self.current_epoch, self.config.num_epochs + 1):
-
-            print()
+            if self.accelerator.is_local_main_process:
+                print()
 
             # Train on the whole train data
             training_results = self.inner_training_loop(epoch)
@@ -622,11 +621,12 @@ class Trainer:
             )
 
             # maybe save checkpoint
-            if epoch % self.config.save_freq == 0:
+            if epoch % self.config.save_freq == 0 and self.accelerator.is_local_main_process:
                 ckpt_save_path = os.path.join(self.checkpoints_dir, str(epoch))
                 self.save(ckpt_save_path)
 
-            self.log(train_logs, evaluation_logs, epoch)
+            if self.accelerator.is_local_main_process:
+                self.log(train_logs, evaluation_logs, epoch)
 
         self.logger.info("Training done!")
 
