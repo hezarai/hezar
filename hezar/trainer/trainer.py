@@ -524,11 +524,10 @@ class Trainer:
                     input_batch = self.prepare_input_batch(input_batch)
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
-                    logits = self.accelerator.gather(outputs["logits"]).detach().cpu().numpy()
-                    labels = self.accelerator.gather(input_batch["labels"]).detach().cpu().numpy()
+                    logits, labels = self.accelerator.gather_for_metrics((outputs["logits"], input_batch["labels"]))
                     # Compute metrics
                     evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
-                    evaluation_results["loss"] = self.accelerator.gather(outputs["loss"]).item()
+                    evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
                     iterator.set_postfix(**self.metrics_handler.tracker.avg())
