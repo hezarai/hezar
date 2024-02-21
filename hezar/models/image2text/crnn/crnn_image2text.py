@@ -17,8 +17,8 @@ class CRNNImage2Text(Model):
 
     is_generative = True
     image_processor = "image_processor"
-    loss_fn_name = "ctc"
-    loss_fn_kwargs = {"zero_infinity": True}
+    loss_func_name = "ctc"
+    loss_func_kwargs = {"zero_infinity": True}
 
     def __init__(self, config: CRNNImage2TextConfig, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -64,7 +64,7 @@ class CRNNImage2Text(Model):
         labels = labels[labels != self.config.blank_id]
         input_lengths = torch.LongTensor([logits.size(0)] * batch_size)
 
-        loss = self.criterion(logits, labels, input_lengths, labels_lengths)
+        loss = self.loss_func(logits, labels, input_lengths, labels_lengths)
 
         return loss
 

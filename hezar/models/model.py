@@ -35,7 +35,7 @@ from ..utils import Logger, get_module_class, sanitize_function_parameters, veri
 
 logger = Logger(__name__)
 
-criterions_mapping = {
+losses_mapping = {
     LossType.L1: nn.L1Loss,
     LossType.NLL: nn.NLLLoss,
     LossType.NLL_2D: nn.NLLLoss2d,
@@ -70,15 +70,15 @@ class Model(nn.Module):
     skip_keys_on_load = []
 
     # Loss function name
-    loss_fn_name: str | LossType = LossType.CROSS_ENTROPY
-    loss_fn_kwargs: Dict[str, Any] = {}
+    loss_func_name: str | LossType = LossType.CROSS_ENTROPY
+    loss_func_kwargs: Dict[str, Any] = {}
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
         self._preprocessor = None
-        self._criterion = self._set_criterion(self.loss_fn_name, **self.loss_fn_kwargs)
+        self._loss_func = self._set_loss_func(self.loss_func_name, **self.loss_func_kwargs)
 
     def __repr__(self):
         representation = super().__repr__()
@@ -87,10 +87,10 @@ class Model(nn.Module):
         return representation
 
     @staticmethod
-    def _set_criterion(loss_fn_name: str, **loss_fn_kwargs: Dict[str, Any]):
-        if loss_fn_name not in criterions_mapping:
-            raise ValueError(f"Invalid criterion name `{loss_fn_name}`. Available: {list(criterions_mapping.keys())}")
-        loss_fn = criterions_mapping[loss_fn_name](**loss_fn_kwargs)
+    def _set_loss_func(loss_func_name: str, **loss_fn_kwargs: Dict[str, Any]):
+        if loss_func_name not in losses_mapping:
+            raise ValueError(f"Invalid loss_func_name `{loss_func_name}`. Available: {list(losses_mapping.keys())}")
+        loss_fn = losses_mapping[loss_func_name](**loss_fn_kwargs)
         return loss_fn
 
     @classmethod
@@ -477,15 +477,15 @@ class Model(nn.Module):
         return next(self.parameters()).device
 
     @property
-    def criterion(self):
-        return self._criterion
+    def loss_func(self):
+        return self._loss_func
 
-    @criterion.setter
-    def criterion(self, value):
+    @loss_func.setter
+    def loss_func(self, value):
         if isinstance(value, str):
-            self._criterion = self._set_criterion(value)
+            self._loss_func = self._set_loss_func(value)
         elif isinstance(value, nn.Module):
-            self._criterion = value
+            self._loss_func = value
         else:
             raise ValueError(f"Criterion value must be either a name or a PyTorch `nn.Module`, got {type(value)}!")
 

@@ -25,7 +25,7 @@ _required_backends = [
 class DistilBertMaskFilling(Model):
     required_backends = _required_backends
     tokenizer_name = "wordpiece_tokenizer"
-    loss_fn_name = "cross_entropy"
+    loss_func_name = "cross_entropy"
 
     def __init__(self, config, **kwargs):
         super().__init__(config=config, **kwargs)
@@ -57,7 +57,7 @@ class DistilBertMaskFilling(Model):
         return outputs
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-        loss = self.criterion(logits.view(-1, self.config.vocab_size), labels.view(-1))
+        loss = self.loss_func(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
     def preprocess(self, inputs: str | List[str], **kwargs):
