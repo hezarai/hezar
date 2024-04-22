@@ -114,29 +114,25 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
     """
     if os.path.isdir(hub_or_local_path):
         files_itr = os.walk(hub_or_local_path)
+        files_itr = os.walk(os.path.join(hub_or_local_path))
         files = []
         for r, d, f in files_itr:
             if r == hub_or_local_path:
                 files.append(f)
             else:
                 for x in f:
-                    path = Path(r)
-                    index = path.parts.index(hub_or_local_path)
-                    new_path = Path("").joinpath(*path.parts[:index], *path.parts[index + 1 :], x)
-                    files.append(str(new_path))
+                    files.append(f"{r.replace(f'{hub_or_local_path}/', '')}/{x}")
+        for root, dirs, files_ in files_itr:
+            for file in files_:
+                files.append(os.path.relpath(os.path.join(root, file), hub_or_local_path))
     else:
         files = HfApi().list_repo_files(hub_or_local_path, repo_type=str(RepoType.MODEL))
 
     if subfolder is not None:
-        new_files = []
-        for i in range(len(files)):
-            if subfolder in files[i]:
-                path = Path(files[i])
-                index = path.parts.index(subfolder)
-                new_path = Path("").joinpath(*path.parts[:index], *path.parts[index + 1 :])
-                new_files.append(str(new_path))
-        files = new_files
+        files = [x.replace(f"{subfolder}/", "") for x in files if subfolder in x]
 
+    if subfolder:
+        files = [os.path.relpath(f, subfolder) for f in files if subfolder in f]
     return files
 
 
