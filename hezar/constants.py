@@ -5,7 +5,6 @@ Home to all constant variables in Hezar
 import os
 from enum import Enum
 
-
 HEZAR_HUB_ID = "hezarai"
 HEZAR_CACHE_DIR = os.getenv("HEZAR_CACHE_DIR", f'{os.path.expanduser("~")}/.cache/hezar')
 
@@ -59,6 +58,7 @@ class Backends(ExplicitEnum):
     SCIKIT = "sklearn"
     SEQEVAL = "seqeval"
     ROUGE = "rouge_score"
+    SAFETENSORS = "safetensors"
 
 
 class TaskType(ExplicitEnum):

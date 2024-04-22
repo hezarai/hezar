@@ -7,6 +7,7 @@ Examples:
     >>> from hezar.models import Model
     >>> model = Model.load("hezarai/bert-base-fa")
 """
+
 from __future__ import annotations
 
 import os
@@ -30,8 +31,13 @@ from ..constants import (
     RegistryType,
 )
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, get_module_class, sanitize_function_parameters, verify_dependencies
-
+from ..utils import (
+    Logger,
+    get_module_class,
+    is_backend_available,
+    sanitize_function_parameters,
+    verify_dependencies,
+)
 
 logger = Logger(__name__)
 
@@ -46,7 +52,7 @@ losses_mapping = {
     LossType.BCE_WITH_LOGITS: nn.BCEWithLogitsLoss,
     LossType.CROSS_ENTROPY: nn.CrossEntropyLoss,
     LossType.TRIPLE_MARGIN: nn.TripletMarginLoss,
-    LossType.CTC: nn.CTCLoss
+    LossType.CTC: nn.CTCLoss,
 }
 
 
@@ -83,7 +89,7 @@ class Model(nn.Module):
     def __repr__(self):
         representation = super().__repr__()
         pattern = r"\('?_criterion'?\): [^\)]+\)\s*"
-        representation = re.sub(pattern, '', representation)
+        representation = re.sub(pattern, "", representation)
         return representation
 
     @staticmethod
@@ -103,6 +109,7 @@ class Model(nn.Module):
         config_filename: Optional[str] = None,
         save_path: Optional[str | os.PathLike] = None,
         cache_dir: Optional[str | os.PathLike] = None,
+        load_safetensors: bool = False,
         **kwargs,
     ) -> "Model":
         """
@@ -120,6 +127,7 @@ class Model(nn.Module):
             config_filename: Optional config filename
             save_path: Save model to this path after loading
             cache_dir: Path to cache directory, defaults to `~/.cache/hezar`
+            load_safetensors: Load `safetensors` saved model. Defaults to `False` to preserve backward compatibility.
 
         Returns:
             The fully loaded Hezar model
@@ -146,6 +154,12 @@ class Model(nn.Module):
             model = model_cls(config, **kwargs)
 
         model_filename = model_filename or model_cls.model_filename or cls.model_filename
+        if load_safetensors:
+            # conditionally loading `safetensors` if both `pickle` and `safetensors` formats
+            # if both formats exist requires a fair bit of alterations to the codebase by my estimation.
+            # moreover, it's redundant if the end goal is to convert everything to `safetensors`
+            # later down the line.
+            model_filename = model_filename.replace(".pt", ".safetensors")
         # does the path exist locally?
         is_local = load_locally or os.path.isdir(hub_or_local_path)
         if not is_local:
@@ -158,8 +172,19 @@ class Model(nn.Module):
         else:
             model_path = os.path.join(hub_or_local_path, model_filename)
         # Get state dict from the model
-        state_dict = torch.load(model_path, map_location=torch.device("cpu"))
-        model.load_state_dict(state_dict)
+        if load_safetensors:
+            if not is_backend_available(Backends.SAFETENSORS):
+                raise ModuleNotFoundError(
+                    f"`load_safetensors=True` requires `{Backends.SAFETENSORS}` to be installed."
+                    f"Please install with `pip install {Backends.SAFETENSORS}` or set `load_safetensors=False`."
+                )
+            else:
+                from safetensors.torch import load_model
+
+                load_model(model, model_path)
+        else:
+            state_dict = torch.load(model_path, map_location=torch.device("cpu"))
+            model.load_state_dict(state_dict)
         if device:
             model.to(device)
         if save_path:
@@ -179,13 +204,16 @@ class Model(nn.Module):
 
         Args:
             state_dict: Model state dict
+
+        Returns:
+            NamedTuple: with ``missing_keys`` and ``unexpected_keys`` fields
         """
         if len(self.skip_keys_on_load):
             for key in self.skip_keys_on_load:
                 if key in state_dict:
                     state_dict.pop(key, None)  # noqa
         try:
-            super().load_state_dict(state_dict, strict=True)
+            tup = super().load_state_dict(state_dict, strict=True)
         except RuntimeError:
             compatible_state_dict = OrderedDict()
             src_state_dict = self.state_dict()
@@ -200,7 +228,8 @@ class Model(nn.Module):
                     compatible_state_dict[src_key] = src_weight
                     incompatible_keys.append(src_key)
 
-            missing_keys, _ = super().load_state_dict(compatible_state_dict, strict=False)
+            tup = super().load_state_dict(compatible_state_dict, strict=False)
+            missing_keys, _ = tup
             if len(missing_keys) or len(incompatible_keys):
                 logger.warning(
                     "Partially loading the weights as the model architecture and the given state dict are "
@@ -208,6 +237,7 @@ class Model(nn.Module):
                     f"Incompatible keys: {incompatible_keys}\n"
                     f"Missing keys: {missing_keys}\n"
                 )
+        return tup
 
     def save(
         self,
@@ -215,6 +245,7 @@ class Model(nn.Module):
         filename: Optional[str] = None,
         save_preprocessor: Optional[bool] = True,
         config_filename: Optional[str] = None,
+        safe_serialization: bool = True,
     ):
         """
         Save model weights and config to a local path
@@ -224,6 +255,7 @@ class Model(nn.Module):
             save_preprocessor: Whether to save preprocessor(s) along with the model or not
             config_filename: Model config filename,
             filename: Model weights filename
+            safe_serialization: Whether to save the model using `safetensors` or the traditional PyTorch way (that uses `pickle`).
 
         Returns:
             Path to the saved model
@@ -236,7 +268,19 @@ class Model(nn.Module):
         self.config.save(save_dir=path, filename=config_filename)
 
         model_save_path = os.path.join(path, filename)
-        torch.save(self.state_dict(), model_save_path)
+        if not safe_serialization:
+            torch.save(self.state_dict(), model_save_path)
+        else:
+            if not is_backend_available(Backends.SAFETENSORS):
+                raise ModuleNotFoundError(
+                    f"`safe_serialization=True` requires `{Backends.SAFETENSORS}` to be installed."
+                    f"Please install with `pip install {Backends.SAFETENSORS}` or set `safe_serialization=False`."
+                )
+            else:
+                from safetensors.torch import save_model
+
+                model_save_path = model_save_path.replace(".pt", ".safetensors")
+                save_model(self, model_save_path)
 
         if save_preprocessor:
             if self.preprocessor is not None:
