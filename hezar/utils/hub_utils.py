@@ -1,10 +1,10 @@
 import os
+from pathlib import Path
 
 from huggingface_hub import HfApi, Repository
 
 from ..constants import HEZAR_CACHE_DIR, HEZAR_HUB_ID, RepoType
 from ..utils.logging import Logger
-
 
 __all__ = [
     "resolve_pretrained_path",
@@ -120,12 +120,22 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
                 files.append(f)
             else:
                 for x in f:
-                    files.append(f"{r.replace(f'{hub_or_local_path}/', '')}/{x}")
+                    path = Path(r)
+                    index = path.parts.index(hub_or_local_path)
+                    new_path = Path("").joinpath(*path.parts[:index], *path.parts[index + 1 :], x)
+                    files.append(str(new_path))
     else:
         files = HfApi().list_repo_files(hub_or_local_path, repo_type=str(RepoType.MODEL))
 
     if subfolder is not None:
-        files = [x.replace(f"{subfolder}/", "") for x in files if subfolder in x]
+        new_files = []
+        for i in range(len(files)):
+            if subfolder in files[i]:
+                path = Path(files[i])
+                index = path.parts.index(subfolder)
+                new_path = Path("").joinpath(*path.parts[:index], *path.parts[index + 1 :])
+                new_files.append(str(new_path))
+        files = new_files
 
     return files
 
