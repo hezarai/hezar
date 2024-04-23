@@ -113,7 +113,7 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
         A list of all file names
     """
     if os.path.isdir(hub_or_local_path):
-        files_itr = os.walk(os.path.join(hub_or_local_path))
+        files_itr = os.walk(hub_or_local_path)
         files = []
         for root, dirs, files_ in files_itr:
             for file in files_:
