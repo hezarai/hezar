@@ -43,6 +43,7 @@ tensorboard = ">=2.10.0"
 scikit-learn = ">=1.0.0"
 accelerate = {version="*", optional=true}
 numpy = {version="1.24.*", optional=true}
+scipy = {version="1.11.4", optional=true}
 gensim = {version="4.3.2", optional=true}
 seqeval = {version=">=1.2.0", optional=true}
 jiwer = {version=">=3.*", optional=true}
@@ -56,7 +57,7 @@ rouge_score = {version="*", optional=true}
 nlp = ["seqeval", "jiwer", "nltk", "rouge_score"]
 audio = ["soundfile", "librosa", "jiwer"]
 vision = ["pillow"]
-embeddings = ["gensim", "numpy"]
+embeddings = ["gensim", "numpy", "scipy"]
 dev = ["pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"]
 all = ["numpy", "gensim", "accelerate", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk", "rouge_score"]
 
