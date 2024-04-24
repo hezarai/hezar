@@ -59,7 +59,7 @@ audio = ["soundfile", "librosa", "jiwer"]
 vision = ["pillow"]
 embeddings = ["gensim", "numpy", "scipy"]
 dev = ["pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"]
-all = ["numpy", "gensim", "accelerate", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk", "rouge_score"]
+all = ["numpy", "gensim", "accelerate", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "nltk", "rouge_score", "scipy"]
 
 [tool.black]
 line-length = 120
