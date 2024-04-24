@@ -112,12 +112,12 @@ tasks_setups = {
             "num_samples": 2,
             "config": {
                 "labels_max_length": 16,
-                "tokenizer_path": "hezarai/whisper-small",
-                "feature_extractor_path": "hezarai/whisper-small"
+                "tokenizer_path": "hezarai/whisper-small-fa",
+                "feature_extractor_path": "hezarai/whisper-small-fa"
             }
         },
         "model": {
-            "path": "hezarai/whisper-small"
+            "path": "hezarai/whisper-small-fa"
         },
         "config": {
             "task": "speech_recognition",
