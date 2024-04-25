@@ -13,6 +13,8 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: run-tests
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3.5.2
