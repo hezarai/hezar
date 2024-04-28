@@ -35,7 +35,6 @@ from .constants import (
 )
 from .utils import Logger, get_module_config_class
 
-
 __all__ = [
     "Config",
     "ModelConfig",
@@ -407,8 +406,10 @@ class TrainerConfig(Config):
             Reference metric key to watch for determining the best model. Recommended to have a {train. | evaluation.}
             prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults to
             `evaluation.{metric_for_best_model}`.
-        save_freq (int):
-            Save the trainer stats and everything every `save_freq` epochs.
+        save_freq (int) (DEPRECATED):
+            Deprecated and renamed to `save_steps`.
+        save_steps (int):
+            Save the trainer outputs every `save_steps` steps. Leave as `0` to ignore saving between training steps.
         checkpoints_dir (str):
             Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
         logs_dir (str):
@@ -444,7 +445,9 @@ class TrainerConfig(Config):
     evaluate_with_generate: bool = True
     metrics: List[str | MetricConfig] = None
     metric_for_best_model: str = "evaluation.loss"
-    save_freq: int = 1
+    save_enabled: bool = True
+    save_freq: int = None
+    save_steps: int = None
     checkpoints_dir: str = "checkpoints"
     logs_dir: str = "logs"
 
@@ -455,10 +458,27 @@ class TrainerConfig(Config):
         and not controlling them can lead to conflicts.
         """
         super().__post_init__()
+        # Validate `task`
         if self.task not in list(TaskType):
             raise ValueError(
                 f"Invalid task `{self.task}` passed to `TrainerConfig`. "
                 f"Available options are {TaskType.list()}",
             )
+        # Validate `metric_for_best_model`
         if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):
             self.metric_for_best_model = f"evaluation.{self.metric_for_best_model}"
+
+        # Validate steps
+        if self.save_steps is not None and self.save_steps % self.gradient_accumulation_steps != 0:
+            logger.warning(
+                f"It's recommended to set a `save_steps` dividable by `gradient_accumulation_steps`, "
+                f"otherwise, the saved model will have non-updated weights!\n"
+                f"`save_steps={self.save_steps}`, `gradient_accumulation_steps={self.gradient_accumulation_steps}`"
+            )
+
+        # Validate deprecated fields
+        if self.save_freq is not None:
+            logger.warning(
+                f"Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
+                f"Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"
+            )

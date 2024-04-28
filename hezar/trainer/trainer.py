@@ -136,6 +136,7 @@ class Trainer:
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
+        self.save_zfill_value = len(str(len(self.train_dataloader) * self.config.num_epochs))
 
         # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
@@ -540,6 +541,11 @@ class Trainer:
                 iterator.set_postfix(loss=avg_loss)
                 self.state.global_step += 1
 
+                # Save trainer outputs if `save_steps` is hit
+                if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
+                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(self.save_zfill_value)}"
+                    self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+
         return {"loss": avg_loss}
 
     def evaluate(self):
@@ -625,7 +631,7 @@ class Trainer:
         if resume_from_checkpoint:
             self.load_from_checkpoint(resume_from_checkpoint)
             if self.current_epoch >= self.config.num_epochs:
-                logger.info(
+                logger.warning(
                     f"Unable to resume from `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` "
                     f"since it belongs to the ending epoch!"
                 )
@@ -658,9 +664,9 @@ class Trainer:
             )
 
             # maybe save checkpoint
-            if epoch % self.config.save_freq == 0:
-                ckpt_save_path = os.path.join(self.checkpoints_dir, str(epoch))
-                self.save(ckpt_save_path)
+            if self.config.save_enabled:
+                ckpt_path_name = f"step-{str(self.state.global_step).zfill(self.save_zfill_value)}"
+                self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
 
             self.log(train_logs, evaluation_logs, epoch)
 
