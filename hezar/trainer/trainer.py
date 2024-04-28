@@ -533,7 +533,7 @@ class Trainer:
                     outputs = self.evaluation_step(input_batch)
                     logits, labels = self.accelerator.gather_for_metrics((outputs["logits"], input_batch["labels"]))
                     # Compute metrics
-                    evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
+                    evaluation_results = self.metrics_handler.compute_metrics(logits.cpu(), labels.cpu())
                     evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
