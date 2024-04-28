@@ -395,7 +395,7 @@ class TrainerConfig(Config):
         gradient_accumulation_steps (int):
             Number of updates steps to accumulate before performing a backward/update pass, defaults to 1.
         distributed (bool):
-            Whether to use distributed training or not (via the `accelerate` package)
+            Whether to use distributed training (via the `accelerate` package)
         mixed_precision (PrecisionType | str):
             Mixed precision type e.g, fp16, bf16, etc. (disabled by default)
         evaluate_with_generate (bool):
@@ -435,11 +435,7 @@ class TrainerConfig(Config):
     batch_size: int = None
     eval_batch_size: int = None
     gradient_accumulation_steps: int = 1
-    distributed: bool = field(
-        init=False,
-        default=False,
-        metadata={"help": "Distributed training isn't supported yet! We're working hard to solve some bugs rn :("}
-    )
+    distributed: bool = False
     mixed_precision: PrecisionType | str | None = None
     use_cpu: bool = False
     evaluate_with_generate: bool = True
