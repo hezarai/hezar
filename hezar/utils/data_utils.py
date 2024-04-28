@@ -7,16 +7,15 @@ from omegaconf import DictConfig
 from ..constants import PaddingType
 from .logging import Logger
 
-
 if TYPE_CHECKING:
     import torch
-
 
 __all__ = [
     "convert_batch_dict_dtype",
     "resolve_inputs_length_for_padding",
     "pad_batch_items",
     "shift_tokens_right",
+    "torch2numpy",
     "get_non_numeric_keys",
     "flatten_dict",
 ]
@@ -174,6 +173,19 @@ def shift_tokens_right(input_ids: "torch.Tensor", pad_token_id: int, decoder_sta
     shifted_input_ids.masked_fill_(shifted_input_ids == -100, pad_token_id)
 
     return shifted_input_ids
+
+
+def torch2numpy(*args):
+    """
+    Cast tensors to numpy
+
+    Args:
+        *args: Any number of torch.Tensor objects
+
+    Returns:
+        The same inputs cast to numpy
+    """
+    return [arg.cpu().numpy() if isinstance(arg, torch.Tensor) else arg for arg in args]
 
 
 def get_non_numeric_keys(d: Dict, batched=True):
