@@ -39,7 +39,7 @@ class TrOCRImage2Text(Model):
     required_backends = _required_backends
     image_processor = "image_processor"
     tokenizer_name = "bpe_tokenizer"
-    loss_fn_name = "cross_entropy"
+    loss_func_name = "cross_entropy"
 
     def __init__(self, config: TrOCRImage2TextConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -76,7 +76,7 @@ class TrOCRImage2Text(Model):
         return outputs
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-        loss = self.criterion(logits.reshape(-1, self.trocr.decoder.config.vocab_size), labels.reshape(-1))
+        loss = self.loss_func(logits.reshape(-1, self.trocr.decoder.config.vocab_size), labels.reshape(-1))
         return loss
 
     def generate(self, pixel_values, generation_config=None, **kwargs):

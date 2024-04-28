@@ -26,7 +26,7 @@ _required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLO
 class ViT(Model):
     required_backends = _required_backends
     image_processor = "image_processor"
-    loss_fn_name = "cross_entropy"
+    loss_func_name = "cross_entropy"
 
     def __init__(self, config: ViTConfig, **kwargs):
         super().__init__(config=config, **kwargs)

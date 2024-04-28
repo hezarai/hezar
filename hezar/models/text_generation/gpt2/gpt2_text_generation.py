@@ -27,7 +27,7 @@ class GPT2TextGeneration(Model):
     is_generative = True
     tokenizer_name = "bpe_tokenizer"
     required_backends = _required_backends
-    loss_fn_name = "cross_entropy"
+    loss_func_name = "cross_entropy"
 
     def __init__(self, config: GPT2TextGenerationConfig, **kwargs):
         super().__init__(config, **kwargs)
@@ -74,7 +74,7 @@ class GPT2TextGeneration(Model):
         shift_logits = logits[..., :-1, :].contiguous()
         shift_labels = labels[..., 1:].contiguous()
         # Compute loss
-        loss = self.criterion(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+        loss = self.loss_func(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
         return loss
 
     def generate(self, token_ids, **kwargs):
