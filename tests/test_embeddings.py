@@ -5,6 +5,7 @@ import pytest
 from hezar.embeddings import Embedding
 from hezar.utils import clean_cache
 
+
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 

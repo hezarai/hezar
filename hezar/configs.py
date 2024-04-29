@@ -35,6 +35,7 @@ from .constants import (
 )
 from .utils import Logger, get_module_config_class
 
+
 __all__ = [
     "Config",
     "ModelConfig",
@@ -479,6 +480,6 @@ class TrainerConfig(Config):
         # Validate deprecated fields
         if self.save_freq is not None:
             logger.warning(
-                f"Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
-                f"Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"
+                "Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
+                "Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"
             )

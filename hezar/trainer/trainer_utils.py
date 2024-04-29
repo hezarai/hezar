@@ -171,6 +171,7 @@ def get_distributed_logger(name: str, level: str = None, fmt: str = None):
     Distributed logger is responsible for handling logging on multiple processes/machines
     """
     import logging
+
     from accelerate.logging import get_logger
 
     fmt = fmt or "Hezar (%(levelname)s): %(message)s"

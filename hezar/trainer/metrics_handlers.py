@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import List
 
 import numpy as np
-import torch
 
 from ..builders import build_metric
 from ..configs import MetricConfig

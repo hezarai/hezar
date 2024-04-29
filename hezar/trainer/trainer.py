@@ -7,21 +7,11 @@ from typing import Any, Callable, Dict, Tuple
 import numpy as np
 import pandas as pd
 import torch
-from tqdm.auto import tqdm
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
-from .metrics_handlers import (
-    Image2TextMetricHandler,
-    MetricsHandler,
-    SequenceLabelingMetricsHandler,
-    SpeechRecognitionMetricsHandler,
-    TextClassificationMetricsHandler,
-    TextGenerationMetricsHandler,
-)
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard, get_distributed_logger
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -40,11 +30,21 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters, verify_dependencies
+from .metrics_handlers import (
+    Image2TextMetricHandler,
+    MetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    TextClassificationMetricsHandler,
+    TextGenerationMetricsHandler,
+)
+from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
+
 
 if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
 else:
-    raise ImportError(f"The package `accelerate` needs to be installed to use `Trainer`!")
+    raise ImportError("The package `accelerate` needs to be installed to use `Trainer`!")
 
 logger = Logger(__name__)
 
