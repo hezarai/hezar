@@ -50,7 +50,6 @@ from .metrics_handlers import (
 )
 from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
 
-
 if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
 else:
@@ -163,7 +162,7 @@ class Trainer:
         if self.accelerator is None:
             self.accelerator = Accelerator(
                 mixed_precision=self.config.mixed_precision,
-                cpu=self.config.use_cpu,
+                cpu=True if self.device == "cpu" else False,
                 step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
                 gradient_accumulation_steps=self.config.gradient_accumulation_steps,
             )
@@ -336,6 +335,12 @@ class Trainer:
         else:
             self.logger.warning(
                 f"{checkpoint} does not seem to be a valid checkpoint!"
+            )
+
+        self.current_epoch = self.state.epoch + 1
+        if self.current_epoch >= self.config.num_epochs:
+            self.logger.warning(
+                f"The checkpoint at `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` belongs to the last epoch!"
             )
 
     def load_csv_logs(self, logs_dir=None):
@@ -551,7 +556,7 @@ class Trainer:
                     logits, labels = self.accelerator.gather_for_metrics((outputs["logits"], input_batch["labels"]))
                     # Compute metrics
                     evaluation_results = self.metrics_handler.compute_metrics(
-                    logits.clone().detach().cpu(),
+                        logits.clone().detach().cpu(),
                         labels.clone().detach().cpu(),
                     )
                     evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).item()
@@ -568,7 +573,7 @@ class Trainer:
 
         def _print_info_line(key, value):
             line = f"  {colorize_text(key, 'bold')}: `{colorize_text(str(value), 'italic')}`"
-            print(line)
+            self.accelerator.print(line)
 
         header = f"{'*' * 20} Training Info {'*' * 20}"
         footer = "*" * len(header)
@@ -597,11 +602,11 @@ class Trainer:
         }
 
         # Header
-        print(f"\n{colorize_text(header, 'bold')}\n")
+        self.accelerator.print(f"\n{colorize_text(header, 'bold')}\n")
         # Info
         [_print_info_line(k, v) for k, v in info.items()]
         # Footer
-        print(f"\n{colorize_text(footer, 'bold')}\n")
+        self.accelerator.print(f"\n{colorize_text(footer, 'bold')}\n")
 
     def train(self, resume_from_checkpoint: str | bool = None):
         """
@@ -613,21 +618,13 @@ class Trainer:
         """
         if resume_from_checkpoint:
             self.load_from_checkpoint(resume_from_checkpoint)
-            if self.current_epoch >= self.config.num_epochs:
-                self.logger.warning(
-                    f"Unable to resume from `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` "
-                    f"since it belongs to the ending epoch!"
-                )
-            self.current_epoch = self.state.epoch + 1
 
-        if self.accelerator.is_local_main_process:
-            self.print_info()
+        self.print_info()
 
         for epoch in range(self.current_epoch, self.config.num_epochs + 1):
-            if self.accelerator.is_local_main_process:
-                print()
+            self.accelerator.print()
 
-            # Train on the whole train data
+            # Train on the whole training set
             training_results = self.inner_training_loop(epoch)
 
             # Save checkpoint
@@ -636,7 +633,7 @@ class Trainer:
                     ckpt_path_name = f"step-{str(self.state.global_step).zfill(len(str(self.total_steps)))}"
                     self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
 
-            # Evaluate the model on eval data
+            # Evaluate the model on the evaluation set
             evaluation_results = self.evaluate()
 
             # LR scheduler step
