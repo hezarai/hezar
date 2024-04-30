@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from ..preprocessors import Tokenizer, AudioFeatureExtractor
+from ..preprocessors import AudioFeatureExtractor, Tokenizer
 from ..utils import Logger, convert_batch_dict_dtype
 
 

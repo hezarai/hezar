@@ -14,6 +14,7 @@ __all__ = [
     "CSVLogger",
     "write_to_tensorboard",
     "resolve_logdir",
+    "get_distributed_logger",
 ]
 
 
@@ -163,3 +164,22 @@ def resolve_logdir(log_dir) -> str:
 
     current_time = datetime.now().strftime("%b%d_%H-%M-%S")
     return os.path.join(log_dir, current_time + "_" + socket.gethostname())
+
+
+def get_distributed_logger(name: str, level: str = None, fmt: str = None):
+    """
+    Distributed logger is responsible for handling logging on multiple processes/machines
+    """
+    import logging
+
+    from accelerate.logging import get_logger
+
+    fmt = fmt or "Hezar (%(levelname)s): %(message)s"
+    level = level or "INFO"
+    logger = get_logger(name, level)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(fmt)
+    handler.setFormatter(formatter)
+    logger.logger.addHandler(handler)
+
+    return logger

@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import List
 
 import numpy as np
-import torch
 
 from ..builders import build_metric
 from ..configs import MetricConfig
@@ -41,6 +40,9 @@ class MetricsHandler:
         self.objective = self._configure_objective()
 
     def _configure_objective(self):
+        """
+        Figure out if the objective of the metric is to `minimize` or `maximize`
+        """
         target_metric = self.trainer.config.metric_for_best_model
         objective_metric = target_metric.split(".")[1] if "." in target_metric else target_metric
         if "loss" in objective_metric:
@@ -55,6 +57,14 @@ class MetricsHandler:
         return objective
 
     def _setup_metrics(self, metrics):
+        """
+        Prepare a dictionary of metric names and their instances mappings.
+        Args:
+            metrics: A list of either names, configs or metric instances. Defaults to `self.valid_metrics`.
+
+        Returns:
+
+        """
         metrics_dict = {}
         metrics = metrics or []
         if not len(metrics):
@@ -136,8 +146,8 @@ class Image2TextMetricHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predictions = self.trainer.model.post_process(torch.tensor(predictions))
-        labels = self.trainer.model.post_process(torch.tensor(labels))
+        predictions = self.trainer.model.post_process(predictions)
+        labels = self.trainer.model.post_process(labels)
         predictions = [x["text"] for x in predictions]
         labels = [x["text"] for x in labels]
         results = {}
@@ -154,8 +164,8 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predictions = self.trainer.model.post_process(torch.tensor(predictions))
-        labels = self.trainer.model.post_process(torch.tensor(labels))
+        predictions = self.trainer.model.post_process(predictions)
+        labels = self.trainer.model.post_process(labels)
         predictions = [x["text"] for x in predictions]
         labels = [x["text"] for x in labels]
         results = {}
@@ -172,8 +182,8 @@ class TextGenerationMetricsHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predictions = self.trainer.model.post_process(torch.tensor(predictions))
-        labels = self.trainer.model.post_process(torch.tensor(labels))
+        predictions = self.trainer.model.post_process(predictions)
+        labels = self.trainer.model.post_process(labels)
         predictions = [x["text"] for x in predictions]
         labels = [x["text"] for x in labels]
         results = {}

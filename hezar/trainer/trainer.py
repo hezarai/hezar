@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import os
 import random
-from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, Tuple
 
 import numpy as np
 import pandas as pd
 import torch
+from tqdm.auto import tqdm
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from .metrics_handlers import (
     Image2TextMetricHandler,
@@ -20,7 +21,7 @@ from .metrics_handlers import (
     TextClassificationMetricsHandler,
     TextGenerationMetricsHandler,
 )
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard
+from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard, get_distributed_logger
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -39,9 +40,20 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters, verify_dependencies
+from .metrics_handlers import (
+    Image2TextMetricHandler,
+    MetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    TextClassificationMetricsHandler,
+    TextGenerationMetricsHandler,
+)
+from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
 
-if TYPE_CHECKING:
+if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
+else:
+    raise ImportError("The package `accelerate` needs to be installed to use `Trainer`!")
 
 logger = Logger(__name__)
 
@@ -97,7 +109,7 @@ class Trainer:
     trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
-    _required_backends = []
+    _required_backends = [Backends.ACCELERATE]
 
     def __init__(
         self,
@@ -115,6 +127,10 @@ class Trainer:
         # Check if all required dependencies are installed
         verify_dependencies(self._required_backends)
 
+        # Setup logger
+        self.logger = get_distributed_logger(__name__)
+
+        # Configuration
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
@@ -136,22 +152,30 @@ class Trainer:
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
-        self.save_zfill_value = len(str(len(self.train_dataloader) * self.config.num_epochs))
+        self.total_steps = len(self.train_dataloader) * self.config.num_epochs
 
         # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
 
         # Setup accelerated objects if possible
-        if accelerator is None and self.config.distributed and not self.config.use_cpu:
-            self.accelerator = self._setup_accelerator()
-            self.scaler = self.accelerator.scaler
-            self.device = self.accelerator.device
-        else:
-            self.accelerator = accelerator
-            enabled = True if (
-                self.config.mixed_precision is not None and not (self.config.use_cpu or self.device == "cpu")
-            ) else False
-            self.scaler = torch.cuda.amp.GradScaler(enabled=enabled)
+        self.accelerator = accelerator
+        if self.accelerator is None:
+            self.accelerator = Accelerator(
+                mixed_precision=self.config.mixed_precision,
+                cpu=True if self.device == "cpu" else False,
+                step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
+                gradient_accumulation_steps=self.config.gradient_accumulation_steps,
+            )
+
+        self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
+            self.accelerator.prepare(
+                self.model,
+                self.optimizer,
+                self.lr_scheduler,
+                self.train_dataloader,
+                self.eval_dataloader,
+            )
+        )
 
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
@@ -198,8 +222,7 @@ class Trainer:
                     cache_dir=HEZAR_CACHE_DIR,
                     resume_download=True,
                 )
-            model.load_state_dict(torch.load(model_path, map_location="cpu"))
-        model.to(self.device)
+            model.load_state_dict(torch.load(model_path))
         return model
 
     def _setup_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
@@ -230,7 +253,7 @@ class Trainer:
                 shuffle=self.config.dataloader_shuffle,
             )
         else:
-            logger.warning(
+            self.logger.warning(
                 "Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
                 "Setting eval_dataloader to None..."
             )
@@ -266,31 +289,6 @@ class Trainer:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs, verbose=True)
         return optimizer, lr_scheduler
 
-    def _setup_accelerator(self):
-        if is_backend_available(Backends.ACCELERATE):
-            from accelerate import Accelerator
-
-            accelerator = Accelerator(
-                mixed_precision=self.config.mixed_precision,
-                step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
-            )
-            self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
-                accelerator.prepare(
-                    self.model,
-                    self.optimizer,
-                    self.lr_scheduler,
-                    self.train_dataloader,
-                    self.eval_dataloader,
-                )
-            )
-        else:
-            raise ValueError(
-                "The configuration for this trainer requires the package `accelerate` to be installed! "
-                "(config.distributed=True)"
-            )
-
-        return accelerator
-
     def _setup_metrics_handler(self):
         """
         Setup MetricsHandler instance for the trainer
@@ -311,7 +309,7 @@ class Trainer:
             load_best: Whether to load the best checkpoint or not, if False, loads the latest checkpoint
         """
         if os.path.isdir(checkpoint) and load_best:
-            logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
+            self.logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
 
         self.state = TrainerState.load(os.path.join(self.checkpoints_dir, self.trainer_state_file))
         if isinstance(checkpoint, bool):
@@ -328,16 +326,21 @@ class Trainer:
             model_path = os.path.join(checkpoint, self.model.model_filename)
             if os.path.isfile(model_path):
                 self.model.load_state_dict(torch.load(model_path))
-                if self.accelerator is not None:
-                    self.model = self.accelerator.prepare(self.model)
-                logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
+                self.model = self.accelerator.prepare(self.model)
+                self.logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
             else:
                 raise FileNotFoundError(
                     f"Could not find `{self.model.model_filename}` at `{os.path.dirname(model_path)}`!\n"
                 )
         else:
-            logger.warning(
+            self.logger.warning(
                 f"{checkpoint} does not seem to be a valid checkpoint!"
+            )
+
+        self.current_epoch = self.state.epoch + 1
+        if self.current_epoch >= self.config.num_epochs:
+            self.logger.warning(
+                f"The checkpoint at `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` belongs to the last epoch!"
             )
 
     def load_csv_logs(self, logs_dir=None):
@@ -369,26 +372,6 @@ class Trainer:
             input_batch = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in input_batch.items()}
 
         return input_batch
-
-    def amp_context_manager(self):
-        """
-        An auto context manager for mixed precision.
-
-        Returns:
-            A torch autocast context manager
-        """
-        if self.accelerator is not None:
-            context_manager = self.accelerator.autocast()
-        else:
-            device_type = "cuda" if "cuda" in self.device else "cpu"
-            dtype = torch.bfloat16 if self.config.mixed_precision == "bf16" or device_type == "cpu" else torch.float16
-            enabled = self.config.mixed_precision is not None or self.config.mixed_precision == "no"
-            context_manager = torch.autocast(
-                device_type=device_type,
-                dtype=dtype,
-                enabled=enabled
-            )
-        return context_manager
 
     def forward(self, input_batch):
         """
@@ -439,12 +422,7 @@ class Trainer:
         """
         Perform optimization step
         """
-        if self.accelerator is not None:
-            self.optimizer.step()
-        else:
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
-
+        self.optimizer.step()
         self.optimizer.zero_grad()
 
     def lr_scheduler_step(self, metrics=None):
@@ -471,15 +449,12 @@ class Trainer:
         Returns:
             Train step outputs including loss, logits, etc.
         """
-        with self.amp_context_manager():
+        with self.accelerator.autocast():
             outputs = self.forward(input_batch)
 
-        loss = self.compute_loss(outputs, **input_batch) / self.config.gradient_accumulation_steps
+        loss = self.compute_loss(outputs, **input_batch)
 
-        if self.accelerator is not None:
-            self.accelerator.backward(loss)
-        else:
-            self.scaler.scale(loss).backward()
+        self.accelerator.backward(loss)
 
         outputs["loss"] = loss
 
@@ -495,7 +470,7 @@ class Trainer:
         Returns:
             Evaluation step outputs including loss, logits, etc.
         """
-        with self.amp_context_manager():
+        with self.accelerator.autocast():
             outputs = self.forward(input_batch)
 
         loss = self.compute_loss(outputs, **input_batch)
@@ -527,13 +502,14 @@ class Trainer:
             desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
+            disable=not self.accelerator.is_local_main_process,
         ) as iterator:
             for step, input_batch in enumerate(iterator):
                 input_batch = self.prepare_input_batch(input_batch)
                 # Training on one batch
-                outputs = self.training_step(input_batch)
-                # Optimization step
-                if (step + 1) % self.config.gradient_accumulation_steps == 0 or step == len(iterator):
+                with self.accelerator.accumulate(self.model):
+                    outputs = self.training_step(input_batch)
+                    # Optimization step
                     self.optimization_step()
                 # Gather outputs for metrics
                 losses_sum += outputs["loss"].item()
@@ -543,8 +519,15 @@ class Trainer:
 
                 # Save trainer outputs if `save_steps` is hit
                 if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
-                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(self.save_zfill_value)}"
+                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(len(str(self.total_steps)))}"
                     self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+                    # Save Trainer state
+                    self.state.save(
+                        os.path.join(
+                            self.checkpoints_dir,
+                            self.trainer_state_file,
+                        )
+                    )
 
         return {"loss": avg_loss}
 
@@ -563,17 +546,20 @@ class Trainer:
             desc="Evaluating... ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
+            disable=not self.accelerator.is_local_main_process,
         ) as iterator:
             with torch.inference_mode():
                 for step, input_batch in enumerate(iterator):
                     input_batch = self.prepare_input_batch(input_batch)
                     # Evaluation on one batch
                     outputs = self.evaluation_step(input_batch)
-                    logits = outputs["logits"].detach().cpu().numpy()
-                    labels = input_batch["labels"].detach().cpu().numpy()
+                    logits, labels = self.accelerator.gather_for_metrics((outputs["logits"], input_batch["labels"]))
                     # Compute metrics
-                    evaluation_results = self.metrics_handler.compute_metrics(logits, labels)
-                    evaluation_results["loss"] = outputs["loss"].item()
+                    evaluation_results = self.metrics_handler.compute_metrics(
+                        logits.clone().detach().cpu(),
+                        labels.clone().detach().cpu(),
+                    )
+                    evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
                     iterator.set_postfix(**self.metrics_handler.tracker.avg())
@@ -587,7 +573,7 @@ class Trainer:
 
         def _print_info_line(key, value):
             line = f"  {colorize_text(key, 'bold')}: `{colorize_text(str(value), 'italic')}`"
-            print(line)
+            self.accelerator.print(line)
 
         header = f"{'*' * 20} Training Info {'*' * 20}"
         footer = "*" * len(header)
@@ -608,17 +594,19 @@ class Trainer:
             "Number of Parameters": self.model.num_parameters,
             "Number of Trainable Parameters": self.model.num_trainable_parameters,
             "Mixed Precision": self.config.mixed_precision or "Full (fp32)",
+            "Gradient Accumulation Steps": self.config.gradient_accumulation_steps,
             "Metrics": list(self.metrics_handler.metrics.keys()),
+            "Save Steps": self.config.save_steps,
             "Checkpoints Path": self.checkpoints_dir,
             "Logs Path": self.logs_dir,
         }
 
         # Header
-        print(f"\n{colorize_text(header, 'bold')}\n")
+        self.accelerator.print(f"\n{colorize_text(header, 'bold')}\n")
         # Info
         [_print_info_line(k, v) for k, v in info.items()]
         # Footer
-        print(f"\n{colorize_text(footer, 'bold')}\n")
+        self.accelerator.print(f"\n{colorize_text(footer, 'bold')}\n")
 
     def train(self, resume_from_checkpoint: str | bool = None):
         """
@@ -630,21 +618,22 @@ class Trainer:
         """
         if resume_from_checkpoint:
             self.load_from_checkpoint(resume_from_checkpoint)
-            if self.current_epoch >= self.config.num_epochs:
-                logger.warning(
-                    f"Unable to resume from `{os.path.join(self.checkpoints_dir, str(self.state.epoch))}` "
-                    f"since it belongs to the ending epoch!"
-                )
-            self.current_epoch = self.state.epoch + 1
 
         self.print_info()
 
         for epoch in range(self.current_epoch, self.config.num_epochs + 1):
-            print()
+            self.accelerator.print()
 
-            # Train on the whole train data
+            # Train on the whole training set
             training_results = self.inner_training_loop(epoch)
-            # Evaluate the model on eval data
+
+            # Save checkpoint
+            if self.accelerator.is_local_main_process:
+                if self.config.save_enabled:
+                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(len(str(self.total_steps)))}"
+                    self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+
+            # Evaluate the model on the evaluation set
             evaluation_results = self.evaluate()
 
             # LR scheduler step
@@ -663,25 +652,19 @@ class Trainer:
                 step=epoch,
             )
 
-            # maybe save checkpoint
-            if self.config.save_enabled:
-                ckpt_path_name = f"step-{str(self.state.global_step).zfill(self.save_zfill_value)}"
-                self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+            self.log(all_logs, epoch)
 
-            self.log(train_logs, evaluation_logs, epoch)
+        self.logger.info("Training done!")
 
-        logger.info("Training done!")
-
-    def log(self, train_logs: Dict[str, Any], evaluation_logs: Dict[str, Any], step: int):
+    def log(self, logs: Dict[str, Any], step: int):
         """
         Log metrics results
         """
         # Log to tensorboard
-        write_to_tensorboard(self.tensorboard, train_logs, step)
-        write_to_tensorboard(self.tensorboard, evaluation_logs, step)
+        write_to_tensorboard(self.tensorboard, logs, step)
 
         # Log to CSV
-        self.csv_logger.write({**train_logs, **evaluation_logs}, step)
+        self.csv_logger.write(logs, step)
 
         # Save trainer state
         self.state.save(
@@ -722,9 +705,9 @@ class Trainer:
         if isinstance(self.train_dataset, Dataset):
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         else:
-            logger.warning(
-                f"The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
-                f" will be saved!"
+            self.logger.warning(
+                "The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
+                " will be saved!"
             )
 
     def push_to_hub(

@@ -35,6 +35,7 @@ from .constants import (
 )
 from .utils import Logger, get_module_config_class
 
+
 __all__ = [
     "Config",
     "ModelConfig",
@@ -395,7 +396,7 @@ class TrainerConfig(Config):
         gradient_accumulation_steps (int):
             Number of updates steps to accumulate before performing a backward/update pass, defaults to 1.
         distributed (bool):
-            Whether to use distributed training or not (via the `accelerate` package)
+            Whether to use distributed training (via the `accelerate` package)
         mixed_precision (PrecisionType | str):
             Mixed precision type e.g, fp16, bf16, etc. (disabled by default)
         evaluate_with_generate (bool):
@@ -435,11 +436,7 @@ class TrainerConfig(Config):
     batch_size: int = None
     eval_batch_size: int = None
     gradient_accumulation_steps: int = 1
-    distributed: bool = field(
-        init=False,
-        default=False,
-        metadata={"help": "Distributed training isn't supported yet! We're working hard to solve some bugs rn :("}
-    )
+    distributed: bool = False
     mixed_precision: PrecisionType | str | None = None
     use_cpu: bool = False
     evaluate_with_generate: bool = True
@@ -479,6 +476,12 @@ class TrainerConfig(Config):
         # Validate deprecated fields
         if self.save_freq is not None:
             logger.warning(
-                f"Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
-                f"Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"
+                "Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
+                "Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"
+            )
+
+        # Distributed mode
+        if self.distributed:
+            logger.warning(
+                "Distributed mode is experimental and might have bugs. Use with caution and don't forget to submit your issues!"
             )

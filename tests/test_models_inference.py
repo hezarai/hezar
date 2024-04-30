@@ -7,6 +7,7 @@ from hezar.models import ModelConfig
 from hezar.preprocessors import Preprocessor
 from hezar.utils import clean_cache
 
+
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 
