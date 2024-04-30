@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 from hezar.data import Dataset
 from hezar.utils import clean_cache
 
+
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 DATASETS_MAPPING = {

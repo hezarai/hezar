@@ -4,12 +4,13 @@ from dataclasses import dataclass
 
 from datasets import Audio, load_dataset
 
-from .dataset import Dataset
-from ..data_collators import SpeechRecognitionDataCollator
 from ...configs import DatasetConfig
-from ...constants import TaskType, Backends, PaddingType
-from ...preprocessors import Tokenizer, AudioFeatureExtractor
+from ...constants import Backends, PaddingType, TaskType
+from ...preprocessors import AudioFeatureExtractor, Tokenizer
 from ...registry import register_dataset
+from ..data_collators import SpeechRecognitionDataCollator
+from .dataset import Dataset
+
 
 _required_backends = [Backends.LIBROSA, Backends.DATASETS]
 

@@ -11,7 +11,7 @@ from tqdm.auto import tqdm
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from .metrics_handlers import (
     Image2TextMetricHandler,
@@ -40,11 +40,21 @@ from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters, verify_dependencies
+from .metrics_handlers import (
+    Image2TextMetricHandler,
+    MetricsHandler,
+    SequenceLabelingMetricsHandler,
+    SpeechRecognitionMetricsHandler,
+    TextClassificationMetricsHandler,
+    TextGenerationMetricsHandler,
+)
+from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
+
 
 if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
 else:
-    raise ImportError(f"The package `accelerate` needs to be installed to use `Trainer`!")
+    raise ImportError("The package `accelerate` needs to be installed to use `Trainer`!")
 
 logger = Logger(__name__)
 
@@ -143,7 +153,7 @@ class Trainer:
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
-        self.save_zfill_value = len(str(len(self.train_dataloader) * self.config.num_epochs))
+        self.total_steps = len(self.train_dataloader) * self.config.num_epochs
 
         # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
@@ -504,8 +514,15 @@ class Trainer:
 
                 # Save trainer outputs if `save_steps` is hit
                 if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
-                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(self.save_zfill_value)}"
+                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(len(str(self.total_steps)))}"
                     self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+                    # Save Trainer state
+                    self.state.save(
+                        os.path.join(
+                            self.checkpoints_dir,
+                            self.trainer_state_file,
+                        )
+                    )
 
         return {"loss": avg_loss}
 
@@ -533,7 +550,10 @@ class Trainer:
                     outputs = self.evaluation_step(input_batch)
                     logits, labels = self.accelerator.gather_for_metrics((outputs["logits"], input_batch["labels"]))
                     # Compute metrics
-                    evaluation_results = self.metrics_handler.compute_metrics(logits.cpu(), labels.cpu())
+                    evaluation_results = self.metrics_handler.compute_metrics(
+                    logits.clone().detach().cpu(),
+                        labels.clone().detach().cpu(),
+                    )
                     evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
@@ -569,7 +589,9 @@ class Trainer:
             "Number of Parameters": self.model.num_parameters,
             "Number of Trainable Parameters": self.model.num_trainable_parameters,
             "Mixed Precision": self.config.mixed_precision or "Full (fp32)",
+            "Gradient Accumulation Steps": self.config.gradient_accumulation_steps,
             "Metrics": list(self.metrics_handler.metrics.keys()),
+            "Save Steps": self.config.save_steps,
             "Checkpoints Path": self.checkpoints_dir,
             "Logs Path": self.logs_dir,
         }
@@ -607,6 +629,13 @@ class Trainer:
 
             # Train on the whole train data
             training_results = self.inner_training_loop(epoch)
+
+            # Save checkpoint
+            if self.accelerator.is_local_main_process:
+                if self.config.save_enabled:
+                    ckpt_path_name = f"step-{str(self.state.global_step).zfill(len(str(self.total_steps)))}"
+                    self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+
             # Evaluate the model on eval data
             evaluation_results = self.evaluate()
 
@@ -626,26 +655,19 @@ class Trainer:
                 step=epoch,
             )
 
-            # maybe save checkpoint
-            if self.config.save_enabled:
-                ckpt_path_name = f"step-{str(self.state.global_step).zfill(self.save_zfill_value)}"
-                self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
-
-            if self.accelerator.is_local_main_process:
-                self.log(train_logs, evaluation_logs, epoch)
+            self.log(all_logs, epoch)
 
         self.logger.info("Training done!")
 
-    def log(self, train_logs: Dict[str, Any], evaluation_logs: Dict[str, Any], step: int):
+    def log(self, logs: Dict[str, Any], step: int):
         """
         Log metrics results
         """
         # Log to tensorboard
-        write_to_tensorboard(self.tensorboard, train_logs, step)
-        write_to_tensorboard(self.tensorboard, evaluation_logs, step)
+        write_to_tensorboard(self.tensorboard, logs, step)
 
         # Log to CSV
-        self.csv_logger.write({**train_logs, **evaluation_logs}, step)
+        self.csv_logger.write(logs, step)
 
         # Save trainer state
         self.state.save(
@@ -687,8 +709,8 @@ class Trainer:
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         else:
             self.logger.warning(
-                f"The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
-                f" will be saved!"
+                "The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
+                " will be saved!"
             )
 
     def push_to_hub(
