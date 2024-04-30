@@ -17,9 +17,7 @@ from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 from hezar.utils import clean_cache
 
-
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
-
 
 tasks_setups = {
     "text_classification": {
@@ -102,7 +100,6 @@ tasks_setups = {
         },
         "config": {
             "task": "image2text",
-            "mixed_precision": "fp16",
             "metrics": ["wer"]
         }
     },
@@ -121,7 +118,6 @@ tasks_setups = {
         },
         "config": {
             "task": "speech_recognition",
-            "mixed_precision": "fp16",
             "metrics": ["wer", "cer"]
         },
     }
@@ -131,7 +127,9 @@ common_train_config = {
     "output_dir": "tests-tmp-train-dir",
     "batch_size": 2,
     "num_epochs": 1,
-    "gradient_accumulation_steps": 2
+    "gradient_accumulation_steps": 2,
+    "mixed_precision": "fp16",
+    "use_cpu": True
 }
 
 
@@ -161,9 +159,9 @@ def test_trainer(task):
     )
     trainer.train()
 
+    del trainer
     shutil.rmtree(config.output_dir, ignore_errors=True)
 
     # Clean cache so that CI environment does not run out of space
     if CI_MODE == "TRUE":
         clean_cache(delay=1)
-
