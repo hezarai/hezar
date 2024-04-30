@@ -479,3 +479,9 @@ class TrainerConfig(Config):
                 "Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
                 "Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"
             )
+
+        # Distributed mode
+        if self.distributed:
+            logger.warning(
+                "Distributed mode is experimental and might have bugs. Use with caution and don't forget to submit your issues!"
+            )
