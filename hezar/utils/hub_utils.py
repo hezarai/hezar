@@ -7,7 +7,6 @@ from ..utils.logging import Logger
 
 
 __all__ = [
-    "resolve_pretrained_path",
     "get_local_cache_path",
     "exists_in_cache",
     "exists_on_hub",
@@ -18,26 +17,6 @@ __all__ = [
 ]
 
 logger = Logger(__name__)
-
-
-def resolve_pretrained_path(hub_or_local_path):
-    """
-    **DEPRECATED**
-
-    Resolve a local or Hub path. If path exists locally it just returns the input, otherwise tries to resolve
-    hub_or_local_path. If it contains the namespace (author/org) leave it as is, otherwise change to hezarai/{hub_path}
-
-    Args:
-        hub_or_local_path: Repo name or id
-
-    Returns:
-        A proper pretrained path
-    """
-    logger.warning("`resolve_pretrained_path` is deprecated! Use the raw `hub_or_local_path`!")
-    if os.path.isdir(hub_or_local_path):
-        return hub_or_local_path
-    repo_id = f"{HEZAR_HUB_ID}/{hub_or_local_path}" if "/" not in hub_or_local_path else hub_or_local_path
-    return repo_id
 
 
 def get_local_cache_path(repo_id, repo_type):
