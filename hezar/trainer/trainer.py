@@ -312,13 +312,14 @@ class Trainer:
         if os.path.isdir(checkpoint) and load_best:
             self.logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
 
+        # Load trainer state file if available
         state_path = os.path.join(self.checkpoints_dir, self.trainer_state_file)
-
         if os.path.isfile(state_path):
             self.state = TrainerState.load(state_path)
         else:
             return
 
+        # If checkpoint is True instead of a path to the checkpoint, load the latest of the best checkpoint
         if isinstance(checkpoint, bool):
             if load_best:
                 checkpoint = os.path.join(self.checkpoints_dir, str(self.state.best_checkpoint))
@@ -328,6 +329,8 @@ class Trainer:
                     self.checkpoints_dir,
                     str(self.state.global_step).zfill(len(str(self.total_steps))),
                 )
+
+        # Load checkpoint file and update trainer state based on the checkpoint file
         if os.path.isdir(checkpoint):
             # Figure out the step and epoch number
             step = os.path.basename(checkpoint)
@@ -672,6 +675,7 @@ class Trainer:
                 step=epoch,
             )
 
+            # Log everything
             self.log(all_logs, epoch)
 
         self.logger.info("Training done!")
