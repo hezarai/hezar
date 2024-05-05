@@ -28,6 +28,7 @@ class TrainerState:
         epoch: Current epoch number
         total_epochs: Total epochs to train the model
         global_step: Number of the update steps so far, one step is a full training step (one batch)
+        epoch_step: Number of the update steps in the current epoch
         metric_for_best_checkpoint: The metric key for choosing the best checkpoint (Also given in the TrainerConfig)
         best_metric_value: The value of the best checkpoint saved so far
         best_checkpoint: Path to the best model checkpoint so far
@@ -36,6 +37,7 @@ class TrainerState:
     epoch: int = 1
     total_epochs: int = None
     global_step: int = 0
+    epoch_step: int = 0
     metric_for_best_checkpoint: str = None
     best_metric_value: float = None
     best_checkpoint: str = None
