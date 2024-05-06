@@ -73,10 +73,11 @@ class SpeechRecognitionDataset(Dataset):
         labels = self.tokenizer(
             transcript,
             max_length=self.config.labels_max_length,
-            return_tensors="pt"
-        )["token_ids"]
+            return_tensors="pt",
+        )
 
         return {
             "input_features": input_features,
-            "labels": labels
+            "labels": labels["token_ids"],
+            "attention_mask": labels["attention_mask"],
         }
