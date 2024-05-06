@@ -81,9 +81,10 @@ class WhisperSpeechRecognition(Model):
 
         return dict(outputs)
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, attention_mask: torch.Tensor = None):
         labels = copy.deepcopy(labels)
-        labels[labels == self.config.pad_token_id] = -100
+        if attention_mask is not None:
+            labels = labels.masked_fill(attention_mask.ne(1), -100)
         loss = self.loss_func(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
