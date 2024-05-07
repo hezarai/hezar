@@ -13,10 +13,8 @@ from ...model import Model
 from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
-
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import WhisperConfig, WhisperForConditionalGeneration
-
 
 _required_backends = [
     Backends.TRANSFORMERS,
@@ -173,8 +171,22 @@ class WhisperSpeechRecognition(Model):
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
 
-    def post_process(self, model_outputs, **kwargs):
+    def post_process(
+        self,
+        model_outputs,
+        skip_special_tokens=True,
+        decode_with_timestamps=True,
+        output_offsets=False,
+        **kwargs,
+    ):
         tokenizer = self.preprocessor[self.tokenizer_name]
-        transcripts = tokenizer.decode(model_outputs, decode_with_timestamps=True, skip_special_tokens=True)
+        if isinstance(model_outputs, torch.Tensor):
+            model_outputs = model_outputs.cpu().numpy().tolist()
+        transcripts = tokenizer.decode(
+            model_outputs,
+            decode_with_timestamps=decode_with_timestamps,
+            skip_special_tokens=skip_special_tokens,
+            output_offsets=output_offsets,
+        )
         outputs = [SpeechRecognitionOutput(text=transcript) for transcript in transcripts]
         return outputs
