@@ -324,12 +324,23 @@ class WhisperBPETokenizer(BPETokenizer):
         Timestamp tokens are above the special tokens' id range and are ignored by `decode()`. This method decodes
         given tokens with timestamps tokens annotated, e.g. "<|1.08|>".
         """
-        timestamp_begin = self.token_to_id(self.config.notimestamps_token) + 1
+        timestamp_begin = self.special_ids[-1] + 1
         outputs = [[]]
+
+        cur_max_timestamp = 0.0
+        prev_segments_len = 0.0
+
         for token in token_ids:
             if token >= timestamp_begin:
-                timestamp = f"<|{(token - timestamp_begin) * time_precision:.2f}|>"
-                outputs.append(timestamp)
+                timestamp = float((token - timestamp_begin) * time_precision)
+
+                if timestamp < cur_max_timestamp:
+                    # next segment has started
+                    prev_segments_len += cur_max_timestamp
+
+                cur_max_timestamp = timestamp
+
+                outputs.append(f"<|{(timestamp + prev_segments_len):.2f}|>")
                 outputs.append([])
             else:
                 outputs[-1].append(token)
