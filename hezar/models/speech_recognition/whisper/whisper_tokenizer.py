@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List
+import re
 
 import numpy as np
 
@@ -299,16 +300,19 @@ class WhisperBPETokenizer(BPETokenizer):
         """
         Override decode method to enable timestamps and offsets.
         """
-        text = super().decode(token_ids, skip_special_tokens=skip_special_tokens, **kwargs)
+        filtered_ids = self._preprocess_token_ids(token_ids, skip_special_tokens=skip_special_tokens)
+        text = super().decode(filtered_ids, skip_special_tokens=skip_special_tokens, **kwargs)
         if decode_with_timestamps:
             text = [
                 self._decode_with_timestamps(
-                    token_id,
+                    ids,
                     time_precision=time_precision,
                     skip_special_tokens=skip_special_tokens,
                 )
-                for token_id in token_ids
+                for ids in filtered_ids
             ]
+        else:
+            text = [re.sub(re.compile(r"<\|(\d+\.\d+)\|>"), "", t) for t in text]
         # retrieve offsets
         if output_offsets:
             offsets = self._compute_offsets(token_ids, time_precision=time_precision)
@@ -329,7 +333,7 @@ class WhisperBPETokenizer(BPETokenizer):
                 outputs.append([])
             else:
                 outputs[-1].append(token)
-        outputs = self.decode(outputs, skip_special_tokens=skip_special_tokens)
+        outputs = [s if isinstance(s, str) else self.decode(s, skip_special_tokens=skip_special_tokens)[0] for s in outputs]  # noqa
         return "".join(outputs)
 
     def _compute_offsets(self, token_ids, time_precision=0.02):
@@ -375,6 +379,23 @@ class WhisperBPETokenizer(BPETokenizer):
             last_slice = current_slice
 
         return offsets
+
+    def _preprocess_token_ids(self, token_ids, skip_special_tokens: bool = False):
+        """
+        Pre-process the token ids for decoding by removing the prompt tokens ids and timestamp token ids.
+
+        Args:
+            token_ids (`Union[int, List[int], np.ndarray, torch.Tensor, tf.Tensor]`):
+                List of tokenized input ids. Typically, obtained using the `__call__` method of the tokenizer.
+            skip_special_tokens (`bool`, *optional*, defaults to `False`):
+                Whether to remove special tokens from the token ids. If `True`, the prompt token ids will be removed.
+        """
+        if skip_special_tokens:
+            prompt_token_id = self.convert_tokens_to_ids("<|startofprev|>")
+            decoder_start_token_id = self.convert_tokens_to_ids("<|startoftranscript|>")
+            token_ids = self._strip_prompt(token_ids, prompt_token_id, decoder_start_token_id)
+
+        return token_ids
 
     def get_prompt_ids(self, text: str, return_tensors="np"):
         """Converts prompt text to IDs that can be passed to [`~WhisperForConditionalGeneration.generate`]."""
