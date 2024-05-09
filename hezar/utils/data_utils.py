@@ -89,13 +89,18 @@ def resolve_inputs_length_for_padding(
 
     # Now lets resolve any conflicts
     if padding_type == "longest":
-        if max_length is not None:
-            logger.warning(
-                "Setting padding='longest' and max_length is not valid. You must set one of them"
-                " and leave the other as None. Falling back to padding='longest'"
-            )
-
-        inputs_length = inputs_max_length
+        if max_length is not None and max_length < inputs_max_length:
+            if not truncation:
+                logger.warning(
+                    f"Setting padding_type to `longest` and a max_length={max_length} which is below the "
+                    f"inputs longest value {inputs_max_length} requires truncation to be True, "
+                    f"got truncation={truncation}. Falling back to truncating inputs to max_length={max_length}."
+                )
+                inputs_length = max_length
+            else:
+                inputs_length = max_length
+        else:
+            inputs_length = inputs_max_length
 
     elif padding_type == "max_length":
         if max_length is None:
