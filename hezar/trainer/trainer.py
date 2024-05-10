@@ -8,21 +8,11 @@ from typing import Any, Callable, Dict, Tuple
 import numpy as np
 import pandas as pd
 import torch
-from tqdm.auto import tqdm
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm.auto import tqdm
 
-from .metrics_handlers import (
-    Image2TextMetricHandler,
-    MetricsHandler,
-    SequenceLabelingMetricsHandler,
-    SpeechRecognitionMetricsHandler,
-    TextClassificationMetricsHandler,
-    TextGenerationMetricsHandler,
-)
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard, get_distributed_logger
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -50,6 +40,7 @@ from .metrics_handlers import (
     TextGenerationMetricsHandler,
 )
 from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
+
 
 if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator

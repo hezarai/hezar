@@ -7,6 +7,7 @@ from omegaconf import DictConfig
 from ..constants import PaddingType
 from .logging import Logger
 
+
 if TYPE_CHECKING:
     import torch
 

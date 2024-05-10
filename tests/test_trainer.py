@@ -17,6 +17,7 @@ from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 from hezar.utils import clean_cache
 
+
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
 tasks_setups = {
