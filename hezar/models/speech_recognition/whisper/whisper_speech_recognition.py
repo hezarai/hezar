@@ -14,7 +14,7 @@ from ...model_outputs import SpeechRecognitionOutput
 from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
 if is_backend_available(Backends.TRANSFORMERS):
-    from transformers import WhisperConfig, WhisperForConditionalGeneration
+    from transformers import WhisperConfig, WhisperForConditionalGeneration, GenerationConfig
 
 _required_backends = [
     Backends.TRANSFORMERS,
@@ -102,6 +102,11 @@ class WhisperSpeechRecognition(Model):
         prompt_ids=None,
         **kwargs,
     ):
+        if generation_config is not None:
+            self.config.generation_config.update(**generation_config)
+
+        generation_config = GenerationConfig(**self.config.generation_config)
+
         generation_outputs = self.whisper.generate(
             input_features=input_features,
             generation_config=generation_config,
