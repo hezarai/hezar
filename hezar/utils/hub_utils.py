@@ -2,7 +2,7 @@ import os
 
 from huggingface_hub import HfApi, Repository
 
-from ..constants import HEZAR_CACHE_DIR, HEZAR_HUB_ID, RepoType
+from ..constants import HEZAR_CACHE_DIR, RepoType
 from ..utils.logging import Logger
 
 

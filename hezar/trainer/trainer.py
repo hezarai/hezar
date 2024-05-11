@@ -8,21 +8,11 @@ from typing import Any, Callable, Dict, Tuple
 import numpy as np
 import pandas as pd
 import torch
-from tqdm.auto import tqdm
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm.auto import tqdm
 
-from .metrics_handlers import (
-    Image2TextMetricHandler,
-    MetricsHandler,
-    SequenceLabelingMetricsHandler,
-    SpeechRecognitionMetricsHandler,
-    TextClassificationMetricsHandler,
-    TextGenerationMetricsHandler,
-)
-from .trainer_utils import CSVLogger, TrainerState, resolve_logdir, write_to_tensorboard, get_distributed_logger
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
@@ -50,6 +40,7 @@ from .metrics_handlers import (
     TextGenerationMetricsHandler,
 )
 from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
+
 
 if is_backend_available(Backends.ACCELERATE):
     from accelerate import Accelerator
@@ -196,7 +187,7 @@ class Trainer:
             epoch=1,
             total_epochs=self.config.num_epochs,
             metric_for_best_checkpoint=self.config.metric_for_best_model,
-            logs_dir=self.tensorboard.log_dir,
+            logs_dir=self.logs_dir,
         )
 
     @staticmethod
@@ -540,7 +531,7 @@ class Trainer:
                 self.state.epoch_step += 1
 
                 # Save trainer outputs if `save_steps` is hit
-                if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
+                if self.config.save_steps and self.state.epoch_step % self.config.save_steps == 0:
                     ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
                     self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
                     # Save Trainer state
@@ -607,6 +598,7 @@ class Trainer:
             "Device(s)": self.device,
             "Batch Size": self.config.batch_size,
             "Epochs": self.config.num_epochs,
+            "Total Steps": self.total_steps,
             "Training Dataset": self.train_dataset,
             "Evaluation Dataset": self.eval_dataset,
             "Optimizer": self.config.optimizer or self.default_optimizer,
