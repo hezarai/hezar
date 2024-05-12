@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import os
 import random
+import time
 from typing import Any, Callable, Dict, Tuple
 
 import numpy as np
@@ -307,8 +308,6 @@ class Trainer:
         state_path = os.path.join(self.checkpoints_dir, self.trainer_state_file)
         if os.path.isfile(state_path):
             self.state = TrainerState.load(state_path)
-        else:
-            return
 
         # If checkpoint is True instead of a path to the checkpoint, load the latest of the best checkpoint
         if isinstance(checkpoint, bool):
@@ -503,7 +502,6 @@ class Trainer:
         self.model.train()
         with tqdm(
             self.train_dataloader,
-            initial=self.state.epoch_step,
             unit="batch",
             desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
@@ -514,24 +512,31 @@ class Trainer:
                 # TODO make this more efficient in a way that the data loader skips batches without iterating them
                 # Skip the first batches to reach `epoch_step`
                 if step < self.state.epoch_step:
+                    iterator.set_description(desc="Skipping already trained batches...")
                     continue
+                elif step == self.state.epoch_step:
+                    iterator.set_description(desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ")
+
                 # Prepare inputs
                 input_batch = self.prepare_input_batch(input_batch)
+
                 # Training on one batch
                 with self.accelerator.accumulate(self.model):
                     outputs = self.training_step(input_batch)
                     # Optimization step
                     self.optimization_step()
+
                 # Gather outputs for metrics
                 losses_sum += outputs["loss"].item()
                 avg_loss = losses_sum / (step + 1)
                 iterator.set_postfix(loss=avg_loss)
+
                 # Update steps states
                 self.state.global_step += 1
                 self.state.epoch_step += 1
 
                 # Save trainer outputs if `save_steps` is hit
-                if self.config.save_steps and self.state.epoch_step % self.config.save_steps == 0:
+                if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
                     ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
                     self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
                     # Save Trainer state
