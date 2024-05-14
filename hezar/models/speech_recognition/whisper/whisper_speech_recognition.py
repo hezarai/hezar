@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 from typing import List
 
+import librosa
 import numpy as np
 import torch
 
@@ -167,6 +168,8 @@ class WhisperSpeechRecognition(Model):
     def preprocess(self, inputs: str | np.ndarray | List[np.ndarray] | List[str], **kwargs):
         if isinstance(inputs, str) or (isinstance(inputs, List) and isinstance(inputs[0], str)):
             inputs = load_audio_files(inputs)
+        elif isinstance(inputs, List) and isinstance(inputs[0], np.ndarray):
+            inputs = [librosa.to_mono(x.transpose()) for x in inputs if isinstance(x, np.ndarray) and len(x.shape) > 1]
 
         tokenizer = self.preprocessor[self.tokenizer_name]
         feature_extractor = self.preprocessor[self.feature_extractor_name]
