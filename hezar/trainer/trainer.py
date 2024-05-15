@@ -30,7 +30,14 @@ from ..constants import (
 from ..data.datasets import Dataset
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
-from ..utils import Logger, colorize_text, is_backend_available, sanitize_function_parameters, verify_dependencies
+from ..utils import (
+    Logger,
+    colorize_text,
+    is_backend_available,
+    sanitize_function_parameters,
+    verify_dependencies,
+    set_seed,
+)
 from .metrics_handlers import (
     Image2TextMetricHandler,
     MetricsHandler,
@@ -127,7 +134,7 @@ class Trainer:
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
         # Set determinism
-        self._set_seed(self.config.seed)
+        set_seed(self.config.seed)
 
         # Setup model and preprocessor(s)
         self.model = self._setup_model(model)
@@ -189,12 +196,6 @@ class Trainer:
             metric_for_best_checkpoint=self.config.metric_for_best_model,
             logs_dir=self.logs_dir,
         )
-
-    @staticmethod
-    def _set_seed(seed):
-        torch.manual_seed(seed)
-        np.random.seed(seed)
-        random.seed(seed)
 
     def _setup_model(self, model: Model) -> Model:
         """
