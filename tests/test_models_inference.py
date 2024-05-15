@@ -5,7 +5,7 @@ import pytest
 from hezar.builders import build_model
 from hezar.models import ModelConfig
 from hezar.preprocessors import Preprocessor
-from hezar.utils import clean_cache
+from hezar.utils import clean_cache, set_seed
 
 
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
@@ -70,6 +70,8 @@ INVALID_OUTPUT_FIELDS = "Invalid fields in the model outputs!"
 
 @pytest.mark.parametrize("task", TESTABLE_MODELS.keys())
 def test_model_inference(task):
+    set_seed(42)
+
     model_params = TESTABLE_MODELS[task]
     path = model_params["path"]
     predict_kwargs = model_params["predict_kwargs"]
