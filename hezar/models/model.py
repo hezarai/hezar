@@ -370,7 +370,9 @@ class Model(nn.Module):
         self,
         inputs: Any | List[Any],
         device: str | torch.device = None,
+        preprocess: bool = True,
         unpack_forward_inputs: bool = True,
+        post_process: bool = True,
         **kwargs,
     ) -> List[Any] | torch.Tensor:
         """
@@ -382,9 +384,11 @@ class Model(nn.Module):
         Args:
             inputs: Raw inputs e.g, a list of texts, path to images, etc.
             device: What device to perform inference on
+            preprocess: Whether to call :method:`preprocess()` before :method:`forward()`
             unpack_forward_inputs: Whether to unpack forward inputs. Set to False if you want to send preprocess outputs
                 directly to the `forward/generate` method without unpacking it. Note that this only applies to the cases
                 that the preprocess method's output is a dict-like/mapping object.
+            post_process: Whether to call :method:`post_process()` after :method:`forward()`
             **kwargs: Other arguments for `preprocess`, `forward`, `generate` and `post_process`. each will be passed to
                 the correct method automatically.
 
@@ -405,7 +409,7 @@ class Model(nn.Module):
         self.eval()
 
         # Preprocessing step
-        model_inputs = self.preprocess(inputs, **preprocess_kwargs)
+        model_inputs = self.preprocess(inputs, **preprocess_kwargs) if preprocess else inputs
 
         # Map inputs and model to device
         device = device or self.device
@@ -416,13 +420,14 @@ class Model(nn.Module):
         inference_fn = self.generate if self.is_generative else self.__call__
 
         # Model inference step (forward for regular models and generate for generative models)
-        if isinstance(model_inputs, Dict) and unpack_forward_inputs:
+        if isinstance(model_inputs, dict) and unpack_forward_inputs:
             model_outputs = inference_fn(**model_inputs, **forward_kwargs)
         else:
             model_outputs = inference_fn(model_inputs, **forward_kwargs)
 
         # Post-processing step
-        processed_outputs = self.post_process(model_outputs, **post_process_kwargs)
+        processed_outputs = self.post_process(model_outputs, **post_process_kwargs) if post_process else model_outputs
+
         return processed_outputs
 
     @staticmethod
