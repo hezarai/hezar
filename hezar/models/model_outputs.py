@@ -4,6 +4,16 @@ Define all model outputs here
 from dataclasses import asdict, dataclass
 from typing import Dict, List, Optional
 
+__all__ = [
+    "ModelOutput",
+    "MaskFillingOutput",
+    "TextClassificationOutput",
+    "SequenceLabelingOutput",
+    "TextGenerationOutput",
+    "SpeechRecognitionOutput",
+    "Image2TextOutput",
+]
+
 
 @dataclass
 class ModelOutput:

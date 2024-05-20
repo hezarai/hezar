@@ -1,5 +1,6 @@
 from ..registry import register_model  # noqa
 from .model import Model, ModelConfig  # noqa
+from .model_outputs import *
 from .backbone import *
 from .image2text import *
 from .mask_filling import *
