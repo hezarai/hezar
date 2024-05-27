@@ -7,6 +7,7 @@ from omegaconf import DictConfig
 from ..constants import PaddingType
 from .logging import Logger
 
+
 if TYPE_CHECKING:
     import torch
 
@@ -237,9 +238,10 @@ def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
 
 
 def set_seed(seed):
-    import torch
-    import numpy as np
     import random
+
+    import numpy as np
+    import torch
 
     torch.manual_seed(seed)
     np.random.seed(seed)

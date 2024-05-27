@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import math
 import os
-import random
 from typing import Any, Callable, Dict, Tuple
 
-import numpy as np
 import pandas as pd
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -35,8 +33,8 @@ from ..utils import (
     colorize_text,
     is_backend_available,
     sanitize_function_parameters,
-    verify_dependencies,
     set_seed,
+    verify_dependencies,
 )
 from .metrics_handlers import (
     Image2TextMetricHandler,
