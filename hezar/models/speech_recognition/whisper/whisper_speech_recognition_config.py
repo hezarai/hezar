@@ -5,7 +5,7 @@ from ....configs import ModelConfig
 
 
 @dataclass
-class WhisperSpeechRecognitionGenerationConfig(ModelConfig):
+class WhisperSpeechRecognitionGenerationConfig:
     alignment_heads: List[List[int]] = None
     begin_suppress_tokens: List[int] = field(default_factory=lambda: [220, 50256])
     bos_token_id: int = 50257
