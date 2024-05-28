@@ -14,6 +14,7 @@ from tqdm.auto import tqdm
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
+    DEFAULT_OPTIMIZER_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_CSV_LOG_FILE,
     DEFAULT_TRAINER_STATE_FILE,
@@ -25,7 +26,7 @@ from ..constants import (
     OptimizerType,
     TaskType,
 )
-from ..data.datasets import Dataset
+from ..data import Dataset, SlicedSampler
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import (
@@ -104,6 +105,7 @@ class Trainer:
     trainer_csv_log_file = DEFAULT_TRAINER_CSV_LOG_FILE
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
     trainer_state_file = DEFAULT_TRAINER_STATE_FILE
+    optimizer_file = DEFAULT_OPTIMIZER_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
     _required_backends = [Backends.ACCELERATE]
@@ -131,27 +133,36 @@ class Trainer:
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
+        self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
+
+        self.state = self._create_trainer_state(self.config.resume_from_checkpoint)
+
+        # Configure checkpoints and logging directories
+        self.logs_dir = self.state.logs_dir
+
         # Set determinism
         set_seed(self.config.seed)
-
-        # Setup model and preprocessor(s)
-        self.model = self._setup_model(model)
-        if self.model.preprocessor is None:
-            if preprocessor is not None:
-                self.model.preprocessor = preprocessor
-            else:
-                raise ValueError(
-                    "You must set a preprocessor for the model or pass the preprocessor parameter to the Trainer!"
-                )
 
         # Configure datasets and data loaders
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
+        self.steps_in_epoch = math.ceil(len(self.train_dataset) / self.config.batch_size)
+        self.total_steps = self.steps_in_epoch * self.config.num_epochs
+        self.config.save_steps = self.steps_in_epoch if not self.config.save_steps else self.config.save_steps
+        self.saves_in_epoch = math.floor(self.steps_in_epoch / self.config.save_steps)
+
         self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
-        self.total_steps = len(self.train_dataloader) * self.config.num_epochs
-        self.config.save_steps = len(self.train_dataloader) if not self.config.save_steps else self.config.save_steps
-        self.save_steps_per_epoch = math.ceil(len(self.train_dataloader) / self.config.save_steps)
+
+        # Setup model and preprocessor(s)
+        self.model = self._setup_model(model)
+        if model.preprocessor is None:
+            if preprocessor is not None:
+                model.preprocessor = preprocessor
+            else:
+                raise ValueError(
+                    "You must set a preprocessor for the model or pass the preprocessor parameter to the Trainer!"
+                )
 
         # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
@@ -179,41 +190,65 @@ class Trainer:
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._setup_metrics_handler()
 
-        # Configure checkpoints and logging directories
-        self.logs_dir = resolve_logdir(os.path.join(self.config.output_dir, self.config.logs_dir))
-        self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
-
         # Setup logging properties
         self.tensorboard = SummaryWriter(log_dir=self.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.logs_dir, csv_filename=self.trainer_csv_log_file)
 
-        # Configure trainer state
-        self.state = TrainerState(
-            epoch=1,
-            total_epochs=self.config.num_epochs,
-            metric_for_best_checkpoint=self.config.metric_for_best_model,
-            logs_dir=self.logs_dir,
-        )
+    def _create_trainer_state(self, checkpoint: str = None):
+        """
+        Create Trainer's state attribute.
+
+        Args:
+            checkpoint: Optional checkpoint path or bool value to load the state from there
+
+        Returns:
+            A TrainerState object
+        """
+        trainer_state_path = os.path.join(self.checkpoints_dir, self.trainer_state_file)
+        if checkpoint is not None and os.path.isfile(trainer_state_path):
+            state = TrainerState.load(trainer_state_path)
+            # Overwrite some fields if checkpoint is a path
+            if os.path.isdir(checkpoint):
+                step = os.path.basename(checkpoint)
+                state.global_step = int(step) if step.isdigit() else self.state.global_step
+                state.epoch = math.ceil(self.state.global_step / len(self.train_dataloader)) - 1
+                state.epoch_step = self.state.global_step % len(self.train_dataloader)
+                if state.epoch_step == 0:
+                    state.epoch += 1
+        else:
+            state = TrainerState(
+                epoch=1,
+                total_epochs=self.config.num_epochs,
+                metric_for_best_checkpoint=self.config.metric_for_best_model,
+                logs_dir=resolve_logdir(os.path.join(self.config.output_dir, self.config.logs_dir)),
+            )
+        return state
 
     def _setup_model(self, model: Model) -> Model:
         """
-        Download the model from HuggingFace Hub if `init_weights_from` is given in the config. Load the model to the
-        device and return it.
+        Create and load the weights for the model. Depending on config.resume_from_checkpoint or
+        config.init_weights_from weights will be loaded to the model.
         """
         if model is None:
             raise ValueError("`model` must be given to the Trainer!")
-        hub_path = self.config.init_weights_from
-        if hub_path is not None:
-            if os.path.isdir(hub_path):
-                model_path = os.path.join(hub_path, model.model_filename)
-            else:
-                model_path = hf_hub_download(
-                    hub_path,
-                    filename=model.model_filename,
-                    cache_dir=HEZAR_CACHE_DIR,
-                    resume_download=True,
-                )
-            model.load_state_dict(torch.load(model_path))
+
+        if self.config.resume_from_checkpoint is not None:
+            if os.path.isdir(self.config.resume_from_checkpoint):
+                model_path = os.path.join(self.config.resume_from_checkpoint, model.model_filename)
+                model.load_state_dict(torch.load(model_path))
+        elif self.config.init_weights_from is not None and self.state.global_step == 0 and self.state.epoch == 1:
+            if self.config.init_weights_from is not None:
+                if os.path.isdir(self.config.init_weights_from):
+                    model_path = os.path.join(self.config.init_weights_from, model.model_filename)
+                else:
+                    model_path = hf_hub_download(
+                        self.config.init_weights_from,
+                        filename=model.model_filename,
+                        cache_dir=HEZAR_CACHE_DIR,
+                        resume_download=True,
+                    )
+                model.load_state_dict(torch.load(model_path))
+
         return model
 
     def _setup_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
@@ -224,10 +259,20 @@ class Trainer:
              A tuple of train and eval dataloaders
         """
         if self.train_dataset is not None:
+            # Handle resuming
+            if self.config.resume_from_checkpoint:
+                self.load_from_checkpoint(self.config.resume_from_checkpoint)
+            if self.state.epoch_step != 0:
+                start_index = self.state.epoch_step * self.config.batch_size
+                sampler = SlicedSampler(self.train_dataset, start_index=start_index)
+            else:
+                sampler = None
+
             train_dataloader = DataLoader(
                 dataset=self.train_dataset,
                 batch_size=self.config.batch_size,
                 collate_fn=self.data_collator,
+                sampler=sampler,
                 num_workers=self.config.num_dataloader_workers,
                 drop_last=self.config.dataloader_drop_last,
                 shuffle=self.config.dataloader_shuffle,
@@ -628,13 +673,12 @@ class Trainer:
     def train(self, resume_from_checkpoint: str | bool = None):
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
-
-        Args:
-            resume_from_checkpoint: Resume from checkpoint path (if value is a path) or automatically load from the
-            latest checkpoint (if value is True)
         """
-        if resume_from_checkpoint:
-            self.load_from_checkpoint(resume_from_checkpoint)
+        if resume_from_checkpoint is not None:
+            self.logger.warning(
+                "Setting `resume_from_checkpoint` in `Trainer.train(resume_from_checkpoint=...)` is deprecated. "
+                "You have to set it in the trainer's config!"
+            )
 
         self.print_info()
 
@@ -696,11 +740,12 @@ class Trainer:
     def save(
         self,
         path: str,
-        config_filename=None,
-        model_filename=None,
-        model_config_filename=None,
-        subfolder=None,
-        dataset_config_file=None,
+        config_filename: str = None,
+        model_filename: str = None,
+        model_config_filename: str = None,
+        subfolder: str = None,
+        dataset_config_file: str = None,
+        save_optimizer: bool = False,
     ):
         """
         Save the trainer and relevant files to a path.

@@ -374,7 +374,13 @@ class TrainerConfig(Config):
         num_epochs (int):
             Number of total epochs to train the model.
         init_weights_from (str):
-            Path to a model from disk or Hub to load the initial weights from.
+            Path to a model from disk or Hub to load the initial weights from. Note that this only loads the model
+            weights and ignores other checkpoint-related states if the path is a checkpoint. To resume training from
+            a checkpoint use the `resume` parameter.
+        resume_from_checkpoint (bool, str, os.PathLike):
+            Resume training from a checkpoint. If set to True, the trainer will load the latest checkpoint, otherwise if
+            a path to a checkpoint is given, it will load that checkpoint and all the other states corresponding to that
+            checkpoint.
         num_dataloader_workers (int):
             Number of dataloader workers, defaults to 4 .
         seed (int):
@@ -424,6 +430,7 @@ class TrainerConfig(Config):
     device: str = "cuda"
     num_epochs: int = None
     init_weights_from: str = None
+    resume_from_checkpoint: bool | str | os.PathLike = None
     num_dataloader_workers: int = 0
     dataloader_drop_last: bool = False
     dataloader_shuffle: bool = True
