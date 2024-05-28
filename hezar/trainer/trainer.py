@@ -675,7 +675,7 @@ class Trainer:
         The full training process like training, evaluation, logging and saving model checkpoints.
         """
         if resume_from_checkpoint is not None:
-            self.logger.warning(
+            raise ValueError(
                 "Setting `resume_from_checkpoint` in `Trainer.train(resume_from_checkpoint=...)` is deprecated. "
                 "You have to set it in the trainer's config!"
             )
