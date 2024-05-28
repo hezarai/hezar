@@ -107,7 +107,7 @@ class WhisperSpeechRecognition(Model):
         if generation_config is not None:
             self.config.generation_config.update(**generation_config)
 
-        generation_config = GenerationConfig(**self.config.generation_config)
+        generation_config = GenerationConfig(**self.config.generation_config.dict())
 
         generation_outputs = self.whisper.generate(
             input_features=input_features,

@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import List
 
 from ....configs import ModelConfig
@@ -21,6 +21,9 @@ class WhisperSpeechRecognitionGenerationConfig:
     return_timestamps: int = False
     suppress_tokens: List[int] = None
     task_to_id: dict[str, int] = field(default_factory=lambda: {"transcribe": 50359, "translate": 50358})
+
+    def dict(self):
+        return asdict(self)
 
 
 @dataclass
