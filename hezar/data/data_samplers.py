@@ -22,11 +22,11 @@ class SlicedSampler(Sampler):
         super().__init__()
         self.data = data
         self.start_index = start_index or 0
-        self.end_index = end_index or len(self.data) - 1
-        self.num_samples = self.end_index - self.end_index
+        self.end_index = end_index or len(self.data)
+        self.num_samples = self.end_index - self.start_index
 
     def __len__(self):
-        return len(self.data[self.start_index: self.end_index])
+        return self.num_samples
 
     def __iter__(self):
         indices = list(range(self.start_index, self.end_index))

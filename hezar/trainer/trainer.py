@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import os
+import tempfile
 from typing import Any, Callable, Dict, Tuple
 
 import pandas as pd
@@ -126,18 +127,26 @@ class Trainer:
         # Check if all required dependencies are installed
         verify_dependencies(self._required_backends)
 
-        # Setup logger
-        self.logger = get_distributed_logger(__name__)
-
         # Configuration
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
+        # Setup accelerated objects if possible
+        self.accelerator = accelerator
+        if self.accelerator is None:
+            self.accelerator = Accelerator(
+                mixed_precision=self.config.mixed_precision,
+                cpu=True if self.device == "cpu" else False,
+                step_scheduler_with_optimizer=False,
+                gradient_accumulation_steps=self.config.gradient_accumulation_steps,
+            )
+
+        # Setup logger
+        self.logger = get_distributed_logger(__name__)
+
+        # Setup checkpoint and state handler
         self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
-
         self.state = self._create_trainer_state(self.config.resume_from_checkpoint)
-
-        # Configure checkpoints and logging directories
         self.logs_dir = self.state.logs_dir
 
         # Set determinism
@@ -152,8 +161,6 @@ class Trainer:
         self.config.save_steps = self.steps_in_epoch if not self.config.save_steps else self.config.save_steps
         self.saves_in_epoch = math.floor(self.steps_in_epoch / self.config.save_steps)
 
-        self.train_dataloader, self.eval_dataloader = self._setup_dataloaders()
-
         # Setup model and preprocessor(s)
         self.model = self._setup_model(model)
         if model.preprocessor is None:
@@ -165,30 +172,14 @@ class Trainer:
                 )
 
         # Setup optimizer and (optionally) lr scheduler
-        self.optimizer, self.lr_scheduler = self._setup_optimizers(optimizer, lr_scheduler)
+        self.optimizer, self.lr_scheduler = self._create_optimizers(optimizer, lr_scheduler)
 
-        # Setup accelerated objects if possible
-        self.accelerator = accelerator
-        if self.accelerator is None:
-            self.accelerator = Accelerator(
-                mixed_precision=self.config.mixed_precision,
-                cpu=True if self.device == "cpu" else False,
-                step_scheduler_with_optimizer=True if self.lr_scheduler is not None else False,
-                gradient_accumulation_steps=self.config.gradient_accumulation_steps,
-            )
-
-        self.model, self.optimizer, self.lr_scheduler, self.train_dataloader, self.eval_dataloader = (
-            self.accelerator.prepare(
-                self.model,
-                self.optimizer,
-                self.lr_scheduler,
-                self.train_dataloader,
-                self.eval_dataloader,
-            )
+        self.model, self.optimizer, self.lr_scheduler = self.accelerator.prepare(
+            self.model, self.optimizer, self.lr_scheduler
         )
 
         # Setup metrics handler and inner trackers for the trainer
-        self.metrics_handler = metrics_handler or self._setup_metrics_handler()
+        self.metrics_handler = metrics_handler or self._create_metrics_handler()
 
         # Setup logging properties
         self.tensorboard = SummaryWriter(log_dir=self.logs_dir)
@@ -224,18 +215,31 @@ class Trainer:
             )
         return state
 
+    def _resolve_checkpoint_path(self, checkpoint: str | bool):
+        if isinstance(checkpoint, bool) and checkpoint:
+            checkpoint_path = os.path.join(self.checkpoints_dir, str(self.state.global_step))
+        elif os.path.isdir(os.path.join(self.checkpoints_dir, checkpoint)):
+            checkpoint_path = checkpoint
+        else:
+            raise ValueError(f"Invalid checkpoint `{checkpoint}`! Expected str or bool, got {type(checkpoint)}")
+
+        return checkpoint_path
+
     def _setup_model(self, model: Model) -> Model:
         """
-        Create and load the weights for the model. Depending on config.resume_from_checkpoint or
-        config.init_weights_from weights will be loaded to the model.
+        Create and load the weights for the model. The weights will be loaded to the model depending
+        on `config.resume_from_checkpoint` or `config.init_weights_from`.
         """
         if model is None:
             raise ValueError("`model` must be given to the Trainer!")
 
+        # Maybe load from checkpoint
         if self.config.resume_from_checkpoint is not None:
-            if os.path.isdir(self.config.resume_from_checkpoint):
-                model_path = os.path.join(self.config.resume_from_checkpoint, model.model_filename)
+            checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
+            model_path = os.path.join(checkpoint_path, model.model_filename)
+            if os.path.isdir(checkpoint_path) and os.path.isfile(model_path):
                 model.load_state_dict(torch.load(model_path))
+        # Maybe load from pretrained weights locally or from a hub repo
         elif self.config.init_weights_from is not None and self.state.global_step == 0 and self.state.epoch == 1:
             if self.config.init_weights_from is not None:
                 if os.path.isdir(self.config.init_weights_from):
@@ -251,7 +255,7 @@ class Trainer:
 
         return model
 
-    def _setup_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
+    def create_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
         """
         Set up data loaders (train/eval) and return them.
 
@@ -260,13 +264,13 @@ class Trainer:
         """
         if self.train_dataset is not None:
             # Handle resuming
-            if self.config.resume_from_checkpoint:
-                self.load_from_checkpoint(self.config.resume_from_checkpoint)
             if self.state.epoch_step != 0:
-                start_index = self.state.epoch_step * self.config.batch_size
+                start_index = self.state.epoch_step * self.config.batch_size + 1
                 sampler = SlicedSampler(self.train_dataset, start_index=start_index)
+                shuffle = False
             else:
                 sampler = None
+                shuffle = self.config.dataloader_shuffle
 
             train_dataloader = DataLoader(
                 dataset=self.train_dataset,
@@ -275,10 +279,11 @@ class Trainer:
                 sampler=sampler,
                 num_workers=self.config.num_dataloader_workers,
                 drop_last=self.config.dataloader_drop_last,
-                shuffle=self.config.dataloader_shuffle,
+                shuffle=shuffle,
             )
         else:
             raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
+
         if self.eval_dataset is not None:
             eval_dataloader = DataLoader(
                 dataset=self.eval_dataset,
@@ -295,9 +300,12 @@ class Trainer:
             )
             eval_dataloader = None
 
+        if self.accelerator is not None:
+            train_dataloader, eval_dataloader = self.accelerator.prepare(train_dataloader, eval_dataloader)
+
         return train_dataloader, eval_dataloader
 
-    def _setup_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
+    def _create_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
         """
         Set up the optimizer and lr lr_scheduler if they're not already given
 
@@ -315,6 +323,11 @@ class Trainer:
                 lr=self.config.learning_rate,
                 weight_decay=self.config.weight_decay,
             )
+            if self.config.resume_from_checkpoint is not None:
+                checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
+                optimizer_path = os.path.join(checkpoint_path, self.optimizer_file)
+                if os.path.isdir(checkpoint_path) and os.path.isfile(optimizer_path):
+                    optimizer.load_state_dict(torch.load(optimizer_path))
 
             if lr_scheduler is None:
                 scheduler_name = self.config.lr_scheduler or self.default_lr_scheduler
@@ -325,7 +338,7 @@ class Trainer:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs, verbose=True)
         return optimizer, lr_scheduler
 
-    def _setup_metrics_handler(self):
+    def _create_metrics_handler(self):
         """
         Setup MetricsHandler instance for the trainer
 
@@ -335,60 +348,6 @@ class Trainer:
         metrics_handler_cls = task_to_metrics_handlers_mapping[self.config.task]
         metrics_handler = metrics_handler_cls(metrics=self.config.metrics, trainer=self)  # noqa
         return metrics_handler
-
-    def load_from_checkpoint(self, checkpoint: str | bool = True, load_best: bool = False):
-        """
-        Load trainer states like model weights, optimizer, etc. from a checkpoint
-
-        Args:
-            checkpoint: Path to checkpoint directory
-            load_best: Whether to load the best checkpoint or not, if False, loads the latest checkpoint
-        """
-        if os.path.isdir(checkpoint) and load_best:
-            self.logger.warning("The `load_best` parameter has no effect when `checkpoint` is a path!")
-
-        # Load trainer state file if available
-        state_path = os.path.join(self.checkpoints_dir, self.trainer_state_file)
-        if os.path.isfile(state_path):
-            self.state = TrainerState.load(state_path)
-
-        # If checkpoint is True instead of a path to the checkpoint, load the latest of the best checkpoint
-        if isinstance(checkpoint, bool):
-            if load_best:
-                checkpoint = os.path.join(self.checkpoints_dir, str(self.state.best_checkpoint))
-            else:
-                # Get the most recent checkpoint based on global step
-                checkpoint = os.path.join(
-                    self.checkpoints_dir,
-                    str(self.state.global_step).zfill(len(str(self.total_steps))),
-                )
-
-        # Load checkpoint file and update trainer state based on the checkpoint file
-        if os.path.isdir(checkpoint):
-            # Figure out the step and epoch number
-            step = os.path.basename(checkpoint)
-            self.state.global_step = int(step) if step.isdigit() else self.state.global_step
-            self.state.epoch = math.ceil(self.state.global_step / len(self.train_dataloader)) - 1
-            self.state.epoch_step = self.state.global_step % len(self.train_dataloader)
-            if self.state.epoch_step == 0:
-                self.state.epoch += 1
-            # Load model's state dict
-            model_path = os.path.join(checkpoint, self.model.model_filename)
-            if os.path.isfile(model_path):
-                self.model.load_state_dict(torch.load(model_path))
-                self.model = self.accelerator.prepare(self.model)
-                self.logger.info(f"Successfully loaded checkpoint from `{checkpoint}` ")
-            else:
-                raise FileNotFoundError(
-                    f"Could not find `{self.model.model_filename}` at `{os.path.dirname(model_path)}`!\n"
-                )
-        else:
-            self.logger.warning(
-                f"{checkpoint} does not seem to be a valid checkpoint!"
-            )
-
-        if self.state.global_step >= self.total_steps:
-            self.logger.warning(f"The checkpoint at `{checkpoint}` belongs to the last training step!")
 
     def load_csv_logs(self, logs_dir=None):
         """
@@ -685,6 +644,8 @@ class Trainer:
         for epoch in range(self.state.epoch, self.config.num_epochs + 1):
             self.accelerator.print()
 
+            self.train_dataloader, self.eval_dataloader = self.create_dataloaders()
+
             # Train on the whole training set
             training_results = self.inner_training_loop(epoch)
 
@@ -711,7 +672,7 @@ class Trainer:
             self.state.update_best_results(
                 metric_value=all_logs[self.config.metric_for_best_model],
                 objective=self.metrics_handler.objective,
-                step=epoch,
+                step=self.state.global_step,
             )
 
             # Log everything
@@ -745,7 +706,7 @@ class Trainer:
         model_config_filename: str = None,
         subfolder: str = None,
         dataset_config_file: str = None,
-        save_optimizer: bool = False,
+        optimizer_file: str = None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -754,18 +715,21 @@ class Trainer:
 
         Args:
             path: A directory to save everything
-            config_filename: Config filename
+            config_filename: Config file name
             model_filename: Model file name
             model_config_filename: Model config file name
             subfolder: Optional sub-folder
-            dataset_config_file: Dataset config filename
+            dataset_config_file: Dataset config file name
+            optimizer_file: Optimizer state file name
         """
         config_filename = config_filename or self.trainer_config_file
         subfolder = subfolder or self.trainer_subfolder
         dataset_config_file = dataset_config_file or self.dataset_config_file
+        optimizer_file = optimizer_file or self.optimizer_file
 
         self.config.save(path, filename=config_filename, subfolder=subfolder)
         self.model.save(path, filename=model_filename, config_filename=model_config_filename)
+        torch.save(self.optimizer, os.path.join(path, subfolder, optimizer_file))
         if isinstance(self.train_dataset, Dataset):
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         else:
@@ -779,9 +743,11 @@ class Trainer:
         repo_id: str,
         config_filename: str = None,
         push_model: bool = True,
+        push_optimizer: bool = True,
         push_logs: bool = True,
         model_filename: str = None,
         model_config_filename: str = None,
+        optimizer_filename: str = None,
         subfolder: str = None,
         dataset_config_filename: str = None,
         commit_message: str = None,
@@ -793,9 +759,11 @@ class Trainer:
         Args:
             repo_id: Path to hub
             config_filename: Trainer config file name
-            push_model: Whether to push the model or not
-            push_logs: Whether to push training logs or not
+            push_model: Whether to push the model
+            push_optimizer: Whether to push the optimizer
+            push_logs: Whether to push training logs
             model_filename: Model file name
+            optimizer_filename: Optimizer file name
             model_config_filename: Model config file name
             subfolder: Path to Trainer files
             dataset_config_filename: Dataset config file name
@@ -805,6 +773,7 @@ class Trainer:
         config_filename = config_filename or self.trainer_config_file
         subfolder = subfolder or self.trainer_subfolder
         dataset_config_file = dataset_config_filename or self.dataset_config_file
+        optimizer_filename = optimizer_filename or self.optimizer_file
 
         # create remote repo
         create_repo(repo_id, repo_type="model", exist_ok=True, private=private)
@@ -828,7 +797,7 @@ class Trainer:
             commit_message=commit_message
         )
 
-        # upload model
+        # Upload model
         if push_model:
             self.model.push_to_hub(
                 repo_id,
@@ -838,6 +807,17 @@ class Trainer:
                 private=private,
             )
 
+        # Upload optimizer state
+        if push_optimizer:
+            optimizer_path = os.path.join(tempfile.mkdtemp(), optimizer_filename)
+            torch.save(self.optimizer.state_dict(), optimizer_path)
+            upload_file(
+                path_or_fileobj=optimizer_path,
+                path_in_repo=os.path.join(self.trainer_subfolder, optimizer_filename),
+                repo_id=repo_id,
+                commit_message=commit_message,
+            )
+        # Upload logs
         if push_logs:
             upload_file(
                 path_or_fileobj=self.csv_logger.save_path,
