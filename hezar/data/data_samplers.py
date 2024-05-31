@@ -24,10 +24,13 @@ class SlicedSampler(Sampler):
         self.start_index = start_index or 0
         self.end_index = end_index or len(self.data)
         self.num_samples = self.end_index - self.start_index
+        self.total_length = len(self.data)
 
     def __len__(self):
-        return self.num_samples
+        return self.total_length
 
     def __iter__(self):
         indices = list(range(self.start_index, self.end_index))
-        return iter(indices)
+        for index in indices:
+            if index >= self.start_index:
+                yield index

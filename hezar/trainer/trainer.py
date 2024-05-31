@@ -144,14 +144,6 @@ class Trainer:
         # Setup logger
         self.logger = get_distributed_logger(__name__)
 
-        # Setup checkpoint and state handler
-        self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
-        self.state = self._create_trainer_state(self.config.resume_from_checkpoint)
-        self.logs_dir = self.state.logs_dir
-
-        # Set determinism
-        set_seed(self.config.seed)
-
         # Configure datasets and data loaders
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
@@ -160,6 +152,14 @@ class Trainer:
         self.total_steps = self.steps_in_epoch * self.config.num_epochs
         self.config.save_steps = self.steps_in_epoch if not self.config.save_steps else self.config.save_steps
         self.saves_in_epoch = math.floor(self.steps_in_epoch / self.config.save_steps)
+
+        # Setup checkpoint and state handler
+        self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
+        self.state = self._create_trainer_state(self.config.resume_from_checkpoint)
+        self.logs_dir = self.state.logs_dir
+
+        # Set determinism
+        set_seed(self.config.seed)
 
         # Setup model and preprocessor(s)
         self.model = self._setup_model(model)
@@ -202,8 +202,8 @@ class Trainer:
             if os.path.isdir(checkpoint):
                 step = os.path.basename(checkpoint)
                 state.global_step = int(step) if step.isdigit() else self.state.global_step
-                state.epoch = math.ceil(self.state.global_step / len(self.train_dataloader)) - 1
-                state.epoch_step = self.state.global_step % len(self.train_dataloader)
+                state.epoch = math.ceil(state.global_step / self.steps_in_epoch)
+                state.epoch_step = state.global_step % self.steps_in_epoch
                 if state.epoch_step == 0:
                     state.epoch += 1
         else:
@@ -218,10 +218,10 @@ class Trainer:
     def _resolve_checkpoint_path(self, checkpoint: str | bool):
         if isinstance(checkpoint, bool) and checkpoint:
             checkpoint_path = os.path.join(self.checkpoints_dir, str(self.state.global_step))
-        elif os.path.isdir(os.path.join(self.checkpoints_dir, checkpoint)):
+        elif os.path.isdir(checkpoint):
             checkpoint_path = checkpoint
         else:
-            raise ValueError(f"Invalid checkpoint `{checkpoint}`! Expected str or bool, got {type(checkpoint)}")
+            raise ValueError(f"Checkpoint `{checkpoint}` is either invalid or does not exist!")
 
         return checkpoint_path
 
@@ -239,6 +239,7 @@ class Trainer:
             model_path = os.path.join(checkpoint_path, model.model_filename)
             if os.path.isdir(checkpoint_path) and os.path.isfile(model_path):
                 model.load_state_dict(torch.load(model_path))
+                self.logger.info(f"Resuming training from checkpoint at `{checkpoint_path}`")
         # Maybe load from pretrained weights locally or from a hub repo
         elif self.config.init_weights_from is not None and self.state.global_step == 0 and self.state.epoch == 1:
             if self.config.init_weights_from is not None:
@@ -265,7 +266,7 @@ class Trainer:
         if self.train_dataset is not None:
             # Handle resuming
             if self.state.epoch_step != 0:
-                start_index = self.state.epoch_step * self.config.batch_size + 1
+                start_index = self.state.epoch_step * self.config.batch_size
                 sampler = SlicedSampler(self.train_dataset, start_index=start_index)
                 shuffle = False
             else:
@@ -294,11 +295,7 @@ class Trainer:
                 shuffle=self.config.dataloader_shuffle,
             )
         else:
-            self.logger.warning(
-                "Cannot create eval dataloader because `eval_dataset` is not given to the Trainer! "
-                "Setting eval_dataloader to None..."
-            )
-            eval_dataloader = None
+            raise ValueError("Cannot create evaluation dataloader because `eval_dataset` is not given!")
 
         if self.accelerator is not None:
             train_dataloader, eval_dataloader = self.accelerator.prepare(train_dataloader, eval_dataloader)
@@ -504,21 +501,15 @@ class Trainer:
         self.model.train()
         with tqdm(
             self.train_dataloader,
+            initial=self.state.epoch_step,
             unit="batch",
             desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
             ascii=" #",
             disable=not self.accelerator.is_local_main_process,
         ) as iterator:
-            for step, input_batch in enumerate(iterator):
-                # TODO make this more efficient in a way that the data loader skips batches without iterating them
-                # Skip the first batches to reach `epoch_step`
-                if step < self.state.epoch_step:
-                    iterator.set_description(desc="Skipping already trained batches...")
-                    continue
-                elif step == self.state.epoch_step:
-                    iterator.set_description(desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ")
-
+            for input_batch in iterator:
+                step = self.state.global_step
                 # Prepare inputs
                 input_batch = self.prepare_input_batch(input_batch)
 
@@ -643,6 +634,7 @@ class Trainer:
 
         for epoch in range(self.state.epoch, self.config.num_epochs + 1):
             self.accelerator.print()
+            self.state.epoch = epoch
 
             self.train_dataloader, self.eval_dataloader = self.create_dataloaders()
 
