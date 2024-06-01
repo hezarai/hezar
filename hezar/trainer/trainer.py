@@ -217,7 +217,8 @@ class Trainer:
 
     def _resolve_checkpoint_path(self, checkpoint: str | bool):
         if isinstance(checkpoint, bool) and checkpoint:
-            checkpoint_path = os.path.join(self.checkpoints_dir, str(self.state.global_step))
+            checkpoint_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
+            checkpoint_path = os.path.join(self.checkpoints_dir, checkpoint_name)
         elif os.path.isdir(checkpoint):
             checkpoint_path = checkpoint
         else:
@@ -322,7 +323,7 @@ class Trainer:
             )
             if self.config.resume_from_checkpoint is not None:
                 checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
-                optimizer_path = os.path.join(checkpoint_path, self.optimizer_file)
+                optimizer_path = os.path.join(checkpoint_path, self.trainer_subfolder, self.optimizer_file)
                 if os.path.isdir(checkpoint_path) and os.path.isfile(optimizer_path):
                     optimizer.load_state_dict(torch.load(optimizer_path))
 
@@ -721,7 +722,7 @@ class Trainer:
 
         self.config.save(path, filename=config_filename, subfolder=subfolder)
         self.model.save(path, filename=model_filename, config_filename=model_config_filename)
-        torch.save(self.optimizer, os.path.join(path, subfolder, optimizer_file))
+        torch.save(self.optimizer.state_dict(), os.path.join(path, subfolder, optimizer_file))
         if isinstance(self.train_dataset, Dataset):
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         else:
