@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "hezar"
-version = "0.37.0"
+version = "0.38.0"
 packages = [{ include = "hezar" }]
 description = "Hezar: The all-in-one AI library for Persian, supporting a wide variety of tasks and modalities!"
 license = "Apache-2.0"
@@ -17,9 +17,9 @@ keywords = ["packaging", "poetry"]
 documentation = "https://hezarai.github.io/hezar/"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Intended Audience :: Developers",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries :: Python Modules"
@@ -63,7 +63,7 @@ all = ["numpy", "gensim", "seqeval", "jiwer", "soundfile", "librosa", "pillow", 
 
 [tool.black]
 line-length = 120
-target-version = ['py39', 'py310', 'py311']
+target-version = ['py310', 'py311', 'py312']
 
 [tool.ruff]
 ignore = ["C901", "E501", "E741", "W605", "F403", "F405"]
