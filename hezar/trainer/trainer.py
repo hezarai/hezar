@@ -27,7 +27,7 @@ from ..constants import (
     OptimizerType,
     TaskType,
 )
-from ..data import Dataset, SlicedSampler
+from ..data import Dataset, RangedSampler
 from ..models import Model
 from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import (
@@ -37,6 +37,7 @@ from ..utils import (
     sanitize_function_parameters,
     set_seed,
     verify_dependencies,
+    dataloader_worker_init_fn,
 )
 from .metrics_handlers import (
     Image2TextMetricHandler,
@@ -265,14 +266,16 @@ class Trainer:
              A tuple of train and eval dataloaders
         """
         if self.train_dataset is not None:
-            # Handle resuming
-            if self.state.epoch_step != 0:
-                start_index = self.state.epoch_step * self.config.batch_size
-                sampler = SlicedSampler(self.train_dataset, start_index=start_index)
-                shuffle = False
-            else:
-                sampler = None
-                shuffle = self.config.dataloader_shuffle
+            start_index = self.state.epoch_step * self.config.batch_size
+            sampler = RangedSampler(
+                self.train_dataset,
+                self.config.batch_size,
+                start_index=start_index,
+                shuffle=self.config.dataloader_shuffle,
+                seed=self.config.seed,
+                drop_last=self.config.dataloader_drop_last,
+            )
+            worker_init_fn = dataloader_worker_init_fn(self.config.seed)
 
             train_dataloader = DataLoader(
                 dataset=self.train_dataset,
@@ -280,20 +283,29 @@ class Trainer:
                 collate_fn=self.data_collator,
                 sampler=sampler,
                 num_workers=self.config.num_dataloader_workers,
-                drop_last=self.config.dataloader_drop_last,
-                shuffle=shuffle,
+                worker_init_fn=worker_init_fn,
             )
         else:
             raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
 
         if self.eval_dataset is not None:
+            sampler = RangedSampler(
+                self.eval_dataset,
+                self.config.eval_batch_size or self.config.batch_size,
+                start_index=0,  # We don't support resumption for evaluation so we always start from zero
+                shuffle=self.config.dataloader_shuffle,
+                seed=self.config.seed,
+                drop_last=self.config.dataloader_drop_last,
+            )
+            worker_init_fn = dataloader_worker_init_fn(self.config.seed)
+
             eval_dataloader = DataLoader(
                 dataset=self.eval_dataset,
                 batch_size=self.config.eval_batch_size or self.config.batch_size,
                 collate_fn=self.data_collator,
+                sampler=sampler,
                 num_workers=self.config.num_dataloader_workers,
-                drop_last=self.config.dataloader_drop_last,
-                shuffle=self.config.dataloader_shuffle,
+                worker_init_fn=worker_init_fn,
             )
         else:
             raise ValueError("Cannot create evaluation dataloader because `eval_dataset` is not given!")

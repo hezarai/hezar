@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
+from functools import partial
 
 from omegaconf import DictConfig
 
@@ -20,6 +21,7 @@ __all__ = [
     "get_non_numeric_keys",
     "flatten_dict",
     "set_seed",
+    "dataloader_worker_init_fn",
 ]
 
 logger = Logger(__name__)
@@ -238,11 +240,26 @@ def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
 
 
 def set_seed(seed):
+    """
+    Set a global seed for all backends to handle reproducibility and determinism.
+    """
     import random
 
     import numpy as np
     import torch
 
     torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
+    
+def dataloader_worker_init_fn(seed):
+    """
+    A dataloader worker init function that handles reproducibility by hard-setting the seed for all workers.
+    """
+    def worker_init_fn(worker_id, seed):
+        seet_seed(seed+worker_id)
+
+    return partial(worker_init_fn, seed=seed)
