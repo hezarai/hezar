@@ -49,17 +49,21 @@ class RangedSampler(Sampler):
         self.num_samples = self.end_index - self.start_index
         self.total_length = len(self.data)
 
-    def __len__(self):
-        return self.total_length
+        self.indices = self._create_indices()
 
-    def __iter__(self):
-        indices = list(range(self.start_index, self.end_index))
+    def _create_indices(self):
+        indices = list(range(self.total_length))
         if self.shuffle:
             if self.seed is None:
                 raise ValueError("Parameter `seed` is required to enable shuffling in the data sampler!")
             set_seed(self.seed)
             random.shuffle(indices)
+        indices = indices[self.start_index:self.end_index]
+        return indices
 
-        for index in indices:
-            if index >= self.start_index:
-                yield index
+    def __len__(self):
+        return self.total_length
+
+    def __iter__(self):
+        for indice in self.indices:
+            yield indice
