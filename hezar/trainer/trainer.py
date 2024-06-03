@@ -472,7 +472,7 @@ class Trainer:
 
         self.accelerator.backward(loss)
 
-        outputs["loss"] = loss
+        outputs["loss"] = loss.detach() / self.config.gradient_accumulation_steps
 
         return outputs
 
@@ -522,7 +522,6 @@ class Trainer:
             disable=not self.accelerator.is_local_main_process,
         ) as iterator:
             for input_batch in iterator:
-                step = self.state.global_step
                 # Prepare inputs
                 input_batch = self.prepare_input_batch(input_batch)
 
@@ -532,14 +531,15 @@ class Trainer:
                     # Optimization step
                     self.optimization_step()
 
-                # Gather outputs for metrics
-                losses_sum += outputs["loss"].item()
-                avg_loss = losses_sum / (step + 1)
-                iterator.set_postfix(loss=avg_loss)
-
                 # Update steps states
                 self.state.global_step += 1
                 self.state.epoch_step += 1
+
+                # Gather outputs for metrics
+                losses_sum += outputs["loss"].item()
+                if self.state.epoch_step % self.config.gradient_accumulation_steps == 0:
+                    avg_loss = losses_sum * self.config.gradient_accumulation_steps / self.state.epoch_step
+                    iterator.set_postfix(loss=avg_loss)
 
                 # Save trainer outputs if `save_steps` is hit
                 if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
