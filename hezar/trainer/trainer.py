@@ -236,7 +236,7 @@ class Trainer:
             raise ValueError("`model` must be given to the Trainer!")
 
         # Maybe load from checkpoint
-        if self.config.resume_from_checkpoint is not None:
+        if self.config.resume_from_checkpoint:
             checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
             model_path = os.path.join(checkpoint_path, model.model_filename)
             if os.path.isdir(checkpoint_path) and os.path.isfile(model_path):
@@ -333,7 +333,7 @@ class Trainer:
                 lr=self.config.learning_rate,
                 weight_decay=self.config.weight_decay,
             )
-            if self.config.resume_from_checkpoint is not None:
+            if self.config.resume_from_checkpoint:
                 checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
                 optimizer_path = os.path.join(checkpoint_path, self.trainer_subfolder, self.optimizer_file)
                 if os.path.isdir(checkpoint_path) and os.path.isfile(optimizer_path):
