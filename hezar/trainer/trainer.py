@@ -538,7 +538,10 @@ class Trainer:
 
                 # Gather outputs for metrics
                 losses_sum += outputs["loss"].item()
-                if self.state.epoch_step % self.config.gradient_accumulation_steps == 0:
+                if (
+                    self.state.epoch_step % self.config.gradient_accumulation_steps == 0
+                    or self.state.epoch_step == self.steps_in_epoch
+                ):
                     avg_loss = losses_sum * self.config.gradient_accumulation_steps / self.state.epoch_step
                     iterator.set_postfix(loss=avg_loss)
 
