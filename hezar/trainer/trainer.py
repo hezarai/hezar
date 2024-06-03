@@ -273,7 +273,7 @@ class Trainer:
                 start_index=start_index,
                 shuffle=self.config.dataloader_shuffle,
                 seed=self.config.seed,
-                drop_last=self.config.dataloader_drop_last,
+                drop_last=False,
             )
             worker_init_fn = dataloader_worker_init_fn(self.config.seed)
 
@@ -295,7 +295,7 @@ class Trainer:
                 start_index=0,  # We don't support resumption for evaluation so we always start from zero
                 shuffle=self.config.dataloader_shuffle,
                 seed=self.config.seed,
-                drop_last=self.config.dataloader_drop_last,
+                drop_last=False,
             )
             worker_init_fn = dataloader_worker_init_fn(self.config.seed)
 
