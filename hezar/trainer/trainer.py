@@ -451,7 +451,8 @@ class Trainer:
         """
         if self.lr_scheduler is not None:
             if isinstance(self.lr_scheduler, lr_schedulers[LRSchedulerType.REDUCE_ON_PLATEAU]):
-                self.lr_scheduler.step(metrics)
+                if metrics:
+                    self.lr_scheduler.step(metrics)
             else:
                 self.lr_scheduler.step()
 
@@ -562,8 +563,12 @@ class Trainer:
         Returns:
             Evaluation results
         """
+        if not hasattr(self, "eval_dataloader"):
+            self.train_dataloader, self.eval_dataloader = self.create_dataloaders()
+
         self.metrics_handler.tracker.reset()
         self.model.eval()
+
         with tqdm(
             self.eval_dataloader,
             unit="batch",
@@ -655,10 +660,9 @@ class Trainer:
             training_results = self.inner_training_loop(epoch)
 
             # Save checkpoint
-            if self.accelerator.is_local_main_process:
-                if self.config.save_enabled:
-                    ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
-                    self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
+            if self.accelerator.is_local_main_process and self.config.save_enabled:
+                ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
+                self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
 
             # Evaluate the model on the evaluation set
             evaluation_results = self.evaluate()
