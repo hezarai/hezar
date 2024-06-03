@@ -1,5 +1,5 @@
-from typing import Sized
 import random
+from typing import Sized
 
 from torch.utils.data import Sampler
 

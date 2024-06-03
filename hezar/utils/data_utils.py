@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
 from functools import partial
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
 
 from omegaconf import DictConfig
 
@@ -254,12 +254,14 @@ def set_seed(seed):
         torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
-    
+
+
 def dataloader_worker_init_fn(seed):
     """
     A dataloader worker init function that handles reproducibility by hard-setting the seed for all workers.
     """
+
     def worker_init_fn(worker_id, seed):
-        seet_seed(seed+worker_id)
+        set_seed(seed + worker_id)
 
     return partial(worker_init_fn, seed=seed)

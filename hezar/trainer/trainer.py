@@ -33,11 +33,11 @@ from ..preprocessors import Preprocessor, PreprocessorsContainer
 from ..utils import (
     Logger,
     colorize_text,
+    dataloader_worker_init_fn,
     is_backend_available,
     sanitize_function_parameters,
     set_seed,
     verify_dependencies,
-    dataloader_worker_init_fn,
 )
 from .metrics_handlers import (
     Image2TextMetricHandler,
