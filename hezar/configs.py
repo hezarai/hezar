@@ -381,8 +381,12 @@ class TrainerConfig(Config):
             Resume training from a checkpoint. If set to True, the trainer will load the latest checkpoint, otherwise if
             a path to a checkpoint is given, it will load that checkpoint and all the other states corresponding to that
             checkpoint.
+        max_steps (int):
+            Maximum number of iterations to train. This helps to limit how many batches you want to train in total.
         num_dataloader_workers (int):
             Number of dataloader workers, defaults to 4 .
+        dataloader_shuffle (bool):
+            Control dataloaders `shuffle` argument.
         seed (int):
             Control determinism of the run by setting a seed value. defaults to 42.
         optimizer (OptimizerType):
@@ -431,6 +435,7 @@ class TrainerConfig(Config):
     num_epochs: int = None
     init_weights_from: str = None
     resume_from_checkpoint: bool | str | os.PathLike = None
+    max_steps: int = None
     num_dataloader_workers: int = 0
     dataloader_shuffle: bool = True
     seed: int = 42

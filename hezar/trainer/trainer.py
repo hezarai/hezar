@@ -132,10 +132,8 @@ class Trainer:
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() and not self.config.use_cpu else "cpu"
 
-        # Setup accelerated objects if possible
-        self.accelerator = accelerator
-        if self.accelerator is None:
-            self.accelerator = Accelerator(
+        # Setup hardware acceleration controller
+        self.accelerator = accelerator or Accelerator(
                 mixed_precision=self.config.mixed_precision,
                 cpu=True if self.device == "cpu" else False,
                 step_scheduler_with_optimizer=False,
@@ -149,8 +147,13 @@ class Trainer:
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or self.train_dataset.data_collator
-        self.steps_in_epoch = math.ceil(len(self.train_dataset) / self.config.batch_size)
-        self.total_steps = self.steps_in_epoch * self.config.num_epochs
+
+        self.num_batches = math.ceil(len(self.train_dataset) / self.config.batch_size)
+        self.total_steps = min(
+            self.config.max_steps or self.num_batches * self.config.num_epochs,
+            self.num_batches * self.config.num_epochs
+        )
+        self.steps_in_epoch = min(self.num_batches, self.total_steps)
         self.config.save_steps = self.steps_in_epoch if not self.config.save_steps else self.config.save_steps
         self.saves_in_epoch = math.floor(self.steps_in_epoch / self.config.save_steps)
 
@@ -516,6 +519,7 @@ class Trainer:
         with tqdm(
             self.train_dataloader,
             initial=self.state.epoch_step,
+            total=self.steps_in_epoch,
             unit="batch",
             desc=f"Epoch: {epoch_num}/{self.config.num_epochs} ",
             bar_format=TQDM_BAR_FORMAT,
@@ -523,6 +527,10 @@ class Trainer:
             disable=not self.accelerator.is_local_main_process,
         ) as iterator:
             for input_batch in iterator:
+                # Handle early stopping
+                if self.state.global_step == self.total_steps:
+                    break
+
                 # Prepare inputs
                 input_batch = self.prepare_input_batch(input_batch)
 
@@ -689,6 +697,10 @@ class Trainer:
 
             # Log everything
             self.log(all_logs, epoch)
+
+            # Early stopping
+            if self.state.global_step == self.total_steps:
+                break
 
         self.logger.info("Training done!")
 
