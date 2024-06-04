@@ -29,6 +29,8 @@ class TrainerState:
         total_epochs: Total epochs to train the model
         global_step: Number of the update steps so far, one step is a full training step (one batch)
         epoch_step: Number of the update steps in the current epoch
+        loss_tracker_sum: Running sum value of the loss tracker
+        loss_tracker_avg: Running mean value of the loss tracker
         metric_for_best_checkpoint: The metric key for choosing the best checkpoint (Also given in the TrainerConfig)
         best_metric_value: The value of the best checkpoint saved so far
         best_checkpoint: Path to the best model checkpoint so far
@@ -38,6 +40,8 @@ class TrainerState:
     total_epochs: int = None
     global_step: int = 0
     epoch_step: int = 0
+    loss_tracker_sum: float = 0.0
+    loss_tracker_avg: float = 0.0
     metric_for_best_checkpoint: str = None
     best_metric_value: float = None
     best_checkpoint: str = None
@@ -89,14 +93,13 @@ class TrainerState:
 class AverageMeter:
     """Compute and store the average and current value"""
 
-    def __init__(self, name, fmt=":f"):
+    def __init__(self, name, avg=None, sum=None, count=None, fmt=":f"):
         self.name = name
-        self.fmt = fmt
         self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-        self.reset()
+        self.avg = avg or 0
+        self.sum = sum or 0
+        self.count = count or 0
+        self.fmt = fmt
 
     def reset(self):
         self.val = 0

@@ -47,7 +47,14 @@ from .metrics_handlers import (
     TextClassificationMetricsHandler,
     TextGenerationMetricsHandler,
 )
-from .trainer_utils import CSVLogger, TrainerState, get_distributed_logger, resolve_logdir, write_to_tensorboard
+from .trainer_utils import (
+    CSVLogger,
+    TrainerState,
+    get_distributed_logger,
+    resolve_logdir,
+    write_to_tensorboard,
+    AverageMeter
+)
 
 
 if is_backend_available(Backends.ACCELERATE):
@@ -184,6 +191,12 @@ class Trainer:
 
         # Setup metrics handler and inner trackers for the trainer
         self.metrics_handler = metrics_handler or self._create_metrics_handler()
+        self.train_loss_tracker = AverageMeter(
+            name="train.loss",
+            avg=self.state.loss_tracker_avg,
+            sum=self.state.loss_tracker_sum,
+            count=self.state.global_step,
+        )
 
         # Setup logging properties
         self.tensorboard = SummaryWriter(log_dir=self.logs_dir)
@@ -208,8 +221,9 @@ class Trainer:
                 state.global_step = int(step) if step.isdigit() else self.state.global_step
                 state.epoch = math.ceil(state.global_step / self.steps_in_epoch)
                 state.epoch_step = state.global_step % self.steps_in_epoch
-                if state.epoch_step == 0:
-                    state.epoch += 1
+
+            if state.epoch_step == 0:
+                state.epoch += 1
         else:
             state = TrainerState(
                 epoch=1,
@@ -217,6 +231,7 @@ class Trainer:
                 metric_for_best_checkpoint=self.config.metric_for_best_model,
                 logs_dir=resolve_logdir(os.path.join(self.config.output_dir, self.config.logs_dir)),
             )
+
         return state
 
     def _resolve_checkpoint_path(self, checkpoint: str | bool):
@@ -476,7 +491,7 @@ class Trainer:
 
         self.accelerator.backward(loss)
 
-        outputs["loss"] = loss.detach() / self.config.gradient_accumulation_steps
+        outputs["loss"] = loss.detach()
 
         return outputs
 
@@ -514,7 +529,7 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        losses_sum = 0
+        accumulated_loss = 0
         self.model.train()
         with tqdm(
             self.train_dataloader,
@@ -528,7 +543,7 @@ class Trainer:
         ) as iterator:
             for input_batch in iterator:
                 # Handle early stopping
-                if self.state.global_step == self.total_steps:
+                if self.state.global_step >= self.total_steps:
                     break
 
                 # Prepare inputs
@@ -545,13 +560,18 @@ class Trainer:
                 self.state.epoch_step += 1
 
                 # Gather outputs for metrics
-                losses_sum += outputs["loss"].item()
+                accumulated_loss += outputs["loss"].item()
                 if (
                     self.state.epoch_step % self.config.gradient_accumulation_steps == 0
                     or self.state.epoch_step == self.steps_in_epoch
                 ):
-                    avg_loss = losses_sum * self.config.gradient_accumulation_steps / self.state.epoch_step
-                    iterator.set_postfix(loss=avg_loss)
+                    accumulated_loss = accumulated_loss / self.config.gradient_accumulation_steps
+                    self.train_loss_tracker.update(accumulated_loss)
+                    iterator.set_postfix(loss=self.train_loss_tracker.avg)
+
+                    self.state.loss_tracker_avg = self.train_loss_tracker.avg
+                    self.state.loss_tracker_sum = self.train_loss_tracker.sum
+                    accumulated_loss = 0
 
                 # Save trainer outputs if `save_steps` is hit
                 if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
@@ -564,8 +584,13 @@ class Trainer:
                             self.trainer_state_file,
                         )
                     )
+                # Log loss running mean
+                if self.config.log_steps and self.state.global_step % self.config.log_steps == 0:
+                    loss_mean = {"train.loss": self.train_loss_tracker.avg}
+                    write_to_tensorboard(self.tensorboard, logs=loss_mean, step=self.state.global_step)
 
-        return {"loss": avg_loss}
+
+        return {"loss": self.train_loss_tracker.avg}
 
     def evaluate(self):
         """
@@ -696,7 +721,7 @@ class Trainer:
             )
 
             # Log everything
-            self.log(all_logs, epoch)
+            self.log(all_logs, self.state.global_step)
 
             # Early stopping
             if self.state.global_step == self.total_steps:

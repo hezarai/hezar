@@ -421,6 +421,8 @@ class TrainerConfig(Config):
             Deprecated and renamed to `save_steps`.
         save_steps (int):
             Save the trainer outputs every `save_steps` steps. Leave as `0` to ignore saving between training steps.
+        log_steps (int):
+            Save training metrics every `log_steps` steps.
         checkpoints_dir (str):
             Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
         logs_dir (str):
@@ -456,6 +458,7 @@ class TrainerConfig(Config):
     save_enabled: bool = True
     save_freq: int = None
     save_steps: int = None
+    log_steps: int = None
     checkpoints_dir: str = "checkpoints"
     logs_dir: str = "logs"
 
