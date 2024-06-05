@@ -15,8 +15,8 @@ from tqdm.auto import tqdm
 from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
-    DEFAULT_OPTIMIZER_FILE,
     DEFAULT_LR_SCHEDULER_FILE,
+    DEFAULT_OPTIMIZER_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_CSV_LOG_FILE,
     DEFAULT_TRAINER_STATE_FILE,
@@ -696,8 +696,6 @@ class Trainer:
         The steps are as follows:
             - The following is run for `self.config.num_epochs` times
                 - Run the training loop on the train dataset
-                    - Create train data loader
-                    - Train the model on 
                 - Save checkpoints
                 - Run evaluation on the evaluation dataset
                 - Apply LR scheduling of a LR Scheduler is available
