@@ -409,6 +409,10 @@ class TrainerConfig(Config):
             Whether to use distributed training (via the `accelerate` package)
         mixed_precision (PrecisionType | str):
             Mixed precision type e.g, fp16, bf16, etc. (disabled by default)
+        use_cpu (bool):
+            Whether to train using the CPU only even if CUDA is available.
+        do_evaluate (bool):
+            Whether to run evaluation when calling `Trainer.train`
         evaluate_with_generate (bool):
             Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).
         metrics (List[str | MetricConfig]):
@@ -452,9 +456,10 @@ class TrainerConfig(Config):
     distributed: bool = False
     mixed_precision: PrecisionType | str | None = None
     use_cpu: bool = False
+    do_evaluate: bool = True
     evaluate_with_generate: bool = True
     metrics: List[str | MetricConfig] = None
-    metric_for_best_model: str = "evaluation.loss"
+    metric_for_best_model: str = "loss"
     save_enabled: bool = True
     save_freq: int = None
     save_steps: int = None
@@ -477,7 +482,10 @@ class TrainerConfig(Config):
             )
         # Validate `metric_for_best_model`
         if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):
-            self.metric_for_best_model = f"evaluation.{self.metric_for_best_model}"
+            if self.do_evaluate:
+                self.metric_for_best_model = f"evaluation.{self.metric_for_best_model}"
+            else:
+                self.metric_for_best_model = f"train.{self.metric_for_best_model}"
 
         # Validate steps
         if self.save_steps is not None and self.save_steps % self.gradient_accumulation_steps != 0:

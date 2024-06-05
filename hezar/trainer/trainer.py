@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import os
 import tempfile
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict
 
 import pandas as pd
 import torch
@@ -16,6 +16,7 @@ from ..configs import TrainerConfig
 from ..constants import (
     DEFAULT_DATASET_CONFIG_FILE,
     DEFAULT_OPTIMIZER_FILE,
+    DEFAULT_LR_SCHEDULER_FILE,
     DEFAULT_TRAINER_CONFIG_FILE,
     DEFAULT_TRAINER_CSV_LOG_FILE,
     DEFAULT_TRAINER_STATE_FILE,
@@ -48,12 +49,12 @@ from .metrics_handlers import (
     TextGenerationMetricsHandler,
 )
 from .trainer_utils import (
+    AverageMeter,
     CSVLogger,
     TrainerState,
     get_distributed_logger,
     resolve_logdir,
     write_to_tensorboard,
-    AverageMeter
 )
 
 
@@ -97,7 +98,7 @@ class Trainer:
     cases you can also override any of the core methods in your own custom Trainer.
 
     Args:
-        model ([`Model`] or `torch.nn.Module`): The main model to train and evaluate
+        model (`Model` | `torch.nn.Module`): The main model to train and evaluate
         config (TrainerConfig): Training configuration and parameters
         train_dataset (Dataset): Train dataset
         eval_dataset (Dataset): Evaluation dataset
@@ -122,9 +123,9 @@ class Trainer:
 
     def __init__(
         self,
-        model: Model = None,
-        config: TrainerConfig = None,
-        train_dataset: Dataset = None,
+        model: Model,
+        config: TrainerConfig,
+        train_dataset: Dataset,
         eval_dataset: Dataset = None,
         data_collator: Callable = None,
         preprocessor: Preprocessor | PreprocessorsContainer = None,
@@ -142,11 +143,11 @@ class Trainer:
 
         # Setup hardware acceleration controller
         self.accelerator = accelerator or Accelerator(
-                mixed_precision=self.config.mixed_precision,
-                cpu=True if self.device == "cpu" else False,
-                step_scheduler_with_optimizer=False,
-                gradient_accumulation_steps=self.config.gradient_accumulation_steps,
-            )
+            mixed_precision=self.config.mixed_precision,
+            cpu=True if self.device == "cpu" else False,
+            step_scheduler_with_optimizer=False,
+            gradient_accumulation_steps=self.config.gradient_accumulation_steps,
+        )
 
         # Setup logger
         self.logger = get_distributed_logger(__name__)
@@ -154,7 +155,7 @@ class Trainer:
         # Configure datasets and data loaders
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
-        self.data_collator = data_collator or self.train_dataset.data_collator
+        self.data_collator = data_collator or getattr(self.train_dataset, "data_collator", None)
 
         self.num_batches = math.ceil(len(self.train_dataset) / self.config.batch_size)
         self.total_steps = min(
@@ -277,62 +278,60 @@ class Trainer:
 
         return model
 
-    def create_dataloaders(self) -> Tuple[DataLoader, DataLoader | None]:
+    def create_train_dataloader(self, dataset) -> DataLoader:
         """
-        Set up data loaders (train/eval) and return them.
-
-        Returns:
-             A tuple of train and eval dataloaders
+        Create train data loader using a ranged sampler that can handle slicing data, shuffling, etc.
         """
-        if self.train_dataset is not None:
-            start_index = self.state.epoch_step * self.config.batch_size
-            sampler = RangedSampler(
-                self.train_dataset,
-                self.config.batch_size,
-                start_index=start_index,
-                shuffle=self.config.dataloader_shuffle,
-                seed=self.config.seed,
-                drop_last=False,
-            )
-            worker_init_fn = dataloader_worker_init_fn(self.config.seed)
+        start_index = self.state.epoch_step * self.config.batch_size
+        sampler = RangedSampler(
+            dataset,
+            self.config.batch_size,
+            start_index=start_index,
+            shuffle=self.config.dataloader_shuffle,
+            seed=self.config.seed,
+            drop_last=False,
+        )
+        worker_init_fn = dataloader_worker_init_fn(self.config.seed)
 
-            train_dataloader = DataLoader(
-                dataset=self.train_dataset,
-                batch_size=self.config.batch_size,
-                collate_fn=self.data_collator,
-                sampler=sampler,
-                num_workers=self.config.num_dataloader_workers,
-                worker_init_fn=worker_init_fn,
-            )
-        else:
-            raise ValueError("Cannot create train dataloader because `train_dataset` is not given!")
+        train_dataloader = DataLoader(
+            dataset=dataset,
+            batch_size=self.config.batch_size,
+            collate_fn=self.data_collator,
+            sampler=sampler,
+            num_workers=self.config.num_dataloader_workers,
+            worker_init_fn=worker_init_fn,
+        )
 
-        if self.eval_dataset is not None:
-            sampler = RangedSampler(
-                self.eval_dataset,
-                self.config.eval_batch_size or self.config.batch_size,
-                start_index=0,  # We don't support resumption for evaluation so we always start from zero
-                shuffle=self.config.dataloader_shuffle,
-                seed=self.config.seed,
-                drop_last=False,
-            )
-            worker_init_fn = dataloader_worker_init_fn(self.config.seed)
+        train_dataloader = self.accelerator.prepare(train_dataloader)
 
-            eval_dataloader = DataLoader(
-                dataset=self.eval_dataset,
-                batch_size=self.config.eval_batch_size or self.config.batch_size,
-                collate_fn=self.data_collator,
-                sampler=sampler,
-                num_workers=self.config.num_dataloader_workers,
-                worker_init_fn=worker_init_fn,
-            )
-        else:
-            raise ValueError("Cannot create evaluation dataloader because `eval_dataset` is not given!")
+        return train_dataloader
 
-        if self.accelerator is not None:
-            train_dataloader, eval_dataloader = self.accelerator.prepare(train_dataloader, eval_dataloader)
+    def create_eval_dataloader(self, dataset) -> DataLoader:
+        """
+        Create eval data loader using a ranged sampler that can handle slicing data, shuffling, etc.
+        """
+        sampler = RangedSampler(
+            dataset,
+            self.config.eval_batch_size or self.config.batch_size,
+            start_index=0,  # We don't support resumption for evaluation so we always start from zero
+            shuffle=self.config.dataloader_shuffle,
+            seed=self.config.seed,
+            drop_last=False,
+        )
+        worker_init_fn = dataloader_worker_init_fn(self.config.seed)
 
-        return train_dataloader, eval_dataloader
+        eval_dataloader = DataLoader(
+            dataset=dataset,
+            batch_size=self.config.eval_batch_size or self.config.batch_size,
+            collate_fn=self.data_collator,
+            sampler=sampler,
+            num_workers=self.config.num_dataloader_workers,
+            worker_init_fn=worker_init_fn,
+        )
+
+        eval_dataloader = self.accelerator.prepare(eval_dataloader)
+
+        return eval_dataloader
 
     def _create_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
         """
@@ -352,11 +351,6 @@ class Trainer:
                 lr=self.config.learning_rate,
                 weight_decay=self.config.weight_decay,
             )
-            if self.config.resume_from_checkpoint:
-                checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
-                optimizer_path = os.path.join(checkpoint_path, self.trainer_subfolder, self.optimizer_file)
-                if os.path.isdir(checkpoint_path) and os.path.isfile(optimizer_path):
-                    optimizer.load_state_dict(torch.load(optimizer_path))
 
             if lr_scheduler is None:
                 scheduler_name = self.config.lr_scheduler or self.default_lr_scheduler
@@ -541,10 +535,14 @@ class Trainer:
         Returns:
             Metrics averages through the full iteration
         """
-        accumulated_loss = 0
+        train_dataloader = self.create_train_dataloader(self.train_dataset)
+
         self.model.train()
+
+        accumulated_loss = 0
+
         with tqdm(
-            self.train_dataloader,
+            train_dataloader,
             initial=self.state.epoch_step,
             total=self.steps_in_epoch,
             unit="batch",
@@ -601,24 +599,29 @@ class Trainer:
                     loss_mean = {"train.loss": self.train_loss_tracker.avg}
                     write_to_tensorboard(self.tensorboard, logs=loss_mean, step=self.state.global_step)
 
-
         return {"loss": self.train_loss_tracker.avg}
 
-    def evaluate(self):
+    def evaluate(self, eval_dataset: Dataset = None):
         """
         Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
 
+        Args:
+            eval_dataset: Any sized iterable like a Hezar Dataset, HuggingFace Dataset, Torch Dataset, etc.
+
         Returns:
-            Evaluation results
+            A dictionary of evaluation results computed by the metrics tracker
         """
-        if not hasattr(self, "eval_dataloader"):
-            self.train_dataloader, self.eval_dataloader = self.create_dataloaders()
+        if eval_dataset is None and self.eval_dataset is None:
+            raise ValueError(
+                "Evaluation needs either passing the `eval_dataset` to the Trainer's `__init__` or `evaluate()`!"
+            )
+        eval_dataloader = self.create_eval_dataloader(eval_dataset or self.eval_dataset)
 
         self.metrics_handler.tracker.reset()
         self.model.eval()
 
         with tqdm(
-            self.eval_dataloader,
+            eval_dataloader,
             unit="batch",
             desc="Evaluating... ",
             bar_format=TQDM_BAR_FORMAT,
@@ -689,8 +692,20 @@ class Trainer:
     def train(self, resume_from_checkpoint: str | bool = None):
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
+
+        The steps are as follows:
+            - The following is run for `self.config.num_epochs` times
+                - Run the training loop on the train dataset
+                    - Create train data loader
+                    - Train the model on 
+                - Save checkpoints
+                - Run evaluation on the evaluation dataset
+                - Apply LR scheduling of a LR Scheduler is available
+                - Gather all metrics outputs
+                - Save the trainer state
+                - Write logs to tensorboard, csv, etc.
         """
-        if resume_from_checkpoint is not None:
+        if resume_from_checkpoint:
             raise ValueError(
                 "Setting `resume_from_checkpoint` in `Trainer.train(resume_from_checkpoint=...)` is deprecated. "
                 "You have to set it in the trainer's config!"
@@ -701,39 +716,39 @@ class Trainer:
         for epoch in range(self.state.epoch, self.config.num_epochs + 1):
             self.accelerator.print()
             self.state.epoch = epoch
-
-            self.train_dataloader, self.eval_dataloader = self.create_dataloaders()
+            metrics_logs = {}
 
             # Train on the whole training set
             training_results = self.inner_training_loop(epoch)
+            metrics_logs.update({"train.loss": training_results["loss"]})
 
             # Save checkpoint
             if self.accelerator.is_local_main_process and self.config.save_enabled:
                 ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
                 self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
 
-            # Evaluate the model on the evaluation set
-            evaluation_results = self.evaluate()
+            if self.config.do_evaluate:
+                # Evaluate the model on the evaluation set
+                evaluation_results = self.evaluate(self.eval_dataset)
+                evaluation_logs = {
+                    f"evaluation.{metric_name}": value for metric_name, value in evaluation_results.items()
+                }
+                metrics_logs.update(evaluation_logs)
 
             # LR scheduler step
-            self.lr_scheduler_step(evaluation_results["loss"])
-
-            # Metrics gathering
-            train_logs = {f"train.{metric_name}": value for metric_name, value in training_results.items()}
-            evaluation_logs = {f"evaluation.{metric_name}": value for metric_name, value in evaluation_results.items()}
-            all_logs = {**train_logs, **evaluation_logs}
+            self.lr_scheduler_step(metrics_logs[self.config.metric_for_best_model])
 
             # Update trainer state
             self.state.epoch = epoch
             self.state.epoch_step = 0
             self.state.update_best_results(
-                metric_value=all_logs[self.config.metric_for_best_model],
+                metric_value=metrics_logs[self.config.metric_for_best_model],
                 objective=self.metrics_handler.objective,
                 step=self.state.global_step,
             )
 
             # Log everything
-            self.log(all_logs, self.state.global_step)
+            self.log(metrics_logs, self.state.global_step)
 
             # Early stopping
             if self.state.global_step == self.total_steps:
@@ -801,11 +816,6 @@ class Trainer:
 
         if isinstance(self.train_dataset, Dataset):
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
-        else:
-            self.logger.warning(
-                "The dataset passed to the Trainer is not a `hezar.data.Dataset` instance so that no dataset config"
-                " will be saved!"
-            )
 
     def push_to_hub(
         self,
@@ -858,13 +868,16 @@ class Trainer:
             private=private,
             commit_message=commit_message,
         )
-        self.train_dataset.config.push_to_hub(
-            repo_id,
-            filename=dataset_config_file,
-            subfolder=subfolder,
-            private=private,
-            commit_message=commit_message
-        )
+
+        # Upload train dataset config
+        if isinstance(self.train_dataset, Dataset):
+            self.train_dataset.config.push_to_hub(
+                repo_id,
+                filename=dataset_config_file,
+                subfolder=subfolder,
+                private=private,
+                commit_message=commit_message
+            )
 
         # Upload model
         if push_model:
