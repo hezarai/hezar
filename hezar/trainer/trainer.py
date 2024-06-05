@@ -115,6 +115,7 @@ class Trainer:
     dataset_config_file = DEFAULT_DATASET_CONFIG_FILE
     trainer_state_file = DEFAULT_TRAINER_STATE_FILE
     optimizer_file = DEFAULT_OPTIMIZER_FILE
+    lr_scheduler_file = DEFAULT_LR_SCHEDULER_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
     _required_backends = [Backends.ACCELERATE]
@@ -364,6 +365,17 @@ class Trainer:
                     lr_scheduler = None
                 else:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs, verbose=True)
+
+        if self.config.resume_from_checkpoint:
+            checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
+            if os.path.isdir(checkpoint_path):
+                optimizer_path = os.path.join(checkpoint_path, self.trainer_subfolder, self.optimizer_file)
+                lr_scheduler_path = os.path.join(checkpoint_path, self.trainer_subfolder, self.lr_scheduler_file)
+                if os.path.isfile(optimizer_path):
+                    optimizer.load_state_dict(torch.load(optimizer_path))
+                if lr_scheduler is not None and os.path.isfile(lr_scheduler_path):
+                    lr_scheduler.load_state_dict(torch.load(lr_scheduler_path))
+
         return optimizer, lr_scheduler
 
     def _create_metrics_handler(self):
@@ -756,6 +768,7 @@ class Trainer:
         subfolder: str = None,
         dataset_config_file: str = None,
         optimizer_file: str = None,
+        lr_scheduler_file: str = None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -770,15 +783,22 @@ class Trainer:
             subfolder: Optional sub-folder
             dataset_config_file: Dataset config file name
             optimizer_file: Optimizer state file name
+            lr_scheduler_file: LR scheduler file name
         """
         config_filename = config_filename or self.trainer_config_file
         subfolder = subfolder or self.trainer_subfolder
         dataset_config_file = dataset_config_file or self.dataset_config_file
         optimizer_file = optimizer_file or self.optimizer_file
+        lr_scheduler_file = lr_scheduler_file or self.lr_scheduler_file
 
         self.config.save(path, filename=config_filename, subfolder=subfolder)
         self.model.save(path, filename=model_filename, config_filename=model_config_filename)
+
         torch.save(self.optimizer.state_dict(), os.path.join(path, subfolder, optimizer_file))
+
+        if self.lr_scheduler is not None:
+            torch.save(self.lr_scheduler.state_dict(), os.path.join(path, subfolder, lr_scheduler_file))
+
         if isinstance(self.train_dataset, Dataset):
             self.train_dataset.config.save(path, filename=dataset_config_file, subfolder=subfolder)
         else:
