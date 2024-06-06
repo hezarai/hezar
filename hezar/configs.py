@@ -507,3 +507,7 @@ class TrainerConfig(Config):
             logger.warning(
                 "Distributed mode is experimental and might have bugs. Use with caution and don't forget to submit your issues!"
             )
+
+        # Disable tokenizers parallelism if num_dataloader_workers is more than 1
+        if self.num_dataloader_workers > 1:
+            os.environ["TOKENIZERS_PARALLELISM"] = "false"
