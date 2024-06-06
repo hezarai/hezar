@@ -85,9 +85,9 @@ class RobertaTextClassification(Model):
         }
         return outputs
 
-    def compute_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
         criterion = nn.CrossEntropyLoss()
-        loss = criterion(inputs.view(-1, self.config.num_labels), targets.view(-1))
+        loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
         return loss
 
     def preprocess(self, inputs: str | List[str], **kwargs):

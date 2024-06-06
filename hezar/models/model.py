@@ -312,13 +312,15 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def compute_loss(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
         """
         Compute loss on the model outputs against the given labels
 
         Args:
-            inputs: Input tensor to compute loss on
-            targets: Target tensor
+            logits: Logits tensor to compute loss on
+            labels: Labels tensor
+
+        Note: Subclasses can also override this method and add other arguments besides `logits` and `labels`
 
         Returns:
             Loss tensor
