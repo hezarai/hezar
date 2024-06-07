@@ -323,6 +323,12 @@ Hezar even better together! ❤️
 
 Don't forget to check out our contribution guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) before diving in. Your support is much appreciated!
 
+## Contact
+We highly recommend to submit any issues or questions in the issues or discussions section but in case you need direct
+contact, here it is:
+- [arxyzan@gmail.com](mailto:arxyzan@gmail.com)
+- Telegram: [@arxyzan](https://t.me/arxyzan)
+
 ## Citation
 If you found this project useful in your work or research please cite it by using this BibTeX entry:
 ```bibtex
