@@ -1,4 +1,4 @@
-# Trainer Basics
+# Trainer Overview
 
 Before exploring training recipes for different tasks, lets dive into the Trainer itself! The `Trainer` is the base
 super class that handles everything needed in order to train any model in Hezar on a given dataset. So lets begin.
@@ -316,6 +316,24 @@ accumulating the losses for every T steps and averaging over them and then perfo
 ```{note}
 Setting the `gradient_accumulation_steps` to 1 (default behavior) is exactly what happens in the regular training without
 any accumulation.
+```
+
+### Saving & Pushing to the Hub
+The Trainer files can also be saved and pushed to the Hub. These files include:
+- Model weights
+- Preprocessor files
+- Configs
+- Logs
+- Optimizers states
+- Trainer state file
+
+#### Save
+```python
+trainer.save("my-awesome-model")
+```
+#### Push to Hub
+```python
+trainer.push_to_hub(repo_id="path/to/hub", commit_message="Upload my awesome model and files")
 ```
 
 ## Custom Trainer
