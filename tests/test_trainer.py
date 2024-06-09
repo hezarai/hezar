@@ -80,7 +80,7 @@ tasks_setups = {
             }
         },
         "model": {
-            "path": "hezarai/crnn-fa-64x256-license-plate-recognition",
+            "path": "hezarai/crnn-fa-license-plate-recognition-v2",
         },
         "config": {
             "task": "image2text",
