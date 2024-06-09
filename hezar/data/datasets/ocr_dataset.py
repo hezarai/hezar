@@ -69,7 +69,12 @@ class OCRDatasetConfig(DatasetConfig):
     invalid_characters: list = None
     reverse_text: bool = None
     reverse_digits: bool = None
-    image_processor_config: ImageProcessorConfig = None
+    image_processor_config: ImageProcessorConfig | dict = None
+
+    def __post_init__(self):
+        super().__post_init__()
+        if isinstance(self.image_processor_config, dict):
+            self.image_processor_config = ImageProcessorConfig(**self.image_processor_config)
 
 
 @register_dataset("ocr", config_class=OCRDatasetConfig)
