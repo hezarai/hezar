@@ -4,7 +4,6 @@ from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import TaskType
-from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger
 from ..data_collators import TextGenerationDataCollator
@@ -21,7 +20,6 @@ class TextSummarizationDatasetConfig(DatasetConfig):
 
     Args:
         path (str): Path to the dataset.
-        tokenizer_path (str): Path to the tokenizer file.
         prefix (str): Prefix for conditional generation.
         text_field (str): Field name for text in the dataset.
         summary_field (str): Field name for summary in the dataset.
@@ -33,7 +31,6 @@ class TextSummarizationDatasetConfig(DatasetConfig):
     name = "text_summarization"
     task: TaskType = TaskType.TEXT_GENERATION
     path: str = None
-    tokenizer_path: str = None
     prefix: str = None
     text_field: str = None
     summary_field: str = None
@@ -54,19 +51,10 @@ class TextSummarizationDataset(Dataset):
         **kwargs: Extra config parameters to assign to the original config.
     """
 
-    def __init__(self, config: TextSummarizationDatasetConfig, split=None, **kwargs):
-        """
-        Initializes a new TextSummarizationDataset instance.
-
-        Args:
-            config (TextSummarizationDatasetConfig): The configuration object for the dataset.
-            split: Dataset split, defaults to None.
-            **kwargs: Additional keyword arguments.
-
-        """
-        super().__init__(config, split=split, **kwargs)
+    def __init__(self, config: TextSummarizationDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
         self.dataset = self._load(split)
-        self.tokenizer = self._build_tokenizer()
+        self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = TextGenerationDataCollator(
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
@@ -88,24 +76,6 @@ class TextSummarizationDataset(Dataset):
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
-
-    def _build_tokenizer(self):
-        """
-        Build the tokenizer.
-
-        Returns:
-            Tokenizer: The tokenizer.
-
-        """
-        if self.config.tokenizer_path:
-            tokenizer = Tokenizer.load(self.config.tokenizer_path)
-        else:
-            logger.warning(
-                "This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset."
-            )
-            tokenizer = None
-        return tokenizer
 
     def __len__(self):
         """

@@ -6,7 +6,6 @@ from datasets import Audio, load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import Backends, PaddingType, TaskType
-from ...preprocessors import AudioFeatureExtractor, Tokenizer
 from ...registry import register_dataset
 from ..data_collators import SpeechRecognitionDataCollator
 from .dataset import Dataset
@@ -20,8 +19,6 @@ class SpeechRecognitionDatasetConfig(DatasetConfig):
     name = "speech_recognition"
     task = TaskType.SPEECH_RECOGNITION
     path: str = None
-    feature_extractor_path: str = None
-    tokenizer_path: str = None
     sampling_rate: int = 16000
     audio_array_padding_type: bool | str | PaddingType = "longest"
     max_audio_array_length: int = None
@@ -37,11 +34,11 @@ class SpeechRecognitionDatasetConfig(DatasetConfig):
 class SpeechRecognitionDataset(Dataset):
     required_backends = _required_backends
 
-    def __init__(self, config: SpeechRecognitionDatasetConfig, split=None, **kwargs):
-        super().__init__(config, split, **kwargs)
+    def __init__(self, config: SpeechRecognitionDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config, split, preprocessor=preprocessor, **kwargs)
         self.data = self._load(split)
-        self.feature_extractor = AudioFeatureExtractor.load(self.config.feature_extractor_path)
-        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.feature_extractor = self.preprocessor.audio_feature_extractor
+        self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = SpeechRecognitionDataCollator(
             self.feature_extractor,
             self.tokenizer,

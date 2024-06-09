@@ -87,7 +87,7 @@ def build_preprocessor(name: str, config: Optional[PreprocessorConfig] = None, *
     return preprocessor
 
 
-def build_dataset(name: str, config: Optional[DatasetConfig] = None, split: SplitType = None, **kwargs):
+def build_dataset(name: str, config: DatasetConfig = None, split: SplitType = None, preprocessor=None, **kwargs):
     """
     Build the dataset using its registry name. If config is None then the dataset is built using the
     default config.
@@ -96,6 +96,7 @@ def build_dataset(name: str, config: Optional[DatasetConfig] = None, split: Spli
         name (str): name of the dataset in the datasets' registry
         config (DatasetConfig): a DatasetConfig instance
         split (str): Dataset split to load
+        preprocessor (str | Preprocessor | PreprocessorsContainer): Preprocessor for the dataset
         **kwargs: extra config parameters that are loaded to the dataset
 
     Returns:
@@ -109,7 +110,7 @@ def build_dataset(name: str, config: Optional[DatasetConfig] = None, split: Spli
             f"Unknown dataset name: `{name}`!\nAvailable dataset names: {available_datasets}"
         )
     config = config or datasets_registry[name].config_class()
-    dataset = datasets_registry[name].module_class(config, split, **kwargs)
+    dataset = datasets_registry[name].module_class(config, split, preprocessor=preprocessor, **kwargs)
     return dataset
 
 

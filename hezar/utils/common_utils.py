@@ -17,6 +17,7 @@ __all__ = [
     "colorize_text",
     "permute_dict_list",
     "sanitize_function_parameters",
+    "get_parents",
 ]
 
 
@@ -135,3 +136,28 @@ def sanitize_function_parameters(func: Callable, params: Dict | Mapping, **kwarg
     input_params = {p: params[p] for p in fn_params_names if p in params}
     return input_params
 
+
+def get_parents(obj, include_self=True, names_only=False):
+    """
+    Get all parent classes of an object
+
+    Args:
+        include_self: If True, will return the class of the obj too.
+        names_only: If True, will return the names of the classes instead of the classes themselves
+    """
+
+    def recurse_bases(cls):
+        bases = cls.__bases__
+        for base in bases:
+            yield base
+            yield from recurse_bases(base)
+
+    # Start the recursion with the class of the object
+    parents = list(set(recurse_bases(obj.__class__)))
+    if include_self:
+        parents.append(obj.__class__)
+
+    if names_only:
+        parents = [base.__name__ for base in parents]
+
+    return parents

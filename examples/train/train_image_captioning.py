@@ -5,8 +5,8 @@ from hezar.trainer import Trainer, TrainerConfig
 
 base_model_path = "hezarai/vit-roberta-fa-base"
 
-train_dataset = Dataset.load("hezarai/flickr30k-fa", split="train", tokenizer_path=base_model_path, max_length=128)
-eval_dataset = Dataset.load("hezarai/flickr30k-fa", split="test", tokenizer_path=base_model_path, max_length=128)
+train_dataset = Dataset.load("hezarai/flickr30k-fa", split="train", preprocessor=base_model_path, max_length=128)
+eval_dataset = Dataset.load("hezarai/flickr30k-fa", split="test", preprocessor=base_model_path, max_length=128)
 
 model = Model.load(base_model_path)
 

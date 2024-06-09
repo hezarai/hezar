@@ -9,7 +9,7 @@ from omegaconf import OmegaConf
 
 from ..configs import PreprocessorConfig
 from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, HEZAR_CACHE_DIR, Backends, RegistryType, RepoType
-from ..utils import get_module_class, list_repo_files, verify_dependencies
+from ..utils import get_module_class, list_repo_files, verify_dependencies, get_parents
 
 
 class Preprocessor:
@@ -66,7 +66,7 @@ class Preprocessor:
         any preprocessor in the path. If there's only one preprocessor, returns it and if there are more, returns a
         dictionary of preprocessors.
 
-        This method must also be overriden by subclasses as it internally calls this method for every possible
+        This method must also be overridden by subclasses as it internally calls this method for every possible
         preprocessor found in the repo.
 
         Args:
@@ -146,3 +146,35 @@ class PreprocessorsContainer(OrderedDict):
         """
         for name, preprocessor in self.items():
             preprocessor.push_to_hub(repo_id, subfolder=subfolder, commit_message=commit_message, private=private)
+
+    @property
+    def tokenizer(self):
+        preprocessors = list(self.values())
+        for p in preprocessors:
+            bases = get_parents(p, names_only=True)
+            if "Tokenizer" in bases:
+                return p
+
+    @property
+    def audio_feature_extractor(self):
+        preprocessors = list(self.values())
+        for p in preprocessors:
+            bases = get_parents(p, names_only=True)
+            if "AudioFeatureExtractor" in bases:
+                return p
+
+    @property
+    def image_processor(self):
+        preprocessors = list(self.values())
+        for p in preprocessors:
+            bases = get_parents(p, names_only=True)
+            if "ImageProcessor" in bases:
+                return p
+
+    @property
+    def text_normalizer(self):
+        preprocessors = list(self.values())
+        for p in preprocessors:
+            bases = get_parents(p, names_only=True)
+            if "TextNormalizer" in bases:
+                return p

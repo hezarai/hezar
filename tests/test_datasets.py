@@ -13,28 +13,27 @@ CI_MODE = os.environ.get("CI_MODE", "FALSE")
 DATASETS_MAPPING = {
     "text-classification": {
         "path": "hezarai/sentiment-dksf",
-        "tokenizer_path": "hezarai/bert-base-fa",
+        "preprocessor": "hezarai/bert-base-fa",
     },
     "sequence-labeling": {
         "path": "hezarai/lscp-pos-500k",
-        "tokenizer_path": "hezarai/bert-base-fa",
+        "preprocessor": "hezarai/bert-base-fa",
     },
     "ocr": {
         "path": "hezarai/persian-license-plate-v1",
-        "tokenizer_path": "hezarai/crnn-fa-printed-96-long",
+        "preprocessor": "hezarai/crnn-fa-printed-96-long",
     },
     "image-captioning": {
         "path": "hezarai/flickr30k-fa",
-        "tokenizer_path": "hezarai/roberta-base-fa",
+        "preprocessor": "hezarai/roberta-base-fa",
     },
     "text-summarization": {
         "path": "hezarai/xlsum-fa",
-        "tokenizer_path": "hezarai/t5-base-fa",
+        "preprocessor": "hezarai/t5-base-fa",
     },
     "speech-recognition": {
         "path": "hezarai/common-voice-13-fa",
-        "tokenizer_path": "hezarai/whisper-small-fa",
-        "feature_extractor_path": "hezarai/whisper-small-fa"
+        "preprocessor": "hezarai/whisper-small-fa",
     },
 }
 
@@ -62,10 +61,12 @@ def test_load_dataset(task):
     required_fields = TASK_TO_REQUIRED_FIELDS[task]
 
     path = DATASETS_MAPPING[task].pop("path")
+    preprocessor = DATASETS_MAPPING[task].pop("preprocessor", None)
 
     train_dataset = Dataset.load(
         path,
         split="train",
+        preprocessor=preprocessor,
         **DATASETS_MAPPING[task]
     )
     assert isinstance(train_dataset, Dataset), INVALID_DATASET_TYPE.format(type(train_dataset))

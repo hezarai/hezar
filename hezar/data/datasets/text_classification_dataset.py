@@ -5,7 +5,6 @@ from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import TaskType
-from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger
 from ..data_collators import TextPaddingDataCollator
@@ -22,7 +21,6 @@ class TextClassificationDatasetConfig(DatasetConfig):
 
     Args:
         path (str): Path to the dataset.
-        tokenizer_path (str): Path to the tokenizer file.
         label_field (str): Field name for labels in the dataset.
         text_field (str): Field name for text in the dataset.
         max_length (int): Maximum length of text.
@@ -31,7 +29,6 @@ class TextClassificationDatasetConfig(DatasetConfig):
     name = "text_classification"
     task: TaskType = TaskType.TEXT_CLASSIFICATION
     path: str = None
-    tokenizer_path: str = None
     label_field: str = None
     text_field: str = None
     max_length: int = None
@@ -46,23 +43,15 @@ class TextClassificationDataset(Dataset):
     Args:
         config (TextClassificationDatasetConfig): Dataset config object.
         split: Which split to use.
+        preprocessor: Dataset's preprocessor
         **kwargs: Extra config parameters to assign to the original config.
     """
 
-    def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
-        """
-        Initializes a new TextClassificationDataset instance.
-
-        Args:
-            config (TextClassificationDatasetConfig): The configuration object for the dataset.
-            split: Dataset split, defaults to None.
-            **kwargs: Additional keyword arguments.
-
-        """
-        super().__init__(config, split=split, **kwargs)
+    def __init__(self, config: TextClassificationDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.tokenizer = self._build_tokenizer()
+        self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = TextPaddingDataCollator(
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
@@ -82,24 +71,6 @@ class TextClassificationDataset(Dataset):
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
-
-    def _build_tokenizer(self):
-        """
-        Build the tokenizer.
-
-        Returns:
-            Tokenizer: The tokenizer.
-
-        """
-        if self.config.tokenizer_path:
-            tokenizer = Tokenizer.load(self.config.tokenizer_path)
-        else:
-            logger.warning(
-                "This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset."
-            )
-            tokenizer = None
-        return tokenizer
 
     def _extract_labels(self):
         """
