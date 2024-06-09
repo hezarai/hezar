@@ -21,8 +21,20 @@ max_length = 8
 reverse_digits = True
 image_processor_config = {"size": (384, 32)}
 
-train_dataset = Dataset.load(dataset_id, split="train", image_processor_config=image_processor_config)
-eval_dataset = Dataset.load(dataset_id, split="test", image_processor_config=image_processor_config)
+train_dataset = Dataset.load(
+    "hezarai/persian-license-plate-v1",
+    split="train",
+    max_length=8,
+    reverse_digits=True,
+    image_processor_config=image_processor_config,
+)
+eval_dataset = Dataset.load(
+    "hezarai/persian-license-plate-v1",
+    split="test",
+    max_length=8,
+    reverse_digits=True,
+    image_processor_config=image_processor_config,
+)
 ```
 - License plates have only 8 characters so we set the max_length=8 which makes the dataset remove longer/shorter samples
 - CRNN's image processor flips the image horizontally (mirror) for Persian but since plates are read in LTR mode we have to set 
