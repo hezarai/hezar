@@ -82,8 +82,8 @@ class CRNNImage2Text(Model):
 
     def post_process(self, generation_outputs, return_scores=False):
         if isinstance(generation_outputs, torch.Tensor):
-            generated_ids = generation_outputs
-            scores = torch.tensor(torch.zeros(generated_ids.shape))
+            generated_ids = generation_outputs.clone().detach()
+            scores = torch.zeros(generated_ids.shape)
         else:
             generated_ids, scores = generation_outputs.values()
 

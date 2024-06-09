@@ -678,6 +678,7 @@ class Trainer:
             "Gradient Accumulation Steps": self.config.gradient_accumulation_steps,
             "Metrics": list(self.metrics_handler.metrics.keys()),
             "Save Steps": self.config.save_steps,
+            "Log Steps": self.config.log_steps,
             "Checkpoints Path": self.checkpoints_dir,
             "Logs Path": self.logs_dir,
         }
