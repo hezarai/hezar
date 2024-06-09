@@ -78,6 +78,7 @@ def test_load_dataset(task):
     test_dataset = Dataset.load(
         path,
         split="test",
+        preprocessor=preprocessor,
         **DATASETS_MAPPING[task]
     )
     assert isinstance(test_dataset, Dataset), INVALID_DATASET_TYPE.format(type(test_dataset))
