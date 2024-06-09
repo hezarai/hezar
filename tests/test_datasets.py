@@ -25,7 +25,7 @@ DATASETS_MAPPING = {
     },
     "image-captioning": {
         "path": "hezarai/flickr30k-fa",
-        "preprocessor": "hezarai/roberta-base-fa",
+        "preprocessor": "hezarai/vit-roberta-fa-base",
     },
     "text-summarization": {
         "path": "hezarai/xlsum-fa",
