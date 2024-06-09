@@ -1,7 +1,7 @@
 # Trainer Overview
 
 Before exploring training recipes for different tasks, lets dive into the Trainer itself! The `Trainer` is the base
-super class that handles everything needed in order to train any model in Hezar on a given dataset. So lets begin.
+super class that handles everything needed in order to train any model in Hezar on a given dataset. So let's begin.
 
 ## A Simple Example
 
@@ -14,7 +14,7 @@ from hezar.preprocessors import Preprocessor
 from hezar.data import Dataset
 from hezar.trainer import Trainer, TrainerConfig
 
-base_model_path = "hezarai/crnn-base-fa-64x256"
+base_model_path = "hezarai/crnn-fa-printed-96-long"
 
 train_dataset = Dataset.load("hezarai/persian-license-plate-v1", split="train", max_length=8, reverse_digits=True)
 eval_dataset = Dataset.load("hezarai/persian-license-plate-v1", split="test", max_length=8, reverse_digits=True)
@@ -47,7 +47,7 @@ trainer.train()
 ## Trainer API
 
 The `Trainer` class is a full training/evaluation loop for models in Hezar (and with some tweaks, any PyTorch model).
-You only pass a couple of necessary objects (trainer config, model, datasets, preprocessor, etc.) to the Trainer and
+You only pass a couple of necessary objects (trainer config, model, datasets, preprocessor, etc.) to the Trainer, and
 it takes care of the rest. Besides, you can also customize every way you can imagine! We've covered those low-level
 parts
 in the guides too.
@@ -90,18 +90,18 @@ Let's explore all the available parameters:
 - **distributed** (bool): Whether to use distributed training (via the `accelerate` package)
 - **mixed_precision** (PrecisionType | str): Mixed precision type e.g, fp16, bf16, etc. (disabled by default)
 - **use_cpu** (bool): Whether to train using the CPU only even if CUDA is available.
-- **do_evaluate** (bool): Whether to run evaluation when calling `Trainer.train`
+- **do_evaluate** (bool): Whether to run evaluation when calling `Trainer.train`. (defaults to True)
 - **evaluate_with_generate** (bool): Whether to use `generate()` in the evaluation step or not. (only applicable for
   generative models).
 - **metrics** (List[str | MetricConfig]): A list of metrics. Depending on the `valid_metrics` in the specific
-  MetricsHandler of the Trainer. metric_for_best_model (str):Reference metric key to watch for the best model.
-  Recommended to have a {train. | evaluation.} prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults
+  `MetricsHandler` of the Trainer.
+- **metric_for_best_model** (str):Reference metric key to watch for the best model.
+  Recommended to have a {`train.` | `evaluation.`} prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults
   to `evaluation.{metric_for_best_model}`.
 - **save_steps** (int): Save the trainer outputs every `save_steps` steps. Set to `0` or `None` to ignore saving between
   training steps.
 - **log_steps** (int): Save training metrics every `log_steps` steps.
-- **checkpoints_dir** (str): Path to the checkpoints' folder. The actual files will be saved
-  under `{output_dir}/{checkpoints_dir}`.
+- **checkpoints_dir** (str): Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
 - **logs_dir** (str): Path to the logs' folder. The actual log files will be saved under `{output_dir}/{logs_dir}`.
 
 ### Datasets
@@ -173,7 +173,7 @@ trainer = Trainer(
 
 ### Optional Parameters
 
-The Trainer's instantiation requires the trainer config, model and training dataset. Now lets explore optional inputs
+The Trainer's instantiation requires the trainer config, model and training dataset. Now let's explore optional inputs
 to the Trainer's `__init__` function.
 
 - `eval_dataset`: The evaluation dataset to evaluate the model performance on it.
@@ -196,8 +196,8 @@ When the Trainer instantiates the following properties are created:
 - Accelerator
 - Optimizer and LR Scheduler (If provided)
 - Metrics handler
-- All info regarding the training steps and criterias
-- Loading checkpoint (if availabel and set in the config)
+- All info regarding the training steps and criteria
+- Loading checkpoint (if available and set in the config)
 - Logging modules (Tensorboard and CSV writer)
 - Trainer state (A module for tracking the state of the trainer on different events)
 - Global seeding
@@ -258,9 +258,9 @@ are gathered by the trackers and logged to logging modules (Tensorboard, CSV, et
 ### Resuming Training
 
 By default, the Trainer will only save checkpoints at the end of each epoch, but you can change this behavior by setting
-the `save_steps` argument in the Trainer's config. Note that one step means one step means a single call to
-the `training_step()`. The total number of steps in one epoch equals `len(train_dataset)`/`batch_size` and the total
-steps equals `len(train_dataset)`/`batch_size`*`num_train_epochs`.
+the `save_steps` argument in the Trainer's config. Note that a step means a single call to the `training_step()`.
+The total number of steps in one epoch equals to `len(train_dataset)`/`batch_size` and the total steps equals to
+`len(train_dataset)`/`batch_size`*`num_train_epochs`.
 
 To enable resuming from checkpoint, you just need to set `resume_from_checkpoint=True` in the Trainer's config:
 ```python
@@ -299,7 +299,7 @@ Refer to [🤗 Accelerate docs](https://huggingface.co/docs/accelerate/en/basic_
 for more info.
 
 ### Mixed Precision
-Mixed precision can also be acheived by setting the `mixed_precision` argument in the Trainer's config.
+Mixed precision can also be achieved by setting the `mixed_precision` argument in the Trainer's config.
 ```python
 trainer_config = TrainerConfig(
     ...,
