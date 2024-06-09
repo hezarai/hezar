@@ -29,7 +29,6 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
         text_column (str): Column name for text in the dataset.
         images_paths_column (str): Column name for image paths in the dataset.
         max_length (int): Maximum length of text.
-        test_split_size (float): Size of the test split.
         image_processor_config (ImageProcessorConfig): Configuration for image processing.
 
     """
@@ -40,8 +39,12 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
     text_column: str = "label"
     images_paths_column = "image_path"
     max_length: int = None
-    test_split_size: float = 0.2
     image_processor_config: ImageProcessorConfig = None
+
+    def __post_init__(self):
+        super().__post_init__()
+        if isinstance(self.image_processor_config, dict):
+            self.image_processor_config = ImageProcessorConfig(**self.image_processor_config)
 
 
 @register_dataset("image_captioning", config_class=ImageCaptioningDatasetConfig)
