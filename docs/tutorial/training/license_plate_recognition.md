@@ -14,16 +14,21 @@ We do provide a pretty solid ALPR dataset at [hezarai/persian-license-plate-v1](
 which you can load as easily as:
 ```python
 from hezar.data import Dataset
+from hezar.preprocessors import Preprocessor
 
+dataset_id = "hezarai/persian-license-plate-v1"
 max_length = 8
 reverse_digits = True
+image_processor_config = {"size": (384, 32)}
 
-train_dataset = Dataset.load("hezarai/persian-license-plate-v1", split="train")
-eval_dataset = Dataset.load("hezarai/persian-license-plate-v1", split="test")
+train_dataset = Dataset.load(dataset_id, split="train", image_processor_config=image_processor_config)
+eval_dataset = Dataset.load(dataset_id, split="test", image_processor_config=image_processor_config)
 ```
 - License plates have only 8 characters so we set the max_length=8 which makes the dataset remove longer/shorter samples
 - CRNN's image processor flips the image horizontally (mirror) for Persian but since plates are read in LTR mode we have to set 
 the `reverse_digits=True` so that the labels are represented in RTL mode.
+- The OCR dataset's config has an `image_processor_config` that can be updated by passing a dict in `load()`. Here, 
+we change the size to (384, 32)(width, height) since our model's architecture will require this size later on.
 
 That's all we need to do to create our datasets ready for passing to the Trainer. If you need to create your own dataset
 you can also see the next section or skip it otherwise.
@@ -79,7 +84,8 @@ from hezar.preprocessors import Preprocessor
 
 base_model_path = "hezarai/crnn-fa-printed-96-long"
 
-model = CRNNImage2Text(CRNNImage2TextConfig(id2label=train_dataset.config.id2label))
+model_config = CRNNImage2TextConfig.load(base_model_path, id2label=train_dataset.config.id2label)
+model = CRNNImage2Text(model_config)
 preprocessor = Preprocessor.load(base_model_path)
 ```
 - The preprocessor is the same as the base model so we set the preprocessor to that.
@@ -124,13 +130,13 @@ Hezar (WARNING): 37 invalid samples found in the dataset! Inspect them using the
 Hezar (WARNING): 2 invalid samples found in the dataset! Inspect them using the `invalid_data` attribute
 Hezar (WARNING): Partially loading the weights as the model architecture and the given state dict are incompatible! 
 Ignore this warning in case you plan on fine-tuning this model
-Incompatible keys: ['map2seq.weight', 'map2seq.bias', 'rnn1.weight_ih_l0', 'rnn1.weight_ih_l0_reverse', 'classifier.weight', 'classifier.bias']
+Incompatible keys: ['classifier.weight', 'classifier.bias']
 Missing keys: []
 
 
 ******************** Training Info ********************
 
-  Output Directory: crnn-plate-fa-v2
+  Output Directory: crnn-plate-fa
   Task: image2text
   Model: CRNNImage2Text
   Init Weights: hezarai/crnn-fa-printed-96-long
@@ -144,48 +150,55 @@ Missing keys: []
   Scheduler: None
   Initial Learning Rate: 2e-05
   Learning Rate Decay: 0.0
-  Number of Parameters: 9254637
-  Number of Trainable Parameters: 9254637
+  Number of Parameters: 9287437
+  Number of Trainable Parameters: 9287437
   Mixed Precision: Full (fp32)
   Gradient Accumulation Steps: 1
   Metrics: ['cer']
   Save Steps: 991
-  Checkpoints Path: crnn-plate-fa-v2/checkpoints
-  Logs Path: crnn-plate-fa-v2/logs/Jun09_11-56-57_Taycan
+  Log Steps: 100
+  Checkpoints Path: crnn-plate-fa/checkpoints
+  Logs Path: crnn-plate-fa/logs/Jun09_13-23-16_Taycan
 
 *******************************************************
 
 
-Epoch: 1/10     100%|######################################################################| 991/991 [01:07<00:00, 14.70batch/s, loss=3.5] 
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 17.24batch/s, cer=1, loss=2.81]
+Epoch: 1/10     100%|######################################################################| 991/991 [01:07<00:00, 14.59batch/s, loss=3.55]
+Evaluating...   100%|######################################################################| 125/125 [00:08<00:00, 15.32batch/s, cer=1, loss=2.89]
 
-Epoch: 2/10     100%|######################################################################| 991/991 [01:07<00:00, 14.65batch/s, loss=2.97]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 17.08batch/s, cer=1, loss=1.87]
+Epoch: 2/10     100%|######################################################################| 991/991 [01:09<00:00, 14.31batch/s, loss=3.12]
+Evaluating...   100%|######################################################################| 125/125 [00:08<00:00, 15.17batch/s, cer=1, loss=2.28]
 
-Epoch: 3/10     100%|######################################################################| 991/991 [01:08<00:00, 14.49batch/s, loss=2.41]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.73batch/s, cer=0.196, loss=0.708]
+Epoch: 3/10     100%|######################################################################| 991/991 [01:09<00:00, 14.24batch/s, loss=2.63]
+Evaluating...   100%|######################################################################| 125/125 [00:08<00:00, 15.16batch/s, cer=0.338, loss=1.01]
 
-Epoch: 4/10     100%|######################################################################| 991/991 [01:07<00:00, 14.59batch/s, loss=1.93]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.83batch/s, cer=0.0883, loss=0.323]
+Epoch: 4/10     100%|######################################################################| 991/991 [01:09<00:00, 14.26batch/s, loss=2.14]
+Evaluating...   100%|######################################################################| 125/125 [00:08<00:00, 15.11batch/s, cer=0.141, loss=0.452]
 
-Epoch: 5/10     100%|######################################################################| 991/991 [01:08<00:00, 14.46batch/s, loss=1.59]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.62batch/s, cer=0.0405, loss=0.193]
+Epoch: 5/10     100%|######################################################################| 991/991 [01:09<00:00, 14.23batch/s, loss=1.78]
+Evaluating...   100%|######################################################################| 125/125 [00:08<00:00, 15.09batch/s, cer=0.0644, loss=0.286]
 
-Epoch: 6/10     100%|######################################################################| 991/991 [01:10<00:00, 14.15batch/s, loss=1.35]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.62batch/s, cer=0.0335, loss=0.165]
+Epoch: 6/10     100%|######################################################################| 991/991 [01:09<00:00, 14.23batch/s, loss=1.52]
+Evaluating...   100%|######################################################################| 125/125 [00:08<00:00, 15.10batch/s, cer=0.056, loss=0.241] 
 
-Epoch: 7/10     100%|######################################################################| 991/991 [01:08<00:00, 14.48batch/s, loss=1.17]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.82batch/s, cer=0.0301, loss=0.132]
+Epoch: 7/10     100%|######################################################################| 991/991 [01:08<00:00, 14.52batch/s, loss=1.32]
+Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 15.92batch/s, cer=0.0521, loss=0.217]
 
-Epoch: 8/10     100%|######################################################################| 991/991 [01:09<00:00, 14.29batch/s, loss=1.03]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.94batch/s, cer=0.0285, loss=0.13] 
+Epoch: 8/10     100%|######################################################################| 991/991 [01:06<00:00, 14.82batch/s, loss=1.17]
+Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 15.79batch/s, cer=0.0548, loss=0.22] 
 
-Epoch: 9/10     100%|######################################################################| 991/991 [01:08<00:00, 14.38batch/s, loss=0.926]
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 17.24batch/s, cer=0.0316, loss=0.136]
+Epoch: 9/10     100%|######################################################################| 991/991 [01:06<00:00, 14.82batch/s, loss=1.05]
+Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 15.85batch/s, cer=0.0481, loss=0.197]
 
-Epoch: 10/10    100%|######################################################################| 991/991 [01:09<00:00, 14.25batch/s, loss=0.84] 
-Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 16.49batch/s, cer=0.0289, loss=0.123]
+Epoch: 10/10    100%|######################################################################| 991/991 [01:06<00:00, 14.81batch/s, loss=0.953]
+Evaluating...   100%|######################################################################| 125/125 [00:07<00:00, 15.88batch/s, cer=0.0465, loss=0.189]
 Hezar (INFO): Training done!
 ```
-In less than 10 minutes on a cheap GTX 1660 GPU, our model acheives a character error rate as low as 2 percent! 
+In less than 10 minutes on a cheap GTX 1660 GPU, our model acheives a character error rate as low as 4 percent! 
 A few more epochs will indeed give better results but that's up to you.
+
+## Push to Hub
+If you'd like, you can push the model along with other Trainer files to the Hub.
+```python
+trainer.push_to_hub("<path/to/model>", commit_message="Upload an awesome ALPR model!")
+```
