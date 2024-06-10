@@ -38,7 +38,7 @@ def verify_image_dims(image: np.ndarray):
 
 
 def convert_image_type(
-    image: np.ndarray | "Image" | torch.Tensor,
+    image: np.ndarray | Image.Image | torch.Tensor,
     target_type: str | ImageType = ImageType.NUMPY,
 ):
     """
@@ -94,7 +94,7 @@ def load_image(path, return_type: str | ImageType = ImageType.PILLOW):
     return converted_image
 
 
-def show_image(image: "Image" | torch.Tensor | np.ndarray, title: str = "Image"):
+def show_image(image: Image.Image | torch.Tensor | np.ndarray, title: str = "Image"):
     """
     Given any type of input image (PIL, numpy, torch), show the image in a window
 

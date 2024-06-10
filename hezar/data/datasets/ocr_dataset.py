@@ -7,10 +7,8 @@ from typing import Dict
 import torch
 from datasets import load_dataset
 
-from ...builders import build_preprocessor
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
-from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger, is_text_valid, reverse_string_digits
 from ..data_collators import CharLevelOCRDataCollator
@@ -47,21 +45,18 @@ class OCRDatasetConfig(DatasetConfig):
     Args:
         path (str): Path to the dataset.
         text_split_type (TextSplitType): Type of text splitting (CHAR_SPLIT or TOKENIZE).
-        tokenizer_path (str): Path to the tokenizer file.
         id2label (Dict[int, str]): Mapping of label IDs to characters.
         text_column (str): Column name for text in the dataset.
         images_paths_column (str): Column name for image paths in the dataset.
         max_length (int): Maximum length of text.
         invalid_characters (list): List of invalid characters.
         reverse_digits (bool): Whether to reverse the digits in text.
-        image_processor_config (ImageProcessorConfig): Configuration for image processing.
 
     """
     name = "ocr"
     task: TaskType = TaskType.IMAGE2TEXT
     path: str = None
-    text_split_type: str | TextSplitType = TextSplitType.TOKENIZE
-    tokenizer_path: str = None  # if left to None, text_split_type must be `char_split`
+    text_split_type: str | TextSplitType = TextSplitType.CHAR_SPLIT
     id2label: Dict[int, str] = field(default_factory=lambda: ID2LABEL)
     text_column: str = "label"
     images_paths_column: str = "image_path"
@@ -69,12 +64,6 @@ class OCRDatasetConfig(DatasetConfig):
     invalid_characters: list = None
     reverse_text: bool = None
     reverse_digits: bool = None
-    image_processor_config: ImageProcessorConfig | dict = None
-
-    def __post_init__(self):
-        super().__post_init__()
-        if isinstance(self.image_processor_config, dict):
-            self.image_processor_config = ImageProcessorConfig(**self.image_processor_config)
 
 
 @register_dataset("ocr", config_class=OCRDatasetConfig)
@@ -89,22 +78,13 @@ class OCRDataset(Dataset):
     """
     required_backends = _required_backends
 
-    def __init__(self, config: OCRDatasetConfig, split=None, **kwargs):
-        """
-        Initializes a new OCRDataset instance.
-
-        Args:
-            config (OCRDatasetConfig): The configuration object for the dataset.
-            split: Dataset split, defaults to None.
-            **kwargs: Additional keyword arguments.
-
-        """
-        super().__init__(config=config, split=split, **kwargs)
+    def __init__(self, config: OCRDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
         self.data = self._load(split)
-        self.image_processor = build_preprocessor("image_processor", config=self.config.image_processor_config)
+        self.image_processor = self.preprocessor.image_processor
         if self.config.text_split_type == TextSplitType.TOKENIZE:
             if self.config.tokenizer_path is not None:
-                self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+                self.tokenizer = self.preprocessor.tokenizer
                 self.data_collator = None  # TODO resolve this in the future.
             else:
                 raise ValueError("No `tokenizer_path` given although `text_split_type` is set to `tokenize`!")

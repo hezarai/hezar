@@ -7,8 +7,8 @@ from hezar.trainer import Trainer, TrainerConfig
 dataset_path = "hezarai/sentiment-dksf"
 base_model_path = "hezarai/bert-base-fa"
 
-train_dataset = Dataset.load(dataset_path, split="train", tokenizer_path=base_model_path)
-eval_dataset = Dataset.load(dataset_path, split="test", tokenizer_path=base_model_path)
+train_dataset = Dataset.load(dataset_path, split="train", preprocessor=base_model_path)
+eval_dataset = Dataset.load(dataset_path, split="test", preprocessor=base_model_path)
 
 model = BertTextClassification(BertTextClassificationConfig(id2label=train_dataset.config.id2label))
 preprocessor = Preprocessor.load(base_model_path)

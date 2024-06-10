@@ -4,7 +4,6 @@ from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import TaskType
-from ...preprocessors import Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger
 from ..data_collators import SequenceLabelingDataCollator
@@ -21,7 +20,6 @@ class SequenceLabelingDatasetConfig(DatasetConfig):
 
     Args:
         path (str): Path to the dataset.
-        tokenizer_path (str): Path to the tokenizer file.
         tags_field (str): Field name for tags in the dataset.
         tokens_field (str): Field name for tokens in the dataset.
         max_length (int): Maximum length of tokens.
@@ -33,7 +31,6 @@ class SequenceLabelingDatasetConfig(DatasetConfig):
     name = "sequence_labeling"
     task: TaskType = TaskType.SEQUENCE_LABELING
     path: str = None
-    tokenizer_path: str = None
     tags_field: str = None
     tokens_field: str = None
     max_length: int = None
@@ -54,22 +51,12 @@ class SequenceLabelingDataset(Dataset):
         **kwargs: Extra config parameters to assign to the original config.
     """
 
-    def __init__(self, config: SequenceLabelingDatasetConfig, split=None, **kwargs):
-        """
-        Initializes a new SequenceLabelingDataset instance.
-
-        Args:
-            config (SequenceLabelingDatasetConfig): The configuration object for the dataset.
-            split: Dataset split, defaults to None.
-            **kwargs: Additional keyword arguments.
-
-        """
-        super().__init__(config, split=split, **kwargs)
+    def __init__(self, config: SequenceLabelingDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
         self.dataset = self._load(split)
         self._extract_labels()
-        self.tokenizer = self._build_tokenizer()
-        if self.tokenizer:
-            self.data_collator = SequenceLabelingDataCollator(self.tokenizer)
+        self.tokenizer = self.preprocessor.tokenizer
+        self.data_collator = SequenceLabelingDataCollator(self.tokenizer, max_length=self.config.max_length)
 
     def _load(self, split):
         """
@@ -85,24 +72,6 @@ class SequenceLabelingDataset(Dataset):
         # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
         dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
         return dataset
-
-    def _build_tokenizer(self):
-        """
-        Build the tokenizer.
-
-        Returns:
-            Tokenizer: The tokenizer.
-
-        """
-        if self.config.tokenizer_path:
-            tokenizer = Tokenizer.load(self.config.tokenizer_path)
-        else:
-            logger.warning(
-                "This dataset requires a tokenizer to work. Provide it in config as `tokenizer_path` "
-                "or set it manually as `dataset.tokenizer = your_tokenizer` after building the dataset."
-            )
-            tokenizer = None
-        return tokenizer
 
     def _extract_labels(self):
         """

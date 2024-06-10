@@ -24,10 +24,9 @@ tasks_setups = {
     "text_classification": {
         "dataset": {
             "path": "hezarai/sentiment-dksf",
+            "preprocessor": "hezarai/bert-base-fa",
             "num_samples": 4,
-            "config": {
-                "tokenizer_path": "hezarai/bert-base-fa",
-            }
+            "config": {}
         },
         "model": {
             "path": "hezarai/bert-fa-sentiment-dksf",
@@ -40,10 +39,9 @@ tasks_setups = {
     "sequence_labeling": {
         "dataset": {
             "path": "hezarai/lscp-pos-500k",
+            "preprocessor": "hezarai/bert-base-fa",
             "num_samples": 4,
-            "config": {
-                "tokenizer_path": "hezarai/bert-base-fa",
-            }
+            "config": {}
         },
         "model": {
             "path": "hezarai/distilbert-fa-pos-lscp-500k",
@@ -56,10 +54,11 @@ tasks_setups = {
     "text_summarization": {
         "dataset": {
             "path": "hezarai/xlsum-fa",
+            "preprocessor": "hezarai/t5-base-fa",
             "num_samples": 4,
             "config": {
-                "tokenizer_path": "hezarai/t5-base-fa",
-                "max_length": 32
+                "max_length": 128,
+                "max_target_length": 32,
             }
         },
         "model": {
@@ -73,6 +72,7 @@ tasks_setups = {
     "ocr": {
         "dataset": {
             "path": "hezarai/persian-license-plate-v1",
+            "preprocessor": "hezarai/crnn-fa-license-plate-recognition-v2",
             "num_samples": 4,
             "config": {
                 "max_length": 8,
@@ -80,7 +80,7 @@ tasks_setups = {
             }
         },
         "model": {
-            "path": "hezarai/crnn-fa-64x256-license-plate-recognition",
+            "path": "hezarai/crnn-fa-license-plate-recognition-v2",
         },
         "config": {
             "task": "image2text",
@@ -90,10 +90,10 @@ tasks_setups = {
     "image-captioning": {
         "dataset": {
             "path": "hezarai/flickr30k-fa",
+            "preprocessor": "hezarai/vit-roberta-fa-base",
             "num_samples": 2,
             "config": {
                 "max_length": 16,
-                "tokenizer_path": "hezarai/vit-roberta-fa-base"
             }
         },
         "model": {
@@ -107,11 +107,10 @@ tasks_setups = {
     "speech-recognition": {
         "dataset": {
             "path": "hezarai/common-voice-13-fa",
+            "preprocessor": "hezarai/whisper-small-fa",
             "num_samples": 2,
             "config": {
                 "labels_max_length": 16,
-                "tokenizer_path": "hezarai/whisper-small-fa",
-                "feature_extractor_path": "hezarai/whisper-small-fa"
             }
         },
         "model": {
@@ -140,8 +139,18 @@ def test_trainer(task):
     num_samples = setup["dataset"]["num_samples"]
 
     # Datasets
-    train_dataset = Dataset.load(setup["dataset"]["path"], split=f"train[:{num_samples}]", **setup["dataset"]["config"])
-    eval_dataset = Dataset.load(setup["dataset"]["path"], split=f"test[:{num_samples}]", **setup["dataset"]["config"])
+    train_dataset = Dataset.load(
+        setup["dataset"]["path"],
+        split=f"train[:{num_samples}]",
+        preprocessor=setup["dataset"]["preprocessor"],
+        **setup["dataset"]["config"],
+    )
+    eval_dataset = Dataset.load(
+        setup["dataset"]["path"],
+        split=f"test[:{num_samples}]",
+        preprocessor=setup["dataset"]["preprocessor"],
+        **setup["dataset"]["config"],
+    )
 
     # Model & Preprocessor
     model_config = ModelConfig.load(setup["model"]["path"])
