@@ -9,7 +9,7 @@ from omegaconf import OmegaConf
 
 from ..configs import PreprocessorConfig
 from ..constants import DEFAULT_PREPROCESSOR_SUBFOLDER, HEZAR_CACHE_DIR, Backends, RegistryType, RepoType
-from ..utils import get_module_class, list_repo_files, verify_dependencies, get_parents
+from ..utils import get_module_class, get_parents, list_repo_files, verify_dependencies
 
 
 class Preprocessor:
