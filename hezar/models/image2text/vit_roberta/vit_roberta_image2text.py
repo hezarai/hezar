@@ -90,7 +90,7 @@ class ViTRobertaImage2Text(Model):
 
         return outputs
 
-    def preprocess(self, inputs: List[str | np.ndarray | Image | torch.Tensor], **kwargs):
+    def preprocess(self, inputs: List[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
         image_processor = self.preprocessor[self.image_processor]
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
