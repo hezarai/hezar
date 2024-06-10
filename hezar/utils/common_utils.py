@@ -142,6 +142,7 @@ def get_parents(obj, include_self=True, names_only=False):
     Get all parent classes of an object
 
     Args:
+        obj: Any Python object
         include_self: If True, will return the class of the obj too.
         names_only: If True, will return the names of the classes instead of the classes themselves
     """
