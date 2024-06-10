@@ -12,8 +12,6 @@ Examples:
     >>> bert_config.save("saved/bert", filename="model_config.yaml")
     >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
 """
-from __future__ import annotations
-
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field, fields

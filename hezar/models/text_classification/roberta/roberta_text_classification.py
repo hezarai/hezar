@@ -1,8 +1,6 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from __future__ import annotations
-
 from typing import List
 
 import torch
