@@ -53,6 +53,41 @@ which is a PyTorch Dataset subclass. (hence having `__getitem__` and `__len__` m
 
 Some examples of the dataset classes are `TextClassificationDataset`, `TextSummarizationDataset`, `SequenceLabelingDataset`, etc.
 
+### Custom Datasets
+As mentioned, the `Dataset` class is a wrapper around the `torch.utils.data.Dataset` class to make it compatible with
+Hezar's structure and standards (working with configurations most importantly). So writing your own custom dataset is
+pretty easy.
+
+The base class for all dataset classes in Hezar is the `hezar.data.Dataset` class which subclasses the `torch.utils.data.Dataset`
+and adds its own functionalities to it.
+
+Every dataset class must have the following signature:
+```python
+from hezar.data import Dataset, DatasetConfig
+from hezar.registry import register_dataset
+
+
+@dataclass
+class ImageCaptioningDatasetConfig(DatasetConfig):
+    name = "image_captioning"  # Must be unique among all datasets names
+    attr1: int = ...
+    attr2: str = ...
+    attr3: bool = ...
+
+
+@register_dataset("image_captioning", config_class=ImageCaptioningDatasetConfig)  # registering is optional
+class ImageCaptioningDataset(Dataset):
+    def __init__(self, config: ImageCaptioningDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
+        # Custom initializations here
+    
+    def __len__(self):
+        pass
+    
+    def __getitem__(self, index):
+        pass
+```
+
 ## Dataset Templates
 We try to have a simple yet practical pattern for all datasets on the Hub. Every dataset on the Hub needs to have
 a dataset loading script. Some ready to use templates are located in the [templates/dataset_scripts](https://github.com/hezarai/hezar/tree/main/templates/dataset_scripts) folder.
