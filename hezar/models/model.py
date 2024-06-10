@@ -7,6 +7,8 @@ Examples:
     >>> from hezar.models import Model
     >>> model = Model.load("hezarai/bert-base-fa")
 """
+from __future__ import annotations
+
 import os
 import re
 import tempfile

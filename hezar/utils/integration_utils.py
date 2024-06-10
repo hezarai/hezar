@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import importlib.util
 from importlib.metadata import version
 from typing import List

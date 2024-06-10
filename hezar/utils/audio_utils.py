@@ -1,6 +1,8 @@
 """
 Common audio utils taken from `transformers.audio_utils`
 """
+from __future__ import annotations
+
 from typing import List, Optional
 
 import numpy as np

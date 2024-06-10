@@ -1,6 +1,8 @@
 """
 A DistilBERT base language model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
+from __future__ import annotations
+
 from typing import List
 
 from ....constants import Backends
