@@ -66,18 +66,18 @@ line-length = 120
 target-version = ['py310', 'py311', 'py312']
 
 [tool.ruff]
-ignore = ["C901", "E501", "E741", "W605", "F403", "F405"]
-select = ["C", "E", "F", "I", "W"]
+lint.ignore = ["C901", "E501", "E741", "W605", "F403", "F405"]
+lint.select = ["C", "E", "F", "I", "W"]
 line-length = 120
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402", "F401", "F403", "F811", "I001"]
 "*example*.py" = ["F401", "F841", "I001"]
 "*test*.py" = ["F401", "F841"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 lines-after-imports = 2
 known-first-party = ["hezar"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
