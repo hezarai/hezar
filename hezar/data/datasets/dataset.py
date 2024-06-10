@@ -52,15 +52,12 @@ class Dataset(TorchDataset):
         self.preprocessor = self.create_preprocessor(preprocessor)
 
     @staticmethod
-    def create_preprocessor(preprocessor: str | Preprocessor):
+    def create_preprocessor(preprocessor: str | Preprocessor | PreprocessorsContainer):
         """
         Create the preprocessor for the dataset.
 
         Args:
-            preprocessor: A path to the preprocessor (hub or local) or a PreprocessorContainer
-
-        Returns:
-
+            preprocessor (str | Preprocessor | PreprocessorsContainer): Preprocessor for the dataset
         """
         if preprocessor is None:
             return preprocessor
