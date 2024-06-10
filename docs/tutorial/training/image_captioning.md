@@ -16,14 +16,14 @@ base_model_path = "hezarai/vit-roberta-fa-base"
 
 ## Dataset
 
-### Persian Flickr30K 
+### Option 1: Persian Flickr30K 
 The flickr30k dataset is already hosted and ready to use in Hezar's Hugging Face Hub.
 
 ```python
 train_dataset = Dataset.load("hezarai/flickr30k-fa", split="train", preprocessor=base_model_path, max_length=128)
 eval_dataset = Dataset.load("hezarai/flickr30k-fa", split="test", preprocessor=base_model_path, max_length=128)
 ```
-### Custom Image Captioning Dataset
+### Option 2: Custom Image Captioning Dataset
 Let's see how we can create a custom dataset for this task. When it comes to customizing a dataset with a supported task in Hezar,
 there are two ways in general; Subclassing the dataset class of that task in particular and subclassing the base `Dataset`
 class. 

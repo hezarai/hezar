@@ -9,7 +9,7 @@ In Hezar, there are two types of `image2text` datasets: `OCRDataset` and `ImageC
 depending on the model, the dataset labels structure is different; For example, `CRNN` requires the labels as characters
 but Transformer-based models like `ViTRoberta` requires the labels as token ids. So here, we'll use the `OCRDataset` class.
 
-### Hezar ALPR Dataset
+### Option 1: Hezar ALPR Dataset
 We do provide a pretty solid ALPR dataset at [hezarai/persian-license-plate-v1](https://huggingface.co/datasets/hezarai/persian-license-plate-v1)
 which you can load as easily as:
 ```python
@@ -45,7 +45,7 @@ we change the size to (384, 32)(width, height) since our model's architecture wi
 That's all we need to do to create our datasets ready for passing to the Trainer. If you need to create your own dataset
 you can also see the next section or skip it otherwise.
 
-### Custom ALPR Dataset
+### Option 2: Custom ALPR Dataset
 Let's see how to create a custom dataset for OCR. When it comes to customizing a dataset with a supported task in Hezar,
 there are two ways in general; Subclassing the dataset class of that task in particular and subclassing the base `Dataset`
 class. 

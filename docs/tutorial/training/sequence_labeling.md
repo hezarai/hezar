@@ -96,3 +96,8 @@ Now we've got everything needed to train the model on our dataset. Let's roll...
 trainer.train()
 ```
 
+## Push to Hub
+If you'd like, you can push the model along with other Trainer files to the Hub.
+```python
+trainer.push_to_hub("<path/to/model>", commit_message="Upload an awesome POS model!")
+```
