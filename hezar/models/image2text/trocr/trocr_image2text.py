@@ -24,7 +24,7 @@ if is_backend_available(Backends.TRANSFORMERS):
     )
 
 if is_backend_available(Backends.PILLOW):
-    from PIL.Image import Image
+    from PIL import Image
 
 _required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 
