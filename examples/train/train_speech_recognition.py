@@ -1,18 +1,13 @@
 from hezar.models import Model
-from hezar.data import SpeechRecognitionDataset, SpeechRecognitionDatasetConfig
+from hezar.data import Dataset
 from hezar.trainer import Trainer, TrainerConfig
 
 
 dataset_path = "hezarai/common-voice-13-fa"
 base_model_path = "hezarai/whisper-small"
 
-dataset_config = SpeechRecognitionDatasetConfig(
-    path=dataset_path,
-    feature_extractor_path=base_model_path,
-    tokenizer_path=base_model_path,
-)
-train_dataset = SpeechRecognitionDataset(dataset_config, split="train", labels_max_length=64)
-eval_dataset = SpeechRecognitionDataset(dataset_config, split="test[:50%]", labels_max_length=64)
+train_dataset = Dataset.load(dataset_path, split="train", preprocessor=base_model_path, labels_max_length=64)
+eval_dataset = Dataset.load(dataset_path, split="test", preprocessor=base_model_path, labels_max_length=64)
 model = Model.load(base_model_path)
 
 train_config = TrainerConfig(

@@ -12,7 +12,7 @@ if __name__ == '__main__':
     train_dataset = Dataset.load(
         dataset_path,
         split="train",
-        tokenizer_path=base_model_path,
+        preprocessor=base_model_path,
         max_length=384,
         max_target_length=80,
         prefix=PREFIX
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     eval_dataset = Dataset.load(
         dataset_path,
         split="test",
-        tokenizer_path=base_model_path,
+        preprocessor=base_model_path,
         max_length=384,
         max_target_length=80,
         prefix=PREFIX,

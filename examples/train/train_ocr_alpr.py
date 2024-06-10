@@ -11,14 +11,14 @@ train_dataset = Dataset.load(
     split="train",
     max_length=8,
     reverse_digits=True,
-    image_processor_config=preprocessor.config,
+    preprocessor=preprocessor,
 )
 eval_dataset = Dataset.load(
     "hezarai/persian-license-plate-v1",
     split="test",
     max_length=8,
     reverse_digits=True,
-    image_processor_config=preprocessor.config,
+    preprocessor=preprocessor,
 )
 
 model_config = CRNNImage2TextConfig.load(base_model_path, id2label=train_dataset.config.id2label)

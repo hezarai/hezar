@@ -3,8 +3,10 @@ from hezar.models import CRNNImage2TextConfig, CRNNImage2Text
 from hezar.preprocessors import ImageProcessor
 from hezar.trainer import Trainer, TrainerConfig
 
-train_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="train")
-eval_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="test")
+image_processor = ImageProcessor.load("hezarai/crnn-fa-printed-96-long")
+
+train_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="train", preprocessor=image_processor)
+eval_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="test", preprocessor=image_processor)
 
 model = CRNNImage2Text(
     CRNNImage2TextConfig(
@@ -13,7 +15,6 @@ model = CRNNImage2Text(
         map2seq_out_dim=96
     )
 )
-preprocessor = ImageProcessor(train_dataset.config.image_processor_config)
 
 train_config = TrainerConfig(
     output_dir="crnn-plate-fa-v1",
@@ -31,7 +32,7 @@ trainer = Trainer(
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,
     data_collator=train_dataset.data_collator,
-    preprocessor=preprocessor,
+    preprocessor=image_processor,
 )
 trainer.train()
 

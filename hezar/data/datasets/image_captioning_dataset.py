@@ -3,10 +3,8 @@ from dataclasses import dataclass
 import torch
 from datasets import load_dataset
 
-from ...builders import build_preprocessor
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
-from ...preprocessors import ImageProcessorConfig, Tokenizer
 from ...registry import register_dataset
 from ...utils import Logger, shift_tokens_right
 from ..data_collators import ImageCaptioningDataCollator
@@ -25,37 +23,28 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
 
     Args:
         path (str): Path to the dataset.
-        tokenizer_path (str): Path to the tokenizer file.
         text_column (str): Column name for text in the dataset.
         images_paths_column (str): Column name for image paths in the dataset.
         max_length (int): Maximum length of text.
-        image_processor_config (ImageProcessorConfig): Configuration for image processing.
 
     """
     name = "image_captioning"
     task: TaskType = TaskType.IMAGE2TEXT
     path: str = None
-    tokenizer_path: str = None
     text_column: str = "label"
     images_paths_column = "image_path"
     max_length: int = None
-    image_processor_config: ImageProcessorConfig = None
-
-    def __post_init__(self):
-        super().__post_init__()
-        if isinstance(self.image_processor_config, dict):
-            self.image_processor_config = ImageProcessorConfig(**self.image_processor_config)
 
 
 @register_dataset("image_captioning", config_class=ImageCaptioningDatasetConfig)
 class ImageCaptioningDataset(Dataset):
     required_backends = _required_backends
 
-    def __init__(self, config: ImageCaptioningDatasetConfig, split=None, **kwargs):
-        super().__init__(config=config, split=split, **kwargs)
+    def __init__(self, config: ImageCaptioningDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
         self.data = self._load(split)
-        self.image_processor = build_preprocessor("image_processor", config=self.config.image_processor_config)
-        self.tokenizer = Tokenizer.load(self.config.tokenizer_path)
+        self.image_processor = self.preprocessor.image_processor
+        self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = ImageCaptioningDataCollator(
             self.tokenizer,
             padding_type="max_length" if self.config.max_length is not None else "longest",

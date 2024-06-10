@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import List, Optional
+from typing import List
 
 from torch.utils.data import Dataset as TorchDataset
 
@@ -14,6 +14,7 @@ from ...constants import (
     RepoType,
     SplitType,
 )
+from ...preprocessors import Preprocessor, PreprocessorsContainer
 from ...utils import verify_dependencies
 
 
@@ -23,6 +24,8 @@ class Dataset(TorchDataset):
 
     Args:
         config: The configuration object for the dataset.
+        split: Dataset split name e.g, train, test, validation, etc.
+        preprocessor: Optional preprocessor object (note that most datasets require this argument)
         **kwargs: Additional keyword arguments.
 
     Attributes:
@@ -35,12 +38,45 @@ class Dataset(TorchDataset):
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = os.path.join(HEZAR_CACHE_DIR, "datasets")
 
-    def __init__(self, config: DatasetConfig, split=None, **kwargs):
+    def __init__(
+        self,
+        config: DatasetConfig,
+        split=None,
+        preprocessor: str | Preprocessor | PreprocessorsContainer = None,
+        **kwargs,
+    ):
         verify_dependencies(self, self.required_backends)
         self.config = config.update(kwargs)
-        self.preprocessor = None
         self.data_collator = None
         self.split = split
+        self.preprocessor = self.create_preprocessor(preprocessor)
+
+    @staticmethod
+    def create_preprocessor(preprocessor: str | Preprocessor):
+        """
+        Create the preprocessor for the dataset.
+
+        Args:
+            preprocessor: A path to the preprocessor (hub or local) or a PreprocessorContainer
+
+        Returns:
+
+        """
+        if preprocessor is None:
+            return preprocessor
+
+        if isinstance(preprocessor, str):
+            preprocessor = Preprocessor.load(preprocessor)
+        if isinstance(preprocessor, Preprocessor):
+            preprocessor = PreprocessorsContainer({preprocessor.config.name: preprocessor})
+        elif isinstance(preprocessor, PreprocessorsContainer):
+            preprocessor = preprocessor
+        else:
+            raise ValueError(
+                f"The `preprocessor` must be a path to the Hub or a Preprocessor/PreprocessorsContainer instance, "
+                f"got {type(preprocessor)}!"
+            )
+        return preprocessor
 
     def __str__(self):
         dataset_name = self.config.path or self.config.name
@@ -75,8 +111,9 @@ class Dataset(TorchDataset):
         cls,
         hub_path: str | os.PathLike,
         config: DatasetConfig = None,
-        config_filename: Optional[str] = None,
-        split: Optional[str | SplitType] = None,
+        config_filename: str = None,
+        split: str | SplitType = None,
+        preprocessor: str | Preprocessor | PreprocessorsContainer = None,
         cache_dir: str = None,
         **kwargs,
     ) -> "Dataset":
@@ -92,6 +129,8 @@ class Dataset(TorchDataset):
                 Dataset config file name. Falls back to `dataset_config.yaml` if not given.
             split (Optional[str | SplitType]):
                 Dataset split, defaults to "train".
+            preprocessor (str | Preprocessor | PreprocessorsContainer):
+                Preprocessor object for the dataset
             cache_dir (str):
                 Path to cache directory, defaults to Hezar's cache directory
             **kwargs:
@@ -115,5 +154,11 @@ class Dataset(TorchDataset):
                 cache_dir=cls.cache_dir,
             )
         dataset_config.path = hub_path
-        dataset = build_dataset(dataset_config.name, config=dataset_config, split=split, **kwargs)
+        dataset = build_dataset(
+            dataset_config.name,
+            config=dataset_config,
+            split=split,
+            preprocessor=preprocessor,
+            **kwargs,
+        )
         return dataset
