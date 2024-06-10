@@ -88,6 +88,23 @@ class ImageCaptioningDataset(Dataset):
         pass
 ```
 
+## Loading Regular HF Datasets
+All the current datasets provided in Hezar's Hugging Face, have the `dataset_config.yaml` in their repos which does not
+exist for regular HF datasets. If you need to load such datasets (that have the correct structure and fields) in Hezar
+using the `Dataset.load()` method, you have to provide the dataset config manually.
+```python
+from hezar.data import Dataset, SpeechRecognitionDatasetConfig
+
+dataset_path = "mozilla-foundation/common_voice_17_0"
+
+dataset_config = SpeechRecognitionDatasetConfig(
+    path=dataset_path, 
+    dataset_config_name="fa", 
+    labels_max_length=64,
+)  # You can modify other fields too
+dataset = Dataset.load(dataset_path, split="train", config=dataset_config)
+```
+
 ## Dataset Templates
 We try to have a simple yet practical pattern for all datasets on the Hub. Every dataset on the Hub needs to have
 a dataset loading script. Some ready to use templates are located in the [templates/dataset_scripts](https://github.com/hezarai/hezar/tree/main/templates/dataset_scripts) folder.
