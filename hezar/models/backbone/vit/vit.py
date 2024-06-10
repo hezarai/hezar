@@ -17,7 +17,7 @@ if is_backend_available(Backends.TRANSFORMERS):
     from transformers import ViTModel
 
 if is_backend_available(Backends.PILLOW):
-    from PIL import Image
+    from PIL.Image import Image
 
 _required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS, Backends.PILLOW]
 

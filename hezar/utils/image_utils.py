@@ -16,7 +16,7 @@ from .logging import Logger
 logger = Logger(__name__)
 
 if is_backend_available(Backends.PILLOW):
-    from PIL import Image
+    from PIL.Image import Image
 
 __all__ = [
     "convert_image_type",
