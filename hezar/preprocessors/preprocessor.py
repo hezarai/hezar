@@ -149,6 +149,9 @@ class PreprocessorsContainer(OrderedDict):
 
     @property
     def tokenizer(self):
+        """
+        Return tokenizer if available
+        """
         preprocessors = list(self.values())
         for p in preprocessors:
             bases = get_parents(p, names_only=True)
@@ -157,6 +160,9 @@ class PreprocessorsContainer(OrderedDict):
 
     @property
     def audio_feature_extractor(self):
+        """
+        Return audio feature extractor if available
+        """
         preprocessors = list(self.values())
         for p in preprocessors:
             bases = get_parents(p, names_only=True)
@@ -165,6 +171,9 @@ class PreprocessorsContainer(OrderedDict):
 
     @property
     def image_processor(self):
+        """
+        Return image processor if available
+        """
         preprocessors = list(self.values())
         for p in preprocessors:
             bases = get_parents(p, names_only=True)
@@ -173,6 +182,9 @@ class PreprocessorsContainer(OrderedDict):
 
     @property
     def text_normalizer(self):
+        """
+        Return text normalizer if available
+        """
         preprocessors = list(self.values())
         for p in preprocessors:
             bases = get_parents(p, names_only=True)
