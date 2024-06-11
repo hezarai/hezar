@@ -36,7 +36,6 @@ class SpeechRecognitionDataset(Dataset):
 
     def __init__(self, config: SpeechRecognitionDatasetConfig, split=None, preprocessor=None, **kwargs):
         super().__init__(config, split, preprocessor=preprocessor, **kwargs)
-        self.data = self._load(split)
         self.feature_extractor = self.preprocessor.audio_feature_extractor
         self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = SpeechRecognitionDataCollator(
@@ -49,7 +48,7 @@ class SpeechRecognitionDataset(Dataset):
         )
 
     def _load(self, split):
-        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
+        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir, **self.config.hf_load_kwargs)
         data = data.cast_column(self.config.audio_column, Audio(sampling_rate=self.config.sampling_rate))
         return data
 

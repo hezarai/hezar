@@ -15,7 +15,7 @@ from ...constants import (
     SplitType,
 )
 from ...preprocessors import Preprocessor, PreprocessorsContainer
-from ...utils import verify_dependencies
+from ...utils import get_module_config_class, list_repo_files, verify_dependencies
 
 
 class Dataset(TorchDataset):
@@ -41,15 +41,23 @@ class Dataset(TorchDataset):
     def __init__(
         self,
         config: DatasetConfig,
-        split=None,
+        split: str = "train",
         preprocessor: str | Preprocessor | PreprocessorsContainer = None,
         **kwargs,
     ):
         verify_dependencies(self, self.required_backends)
         self.config = config.update(kwargs)
-        self.data_collator = None
         self.split = split
+        self.data = self._load(self.split)
         self.preprocessor = self.create_preprocessor(preprocessor)
+        self.data_collator = None
+
+    def _load(self, split):
+        """
+        The internal function to load the dataset files and properties.
+        By default, this uses the HF `datasets.load_dataset()`.
+        """
+        pass
 
     @staticmethod
     def create_preprocessor(preprocessor: str | Preprocessor | PreprocessorsContainer):
@@ -139,17 +147,40 @@ class Dataset(TorchDataset):
         """
         split = split or "train"
         config_filename = config_filename or cls.config_filename
+
+        if ":" in hub_path:
+            hub_path, hf_dataset_config_name = hub_path.split(":")
+            kwargs["hf_load_kwargs"] = kwargs.get("hf_load_kwargs", {})
+            kwargs["hf_load_kwargs"]["name"] = hf_dataset_config_name
+
         if cache_dir is not None:
             cls.cache_dir = cache_dir
+
+        has_config = config_filename in list_repo_files(hub_path, repo_type="dataset")
+
         if config is not None:
             dataset_config = config.update(kwargs)
-        else:
+        elif has_config:
             dataset_config = DatasetConfig.load(
                 hub_path,
                 filename=config_filename,
                 repo_type=RepoType.DATASET,
                 cache_dir=cls.cache_dir,
+                **kwargs,
             )
+        elif kwargs.get("task", None):
+            config_cls = get_module_config_class(kwargs["task"], registry_type="dataset")
+            if config_cls:
+                dataset_config = config_cls(**kwargs)
+            else:
+                raise ValueError(f"Task `{kwargs['task']}` is not valid!")
+        else:
+            raise ValueError(
+                f"The dataset at `{hub_path}` does not have enough info and config to load using Hezar!"
+                f"\nHint: Either pass the proper `config` to `.load()` or pass in required config parameters as "
+                f"kwargs in `.load()`, most notably `task`!"
+            )
+
         dataset_config.path = hub_path
         dataset = build_dataset(
             dataset_config.name,

@@ -690,7 +690,7 @@ class Trainer:
         # Footer
         self.accelerator.print(f"\n{colorize_text(footer, 'bold')}\n")
 
-    def train(self, resume_from_checkpoint: str | bool = None):
+    def train(self, resume_from_checkpoint="deprecated"):
         """
         The full training process like training, evaluation, logging and saving model checkpoints.
 
@@ -704,7 +704,7 @@ class Trainer:
                 - Save the trainer state
                 - Write logs to tensorboard, csv, etc.
         """
-        if resume_from_checkpoint:
+        if resume_from_checkpoint != "deprecated":
             raise ValueError(
                 "Setting `resume_from_checkpoint` in `Trainer.train(resume_from_checkpoint=...)` is deprecated. "
                 "You have to set it in the trainer's config!"
