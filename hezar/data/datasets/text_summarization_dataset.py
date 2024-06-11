@@ -53,7 +53,6 @@ class TextSummarizationDataset(Dataset):
 
     def __init__(self, config: TextSummarizationDatasetConfig, split=None, preprocessor=None, **kwargs):
         super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
-        self.dataset = self._load(split)
         self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = TextGenerationDataCollator(
             tokenizer=self.tokenizer,
@@ -73,9 +72,8 @@ class TextSummarizationDataset(Dataset):
             The whole dataset.
 
         """
-        # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
-        dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
-        return dataset
+        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir, **self.config.hf_load_kwargs)
+        return data
 
     def __len__(self):
         """
@@ -85,7 +83,7 @@ class TextSummarizationDataset(Dataset):
             int: The length of the dataset.
 
         """
-        return len(self.dataset)
+        return len(self.data)
 
     def __getitem__(self, index):
         """
@@ -98,10 +96,10 @@ class TextSummarizationDataset(Dataset):
             dict: The input data.
 
         """
-        text = self.dataset[index][self.config.text_field]
+        text = self.data[index][self.config.text_field]
         if self.config.prefix is not None:
             text = self.config.prefix + text  # for conditional generation we might need a static prefix
-        summary = self.dataset[index][self.config.summary_field]
+        summary = self.data[index][self.config.summary_field]
 
         inputs = self.tokenizer(
             text,

@@ -53,7 +53,6 @@ class SequenceLabelingDataset(Dataset):
 
     def __init__(self, config: SequenceLabelingDatasetConfig, split=None, preprocessor=None, **kwargs):
         super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
-        self.dataset = self._load(split)
         self._extract_labels()
         self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = SequenceLabelingDataCollator(self.tokenizer, max_length=self.config.max_length)
@@ -69,15 +68,14 @@ class SequenceLabelingDataset(Dataset):
             The whole dataset.
 
         """
-        # TODO: In case we want to make this class work on other types like csv, json, etc. we have to do it here.
-        dataset = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
-        return dataset
+        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir, **self.config.hf_load_kwargs)
+        return data
 
     def _extract_labels(self):
         """
         Extract label names, ids and build dictionaries.
         """
-        tags_list = self.dataset.features[self.config.tags_field].feature.names
+        tags_list = self.data.features[self.config.tags_field].feature.names
         self.id2label = self.config.id2label = {k: str(v) for k, v in dict(enumerate(tags_list)).items()}
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(tags_list)
@@ -90,7 +88,7 @@ class SequenceLabelingDataset(Dataset):
             int: The length of the dataset.
 
         """
-        return len(self.dataset)
+        return len(self.data)
 
     def _tokenize_and_align(self, tokens, labels):
         """
@@ -143,6 +141,6 @@ class SequenceLabelingDataset(Dataset):
             dict: The input data.
 
         """
-        tokens, tags = self.dataset[index].values()
+        tokens, tags = self.data[index].values()
         inputs = self._tokenize_and_align(tokens, tags)
         return inputs

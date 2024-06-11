@@ -80,7 +80,6 @@ class OCRDataset(Dataset):
 
     def __init__(self, config: OCRDatasetConfig, split=None, preprocessor=None, **kwargs):
         super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
-        self.data = self._load(split)
         self.image_processor = self.preprocessor.image_processor
         if self.config.text_split_type == TextSplitType.TOKENIZE:
             if self.config.tokenizer_path is not None:
@@ -113,7 +112,7 @@ class OCRDataset(Dataset):
             Dataset: The cleaned dataset.
 
         """
-        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir)
+        data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir, **self.config.hf_load_kwargs)
         # Cleanup dataset
         valid_indices = []
         invalid_indices = []
