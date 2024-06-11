@@ -81,7 +81,7 @@ class Preprocessor:
         """
         subfolder = subfolder or cls.preprocessor_subfolder
         cache_dir = cache_dir or HEZAR_CACHE_DIR
-        preprocessor_files = list_repo_files(hub_or_local_path, subfolder=subfolder)
+        preprocessor_files = list_repo_files(hub_or_local_path, subfolder=subfolder, repo_type="model")
         preprocessors = PreprocessorsContainer()
         for f in preprocessor_files:
             if f.endswith(".yaml"):

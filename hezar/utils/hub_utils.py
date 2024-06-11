@@ -80,13 +80,14 @@ def clone_repo(repo_id: str, save_path: str, **kwargs):
     return repo.local_dir
 
 
-def list_repo_files(hub_or_local_path: str, subfolder: str = None):
+def list_repo_files(hub_or_local_path: str, subfolder: str = None, repo_type: str | RepoType = RepoType.MODEL):
     """
     List all files in a Hub or local model repo
 
     Args:
         hub_or_local_path: Path to hub or local repo
         subfolder: Optional subfolder path
+        repo_type: Repo type of either dataset or model
 
     Returns:
         A list of all file names
@@ -98,7 +99,7 @@ def list_repo_files(hub_or_local_path: str, subfolder: str = None):
             for file in files_:
                 files.append(os.path.relpath(os.path.join(root, file), hub_or_local_path))
     else:
-        files = HfApi().list_repo_files(hub_or_local_path, repo_type=str(RepoType.MODEL))
+        files = HfApi().list_repo_files(hub_or_local_path, repo_type=str(repo_type))
 
     if subfolder:
         files = [os.path.relpath(f, subfolder) for f in files if subfolder in f]
