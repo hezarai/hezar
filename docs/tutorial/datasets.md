@@ -63,6 +63,8 @@ and adds its own functionalities to it.
 
 Every dataset class must have the following signature:
 ```python
+from dataclasses import dataclass
+
 from hezar.data import Dataset, DatasetConfig
 from hezar.registry import register_dataset
 
