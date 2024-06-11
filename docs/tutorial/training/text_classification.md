@@ -63,11 +63,11 @@ class SentimentAnalysisDataset(TextClassificationDataset):
         self.num_labels = self.config.num_labels = len(self.id2label)
 
     def __len__(self):
-        return len(self.dataset)
+        return len(self.data)
 
     def __getitem__(self, index):
-        text = self.dataset[index][self.config.text_field]
-        label = self.dataset[index][self.config.label_field]
+        text = self.data[index][self.config.text_field]
+        label = self.data[index][self.config.label_field]
         label_id = self.label2id[label]
         inputs = self.tokenizer(
             text,

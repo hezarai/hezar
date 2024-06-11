@@ -18,24 +18,22 @@ xlsum_dataset = load_dataset("hezarai/xlsum-fa")
 ```python
 from hezar.data import Dataset
 
-sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
-lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
-xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
+sentiment_dataset = Dataset.load("hezarai/sentiment-dksf", preprocessor="hezarai/bert-base-fa")  # A TextClassificationDataset instance
+lscp_dataset = Dataset.load("hezarai/lscp-pos-500k", preprocessor="hezarai/roberta-base-fa")  # A SequenceLabelingDataset instance
+xlsum_dataset = Dataset.load("hezarai/xlsum-fa", preprocessor="hezarai/t5-base-fa")  # A TextSummarizationDataset instance
 ...
 ```
 
 The difference between using Hezar vs Hugging Face datasets is the output class. In Hezar when you load
 a dataset using the `Dataset` class, it automatically finds the proper class for that dataset and creates a
-PyTorch `Dataset` instance so that it can be easily passed to a PyTorch `DataLoader` class.
+PyTorch `Dataset` instance so that it can be easily passed to a PyTorch `DataLoader` class. That's why it also requires
+the `preprocessor` to be filled since iterating the dataset needs the preprocessor to process the samples. 
 ```python
 from torch.utils.data import DataLoader
 
 from hezar.data.datasets import Dataset
 
-dataset = Dataset.load(
-    "hezarai/lscp-pos-500k",
-    tokenizer_path="hezarai/distilbert-base-fa",  # tokenizer_path is necessary for data collator
-)
+dataset = Dataset.load("hezarai/lscp-pos-500k", preprocessor="hezarai/distilbert-base-fa")
 
 loader = DataLoader(dataset, batch_size=16, shuffle=True, collate_fn=dataset.data_collator)
 itr = iter(loader)
@@ -43,9 +41,11 @@ print(next(itr))
 ```
 But when loading using Hugging Face datasets, the output is an HF Dataset instance.
 
-So in a nutshell, any Hezar dataset can be loaded using HF datasets but not vise-versa!
+```{note}
+Any Hezar dataset can be loaded using HF datasets but not vise-versa!
 (Because Hezar looks out for a `dataset_config.yaml` file in any dataset repo so non-Hezar datasets cannot be
-loaded using Hezar `Dataset` class.)
+loaded using Hezar `Dataset` class in most cases!)
+```
 
 ## Dataset classes
 Hezar categorizes datasets based on their target task. The dataset classes all inherit from the base `Dataset` class
@@ -120,7 +120,14 @@ dataset = Dataset.load(dataset_path, split="train", config=dataset_config)
 ```
 
 
-## Dataset Templates
+## Dataset Templates (Deprecated)
 We try to have a simple yet practical pattern for all datasets on the Hub. Every dataset on the Hub needs to have
 a dataset loading script. Some ready to use templates are located in the [templates/dataset_scripts](https://github.com/hezarai/hezar/tree/main/templates/dataset_scripts) folder.
 To add a new Hezar compatible dataset to the Hub you can follow the guide provided there.
+
+```{note}
+Dataset scripts are no longer recommended in the Hugging Face Hub but instead, the datasets must be uploaded in Parquet
+format that already has all the required metadata inside them. For more info on how you can create or convert your
+datasets to Parquet format see [this tutorial](https://huggingface.co/docs/datasets/process#export).
+```
+
