@@ -81,6 +81,12 @@ class ImageCaptioningDataset(Dataset):
         super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
         # Custom initializations here
     
+    def _load(self, split):
+        """
+        Load the data which can be a csv, HF dataset, etc. It will be assigned to the `self.data` attribute.
+        """
+        pass
+    
     def __len__(self):
         pass
     
@@ -92,18 +98,25 @@ class ImageCaptioningDataset(Dataset):
 All the current datasets provided in Hezar's Hugging Face, have the `dataset_config.yaml` in their repos which does not
 exist for regular HF datasets. If you need to load such datasets (that have the correct structure and fields) in Hezar
 using the `Dataset.load()` method, you have to provide the dataset config manually.
+
+```{note}
+If the dataset needs a configuration name to be specified (as `datasets.load_dataset(path, name=<configuration name>)`),
+you can pass it either in `DatasetConfig.hf_load_kwargs` or like `Dataset.load("hezarai/dataset:config_name")`. See the
+example below.
+```
+
 ```python
 from hezar.data import Dataset, SpeechRecognitionDatasetConfig
 
-dataset_path = "mozilla-foundation/common_voice_17_0"
+dataset_path = "mozilla-foundation/common_voice_17_0:fa"  # `fa` is the config name of the dataset
 
 dataset_config = SpeechRecognitionDatasetConfig(
-    path=dataset_path, 
-    dataset_config_name="fa", 
+    path=dataset_path,
     labels_max_length=64,
 )  # You can modify other fields too
 dataset = Dataset.load(dataset_path, split="train", config=dataset_config)
 ```
+
 
 ## Dataset Templates
 We try to have a simple yet practical pattern for all datasets on the Hub. Every dataset on the Hub needs to have
