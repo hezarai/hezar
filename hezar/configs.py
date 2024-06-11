@@ -322,14 +322,37 @@ class PreprocessorConfig(Config):
 class DatasetConfig(Config):
     """
     Base dataclass for all dataset configs
+
+    Args:
+        path (str):
+            Path to the dataset either on the Hub or local. Supported syntax is either `<path>` or `<path>:<name>` where
+            <name> is the parameter `name` in the `load_dataset()`
+        task (str):
+            A supported task for the dataset
+        hf_load_kwargs (dict):
+            keyword arguments to pass to the HF `datasets.load_dataset()`
     """
 
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.DATASET)
-    task: TaskType | List[TaskType] = field(
-        default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
-    )
     path: str = None
+    task: TaskType | List[TaskType] = field(
+        default=None,
+        metadata={"help": "Name of the task(s) this dataset is built for"}
+    )
+    hf_load_kwargs: dict = None
+
+    def __post_init__(self):
+        super().__post_init__()
+        if self.path and ":" in self.path:
+            self.path, config_name = self.path.split(":")
+            self.hf_load_kwargs["name"] = config_name
+        if self.hf_load_kwargs:
+            self.hf_load_kwargs.pop("path", None)
+            self.hf_load_kwargs.pop("cache_dir", None)
+            self.hf_load_kwargs.pop("split", None)
+        else:
+            self.hf_load_kwargs = {}
 
 
 @dataclass
