@@ -3,6 +3,13 @@ Image to text is the task of generating text from an image e.g, image captioning
 In Hezar, the `image2text` task is responsible for all of those which currently includes image captioning and OCR.
 
 In this tutorial, we'll finetune a base OCR model (CRNN) on a license plate recognition dataset.
+```python
+from hezar.data import Dataset
+from hezar.models import CRNNImage2TextConfig, CRNNImage2Text
+from hezar.preprocessors import Preprocessor
+
+base_model_path = "hezarai/crnn-fa-printed-96-long"
+```
 
 ## Dataset
 In Hezar, there are two types of `image2text` datasets: `OCRDataset` and `ImageCaptioningDataset`. The reason is that
@@ -13,27 +20,22 @@ but Transformer-based models like `ViTRoberta` requires the labels as token ids.
 We do provide a pretty solid ALPR dataset at [hezarai/persian-license-plate-v1](https://huggingface.co/datasets/hezarai/persian-license-plate-v1)
 which you can load as easily as:
 ```python
-from hezar.data import Dataset
-from hezar.preprocessors import Preprocessor
-
-dataset_id = "hezarai/persian-license-plate-v1"
 max_length = 8
 reverse_digits = True
-image_processor_config = {"size": (384, 32)}
 
 train_dataset = Dataset.load(
     "hezarai/persian-license-plate-v1",
     split="train",
+    preprocessor=base_model_path,
     max_length=8,
     reverse_digits=True,
-    image_processor_config=image_processor_config,
 )
 eval_dataset = Dataset.load(
     "hezarai/persian-license-plate-v1",
     split="test",
+    preprocessor=base_model_path,
     max_length=8,
     reverse_digits=True,
-    image_processor_config=image_processor_config,
 )
 ```
 - License plates have only 8 characters so we set the max_length=8 which makes the dataset remove longer/shorter samples
@@ -55,12 +57,13 @@ Since we're customizing an `image2text` dataset, we can override the `OCRDataset
 Let's consider you have a CSV file of your dataset with two columns: `image_path`, `text`.
 
 ```python
+import pandas as pd
 from hezar.data import OCRDataset, OCRDatasetConfig
 
 
 class ALPRDataset(OCRDataset):
-    def __init__(self, config: OCRDatasetConfig, split=None, **kwargs):
-        super().__init__(config=config, split=split, **kwargs)
+    def __init__(self, config: OCRDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
 
     # Override the `_load` method (originally loads a dataset from the Hub) to load the csv file
     def _load(self, split=None):
@@ -91,11 +94,6 @@ You can customize this class further according to your needs.
 For the model we'll use the `CRNN` model with pretrained weights from `hezarai/crnn-fa-printed-96-long` which was trained
 on a large Persian corpus with millions of synthetic samples. 
 ```python
-from hezar.models import CRNNImage2TextConfig, CRNNImage2Text
-from hezar.preprocessors import Preprocessor
-
-base_model_path = "hezarai/crnn-fa-printed-96-long"
-
 model_config = CRNNImage2TextConfig.load(base_model_path, id2label=train_dataset.config.id2label)
 model = CRNNImage2Text(model_config)
 preprocessor = Preprocessor.load(base_model_path)

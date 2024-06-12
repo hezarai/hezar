@@ -46,8 +46,8 @@ from hezar.data import TextClassificationDataset, TextClassificationDatasetConfi
 class SentimentAnalysisDataset(TextClassificationDataset):
     id2label = {0: "negative", 1: "positive", 2: "neutral"}
     
-    def __init__(self, config: TextClassificationDatasetConfig, split=None, **kwargs):
-        super().__init__(config, split=split, **kwargs)
+    def __init__(self, config: TextClassificationDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
 
     def _load(self, split):
         # Load a dataframe here and make sure the split is fetched

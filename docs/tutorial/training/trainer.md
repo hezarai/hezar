@@ -16,8 +16,20 @@ from hezar.trainer import Trainer, TrainerConfig
 
 base_model_path = "hezarai/crnn-fa-printed-96-long"
 
-train_dataset = Dataset.load("hezarai/persian-license-plate-v1", split="train", max_length=8, reverse_digits=True)
-eval_dataset = Dataset.load("hezarai/persian-license-plate-v1", split="test", max_length=8, reverse_digits=True)
+train_dataset = Dataset.load(
+    "hezarai/persian-license-plate-v1", 
+    split="train",
+    preprocessor=base_model_path,
+    max_length=8, 
+    reverse_digits=True,
+)
+eval_dataset = Dataset.load(
+    "hezarai/persian-license-plate-v1", 
+    split="test",
+    preprocessor=base_model_path,
+    max_length=8, 
+    reverse_digits=True,
+)
 
 model = CRNNImage2Text(CRNNImage2TextConfig(id2label=train_dataset.config.id2label))
 preprocessor = Preprocessor.load(base_model_path)

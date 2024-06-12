@@ -32,8 +32,8 @@ custom datasets refer to [this tutorial]().
 Loading Hezar datasets is pretty straight forward:
 
 ```python
-train_dataset = Dataset.load("hezarai/lscp-pos-500k", split="train", tokenizer_path=base_model_path)
-eval_dataset = Dataset.load("hezarai/lscp-pos-500k", split="test", tokenizer_path=base_model_path)
+train_dataset = Dataset.load("hezarai/lscp-pos-500k", split="train", preprocessor=base_model_path)
+eval_dataset = Dataset.load("hezarai/lscp-pos-500k", split="test", preprocessor=base_model_path)
 ```
 What are these objects? Well, these are basically PyTorch Dataset instances which are actually wrapped by Hezar's 
 `SequenceLabelingDataset` class (a subclass of `hezar.data.datasets.Dataset`). 

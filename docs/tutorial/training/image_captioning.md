@@ -41,8 +41,8 @@ from hezar.utils import shift_tokens_right
 
 
 class Flickr30kDataset(ImageCaptioningDataset):
-    def __init__(self, config: ImageCaptioningDatasetConfig, split=None, **kwargs):
-        super().__init__(config=config, split=split, **kwargs)
+    def __init__(self, config: ImageCaptioningDatasetConfig, split=None, preprocessor=None, **kwargs):
+        super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
 
     # Override the `_load` method (originally loads a dataset from the Hub) to load the csv file
     def _load(self, split=None):
