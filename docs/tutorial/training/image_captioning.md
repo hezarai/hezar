@@ -76,45 +76,7 @@ You can customize this class further according to your needs.
 
 ### Data Collator
 The default data collator of the `ImageCaptioningDataset` named `ImageCaptioningDataCollator` handles the data collation
-as below:
-```python
-from ..preprocessors import Tokenizer
-from ..utils import convert_batch_dict_dtype
-
-class ImageCaptioningDataCollator:
-    def __init__(
-        self,
-        tokenizer: Tokenizer,
-        padding_type: str = "longest",
-        padding_side: str = "right",
-        max_length: int = None,
-        return_tensors: str = "pt",
-    ):
-        self.tokenizer = tokenizer
-        self.padding_type = padding_type
-        self.padding_side = padding_side
-        self.max_length = max_length
-        self.return_tensors = return_tensors
-
-    def __call__(self, encoded_batch):
-        encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
-        permuted_batch = {}
-        for key in encoded_batch[0].keys():
-            stack = [e for item in encoded_batch for e in item[key]]
-            permuted_batch[key] = stack
-
-        padded_batch = self.tokenizer.pad_encoded_batch(
-            permuted_batch,
-            padding=self.padding_type,
-            max_length=self.max_length,
-            exclude_keys=["pixel_values"],
-            return_tensors=self.return_tensors,
-        )
-        padded_batch = convert_batch_dict_dtype(padded_batch, dtype="pt")
-
-        return padded_batch
-```
-This collator pads the tokenizer outputs based on max length and padding type.
+by padding the tokenizer outputs based on max length and padding type.
 
 ## Model
 For the model we'll use the `ViTRobertaImage2Text` model with pretrained weights from `hezarai/vit-roberta-fa-base` 
