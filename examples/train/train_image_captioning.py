@@ -17,6 +17,9 @@ train_config = TrainerConfig(
     batch_size=12,
     num_epochs=20,
     mixed_precision="fp16",
+    resume_from_checkpoint=True,
+    log_steps=100,
+    save_steps=500,
     metrics=["wer"],
     metric_for_best_model="wer"
 )
