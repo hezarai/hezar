@@ -54,7 +54,6 @@ class SentimentAnalysisDataset(TextClassificationDataset):
         df = pd.read_csv(self.config.path)
         return df
 
-
     def _extract_labels(self):
         """
         Extract label names, ids and build dictionaries.
