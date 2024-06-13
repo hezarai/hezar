@@ -272,7 +272,6 @@ class Trainer:
                         self.config.init_weights_from,
                         filename=model.model_filename,
                         cache_dir=HEZAR_CACHE_DIR,
-                        resume_download=True,
                     )
                 model.load_state_dict(torch.load(model_path))
 

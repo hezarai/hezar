@@ -599,7 +599,6 @@ class Tokenizer(Preprocessor):
                 filename=tokenizer_filename,
                 subfolder=subfolder,
                 cache_dir=cache_dir,
-                resume_download=True,
             )
         tokenizer = build_preprocessor(config.name, config, tokenizer_file=tokenizer_path, **kwargs)
         return tokenizer

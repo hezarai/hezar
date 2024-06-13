@@ -153,7 +153,6 @@ class Model(nn.Module):
                 hub_or_local_path,
                 filename=model_filename,
                 cache_dir=cache_dir,
-                resume_download=True,
             )
         else:
             model_path = os.path.join(hub_or_local_path, model_filename)

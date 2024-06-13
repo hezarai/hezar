@@ -218,14 +218,12 @@ class Embedding:
                 filename=embedding_file,
                 subfolder=subfolder,
                 cache_dir=cache_dir,
-                resume_download=True,
             )
             vectors_path = hf_hub_download(
                 hub_or_local_path,
                 filename=vectors_file,
                 subfolder=subfolder,
                 cache_dir=cache_dir,
-                resume_download=True,
             )
 
         embedding = build_embedding(
