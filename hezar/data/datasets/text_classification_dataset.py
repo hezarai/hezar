@@ -79,16 +79,6 @@ class TextClassificationDataset(Dataset):
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(labels_list)
 
-    def __len__(self):
-        """
-        Returns the length of the dataset.
-
-        Returns:
-            int: The length of the dataset.
-
-        """
-        return len(self.data)
-
     def __getitem__(self, index):
         """
         Tokenize inputs and return a dict containing ids, masks, labels, etc.

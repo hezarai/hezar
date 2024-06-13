@@ -52,9 +52,6 @@ class SpeechRecognitionDataset(Dataset):
         data = data.cast_column(self.config.audio_column, Audio(sampling_rate=self.config.sampling_rate))
         return data
 
-    def __len__(self):
-        return len(self.data)
-
     def __getitem__(self, index):
         sample_dict = self.data[index]
         transcript = sample_dict[self.config.transcript_column]

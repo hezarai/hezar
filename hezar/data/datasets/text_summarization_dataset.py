@@ -75,16 +75,6 @@ class TextSummarizationDataset(Dataset):
         data = load_dataset(self.config.path, split=split, cache_dir=self.cache_dir, **self.config.hf_load_kwargs)
         return data
 
-    def __len__(self):
-        """
-        Returns the length of the dataset.
-
-        Returns:
-            int: The length of the dataset.
-
-        """
-        return len(self.data)
-
     def __getitem__(self, index):
         """
         Tokenize inputs and return a dict containing ids, masks, labels, etc.

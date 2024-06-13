@@ -90,13 +90,9 @@ class Dataset(TorchDataset):
 
     def __len__(self):
         """
-        Returns the length of the dataset.
-
-        Raises:
-            NotImplementedError: This method must be implemented in derived classes.
-
+        Returns the length of the dataset. If the `max_size` is set in the config, will return that.
         """
-        raise NotImplementedError
+        return self.config.max_size or len(self.data)
 
     def __getitem__(self, index):
         """

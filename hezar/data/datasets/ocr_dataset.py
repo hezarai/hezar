@@ -91,16 +91,6 @@ class OCRDataset(Dataset):
             self.tokenizer = None
             self.data_collator = CharLevelOCRDataCollator()
 
-    def __len__(self):
-        """
-        Returns the length of the dataset.
-
-        Returns:
-            int: The length of the dataset.
-
-        """
-        return len(self.data)
-
     def _load(self, split=None):
         """
         Load the dataset and clean up invalid samples.

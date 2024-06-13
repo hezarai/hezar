@@ -50,16 +50,6 @@ class ImageCaptioningDataset(Dataset):
             max_length=self.config.max_length
         )
 
-    def __len__(self):
-        """
-        Returns the length of the dataset.
-
-        Returns:
-            int: The length of the dataset.
-
-        """
-        return len(self.data)
-
     def _load(self, split):
         """
         Load the dataset and clean up invalid samples.

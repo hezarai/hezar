@@ -80,16 +80,6 @@ class SequenceLabelingDataset(Dataset):
         self.label2id = self.config.label2id = {v: k for k, v in self.id2label.items()}
         self.num_labels = self.config.num_labels = len(tags_list)
 
-    def __len__(self):
-        """
-        Returns the length of the dataset.
-
-        Returns:
-            int: The length of the dataset.
-
-        """
-        return len(self.data)
-
     def _tokenize_and_align(self, tokens, labels):
         """
         Tokenize and align tokens and labels.
