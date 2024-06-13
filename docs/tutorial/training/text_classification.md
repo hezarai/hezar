@@ -1,19 +1,19 @@
 # Text Classification (Sentiment Analysis)
 Text classification is the task of categorizing a text to a label. The most notable example is sentiment analysis.
-In this tutorial we'll finetune a RoBERTa model on a dataset of sentiments (labels: positive, negative, neutral) gathered
+In this tutorial we'll finetune a BERT model on a dataset of sentiments (labels: positive, negative, neutral) gathered
 from users comments on Digikala and SnappFood.
 
 Let's first import everything needed.
 ```python
-from hezar.models import RobertaTextClassification, RobertaTextClassificationConfig
+from hezar.models import BertTextClassification, BertTextClassificationConfig
 from hezar.data import Dataset
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 ```
 
-As mentioned we'll use the base RoBERTa model to do so.
+As mentioned we'll use the base BERT model to do so.
 ```python
-base_model_path = "hezarai/roberta-base-fa"
+base_model_path = "hezarai/bert-base-fa"
 ```
 ## Dataset
 The selected dataset is a collection of users comments on products and food.
@@ -90,7 +90,7 @@ dataset just move on to the next steps.
 ## Model & Preprocessor
 As said, we'll use the base RoBERTa model:
 ```python
-model = RobertaTextClassification(RobertaTextClassificationConfig(id2label=train_dataset.config.id2label))
+model = BertTextClassification(BertTextClassificationConfig(id2label=train_dataset.config.id2label))
 preprocessor = Preprocessor.load(base_model_path)
 ```
 
@@ -99,7 +99,7 @@ Now that the datasets and model are ready let's go for training.
 ### Training Configuration
 ```python
 train_config = TrainerConfig(
-    output_dir="roberta-fa-sentiment-analysis",
+    output_dir="bert-fa-sentiment-analysis",
     task="text_classification",
     device="cuda",
     init_weights_from=base_model_path,
@@ -125,7 +125,73 @@ trainer = Trainer(
 )
 trainer.train()
 ```
+```
+Hezar (WARNING): Partially loading the weights as the model architecture and the given state dict are incompatible! 
+Ignore this warning in case you plan on fine-tuning this model
+Incompatible keys: []
+Missing keys: ['classifier.weight', 'classifier.bias']
 
+
+******************** Training Info ********************
+
+  Output Directory: bert-fa-sentiment-analysis-dksf
+  Task: text_classification
+  Model: BertTextClassification
+  Init Weights: hezarai/bert-base-fa
+  Device(s): cuda
+  Batch Size: 8
+  Epochs: 10
+  Total Steps: 35760
+  Training Dataset: TextClassificationDataset(28602)
+  Evaluation Dataset: TextClassificationDataset(2315)
+  Optimizer: adam
+  Scheduler: None
+  Initial Learning Rate: 2e-05
+  Learning Rate Decay: 0.0
+  Number of Parameters: 118299651
+  Number of Trainable Parameters: 118299651
+  Mixed Precision: Full (fp32)
+  Gradient Accumulation Steps: 1
+  Metrics: ['accuracy']
+  Save Steps: 3576
+  Log Steps: None
+  Checkpoints Path: bert-fa-sentiment-analysis-dksf/checkpoints
+  Logs Path: bert-fa-sentiment-analysis-dksf/logs/Jun13_19-29-38_bigrig
+
+*******************************************************
+
+
+Epoch: 1/10     100%|######################################################################| 3576/3576 [05:58<00:00,  9.99batch/s, loss=0.62] 
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 38.38batch/s, accuracy=0.811]
+
+Epoch: 2/10     100%|######################################################################| 3576/3576 [06:02<00:00,  9.86batch/s, loss=0.479]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 38.66batch/s, accuracy=0.818]
+
+Epoch: 3/10     100%|######################################################################| 3576/3576 [06:03<00:00,  9.84batch/s, loss=0.369]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 37.79batch/s, accuracy=0.845]  
+
+Epoch: 4/10     100%|######################################################################| 3576/3576 [06:00<00:00,  9.92batch/s, loss=0.299]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 38.09batch/s, accuracy=0.829]
+
+Epoch: 5/10     100%|######################################################################| 3576/3576 [06:00<00:00,  9.91batch/s, loss=0.252]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 37.88batch/s, accuracy=0.854]
+
+Epoch: 6/10     100%|######################################################################| 3576/3576 [06:02<00:00,  9.87batch/s, loss=0.219]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 38.68batch/s, accuracy=0.846] 
+
+Epoch: 7/10     100%|######################################################################| 3576/3576 [06:00<00:00,  9.93batch/s, loss=0.194]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 37.61batch/s, accuracy=0.862] 
+
+Epoch: 8/10     100%|######################################################################| 3576/3576 [06:01<00:00,  9.90batch/s, loss=0.175]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 37.85batch/s, accuracy=0.857] 
+
+Epoch: 9/10     100%|######################################################################| 3576/3576 [06:01<00:00,  9.90batch/s, loss=0.16] 
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 37.71batch/s, accuracy=0.84] 
+
+Epoch: 10/10    100%|######################################################################| 3576/3576 [06:01<00:00,  9.89batch/s, loss=0.147]
+Evaluating...   100%|######################################################################| 290/290 [00:07<00:00, 37.70batch/s, accuracy=0.83] 
+Hezar (INFO): Training done!
+```
 ## Push to Hub
 If you'd like, you can push the model along with other Trainer files to the Hub.
 ```python

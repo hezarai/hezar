@@ -32,14 +32,17 @@ custom datasets refer to [this tutorial]().
 Loading Hezar datasets is pretty straight forward:
 
 ```python
-train_dataset = Dataset.load("hezarai/lscp-pos-500k", split="train", preprocessor=base_model_path)
-eval_dataset = Dataset.load("hezarai/lscp-pos-500k", split="test", preprocessor=base_model_path)
+train_dataset = Dataset.load("hezarai/lscp-pos-500k", split="train", preprocessor=base_model_path, max_size=100000)
+eval_dataset = Dataset.load("hezarai/lscp-pos-500k", split="test", preprocessor=base_model_path, max_size=10000)
 ```
 What are these objects? Well, these are basically PyTorch Dataset instances which are actually wrapped by Hezar's 
 `SequenceLabelingDataset` class (a subclass of `hezar.data.datasets.Dataset`). 
 
 What does the `SequenceLabelingDataset`'s `__getitem__` do? Simple! It just tokenizes the inputs and return a dictionary
-containing `token_ids`, `labels`, `attention_mask`, `word_ids`. 
+containing `token_ids`, `labels`, `attention_mask`, `word_ids`.
+
+Note that here we set the `max_size` for train and eval sets to 100K and 10K respectively since that's more than enough
+for this demonstration.
 
 ### What about the data collator?
 Indeed, our dataset needs a data collator function that concatenates multiple samples into a batch by padding them. etc.
@@ -70,6 +73,7 @@ train_config = TrainerConfig(
     device="cuda",
     init_weights_from=base_model_path,
     batch_size=8,
+    num_dataloader_workers=2,
     num_epochs=5,
     metrics=["seqeval"],
 )
@@ -95,7 +99,58 @@ Now we've got everything needed to train the model on our dataset. Let's roll...
 ```python
 trainer.train()
 ```
+```
+Hezar (WARNING): Partially loading the weights as the model architecture and the given state dict are incompatible! 
+Ignore this warning in case you plan on fine-tuning this model
+Incompatible keys: []
+Missing keys: ['classifier.weight', 'classifier.bias']
 
+
+******************** Training Info ********************
+
+  Output Directory: bert-fa-pos-lscp-500k
+  Task: sequence_labeling
+  Model: BertSequenceLabeling
+  Init Weights: hezarai/bert-base-fa
+  Device(s): cuda
+  Batch Size: 8
+  Epochs: 5
+  Total Steps: 62500
+  Training Dataset: SequenceLabelingDataset(100000)
+  Evaluation Dataset: SequenceLabelingDataset(10000)
+  Optimizer: adam
+  Scheduler: None
+  Initial Learning Rate: 2e-05
+  Learning Rate Decay: 0.0
+  Number of Parameters: 118315031
+  Number of Trainable Parameters: 118315031
+  Mixed Precision: Full (fp32)
+  Gradient Accumulation Steps: 1
+  Metrics: ['seqeval']
+  Save Steps: 12500
+  Log Steps: None
+  Checkpoints Path: bert-fa-pos-lscp-500k/checkpoints
+  Logs Path: bert-fa-pos-lscp-500k/logs/Jun14_00-46-47_bigrig
+
+*******************************************************
+
+
+Epoch: 1/5      100%|######################################################################| 12500/12500 [14:29<00:00, 14.37batch/s, loss=0.358]
+Evaluating...   100%|######################################################################| 1250/1250 [00:25<00:00, 56.82batch/s, accuracy=0.914, f1=0.914, loss=0.254, precision=0.914, recall=0.914]
+
+Epoch: 2/5      100%|######################################################################| 12500/12500 [14:19<00:00, 14.17batch/s, loss=0.358]
+Evaluating...   100%|######################################################################| 1250/1250 [00:23<00:00, 56.82batch/s, accuracy=0.926, f1=0.926, loss=0.254, precision=0.926, recall=0.926]
+
+Epoch: 3/5      100%|######################################################################| 12500/12500 [14:39<00:00, 14.02batch/s, loss=0.358]
+Evaluating...   100%|######################################################################| 1250/1250 [00:22<00:00, 56.82batch/s, accuracy=0.928, f1=0.928, loss=0.254, precision=0.928, recall=0.928]
+
+Epoch: 4/5      100%|######################################################################| 12500/12500 [14:22<00:00, 14.56batch/s, loss=0.358]
+Evaluating...   100%|######################################################################| 1250/1250 [00:20<00:00, 56.82batch/s, accuracy=0.932, f1=0.932, loss=0.254, precision=0.932, recall=0.932]
+
+Epoch: 5/5      100%|######################################################################| 12500/12500 [14:29<00:00, 14.98batch/s, loss=0.358]
+Evaluating...   100%|######################################################################| 1250/1250 [00:20<00:00, 56.82batch/s, accuracy=0.942, f1=0.942, loss=0.254, precision=0.942, recall=0.942]
+Hezar (INFO): Training done!
+```
 ## Push to Hub
 If you'd like, you can push the model along with other Trainer files to the Hub.
 ```python
