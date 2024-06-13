@@ -95,6 +95,7 @@ Let's explore all the available parameters:
 - **weight_decay** (float): Optimizer weight decay value.
 - **lr_scheduler** (LRSchedulerType): Optional learning rate scheduler among `LRSchedulerType` enum.
 - **lr_scheduler_kwargs** (Dict[str, Any]): LR scheduler instructor kwargs depending on the scheduler type
+- **lr_scheduling_steps** (int): Number of steps to perform scheduler stepping. If left as None, will default to the steps in one full epoch.
 - **batch_size** (int): Training batch size.
 - **eval_batch_size** (int): Evaluation batch size, defaults to `batch_size` if None.
 - **gradient_accumulation_steps** (int): Number of updates steps to accumulate before performing a backward/update pass,
@@ -242,7 +243,8 @@ the number of batches present in the data loader:
    does not happen here since it has its own method.
 3. Optimization step (`optimization_step`): Does the optimizer stepping and zeros gradients afterward. (Gradient
    accumulation is handled by the accelerator)
-4. Update loss tracker and the trainer states.
+4. LR scheduling: Depending on `lr_scheduling_steps`, perform one step of LR scheduling.
+5. Update loss tracker and the trainer states.
 5. Update and show the loss moving average in the progress bar.
 6. Perform saving and logging according to `save_steps` and `log_steps`.
 7. Return average loss up until now. (This value is accumulated and averaged since the beginning of the whole training

@@ -55,6 +55,7 @@ from .trainer_utils import (
     get_distributed_logger,
     resolve_logdir,
     write_to_tensorboard,
+    get_lr_scheduler_type,
 )
 
 
@@ -72,6 +73,7 @@ optimizers = {
 }
 lr_schedulers = {
     LRSchedulerType.LAMBDA: torch.optim.lr_scheduler.LambdaLR,
+    LRSchedulerType.REDUCE_ON_PLATEAU: torch.optim.lr_scheduler.ReduceLROnPlateau,
     LRSchedulerType.STEP: torch.optim.lr_scheduler.StepLR,
     LRSchedulerType.MULTI_STEP: torch.optim.lr_scheduler.MultiStepLR,
     LRSchedulerType.ONE_CYCLE: torch.optim.lr_scheduler.OneCycleLR,
@@ -186,7 +188,10 @@ class Trainer:
 
         # Setup optimizer and (optionally) lr scheduler
         self.optimizer, self.lr_scheduler = self._create_optimizers(optimizer, lr_scheduler)
+        self.lr_scheduling_steps = self.config.lr_scheduling_steps or self.steps_in_epoch
+        self.lr_scheduler_type = get_lr_scheduler_type(self.lr_scheduler, lr_schedulers)
 
+        # Move objects to the accelerator
         self.model, self.optimizer, self.lr_scheduler = self.accelerator.prepare(
             self.model, self.optimizer, self.lr_scheduler
         )
@@ -464,21 +469,6 @@ class Trainer:
         self.optimizer.step()
         self.optimizer.zero_grad()
 
-    def lr_scheduler_step(self, metrics=None):
-        """
-        Perform the learning rate scheduling step
-
-        Args:
-            metrics: one or multiple values that the scheduler watches to either perform step function or not. Only
-             works for `ReduceLROnPlateau`.
-        """
-        if self.lr_scheduler is not None:
-            if isinstance(self.lr_scheduler, lr_schedulers[LRSchedulerType.REDUCE_ON_PLATEAU]):
-                if metrics:
-                    self.lr_scheduler.step(metrics)
-            else:
-                self.lr_scheduler.step()
-
     def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
         """
         Train one batch of data and return loss and model outputs
@@ -582,6 +572,14 @@ class Trainer:
                     self.state.loss_tracker_sum = self.train_loss_tracker.sum
                     accumulated_loss = 0
 
+                # Scheduler step
+                if (
+                    self.lr_scheduler is not None and
+                    self.state.global_step % self.lr_scheduling_steps == 0 and
+                    self.lr_scheduler_type != LRSchedulerType.REDUCE_ON_PLATEAU
+                ):
+                    self.lr_scheduler.step()
+
                 # Save trainer outputs if `save_steps` is hit
                 if self.config.save_steps and self.state.global_step % self.config.save_steps == 0:
                     ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
@@ -593,6 +591,7 @@ class Trainer:
                             self.trainer_state_file,
                         )
                     )
+
                 # Log loss running mean
                 if self.config.log_steps and self.state.global_step % self.config.log_steps == 0:
                     loss_mean = {"train.loss": self.train_loss_tracker.avg}
@@ -733,8 +732,9 @@ class Trainer:
                 }
                 metrics_logs.update(evaluation_logs)
 
-            # LR scheduler step
-            self.lr_scheduler_step(metrics_logs[self.config.metric_for_best_model])
+            # LR scheduler step (only for reduce on plateau)
+            if self.lr_scheduler_type == LRSchedulerType.REDUCE_ON_PLATEAU:
+                self.lr_scheduler.step(metrics_logs[self.config.metric_for_best_model])
 
             # Update trainer state
             self.state.epoch = epoch

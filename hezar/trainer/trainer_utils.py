@@ -15,6 +15,7 @@ __all__ = [
     "write_to_tensorboard",
     "resolve_logdir",
     "get_distributed_logger",
+    "get_lr_scheduler_type",
 ]
 
 
@@ -188,3 +189,8 @@ def get_distributed_logger(name: str, level: str = None, fmt: str = None):
     logger.logger.addHandler(handler)
 
     return logger
+
+def get_lr_scheduler_type(lr_scheduler, schedulers_mapping: dict):
+    for name, scheduler_cls in schedulers_mapping.items():
+        if isinstance(lr_scheduler, scheduler_cls):
+            return name

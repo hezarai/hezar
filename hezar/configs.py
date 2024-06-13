@@ -422,6 +422,8 @@ class TrainerConfig(Config):
             Optional learning rate scheduler among `LRSchedulerType` enum.
         lr_scheduler_kwargs (Dict[str, Any]):
             LR scheduler instructor kwargs depending on the scheduler type
+        lr_scheduling_steps (int):
+            Number of steps to perform scheduler stepping. If left as None, will default to the steps in one full epoch.
         batch_size (int):
             Training batch size.
         eval_batch_size (int):
@@ -473,6 +475,7 @@ class TrainerConfig(Config):
     weight_decay: float = 0.0
     lr_scheduler: str | LRSchedulerType = None
     lr_scheduler_kwargs: Dict[str, Any] = None
+    lr_scheduling_steps: int = None
     batch_size: int = None
     eval_batch_size: int = None
     gradient_accumulation_steps: int = 1
