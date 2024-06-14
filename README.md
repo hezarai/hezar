@@ -214,12 +214,13 @@ You can load any of the datasets on the [Hub](https://huggingface.co/hezarai) li
 ```python
 from hezar.data import Dataset
 
-sentiment_dataset = Dataset.load("hezarai/sentiment-dksf")  # A TextClassificationDataset instance
-lscp_dataset = Dataset.load("hezarai/lscp-pos-500k")  # A SequenceLabelingDataset instance
-xlsum_dataset = Dataset.load("hezarai/xlsum-fa")  # A TextSummarizationDataset instance
-alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1")  # An OCRDataset instance
-flickr30k_dataset = Dataset.load("hezarai/flickr30k-fa")  # An ImageCaptioningDataset instance
-commonvoice_dataset = Dataset.load("hezarai/common-voice-13-fa")  # A SpeechRecognitionDataset instance
+# The `preprocessor` depends on what you want to do exactly later on. Below are just examples.
+sentiment_dataset = Dataset.load("hezarai/sentiment-dksf", preprocessor="hezarai/bert-base-fa")  # A TextClassificationDataset instance
+lscp_dataset = Dataset.load("hezarai/lscp-pos-500k", preprocessor="hezarai/bert-base-fa")  # A SequenceLabelingDataset instance
+xlsum_dataset = Dataset.load("hezarai/xlsum-fa", preprocessor="hezarai/t5-base-fa")  # A TextSummarizationDataset instance
+alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1", preprocessor="hezarai/crnn-fa-printed-96-long")  # An OCRDataset instance
+flickr30k_dataset = Dataset.load("hezarai/flickr30k-fa", preprocessor="hezarai/vit-roberta-fa-base")  # An ImageCaptioningDataset instance
+commonvoice_dataset = Dataset.load("hezarai/common-voice-13-fa", preprocessor="hezarai/whisper-small-fa")  # A SpeechRecognitionDataset instance
 ...
 ```
 The returned dataset objects from `load()` are PyTorch Dataset wrappers for specific tasks and can be used by a data loader out-of-the-box!
