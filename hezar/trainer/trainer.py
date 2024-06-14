@@ -159,10 +159,29 @@ class Trainer:
         self.eval_dataset = eval_dataset
         self.data_collator = data_collator or getattr(self.train_dataset, "data_collator", None)
 
+        # Configure steps
         self.num_batches = math.ceil(len(self.train_dataset) / self.config.batch_size)
+        self.config.max_steps = (
+            math.ceil(self.config.max_steps * self.num_batches) * self.config.num_epochs
+            if isinstance(self.config.max_steps, float)
+            and 0 < self.config.max_steps <= 1
+            else self.config.max_steps
+        )
         self.total_steps = min(
             self.config.max_steps or self.num_batches * self.config.num_epochs,
             self.num_batches * self.config.num_epochs
+        )
+        self.config.save_steps = (
+            math.ceil(self.config.save_steps * self.total_steps)
+            if isinstance(self.config.save_steps, float)
+            and 0 < self.config.save_steps <= 1
+            else self.config.save_steps
+        )
+        self.config.log_steps = (
+            math.ceil(self.config.log_steps * self.total_steps)
+            if isinstance(self.config.log_steps, float)
+            and 0 < self.config.log_steps <= 1
+            else self.config.log_steps
         )
         self.steps_in_epoch = min(self.num_batches, self.total_steps)
         self.config.save_steps = self.steps_in_epoch if not self.config.save_steps else self.config.save_steps

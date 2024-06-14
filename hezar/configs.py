@@ -453,10 +453,14 @@ class TrainerConfig(Config):
             `evaluation.{metric_for_best_model}`.
         save_freq (int) (DEPRECATED):
             Deprecated and renamed to `save_steps`.
+        save_enabled (bool):
+            Whether to save checkpoints at all. `False` disables even the saves in-between the epochs.
         save_steps (int):
-            Save the trainer outputs every `save_steps` steps. Leave as `0` to ignore saving between training steps.
+            Save the trainer outputs every `save_steps` steps. Leave as None to ignore saving in-between training steps.
+            If set to a float value between 0 and 1, it will be interpreted as a fraction of the total steps.
         log_steps (int):
-            Save training metrics every `log_steps` steps.
+            Save training metrics every `log_steps` steps. If set to a float value between 0 and 1, it will be
+            interpreted as a fraction of the total steps.
         checkpoints_dir (str):
             Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
         logs_dir (str):
@@ -492,7 +496,7 @@ class TrainerConfig(Config):
     metrics: List[str | MetricConfig] = None
     metric_for_best_model: str = "loss"
     save_enabled: bool = True
-    save_freq: int = None
+    save_freq: int = "deprecated"
     save_steps: int = None
     log_steps: int = None
     checkpoints_dir: str = "checkpoints"
@@ -519,7 +523,7 @@ class TrainerConfig(Config):
                 self.metric_for_best_model = f"train.{self.metric_for_best_model}"
 
         # Validate steps
-        if self.save_steps is not None and self.save_steps % self.gradient_accumulation_steps != 0:
+        if isinstance(self.save_steps, int) and self.save_steps % self.gradient_accumulation_steps != 0:
             logger.warning(
                 f"It's recommended to set a `save_steps` dividable by `gradient_accumulation_steps`, "
                 f"otherwise, the saved model will have non-updated weights!\n"
@@ -527,7 +531,7 @@ class TrainerConfig(Config):
             )
 
         # Validate deprecated fields
-        if self.save_freq is not None:
+        if self.save_freq != "deprecated":
             logger.warning(
                 "Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save)."
                 "Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !"

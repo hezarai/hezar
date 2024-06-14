@@ -111,9 +111,10 @@ Let's explore all the available parameters:
 - **metric_for_best_model** (str):Reference metric key to watch for the best model.
   Recommended to have a {`train.` | `evaluation.`} prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults
   to `evaluation.{metric_for_best_model}`.
-- **save_steps** (int): Save the trainer outputs every `save_steps` steps. Set to `0` or `None` to ignore saving between
-  training steps.
-- **log_steps** (int): Save training metrics every `log_steps` steps.
+- **save_steps** (int): Save the trainer outputs every `save_steps` steps. Leave as None to ignore saving in-between training steps.
+If set to a float value between 0 and 1, it will be interpreted as a fraction of the total steps.
+- **log_steps** (int): Save training metrics every `log_steps` steps. If set to a float value between 0 and 1, it will be
+interpreted as a fraction of the total steps.
 - **checkpoints_dir** (str): Path to the checkpoints' folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.
 - **logs_dir** (str): Path to the logs' folder. The actual log files will be saved under `{output_dir}/{logs_dir}`.
 
