@@ -13,7 +13,6 @@ maintainers = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
 repository = "https://github.com/hezarai/hezar"
 homepage = "https://github.com/hezarai"
 readme = ["README.md"]
-requires-python = ">=3.10.0"
 keywords = ["packaging", "poetry"]
 documentation = "https://hezarai.github.io/hezar/"
 classifiers = [
@@ -32,6 +31,7 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
+python = ">=3.10.0"
 torch = ">=1.10.0"
 omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
