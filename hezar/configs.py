@@ -329,10 +329,12 @@ class DatasetConfig(Config):
             <name> is the parameter `name` in the `load_dataset()`
         task (str):
             A supported task for the dataset
-        max_size (int):
+        max_size (int | float):
             Maximum number of data samples. Overwrites the main length of the dataset when calling `len(dataset)`.
+            If set to a float value between 0 and 1, will be interpreted as a fraction value, e.g, 0.3 means 30% of the
+            whole length.
         hf_load_kwargs (dict):
-            keyword arguments to pass to the HF `datasets.load_dataset()`
+            Keyword arguments to pass to the HF `datasets.load_dataset()`
     """
 
     name: str = field(init=False, default=None)
@@ -342,7 +344,7 @@ class DatasetConfig(Config):
         default=None,
         metadata={"help": "Name of the task(s) this dataset is built for"}
     )
-    max_size: int = None
+    max_size: int | float = None
     hf_load_kwargs: dict = None
 
     def __post_init__(self):

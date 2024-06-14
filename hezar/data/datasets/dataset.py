@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import os
 from typing import List
 
@@ -90,9 +91,15 @@ class Dataset(TorchDataset):
 
     def __len__(self):
         """
-        Returns the length of the dataset. If the `max_size` is set in the config, will return that.
+        Returns the length of the dataset. The `max_size` parameter in the config can overwrite this value.
         """
-        return self.config.max_size or len(self.data)
+        if isinstance(self.config.max_size, float) and 0 < self.config.max_size <= 1:
+            return math.ceil(self.config.max_size * len(self.data))
+
+        elif (isinstance(self.config.max_size, int) and 0 < self.config.max_size < len(self.data)):
+            return self.config.max_size
+
+        return len(self.data)
 
     def __getitem__(self, index):
         """

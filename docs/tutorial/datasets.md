@@ -53,6 +53,15 @@ which is a PyTorch Dataset subclass. (hence having `__getitem__` and `__len__` m
 
 Some examples of the dataset classes are `TextClassificationDataset`, `TextSummarizationDataset`, `SequenceLabelingDataset`, etc.
 
+### Dataset Configs
+All dataset classes must have a dataset config (as a dataclass of type `DatasetConfig`) implemented. Any field in such
+dataclass is acceptable but the base dataset config takes the following for all configs:
+- `task`: A mandatory field representing the task of the dataset of type `hezar.constants.TaskType`
+- `path`: Path to the files of the dataset to be loaded. Can be a Hub dataset or local but remember that the loading procedure must be implemented in the `_load` method of the dataset.
+- `max_size`: Maximum number of data samples. Overwrites the main length of the dataset when calling `len(dataset)`.
+If set to a float value between 0 and 1, will be interpreted as a fraction value, e.g, 0.3 means 30% of the whole length.
+- `hf_load_kwargs`: Keyword arguments to pass to the HF `datasets.load_dataset()`
+
 ### Custom Datasets
 As mentioned, the `Dataset` class is a wrapper around the `torch.utils.data.Dataset` class to make it compatible with
 Hezar's structure and standards (working with configurations most importantly). So writing your own custom dataset is
@@ -90,6 +99,9 @@ class ImageCaptioningDataset(Dataset):
         pass
     
     def __len__(self):
+        """
+        Typically returns the length of the `self.data` or the `config.max_size` if set.
+        """
         pass
     
     def __getitem__(self, index):
