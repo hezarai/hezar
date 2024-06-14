@@ -54,7 +54,7 @@ class TextClassificationDataset(Dataset):
         self.data_collator = TextPaddingDataCollator(
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
-        )
+        ) if self.tokenizer else None
 
     def _load(self, split):
         """

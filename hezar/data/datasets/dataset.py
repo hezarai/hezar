@@ -16,7 +16,9 @@ from ...constants import (
     SplitType,
 )
 from ...preprocessors import Preprocessor, PreprocessorsContainer
-from ...utils import get_module_config_class, list_repo_files, verify_dependencies
+from ...utils import Logger, get_module_config_class, list_repo_files, verify_dependencies
+
+logger = Logger(__name__)
 
 
 class Dataset(TorchDataset):
@@ -26,7 +28,7 @@ class Dataset(TorchDataset):
     Args:
         config: The configuration object for the dataset.
         split: Dataset split name e.g, train, test, validation, etc.
-        preprocessor: Optional preprocessor object (note that most datasets require this argument)
+        preprocessor: Preprocessor object or path (note that Hezar datasets classes require this argument).
         **kwargs: Additional keyword arguments.
 
     Attributes:
@@ -69,7 +71,11 @@ class Dataset(TorchDataset):
             preprocessor (str | Preprocessor | PreprocessorsContainer): Preprocessor for the dataset
         """
         if preprocessor is None:
-            return preprocessor
+            logger.warning(
+                "Since v0.39.0, `Dataset` classes require the `preprocessor` parameter and cannot be None or it will "
+                "lead to errors later on! (This warning will change to an error in the future)"
+            )
+            return PreprocessorsContainer()
 
         if isinstance(preprocessor, str):
             preprocessor = Preprocessor.load(preprocessor)
@@ -91,12 +97,13 @@ class Dataset(TorchDataset):
 
     def __len__(self):
         """
-        Returns the length of the dataset. The `max_size` parameter in the config can overwrite this value.
+        Returns the length of the dataset. The `max_size` parameter in the config can overwrite this value. Override
+        with caution!
         """
         if isinstance(self.config.max_size, float) and 0 < self.config.max_size <= 1:
             return math.ceil(self.config.max_size * len(self.data))
 
-        elif (isinstance(self.config.max_size, int) and 0 < self.config.max_size < len(self.data)):
+        elif isinstance(self.config.max_size, int) and 0 < self.config.max_size < len(self.data):
             return self.config.max_size
 
         return len(self.data)
@@ -118,10 +125,10 @@ class Dataset(TorchDataset):
     def load(
         cls,
         hub_path: str | os.PathLike,
-        config: DatasetConfig = None,
-        config_filename: str = None,
         split: str | SplitType = None,
         preprocessor: str | Preprocessor | PreprocessorsContainer = None,
+        config: DatasetConfig = None,
+        config_filename: str = None,
         cache_dir: str = None,
         **kwargs,
     ) -> "Dataset":
@@ -131,14 +138,14 @@ class Dataset(TorchDataset):
         Args:
             hub_path (str | os.PathLike):
                 Path to dataset from hub or locally.
-            config: (DatasetConfig):
-                A config object to ignore the config in the repo or in case the repo has no `dataset_config.yaml` file
-            config_filename (Optional[str]):
-                Dataset config file name. Falls back to `dataset_config.yaml` if not given.
             split (Optional[str | SplitType]):
                 Dataset split, defaults to "train".
             preprocessor (str | Preprocessor | PreprocessorsContainer):
                 Preprocessor object for the dataset
+            config: (DatasetConfig):
+                A config object to ignore the config in the repo or in case the repo has no `dataset_config.yaml` file
+            config_filename (Optional[str]):
+                Dataset config file name. Falls back to `dataset_config.yaml` if not given.
             cache_dir (str):
                 Path to cache directory, defaults to Hezar's cache directory
             **kwargs:
