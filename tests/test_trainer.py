@@ -25,8 +25,9 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/sentiment-dksf",
             "preprocessor": "hezarai/bert-base-fa",
-            "num_samples": 4,
-            "config": {}
+            "config": {
+                "max_size": 4,
+            }
         },
         "model": {
             "path": "hezarai/bert-fa-sentiment-dksf",
@@ -40,8 +41,9 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/lscp-pos-500k",
             "preprocessor": "hezarai/bert-base-fa",
-            "num_samples": 4,
-            "config": {}
+            "config": {
+                "max_size": 4,
+            }
         },
         "model": {
             "path": "hezarai/distilbert-fa-pos-lscp-500k",
@@ -55,8 +57,8 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/xlsum-fa",
             "preprocessor": "hezarai/t5-base-fa",
-            "num_samples": 4,
             "config": {
+                "max_size": 4,
                 "max_length": 128,
                 "max_target_length": 32,
             }
@@ -73,8 +75,8 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/persian-license-plate-v1",
             "preprocessor": "hezarai/crnn-fa-license-plate-recognition-v2",
-            "num_samples": 4,
             "config": {
+                "max_size": 4,
                 "max_length": 8,
                 "reverse_digits": True,
             }
@@ -91,8 +93,8 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/flickr30k-fa",
             "preprocessor": "hezarai/vit-roberta-fa-base",
-            "num_samples": 2,
             "config": {
+                "max_size": 2,
                 "max_length": 16,
             }
         },
@@ -108,8 +110,8 @@ tasks_setups = {
         "dataset": {
             "path": "hezarai/common-voice-13-fa",
             "preprocessor": "hezarai/whisper-small-fa",
-            "num_samples": 2,
             "config": {
+                "max_size": 2,
                 "labels_max_length": 16,
             }
         },
@@ -136,18 +138,17 @@ common_train_config = {
 @pytest.mark.parametrize("task", tasks_setups.keys())
 def test_trainer(task):
     setup = tasks_setups[task]
-    num_samples = setup["dataset"]["num_samples"]
 
     # Datasets
     train_dataset = Dataset.load(
         setup["dataset"]["path"],
-        split=f"train[:{num_samples}]",
+        split="train",
         preprocessor=setup["dataset"]["preprocessor"],
         **setup["dataset"]["config"],
     )
     eval_dataset = Dataset.load(
         setup["dataset"]["path"],
-        split=f"test[:{num_samples}]",
+        split="test",
         preprocessor=setup["dataset"]["preprocessor"],
         **setup["dataset"]["config"],
     )
