@@ -41,8 +41,7 @@ eval_dataset = Dataset.load(
 - License plates have only 8 characters so we set the max_length=8 which makes the dataset remove longer/shorter samples
 - CRNN's image processor flips the image horizontally (mirror) for Persian but since plates are read in LTR mode we have to set 
 the `reverse_digits=True` so that the labels are represented in RTL mode.
-- The OCR dataset's config has an `image_processor_config` that can be updated by passing a dict in `load()`. Here, 
-we change the size to (384, 32)(width, height) since our model's architecture will require this size later on.
+- For the `preprocessor` we use the base model's preprocessor which is an `ImageProcessor` instance to do the job.
 
 That's all we need to do to create our datasets ready for passing to the Trainer. If you need to create your own dataset
 you can also see the next section or skip it otherwise.
