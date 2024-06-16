@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 from typing import List
 
-import librosa
 import numpy as np
 import torch
 
@@ -17,6 +16,9 @@ from .whisper_speech_recognition_config import WhisperSpeechRecognitionConfig
 
 if is_backend_available(Backends.TRANSFORMERS):
     from transformers import GenerationConfig, WhisperConfig, WhisperForConditionalGeneration
+
+if is_backend_available(Backends.LIBROSA):
+    import librosa
 
 _required_backends = [
     Backends.TRANSFORMERS,
