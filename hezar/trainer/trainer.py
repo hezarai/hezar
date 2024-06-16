@@ -53,9 +53,9 @@ from .trainer_utils import (
     CSVLogger,
     TrainerState,
     get_distributed_logger,
+    get_lr_scheduler_type,
     resolve_logdir,
     write_to_tensorboard,
-    get_lr_scheduler_type,
 )
 
 
