@@ -24,6 +24,16 @@ xlsum_dataset = Dataset.load("hezarai/xlsum-fa", preprocessor="hezarai/t5-base-f
 ...
 ```
 
+```{note}
+The `preprocessor` can also be a `Preprocessor` instance and does not have to be a path.
+```python
+from hezar.data import Dataset
+from hezar.preprocessors import Preprocessor
+
+tokenizer = Preprocessor.load("hezarai/bert-base-fa")
+dataset = Dataset.load("hezarai/sentiment-dksf", preprocessor=tokenizer)
+```
+
 The difference between using Hezar vs Hugging Face datasets is the output class. In Hezar when you load
 a dataset using the `Dataset` class, it automatically finds the proper class for that dataset and creates a
 PyTorch `Dataset` instance so that it can be easily passed to a PyTorch `DataLoader` class. That's why it also requires
