@@ -1,4 +1,5 @@
 from ..registry import register_model  # noqa
+from ..builders import build_model  # noqa
 from .model import Model, ModelConfig  # noqa
 from .model_outputs import *
 from .backbone import *
