@@ -190,6 +190,7 @@ class Trainer:
         # Setup checkpoint and state handler
         self.checkpoints_dir = os.path.join(self.config.output_dir, self.config.checkpoints_dir)
         self.state = self._create_trainer_state(self.config.resume_from_checkpoint)
+        self.trainer_state_path = os.path.join(self.checkpoints_dir, self.trainer_state_file)
         self.logs_dir = self.state.logs_dir
 
         # Set determinism
@@ -604,12 +605,7 @@ class Trainer:
                     ckpt_path_name = str(self.state.global_step).zfill(len(str(self.total_steps)))
                     self.save(os.path.join(self.checkpoints_dir, ckpt_path_name))
                     # Save Trainer state
-                    self.state.save(
-                        os.path.join(
-                            self.checkpoints_dir,
-                            self.trainer_state_file,
-                        )
-                    )
+                    self.state.save(self.trainer_state_path)
 
                 # Log loss running mean
                 if self.config.log_steps and self.state.global_step % self.config.log_steps == 0:
