@@ -7,6 +7,9 @@ them on any machine is a piece of cake!
 ```
 pip install hezar
 ```
+```{note}
+Since v0.39.0, `hezar` is only installable with `Python 3.10` or later!
+```
 ### Installation variations
 Hezar is packed with a lot of tools that are dependent on other packages. Most of the
 time you might not want everything to be installed, hence, providing multiple variations of
@@ -37,5 +40,5 @@ import hezar
 print(hezar.__version__)
 ```
 ```
-0.23.1
+0.39.1
 ```

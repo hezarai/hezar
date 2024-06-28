@@ -31,7 +31,7 @@ Hezar is a library that:
 - and more!
 
 ## Installation
-Hezar is available on PyPI and can be installed with pip:
+Hezar is available on PyPI and can be installed with pip (**Python 3.10 and later**):
 ```
 pip install hezar
 ```
