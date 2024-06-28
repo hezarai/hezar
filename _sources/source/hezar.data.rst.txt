@@ -1,0 +1,27 @@
+hezar.data package
+==================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.data.datasets
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.data.data_collators
+   hezar.data.data_samplers
+
+Module contents
+---------------
+
+.. automodule:: hezar.data
+   :members:
+   :undoc-members:
+   :show-inheritance:

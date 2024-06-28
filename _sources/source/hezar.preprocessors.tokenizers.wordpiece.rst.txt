@@ -1,0 +1,7 @@
+hezar.preprocessors.tokenizers.wordpiece module
+===============================================
+
+.. automodule:: hezar.preprocessors.tokenizers.wordpiece
+   :members:
+   :undoc-members:
+   :show-inheritance:

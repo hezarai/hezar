@@ -1,0 +1,10 @@
+hezar.models.text\_embedding package
+====================================
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.text_embedding
+   :members:
+   :undoc-members:
+   :show-inheritance:

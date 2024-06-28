@@ -1,0 +1,7 @@
+hezar.utils.file\_utils module
+==============================
+
+.. automodule:: hezar.utils.file_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

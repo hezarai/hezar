@@ -1,0 +1,7 @@
+hezar.models.sequence\_labeling.bert.bert\_sequence\_labeling module
+====================================================================
+
+.. automodule:: hezar.models.sequence_labeling.bert.bert_sequence_labeling
+   :members:
+   :undoc-members:
+   :show-inheritance:

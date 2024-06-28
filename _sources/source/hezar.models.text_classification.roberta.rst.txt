@@ -1,0 +1,19 @@
+hezar.models.text\_classification.roberta package
+=================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.text_classification.roberta.roberta_text_classification
+   hezar.models.text_classification.roberta.roberta_text_classification_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.text_classification.roberta
+   :members:
+   :undoc-members:
+   :show-inheritance:

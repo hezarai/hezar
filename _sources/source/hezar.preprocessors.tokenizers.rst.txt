@@ -1,0 +1,22 @@
+hezar.preprocessors.tokenizers package
+======================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.preprocessors.tokenizers.bpe
+   hezar.preprocessors.tokenizers.sentencepiece_bpe
+   hezar.preprocessors.tokenizers.sentencepiece_unigram
+   hezar.preprocessors.tokenizers.tokenizer
+   hezar.preprocessors.tokenizers.wordpiece
+
+Module contents
+---------------
+
+.. automodule:: hezar.preprocessors.tokenizers
+   :members:
+   :undoc-members:
+   :show-inheritance:

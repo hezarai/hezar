@@ -1,0 +1,7 @@
+hezar.preprocessors.text\_normalizer module
+===========================================
+
+.. automodule:: hezar.preprocessors.text_normalizer
+   :members:
+   :undoc-members:
+   :show-inheritance:
