@@ -29,6 +29,7 @@ __all__ = [
     "gray_scale_image",
     "find_channels_axis_side",
     "transpose_channels_axis_side",
+    "draw_boxes",
 ]
 
 
@@ -233,4 +234,34 @@ def transpose_channels_axis_side(
     elif axis_side == ChannelsAxisSide.LAST:
         image = image.transpose((1, 2, 0))
 
+    return image
+
+
+def draw_boxes(image, bboxes, bbox_color: tuple = (0, 255, 0)):
+    """
+    Draw bbox on the image
+
+    Args:
+        image: A *single* image
+        bboxes: A list of bboxes in a single image
+        bbox_color: Color of the bbox in image
+
+    Returns:
+        The overlaid image
+    """
+    import cv2
+
+    for bbox in bboxes:
+        if bbox is None:
+            continue
+        x1, y1, w, h = bbox
+        x2 = x1 + w
+        y2 = y1 + h
+        image = cv2.rectangle(
+            image,
+            (x1, y1),
+            (x2, y2),
+            bbox_color,
+            1,
+        )
     return image

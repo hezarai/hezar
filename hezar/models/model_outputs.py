@@ -13,6 +13,7 @@ __all__ = [
     "TextGenerationOutput",
     "SpeechRecognitionOutput",
     "Image2TextOutput",
+    "TextDetectionOutput",
 ]
 
 
@@ -95,3 +96,8 @@ class SpeechRecognitionOutput(ModelOutput):
 class Image2TextOutput(ModelOutput):
     text: Optional[str] = None
     score: Optional[str] = None
+
+
+@dataclass(repr=False)
+class TextDetectionOutput(ModelOutput):
+    boxes: list[int] = None
