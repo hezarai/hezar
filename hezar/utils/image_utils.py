@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from io import BytesIO
 from typing import Iterable, Tuple
 
@@ -16,19 +17,22 @@ from .logging import Logger
 logger = Logger(__name__)
 
 if is_backend_available(Backends.PILLOW):
-    from PIL import Image
+    from PIL import Image, ImageDraw
 
 __all__ = [
     "convert_image_type",
     "normalize_image",
     "load_image",
     "show_image",
+    "save_image",
     "rescale_image",
     "resize_image",
     "mirror_image",
     "gray_scale_image",
     "find_channels_axis_side",
     "transpose_channels_axis_side",
+    "draw_boxes",
+    "crop_boxes",
 ]
 
 
@@ -106,6 +110,21 @@ def show_image(image: Image.Image | torch.Tensor | np.ndarray, title: str = "Ima
     pil_image.show(title=title)
 
 
+def save_image(image: Image.Image | torch.Tensor | np.ndarray, path: str):
+    """
+    Save a PIL/numpy/torch image into a path.
+
+    Args:
+        image: A PIL.Image or np.ndarray or torch.Tensor image type
+        path: The full path of the image to save
+    """
+    if os.path.dirname(path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    pil_image = convert_image_type(image, ImageType.PILLOW)
+    pil_image.save(path)
+
+
 def rescale_image(image: np.ndarray, scale: float):
     verify_image_dims(image)
     image = image * scale
@@ -169,7 +188,7 @@ def gray_scale_image(image: np.ndarray, return_type: str | ImageType = ImageType
 def normalize_image(
     image: np.ndarray,
     mean: float | Iterable[float],
-    std:  float | Iterable[float],
+    std: float | Iterable[float],
     channel_axis: str | ChannelsAxisSide = "first",
 ):
     verify_image_dims(image)
@@ -205,7 +224,7 @@ def find_channels_axis_side(image: np.ndarray, num_channels: int = None):
 
 def transpose_channels_axis_side(
     image: np.ndarray,
-    axis_side:  str | ChannelsAxisSide,
+    axis_side: str | ChannelsAxisSide,
     num_channels: int = None,
     src_axis_side: str | ChannelsAxisSide = None,
 ):
@@ -234,3 +253,59 @@ def transpose_channels_axis_side(
         image = image.transpose((1, 2, 0))
 
     return image
+
+
+def draw_boxes(image, bboxes, bbox_color: tuple = (0, 255, 0)) -> "Image.Image":
+    """
+    Draw bbox on the image
+
+    Args:
+        image: A *single* image (Pillow Image object)
+        bboxes: A list of bboxes in a single image
+        bbox_color: Color of the bbox in image (RGB tuple)
+
+    Returns:
+        The overlaid image
+    """
+    # Convert the bbox_color from BGR to RGB if necessary
+    bbox_color = (bbox_color[0], bbox_color[1], bbox_color[2])
+
+    # Create a drawing context
+    draw = ImageDraw.Draw(image)
+
+    for bbox in bboxes:
+        if bbox is None:
+            continue
+        x1, y1, w, h = bbox
+        x2 = x1 + w
+        y2 = y1 + h
+        # Draw the rectangle on the image
+        draw.rectangle((x1, y1, x2, y2), outline=bbox_color, width=1)
+
+    return image
+
+
+def crop_boxes(image, bboxes) -> list["Image.Image"]:
+    """
+    Crop all bounding boxes in an image
+
+    Args:
+        image: A *single* image (Pillow Image object)
+        bboxes: A list of bboxes in a single image (x1, y1, width, height)
+
+    Returns:
+        A list of cropped images
+    """
+    cropped_images = []
+
+    for bbox in bboxes:
+        if bbox is None:
+            continue
+        x1, y1, w, h = bbox
+        x2 = x1 + w
+        y2 = y1 + h
+        # Crop the image using the bounding box coordinates
+        cropped_image = image.crop((x1, y1, x2, y2))
+        cropped_images.append(cropped_image)
+
+    return cropped_images
