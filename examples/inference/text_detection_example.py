@@ -1,10 +1,9 @@
-import cv2
 from hezar.models import Model
-from hezar.utils import draw_boxes
+from hezar.utils import load_image, draw_boxes, show_image
 
 
 model = Model.load("craft", device="cuda")
-outputs = model.predict("../assets/text_detection_example.png")
-image = cv2.imread("../assets/text_detection_example.png")
+image = load_image("../assets/text_detection_example.jpg")
+outputs = model.predict(image)
 result_image = draw_boxes(image, outputs[0]["boxes"])
-cv2.imwrite("detected.png", result_image)
+show_image(result_image, "text_detected")
