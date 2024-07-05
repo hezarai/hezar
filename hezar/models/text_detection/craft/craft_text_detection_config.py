@@ -10,4 +10,3 @@ class CraftTextDetectionConfig(ModelConfig):
     link_threshold: float = 0.4
     low_text: float = 0.4
     poly: bool = False
-    estimate_num_chars: bool = False

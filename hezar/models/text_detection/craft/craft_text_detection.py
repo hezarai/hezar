@@ -103,7 +103,6 @@ class CraftTextDetection(Model):
         link_threshold: float = None,
         low_text: float = None,
         poly: bool = False,
-        return_images: bool = False,
     ):
         text_threshold = text_threshold or self.config.text_threshold
         link_threshold = link_threshold or self.config.link_threshold
