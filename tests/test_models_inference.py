@@ -33,6 +33,13 @@ TESTABLE_MODELS = {
         "output_type_within_batch": dict,
         "required_output_keys": {"text", "score"}
     },
+    "text_detection": {
+        "path": "hezarai/CRAFT",
+        "inputs": {"type": "file", "value": "samples/text_detection_example.png"},
+        "predict_kwargs": {},
+        "output_type_within_batch": dict,
+        "required_output_keys": {"boxes"}
+    },
     "ocr": {
         "path": "hezarai/crnn-fa-printed-96-long",
         "inputs": {"type": "file", "value": "samples/ocr_example.jpg"},
