@@ -5,11 +5,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 
+from ....constants import Backends
 from ....registry import register_model
 from ...model import Model
 from ...model_outputs import TextDetectionOutput
 from .craft_text_detection_config import CraftTextDetectionConfig
 from .craft_utils import adjust_result_coordinates, get_detection_boxes, polys2boxes
+
+
+_required_backends = [
+    Backends.OPENCV,
+    Backends.PILLOW,
+    Backends.TORCHVISION,
+]
 
 
 def init_weights(modules):
@@ -31,7 +39,7 @@ class CraftTextDetection(Model):
     """
     CRAFT for text detection. Copied from the original implementation at https://github.com/clovaai/CRAFT-pytorch
     """
-    image_processor = "image_processor"
+    required_backends = _required_backends
 
     def __init__(self, config: CraftTextDetectionConfig, **kwargs):
         super(CraftTextDetection, self).__init__(config=config, **kwargs)

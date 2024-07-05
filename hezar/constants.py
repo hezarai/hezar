@@ -47,6 +47,7 @@ class Backends(ExplicitEnum):
     """
 
     PYTORCH = "torch"
+    TORCHVISION = "torchvision"
     TRANSFORMERS = "transformers"
     DATASETS = "datasets"
     TOKENIZERS = "tokenizers"
@@ -56,6 +57,7 @@ class Backends(ExplicitEnum):
     WANDB = "wandb"
     GENSIM = "gensim"
     PILLOW = "PIL"
+    OPENCV = "cv2"
     JIWER = "jiwer"
     NLTK = "nltk"
     SCIKIT = "sklearn"

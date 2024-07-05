@@ -3,8 +3,14 @@ CRAFT utility functions copied and modified based on https://github.com/clovaai/
 """
 import math
 
-import cv2
 import numpy as np
+
+from ....constants import Backends
+from ....utils import is_backend_available
+
+
+if is_backend_available(Backends.OPENCV):
+    import cv2
 
 
 def warp_coordinates(m_inv, pt):
