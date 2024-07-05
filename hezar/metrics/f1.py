@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 from typing import Iterable
 
-from sklearn.metrics import f1_score
-
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
 from ..registry import register_metric
+from ..utils import is_backend_available
 from .metric import Metric
 
+
+if is_backend_available(Backends.SCIKIT):
+    from sklearn.metrics import f1_score
 
 _required_backends = [
     Backends.SCIKIT,

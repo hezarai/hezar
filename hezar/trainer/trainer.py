@@ -121,7 +121,11 @@ class Trainer:
     lr_scheduler_file = DEFAULT_LR_SCHEDULER_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
-    _required_backends = [Backends.ACCELERATE]
+    _required_backends = [
+        Backends.ACCELERATE,
+        Backends.TENSORBOARD,
+        Backends.DATASETS
+    ]
 
     def __init__(
         self,

@@ -38,7 +38,7 @@ class Dataset(TorchDataset):
         cache_dir (str): Default cache directory for the dataset.
 
     """
-    required_backends: List[str | Backends] = None
+    required_backends: List[str | Backends] = [Backends.DATASETS]
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = os.path.join(HEZAR_CACHE_DIR, "datasets")
 

@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from datasets import Audio, load_dataset
-
 from ...configs import DatasetConfig
 from ...constants import Backends, PaddingType, TaskType
 from ...registry import register_dataset
+from ...utils import is_backend_available
 from ..data_collators import SpeechRecognitionDataCollator
 from .dataset import Dataset
 
+
+if is_backend_available(Backends.DATASETS):
+    from datasets import Audio, load_dataset
 
 _required_backends = [Backends.LIBROSA, Backends.DATASETS]
 

@@ -1,19 +1,21 @@
 from dataclasses import dataclass
 
 import torch
-from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...registry import register_dataset
-from ...utils import Logger, shift_tokens_right
+from ...utils import Logger, is_backend_available, shift_tokens_right
 from ..data_collators import ImageCaptioningDataCollator
 from .dataset import Dataset
 
 
+if is_backend_available(Backends.DATASETS):
+    from datasets import load_dataset
+
 logger = Logger(__name__)
 
-_required_backends = [Backends.SCIKIT]
+_required_backends = [Backends.DATASETS]
 
 
 @dataclass

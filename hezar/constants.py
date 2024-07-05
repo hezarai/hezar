@@ -52,6 +52,7 @@ class Backends(ExplicitEnum):
     DATASETS = "datasets"
     TOKENIZERS = "tokenizers"
     ACCELERATE = "accelerate"
+    TENSORBOARD = "tensorboard"
     SOUNDFILE = "soundfile"
     LIBROSA = "librosa"
     WANDB = "wandb"

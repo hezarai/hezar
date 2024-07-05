@@ -5,15 +5,17 @@ from enum import Enum
 from typing import Dict
 
 import torch
-from datasets import load_dataset
 
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...registry import register_dataset
-from ...utils import Logger, is_text_valid, reverse_string_digits
+from ...utils import Logger, is_backend_available, is_text_valid, reverse_string_digits
 from ..data_collators import CharLevelOCRDataCollator
 from .dataset import Dataset
 
+
+if is_backend_available(Backends.DATASETS):
+    from datasets import load_dataset
 
 logger = Logger(__name__)
 

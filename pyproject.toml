@@ -36,12 +36,13 @@ torch = ">=1.10.0"
 omegaconf = ">=2.3.0"
 transformers = ">=4.28.0"
 tokenizers = ">=0.13.0"
-datasets = ">=2.9.0"
 huggingface_hub = ">=0.12.0"
-tensorboard = ">=2.10.0"
-scikit-learn = ">=1.0.0"
+datasets = {version=">=2.9.0", optional=true}
+pandas = {version="*", optional=true}
+scikit-learn = {version=">=1.0.0", optional=true}
+tensorboard = {version=">=2.10.0", optional=true}
 torchvision = {version="*", optional=true}
-opencv-python = { version = "*", optional = true }
+opencv-python = { version = "*", optional = true}
 accelerate = {version=">=0.27.0", optional=true}
 numpy = {version="1.24.*", optional=true}
 scipy = {version="1.11.4", optional=true}
@@ -58,9 +59,18 @@ rouge_score = {version="*", optional=true}
 nlp = ["seqeval", "jiwer", "nltk", "rouge_score"]
 audio = ["soundfile", "librosa", "jiwer"]
 vision = ["pillow", "torchvision", "opencv-python"]
+metrics = ["scikit-learn", "jiwer", "nltk", "rouge_score", "seqeval"]
+trainer = ["accelerate", "pandas", "tensorboard"]
 embeddings = ["gensim", "numpy", "scipy"]
 dev = ["pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"]
-all = ["numpy", "gensim", "seqeval", "jiwer", "soundfile", "librosa", "pillow", "torchvision", "opencv-python", "nltk", "rouge_score", "scipy"]
+all = [
+    "datasets", "accelerate", "pandas", "tensorboard",  # Trainer
+    "numpy", "gensim", "scipy", # Embeddings
+    "scikit-learn", "jiwer", "nltk", "rouge_score", "seqeval",  # Metrics
+    "soundfile", "librosa",  # Speech
+    "torchvision", "pillow", "opencv-python",  # Vision
+    "pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"  # Dev, docs, tests
+]
 
 [tool.black]
 line-length = 120

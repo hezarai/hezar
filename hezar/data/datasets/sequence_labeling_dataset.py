@@ -1,14 +1,15 @@
 from dataclasses import dataclass
 
-from datasets import load_dataset
-
 from ...configs import DatasetConfig
-from ...constants import TaskType
+from ...constants import Backends, TaskType
 from ...registry import register_dataset
-from ...utils import Logger
+from ...utils import Logger, is_backend_available
 from ..data_collators import SequenceLabelingDataCollator
 from .dataset import Dataset
 
+
+if is_backend_available(Backends.DATASETS):
+    from datasets import load_dataset
 
 logger = Logger(__name__)
 
