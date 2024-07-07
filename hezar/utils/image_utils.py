@@ -33,6 +33,7 @@ __all__ = [
     "transpose_channels_axis_side",
     "draw_boxes",
     "crop_boxes",
+    "pad_boxes",
 ]
 
 
@@ -285,27 +286,61 @@ def draw_boxes(image, bboxes, bbox_color: tuple = (0, 255, 0)) -> "Image.Image":
     return image
 
 
-def crop_boxes(image, bboxes) -> list["Image.Image"]:
+def pad_boxes(bboxes, padding: int | tuple = None):
+    """
+    Add a padding to sides of the bounding boxes.
+
+    Args:
+        bboxes: A list of bounding boxes (x1, y1, w, h)
+        padding: A single integer value to pad equally or a tuple of size 4 for more specific padding. Tuple order is
+            (left, up, right, down)
+
+    Returns:
+        A list of padded bounding boxes
+    """
+    if isinstance(padding, int):
+        padding = [padding] * 4
+    if isinstance(padding, tuple) and len(padding) != 4:
+        raise ValueError(f"padding must be a single int value or a tuple of size 4, got {len(padding)}!")
+
+    padded_bboxes = []
+    for bbox in bboxes:
+        x1, y1, w, h = bbox
+        x2 = x1 + w
+        y2 = y1 + h
+
+        x1 -= padding[0]
+        x2 += padding[2]
+        y1 -= padding[1]
+        y2 += padding[3]
+
+        w = x2 - x1
+        h = y2 - y1
+        padded_bboxes.append((x1, y1, w, h))
+    return padded_bboxes
+
+
+def crop_boxes(image, bboxes, padding: int | tuple = None) -> list["Image.Image"]:
     """
     Crop all bounding boxes in an image
 
     Args:
         image: A *single* image (Pillow Image object)
         bboxes: A list of bboxes in a single image (x1, y1, width, height)
+        padding: Number of pixels to pad the bbox coordinates. An int value means all sides and tuple pads sides
+            specifically.
 
     Returns:
         A list of cropped images
     """
-    cropped_images = []
+    if padding is not None:
+        bboxes = pad_boxes(bboxes, padding)
 
+    cropped_images = []
     for bbox in bboxes:
-        if bbox is None:
-            continue
         x1, y1, w, h = bbox
-        x2 = x1 + w
-        y2 = y1 + h
-        # Crop the image using the bounding box coordinates
-        cropped_image = image.crop((x1, y1, x2, y2))
+
+        cropped_image = image.crop((x1, y1, x1 + w, y1 + h))
         cropped_images.append(cropped_image)
 
     return cropped_images
