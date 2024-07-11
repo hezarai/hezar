@@ -132,18 +132,12 @@ show_image(result_image, "result")
 - **Image to Text (OCR)**
 ```python
 from hezar.models import Model
-# OCR with TrOCR
-model = Model.load("hezarai/trocr-base-fa-v2")
-texts = model.predict(["examples/assets/ocr_example.jpg"])
-print(f"TrOCR Output: {texts}")
-
 # OCR with CRNN
 model = Model.load("hezarai/crnn-fa-printed-96-long")
 texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```
 ```
-TrOCR Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 CRNN Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
@@ -285,7 +279,7 @@ trainer.train()
 
 trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor, trainer files and configs
 ```
-You can actually go way deeper with the Trainer. See more details [here](https://hezarai.github.io/hezar/guide).
+You can actually go way deeper with the Trainer. See more details [here](https://hezarai.github.io/hezar/tutorial/training/index.html).
 
 ## Offline Mode
 Hezar hosts everything on [the HuggingFace Hub](https://huggingface.co/hezarai). When you use the `.load()` method for a model, dataset, etc., it's

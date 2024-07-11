@@ -73,18 +73,12 @@ show_image(result_image, "result")
 - **Image to Text (OCR)**
 ```python
 from hezar.models import Model
-# OCR with TrOCR
-model = Model.load("hezarai/trocr-base-fa-v2")
-texts = model.predict(["examples/assets/ocr_example.jpg"])
-print(f"TrOCR Output: {texts}")
-
 # OCR with CRNN
 model = Model.load("hezarai/crnn-fa-printed-96-long")
 texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```
 ```
-TrOCR Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 CRNN Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 ```
 ![](https://raw.githubusercontent.com/hezarai/hezar/main/examples/assets/ocr_example.jpg)
@@ -227,4 +221,4 @@ trainer.train()
 trainer.push_to_hub("bert-fa-pos-lscp-500k")  # push model, config, preprocessor, trainer files and configs
 ```
 
-Want to go deeper? Check out the [guides](../guide/index.md).
+Want to go deeper? Check out the [training tutorials](../tutorial/training/index.md).
