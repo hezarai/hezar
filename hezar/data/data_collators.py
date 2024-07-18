@@ -39,7 +39,7 @@ class TextPaddingDataCollator:
         padding_type: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
-        return_tensors: str = "pt",
+        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type
@@ -131,7 +131,7 @@ class TextGenerationDataCollator:
         padding_side: str = "right",
         max_length: int = None,
         max_target_length: int = None,
-        return_tensors: str = "pt",
+        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type
@@ -189,7 +189,7 @@ class ImageCaptioningDataCollator:
         padding_type: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
-        return_tensors: str = "pt",
+        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type
@@ -290,7 +290,7 @@ class SequenceLabelingDataCollator:
         padding_side: str = "right",
         label_pad_token_id: int = -100,
         max_length: int = None,
-        return_tensors: str = "pt",
+        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding_type = padding_type

@@ -97,7 +97,7 @@ class ImageProcessor(Preprocessor):
         resample: float = None,
         mirror: bool = None,
         gray_scale: bool = None,
-        return_tensors: str = "pt",
+        return_tensors: str = "torch",
         **kwargs,
     ):
         """
