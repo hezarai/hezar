@@ -27,49 +27,45 @@ __all__ = [
 logger = Logger(__name__)
 
 
-# TODO: This code might be able to be written in a cleaner way, but be careful, any change might break a lot of things!
-def convert_batch_dict_dtype(batch_dict: Dict[str, Any], dtype: str = None, skip_keys: list = None):
+def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: list = None) -> dict:
     """
-    Convert data dtypes of the values in a batch dict
+    Convert data dtypes of the values in a batch dict.
 
     Args:
-        batch_dict: The batched dictionary. Each key in the dict has a batch of data as its value.
-        dtype: Target data type to convert to
-        skip_keys: A list of key names to skip conversion
+        batch_dict (dict): The batched dictionary. Each key in the dict has a batch of data as its value.
+        dtype (str): Target data type to convert to ("list", "numpy", "torch").
+        skip_keys (list): A list of key names to skip conversion.
 
     Returns:
-        The same dict with cast values
+        dict: The same dict with cast values.
     """
     import numpy as np
     import torch
 
-    dtype = dtype or "list"
     skip_keys = skip_keys or []
 
-    if dtype == "list":
-        for k, v in batch_dict.items():
-            if isinstance(v, np.ndarray):
-                batch_dict[k] = v.tolist()
-            elif isinstance(v, torch.Tensor):
-                batch_dict[k] = v.cpu().numpy().tolist()
-        return batch_dict
+    for key, value in batch_dict.items():
+        # Skip conversion for specified keys
+        if key in skip_keys:
+            continue
 
-    if dtype in ["np", "numpy"]:
-        caster = np.asarray
-        cast_type = np.ndarray
-    elif dtype in ["pt", "torch", "pytorch"]:
-        caster = torch.tensor
-        cast_type = torch.Tensor
-    else:
-        raise ValueError(f"Invalid `dtype`: {dtype}")
+        # Convert to python lists
+        if dtype == "list":
+            if isinstance(value, (torch.Tensor, np.ndarray)):
+                batch_dict[key] = value.tolist()
+        # Convert to numpy arrays
+        elif dtype == "numpy":
+            if isinstance(value, torch.Tensor):
+                batch_dict[key] = value.numpy()
+            elif isinstance(value, list):
+                batch_dict[key] = np.array(value)
+        # Convert to torch tensors
+        elif dtype == "torch":
+            if isinstance(value, np.ndarray):
+                batch_dict[key] = torch.tensor(value)
+            elif isinstance(value, list):
+                batch_dict[key] = torch.tensor(value)
 
-    for k, v in batch_dict.items():
-        if k not in skip_keys:
-            try:
-                if not isinstance(v, cast_type):
-                    batch_dict[k] = caster(v)
-            except Exception as e:  # noqa
-                logger.warning(f"Could not convert values of `{k}` to type `{dtype}`\n" f"Error: {e}")
     return batch_dict
 
 

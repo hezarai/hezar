@@ -85,7 +85,7 @@ class CraftImageProcessor(ImageProcessor):
         mag_ratio: float = None,
         mirror: bool = None,
         gray_scale: bool = None,
-        return_tensors: str = "pt",
+        return_tensors: str = "torch",
         **kwargs,
     ):
         mean = mean or self.config.mean

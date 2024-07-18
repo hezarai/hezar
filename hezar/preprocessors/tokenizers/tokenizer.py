@@ -352,7 +352,7 @@ class Tokenizer(Preprocessor):
             }
 
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
-        if device and return_tensors == "pt":
+        if device and return_tensors == "torch":
             outputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in outputs.items()}
 
         return outputs

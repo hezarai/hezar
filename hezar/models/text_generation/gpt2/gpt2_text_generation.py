@@ -85,7 +85,7 @@ class GPT2TextGeneration(Model):
 
     def preprocess(self, texts: str | List[str], **kwargs):
         tokenizer = self.preprocessor[self.tokenizer_name]
-        inputs = tokenizer(texts, return_tensors="pt", device=self.device)
+        inputs = tokenizer(texts, return_tensors="torch", device=self.device)
         return inputs
 
     def post_process(self, generated_ids: torch.Tensor):

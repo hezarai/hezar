@@ -96,7 +96,7 @@ class TextClassificationDataset(Dataset):
         label = self.data[index][self.config.label_field]
         inputs = self.tokenizer(
             text,
-            return_tensors="pt",
+            return_tensors="torch",
             truncation_strategy="longest_first",
             padding="longest",
             return_attention_mask=True,

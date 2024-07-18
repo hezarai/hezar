@@ -70,7 +70,7 @@ class DistilBertMaskFilling(Model):
             if tokenizer.mask_token not in text:
                 raise ValueError(f"The input must have a `{tokenizer.mask_token}` token!")
 
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
+        inputs = tokenizer(inputs, return_tensors="torch", device=self.device)
         return inputs
 
     def post_process(self, model_outputs: dict, top_k=1):

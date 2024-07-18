@@ -408,7 +408,7 @@ class WhisperBPETokenizer(BPETokenizer):
 
         return token_ids
 
-    def get_prompt_ids(self, text: str, return_tensors="np"):
+    def get_prompt_ids(self, text: str, return_tensors="numpy"):
         """Converts prompt text to IDs that can be passed to [`~WhisperForConditionalGeneration.generate`]."""
         batch_encoding = self([("<|startofprev|>", " " + text.strip())], add_special_tokens=False)
 
