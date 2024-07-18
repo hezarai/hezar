@@ -29,7 +29,6 @@ class T5TextGeneration(Model):
 
     is_generative = True
     required_backends = _required_backends
-    tokenizer_name = "sentencepiece_unigram_tokenizer"
     loss_func_name = "cross_entropy"
 
     def __init__(self, config: T5TextGenerationConfig, **kwargs):
@@ -103,12 +102,12 @@ class T5TextGeneration(Model):
         prefix = prefix or self.config.input_prefix
         if prefix:
             inputs = [f"{prefix}{x}" for x in inputs]
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         inputs = tokenizer(inputs, return_tensors="torch", device=self.device)
         return inputs
 
     def post_process(self, generated_ids: torch.Tensor, **kwargs):
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         decoded_outputs = tokenizer.decode(generated_ids.cpu().numpy().tolist())
         outputs = [TextGenerationOutput(text=text) for text in decoded_outputs]
         return outputs

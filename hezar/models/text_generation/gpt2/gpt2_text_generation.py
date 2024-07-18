@@ -25,7 +25,6 @@ _required_backends = [Backends.TRANSFORMERS, Backends.TOKENIZERS]
 @register_model("gpt2_text_generation", config_class=GPT2TextGenerationConfig)
 class GPT2TextGeneration(Model):
     is_generative = True
-    tokenizer_name = "bpe_tokenizer"
     required_backends = _required_backends
     loss_func_name = "cross_entropy"
 
@@ -84,12 +83,12 @@ class GPT2TextGeneration(Model):
         return generated_ids
 
     def preprocess(self, texts: str | List[str], **kwargs):
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         inputs = tokenizer(texts, return_tensors="torch", device=self.device)
         return inputs
 
     def post_process(self, generated_ids: torch.Tensor):
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         decoded_outputs = tokenizer.decode(generated_ids.cpu().numpy().tolist())
         outputs = [TextGenerationOutput(text=text) for text in decoded_outputs]
         return outputs

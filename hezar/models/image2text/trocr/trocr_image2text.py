@@ -37,8 +37,6 @@ class TrOCRImage2Text(Model):
 
     is_generative = True
     required_backends = _required_backends
-    image_processor = "image_processor"
-    tokenizer_name = "bpe_tokenizer"
     loss_func_name = "cross_entropy"
 
     def __init__(self, config: TrOCRImage2TextConfig, **kwargs):
@@ -88,12 +86,12 @@ class TrOCRImage2Text(Model):
         return outputs
 
     def preprocess(self, inputs: List[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
-        image_processor = self.preprocessor[self.image_processor]
+        image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
     def post_process(self, model_outputs, **kwargs):
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
         outputs = [Image2TextOutput(text=text) for text in decoded_outputs]
         return outputs

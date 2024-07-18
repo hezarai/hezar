@@ -24,7 +24,6 @@ _required_backends = [
 @register_model("distilbert_mask_filling", config_class=DistilBertMaskFillingConfig)
 class DistilBertMaskFilling(Model):
     required_backends = _required_backends
-    tokenizer_name = "wordpiece_tokenizer"
     loss_func_name = "cross_entropy"
 
     def __init__(self, config, **kwargs):
@@ -64,7 +63,7 @@ class DistilBertMaskFilling(Model):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
 
         for text in inputs:
             if tokenizer.mask_token not in text:
@@ -77,7 +76,7 @@ class DistilBertMaskFilling(Model):
         output_logits = model_outputs.get("logits")
         token_ids = model_outputs.get("token_ids")
 
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         mask_token_id = tokenizer.mask_token_id
 
         unfilled_token_ids = token_ids.cpu().numpy().copy()

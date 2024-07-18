@@ -76,7 +76,7 @@ class CRNNImage2Text(Model):
         return {"generated_ids": output_ids, "scores": mean_probs}
 
     def preprocess(self, inputs, **kwargs):
-        image_processor = self.preprocessor[self.image_processor]
+        image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
