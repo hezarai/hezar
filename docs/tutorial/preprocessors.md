@@ -52,6 +52,12 @@ PreprocessorsContainer(
     ]
 )
 ```
+In order to access specific preprocessor objects within a `PreprocessorContainer` instance, you can use the following
+properties:
+- `tokenizer`: Returns the tokenizer of the container if exists.
+- `text_normalizer`: Returns the text normalizer of the container if exists.
+- `image_processor`: Returns the image processor of the container if exists.
+- `audio_feature_extractor`: Returns the audio feature extractor of the container if exists.
 
 ## Saving & Pushing to the Hub
 Although preprocessor have their own type, they all implement the `load`, `save` and `push_to_hub` methods.

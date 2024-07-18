@@ -35,8 +35,6 @@ class WhisperSpeechRecognition(Model):
 
     is_generative = True
     required_backends = _required_backends
-    feature_extractor_name = "whisper_feature_extractor"
-    tokenizer_name = "whisper_bpe_tokenizer"
     loss_func_name = "cross_entropy"
 
     def __init__(self, config: WhisperSpeechRecognitionConfig, **kwargs):
@@ -174,10 +172,10 @@ class WhisperSpeechRecognition(Model):
         elif isinstance(inputs, List) and isinstance(inputs[0], np.ndarray):
             inputs = [librosa.to_mono(x.transpose()) for x in inputs if isinstance(x, np.ndarray) and len(x.shape) > 1]
 
-        tokenizer = self.preprocessor[self.tokenizer_name]
-        feature_extractor = self.preprocessor[self.feature_extractor_name]
+        tokenizer = self.preprocessor.tokenizer
+        feature_extractor = self.preprocessor.audio_feature_extractor
 
-        forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language="persian", task="transcribe")
+        forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=tokenizer.language, task="transcribe")
         inputs = feature_extractor(inputs, sampling_rate=self.config.sampling_rate, return_tensors="torch")
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
@@ -190,7 +188,7 @@ class WhisperSpeechRecognition(Model):
         output_offsets=False,
         **kwargs,
     ):
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         if isinstance(model_outputs, torch.Tensor):
             model_outputs = model_outputs.cpu().numpy().tolist()
         transcripts = tokenizer.decode(

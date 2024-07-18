@@ -27,7 +27,6 @@ _required_backends = [
 @register_model("roberta_mask_filling", config_class=RobertaMaskFillingConfig)
 class RobertaMaskFilling(Model):
     required_backends = _required_backends
-    tokenizer_name = "bpe_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "roberta.embeddings.position_ids"]  # For older versions
     loss_func_name = "cross_entropy"
 
@@ -74,7 +73,7 @@ class RobertaMaskFilling(Model):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
 
         for text in inputs:
             if tokenizer.mask_token not in text:
@@ -87,7 +86,7 @@ class RobertaMaskFilling(Model):
         output_logits = model_outputs.get("logits")
         token_ids = model_outputs.get("token_ids")
 
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         mask_token_id = tokenizer.mask_token_id
 
         unfilled_token_ids = token_ids.cpu().numpy().copy()
