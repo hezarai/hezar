@@ -38,7 +38,6 @@ class ViTRobertaImage2Text(Model):
     is_generative = True
     required_backends = _required_backends
     image_processor = "image_processor"
-    tokenizer_name = "bpe_tokenizer"
     loss_func_name = "cross_entropy"
 
     def __init__(self, config: ViTRobertaImage2TextConfig, **kwargs):
@@ -81,7 +80,7 @@ class ViTRobertaImage2Text(Model):
         return loss
 
     def generate(self, pixel_values, generation_config=None, **kwargs):
-        tokenizer = self.preprocessor["bpe_tokenizer"]
+        tokenizer = self.preprocessor.tokenizer
         if generation_config is None:
             generation_config = self.config.dict()["generation"]
             generation_config["decoder_start_token_id"] = tokenizer.pad_token_id
@@ -91,12 +90,12 @@ class ViTRobertaImage2Text(Model):
         return outputs
 
     def preprocess(self, inputs: List[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
-        image_processor = self.preprocessor[self.image_processor]
+        image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
     def post_process(self, model_outputs: torch.Tensor, **kwargs):
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        tokenizer = self.preprocessor.tokenizer
         decoded_outputs = tokenizer.decode(model_outputs.cpu().numpy().tolist())
         outputs = [Image2TextOutput(text=text) for text in decoded_outputs]
         return outputs

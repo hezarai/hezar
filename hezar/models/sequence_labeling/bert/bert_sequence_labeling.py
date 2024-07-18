@@ -32,7 +32,6 @@ class BertSequenceLabeling(Model):
     """
 
     required_backends = _required_backends
-    tokenizer_name = "wordpiece_tokenizer"
     skip_keys_on_load = ["model.embeddings.position_ids", "bert.embeddings.position_ids"]  # For older versions
 
     def __init__(self, config: BertSequenceLabelingConfig, **kwargs):
@@ -96,10 +95,9 @@ class BertSequenceLabeling(Model):
     def preprocess(self, inputs: str | List[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
-        if "text_normalizer" in self.preprocessor:
-            normalizer = self.preprocessor["text_normalizer"]
-            inputs = normalizer(inputs)
-        tokenizer = self.preprocessor[self.tokenizer_name]
+        if self.preprocessor.text_normalizer is not None:
+            inputs = self.preprocessor.text_normalizer(inputs)
+        tokenizer = self.preprocessor.tokenizer
         inputs = tokenizer(
             inputs,
             return_word_ids=True,
