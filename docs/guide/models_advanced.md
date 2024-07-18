@@ -161,7 +161,7 @@ class TextClassificationModel(Model):
 
     def preprocess(self, raw_texts):
         tokenizer = self.preprocessor["bpe_tokenizer"]
-        model_inputs = tokenizer(raw_texts, return_tensors="pt")
+        model_inputs = tokenizer(raw_texts, return_tensors="torch")
         return model_inputs
 
     def post_process(self, model_outputs):

@@ -77,7 +77,7 @@ class ALPRDataset(OCRDataset):
     def __getitem__(self, index):
         path, text = self.data.iloc[index].values()
         # The `image_processor` (`ImageProcessor`) loads the image file and processes it base on it's config
-        pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"][0]
+        pixel_values = self.image_processor(path, return_tensors="torch")["pixel_values"][0]
         # The `_text_to_tensor` converts the raw text to a tensor using the `id2label` attribute.
         labels = self._text_to_tensor(text)
         inputs = {

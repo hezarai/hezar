@@ -71,7 +71,7 @@ class BERT(Model):
             normalizer = self.preprocessor["text_normalizer"]
             inputs = normalizer(inputs)
         tokenizer = self.preprocessor[self.tokenizer_name]
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
+        inputs = tokenizer(inputs, return_tensors="torch", device=self.device)
         return inputs
 
     def post_process(self, model_outputs, **kwargs):

@@ -219,7 +219,7 @@ class ImageCaptioningDataCollator:
             exclude_keys=["pixel_values"],
             return_tensors=self.return_tensors,
         )
-        padded_batch = convert_batch_dict_dtype(padded_batch, dtype="pt")
+        padded_batch = convert_batch_dict_dtype(padded_batch, dtype="torch")
 
         return padded_batch
 
@@ -253,14 +253,14 @@ class SpeechRecognitionDataCollator:
             padding=self.labels_padding_type,
             max_length=self.labels_max_length,
             exclude_keys=["input_features"],
-            return_tensors="pt"
+            return_tensors="torch"
         )
 
         inputs = self.feature_extractor.pad(
             inputs,
             padding=self.inputs_padding_type,
             max_length=self.inputs_max_length,
-            return_tensors="pt",
+            return_tensors="torch",
         )
 
         return inputs
@@ -317,7 +317,7 @@ class SequenceLabelingDataCollator:
             padding=self.padding_type,  # noqa
             max_length=self.max_length,
             # Conversion to tensors will fail if we have labels as they are not of the same length yet.
-            return_tensors="pt" if labels is None else None,
+            return_tensors="torch" if labels is None else None,
         )
 
         if labels is None:

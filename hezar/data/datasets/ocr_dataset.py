@@ -164,7 +164,7 @@ class OCRDataset(Dataset):
 
         """
         path, text = self.data[index].values()
-        pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"][0]
+        pixel_values = self.image_processor(path, return_tensors="torch")["pixel_values"][0]
         labels = self._text_to_tensor(text)
         inputs = {
             "pixel_values": pixel_values,

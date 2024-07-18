@@ -70,7 +70,7 @@ class SentimentAnalysisDataset(TextClassificationDataset):
         label_id = self.label2id[label]
         inputs = self.tokenizer(
             text,
-            return_tensors="pt",
+            return_tensors="torch",
             truncation_strategy="longest_first",
             padding="longest",
             return_attention_mask=True,

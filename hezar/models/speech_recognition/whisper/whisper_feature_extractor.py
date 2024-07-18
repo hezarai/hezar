@@ -114,7 +114,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
             truncation=truncation,
             pad_to_multiple_of=pad_to_multiple_of,
             return_attention_mask=return_attention_mask or do_normalize,
-            return_tensors="np",
+            return_tensors="numpy",
         )
 
         # zero-mean and unit-variance normalization

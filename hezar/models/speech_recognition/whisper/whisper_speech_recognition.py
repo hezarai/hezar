@@ -178,7 +178,7 @@ class WhisperSpeechRecognition(Model):
         feature_extractor = self.preprocessor[self.feature_extractor_name]
 
         forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language="persian", task="transcribe")
-        inputs = feature_extractor(inputs, sampling_rate=self.config.sampling_rate, return_tensors="pt")
+        inputs = feature_extractor(inputs, sampling_rate=self.config.sampling_rate, return_tensors="torch")
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
 

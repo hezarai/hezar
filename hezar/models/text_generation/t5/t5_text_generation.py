@@ -104,7 +104,7 @@ class T5TextGeneration(Model):
         if prefix:
             inputs = [f"{prefix}{x}" for x in inputs]
         tokenizer = self.preprocessor[self.tokenizer_name]
-        inputs = tokenizer(inputs, return_tensors="pt", device=self.device)
+        inputs = tokenizer(inputs, return_tensors="torch", device=self.device)
         return inputs
 
     def post_process(self, generated_ids: torch.Tensor, **kwargs):

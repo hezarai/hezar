@@ -87,7 +87,7 @@ class AudioFeatureExtractor(Preprocessor):
             if index < len(required_input):
                 first_element = required_input[index][0]
 
-        # processed_features = convert_batch_dict_dtype(processed_features, dtype="np")
+        # processed_features = convert_batch_dict_dtype(processed_features, dtype="numpy")
         padding_strategy = self._get_padding_strategy(padding=padding, max_length=max_length)
 
         required_input = processed_features[self.model_input_name]

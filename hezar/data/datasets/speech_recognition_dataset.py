@@ -62,14 +62,14 @@ class SpeechRecognitionDataset(Dataset):
         input_features = self.feature_extractor(
             audio_array,
             sampling_rate=self.config.sampling_rate,
-            return_tensors="pt"
+            return_tensors="torch"
         )["input_features"]
 
         labels = self.tokenizer(
             transcript,
             padding_strategy=self.config.labels_padding_type,
             max_length=self.config.labels_max_length,
-            return_tensors="pt",
+            return_tensors="torch",
         )
 
         return {

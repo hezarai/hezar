@@ -107,7 +107,7 @@ class BertSequenceLabeling(Model):
             return_offsets_mapping=True,
             padding=True,
             truncation=True,
-            return_tensors="pt",
+            return_tensors="torch",
             device=self.device,
         )
         return inputs

@@ -54,7 +54,7 @@ class Flickr30kDataset(ImageCaptioningDataset):
     def __getitem__(self, index):
         path, text = self.data.iloc[index].values()
         # The `image_processor` (`ImageProcessor`) loads the image file and processes it base on it's config
-        pixel_values = self.image_processor(path, return_tensors="pt")["pixel_values"]
+        pixel_values = self.image_processor(path, return_tensors="torch")["pixel_values"]
         tokenized_inputs = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)
         labels = torch.tensor([tokenized_inputs["token_ids"]])
         attention_mask = torch.tensor([tokenized_inputs["attention_mask"]])
