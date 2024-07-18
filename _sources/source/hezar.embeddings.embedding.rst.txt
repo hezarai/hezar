@@ -1,0 +1,7 @@
+hezar.embeddings.embedding module
+=================================
+
+.. automodule:: hezar.embeddings.embedding
+   :members:
+   :undoc-members:
+   :show-inheritance:

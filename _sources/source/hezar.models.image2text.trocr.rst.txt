@@ -1,0 +1,19 @@
+hezar.models.image2text.trocr package
+=====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.image2text.trocr.trocr_image2text
+   hezar.models.image2text.trocr.trocr_image2text_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.image2text.trocr
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,20 @@
+hezar.trainer package
+=====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.trainer.metrics_handlers
+   hezar.trainer.trainer
+   hezar.trainer.trainer_utils
+
+Module contents
+---------------
+
+.. automodule:: hezar.trainer
+   :members:
+   :undoc-members:
+   :show-inheritance:

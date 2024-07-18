@@ -1,0 +1,7 @@
+hezar.models.sequence\_labeling.distilbert.distilbert\_sequence\_labeling module
+================================================================================
+
+.. automodule:: hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,19 @@
+hezar.models.text\_generation package
+=====================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.text_generation.gpt2
+   hezar.models.text_generation.t5
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.text_generation
+   :members:
+   :undoc-members:
+   :show-inheritance:

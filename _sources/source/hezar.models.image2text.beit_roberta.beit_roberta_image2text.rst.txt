@@ -1,0 +1,7 @@
+hezar.models.image2text.beit\_roberta.beit\_roberta\_image2text module
+======================================================================
+
+.. automodule:: hezar.models.image2text.beit_roberta.beit_roberta_image2text
+   :members:
+   :undoc-members:
+   :show-inheritance:

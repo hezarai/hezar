@@ -1,0 +1,7 @@
+hezar.models.text\_generation.t5.t5\_text\_generation\_config module
+====================================================================
+
+.. automodule:: hezar.models.text_generation.t5.t5_text_generation_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
