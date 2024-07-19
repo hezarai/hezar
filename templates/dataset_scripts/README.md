@@ -1,4 +1,4 @@
-# Datasets Loading Scripts Templates
+# Datasets Loading Scripts Templates (DEPRECATED)
 In this section you can explore different ready to use templates for writing a dataset script.
 These scripts are separated by dataset file type (csv, parquet, etc) and task (text classification, etc).
 
