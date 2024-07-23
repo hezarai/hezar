@@ -126,7 +126,7 @@ class ImageProcessor(Preprocessor):
         mirror = mirror or self.config.mirror
         gray_scale = gray_scale or self.config.gray_scale
 
-        if not isinstance(images, Iterable) or isinstance(images, str):
+        if not isinstance(images, list) or isinstance(images, str) or isinstance(images, np.ndarray):
             images = [images]
 
         # Load images if inputs are list of files
