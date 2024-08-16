@@ -166,7 +166,7 @@ class WhisperSpeechRecognition(Model):
     def freeze_encoder(self):
         self.whisper.freeze_encoder()
 
-    def preprocess(self, inputs: str | np.ndarray | List[np.ndarray] | List[str], **kwargs):
+    def preprocess(self, inputs: str | np.ndarray | List[np.ndarray] | List[str], language=None, **kwargs):
         if isinstance(inputs, str) or (isinstance(inputs, List) and isinstance(inputs[0], str)):
             inputs = load_audio_files(inputs)
         elif isinstance(inputs, List) and isinstance(inputs[0], np.ndarray):
@@ -174,8 +174,9 @@ class WhisperSpeechRecognition(Model):
 
         tokenizer = self.preprocessor.tokenizer
         feature_extractor = self.preprocessor.audio_feature_extractor
+        language = language or tokenizer.language
 
-        forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=tokenizer.language, task="transcribe")
+        forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=language, task="transcribe")
         inputs = feature_extractor(inputs, sampling_rate=self.config.sampling_rate, return_tensors="torch")
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
