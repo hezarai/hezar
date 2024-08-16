@@ -1,0 +1,7 @@
+hezar.data.datasets.text\_summarization\_dataset module
+=======================================================
+
+.. automodule:: hezar.data.datasets.text_summarization_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,19 @@
+hezar.models.sequence\_labeling.distilbert package
+==================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling
+   hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.sequence_labeling.distilbert
+   :members:
+   :undoc-members:
+   :show-inheritance:

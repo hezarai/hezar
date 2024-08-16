@@ -1,0 +1,34 @@
+hezar.models package
+====================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.backbone
+   hezar.models.image2text
+   hezar.models.mask_filling
+   hezar.models.sequence_labeling
+   hezar.models.speech_recognition
+   hezar.models.text_classification
+   hezar.models.text_detection
+   hezar.models.text_generation
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.model
+   hezar.models.model_outputs
+
+Module contents
+---------------
+
+.. automodule:: hezar.models
+   :members:
+   :undoc-members:
+   :show-inheritance:

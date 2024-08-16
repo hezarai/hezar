@@ -1,0 +1,7 @@
+hezar.models.text\_detection.craft.craft\_image\_processor module
+=================================================================
+
+.. automodule:: hezar.models.text_detection.craft.craft_image_processor
+   :members:
+   :undoc-members:
+   :show-inheritance:

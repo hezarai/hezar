@@ -1,0 +1,7 @@
+hezar.data.datasets.text\_classification\_dataset module
+========================================================
+
+.. automodule:: hezar.data.datasets.text_classification_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

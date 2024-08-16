@@ -1,0 +1,7 @@
+hezar.utils.logging module
+==========================
+
+.. automodule:: hezar.utils.logging
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,21 @@
+hezar.models.text\_detection.craft package
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.text_detection.craft.craft_image_processor
+   hezar.models.text_detection.craft.craft_text_detection
+   hezar.models.text_detection.craft.craft_text_detection_config
+   hezar.models.text_detection.craft.craft_utils
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.text_detection.craft
+   :members:
+   :undoc-members:
+   :show-inheritance:

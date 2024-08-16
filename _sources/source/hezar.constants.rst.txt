@@ -1,0 +1,7 @@
+hezar.constants module
+======================
+
+.. automodule:: hezar.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
