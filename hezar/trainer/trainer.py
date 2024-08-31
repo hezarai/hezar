@@ -712,7 +712,7 @@ class Trainer:
         The full training process like training, evaluation, logging and saving model checkpoints.
 
         The steps are as follows:
-            - The following is run for `self.config.num_epochs` times
+            The following is run for `self.config.num_epochs` times
                 - Run the training loop on the train dataset
                 - Save checkpoints
                 - Run evaluation on the evaluation dataset

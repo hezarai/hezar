@@ -79,6 +79,7 @@ class Model(nn.Module):
         self.config = config.update(kwargs)
         self._preprocessor = None
         self._loss_func = self._set_loss_func(self.loss_func_name, **self.loss_func_kwargs)
+        self.inference_fn = self.generate if self.is_generative else self.__call__
 
     def __repr__(self):
         representation = super().__repr__()
@@ -397,9 +398,9 @@ class Model(nn.Module):
             Prediction results, each model or task can have its own type and structure
         """
         # Unpack kwargs for each step
-        preprocess_kwargs, forward_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
+        preprocess_kwargs, inference_kwargs, post_process_kwargs = self._unpack_prediction_kwargs(**kwargs)
         invalid_kwargs = {
-            k: v for k, v in kwargs.items() if k not in {**preprocess_kwargs, **forward_kwargs, **post_process_kwargs}
+            k: v for k, v in kwargs.items() if k not in {**preprocess_kwargs, **inference_kwargs, **post_process_kwargs}
         }
         if len(invalid_kwargs):
             logger.warning(
@@ -417,14 +418,11 @@ class Model(nn.Module):
         model_inputs = self._move_inputs_to_device(model_inputs, device)
         self.to(device)
 
-        # Specify model inference function
-        inference_fn = self.generate if self.is_generative else self.__call__
-
         # Model inference step (forward for regular models and generate for generative models)
         if isinstance(model_inputs, dict) and unpack_forward_inputs:
-            model_outputs = inference_fn(**model_inputs, **forward_kwargs)
+            model_outputs = self.inference_fn(**model_inputs, **inference_kwargs)
         else:
-            model_outputs = inference_fn(model_inputs, **forward_kwargs)
+            model_outputs = self.inference_fn(model_inputs, **inference_kwargs)
 
         # Post-processing step
         processed_outputs = self.post_process(model_outputs, **post_process_kwargs) if post_process else model_outputs
@@ -470,10 +468,10 @@ class Model(nn.Module):
         inference_fn = type(self).generate if self.is_generative else type(self).forward
 
         preprocess_kwargs = sanitize_function_parameters(type(self).preprocess, kwargs)
-        forward_kwargs = sanitize_function_parameters(inference_fn, kwargs)
+        inference_kwargs = sanitize_function_parameters(inference_fn, kwargs)
         post_process_kwargs = sanitize_function_parameters(type(self).post_process, kwargs)
 
-        return preprocess_kwargs, forward_kwargs, post_process_kwargs
+        return preprocess_kwargs, inference_kwargs, post_process_kwargs
 
     @property
     def device(self):
