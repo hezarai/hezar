@@ -6,7 +6,6 @@ from datasets.tasks import TextClassification
 
 logger = datasets.logging.get_logger(__name__)
 
-
 _CITATION = """Citation"""
 _DESCRIPTION = """Description"""
 

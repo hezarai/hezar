@@ -130,7 +130,8 @@ class CommonVoice(datasets.GeneratorBasedBuilder):
                 if filename in metadata:
                     result = dict(metadata[filename])
                     # set the audio feature and the path to the extracted file
-                    path = os.path.join(local_extracted_archive_paths[i], path) if local_extracted_archive_paths else path
+                    path = os.path.join(local_extracted_archive_paths[i],
+                                        path) if local_extracted_archive_paths else path
                     result["audio"] = {"path": path, "bytes": file.read()}
                     result["path"] = path
                     yield path, result

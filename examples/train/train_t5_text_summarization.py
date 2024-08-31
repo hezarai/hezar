@@ -3,7 +3,6 @@ from hezar.data import Dataset
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 
-
 if __name__ == '__main__':
     dataset_path = "hezarai/xlsum-fa"
     base_model_path = "hezarai/t5-base-fa"

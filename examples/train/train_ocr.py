@@ -35,4 +35,3 @@ trainer = Trainer(
     preprocessor=image_processor,
 )
 trainer.train()
-

@@ -79,7 +79,7 @@ class Model(nn.Module):
         self.config = config.update(kwargs)
         self._preprocessor = None
         self._loss_func = self._set_loss_func(self.loss_func_name, **self.loss_func_kwargs)
-        self.inference_fn = self.generate if self.is_generative else self.__call__
+        self._inference_fn = self.generate if self.is_generative else self.__call__
 
     def __repr__(self):
         representation = super().__repr__()
@@ -420,9 +420,9 @@ class Model(nn.Module):
 
         # Model inference step (forward for regular models and generate for generative models)
         if isinstance(model_inputs, dict) and unpack_forward_inputs:
-            model_outputs = self.inference_fn(**model_inputs, **inference_kwargs)
+            model_outputs = self._inference_fn(**model_inputs, **inference_kwargs)
         else:
-            model_outputs = self.inference_fn(model_inputs, **inference_kwargs)
+            model_outputs = self._inference_fn(model_inputs, **inference_kwargs)
 
         # Post-processing step
         processed_outputs = self.post_process(model_outputs, **post_process_kwargs) if post_process else model_outputs

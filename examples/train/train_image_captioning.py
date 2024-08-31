@@ -2,7 +2,6 @@ from hezar.models import Model
 from hezar.data import Dataset
 from hezar.trainer import Trainer, TrainerConfig
 
-
 base_model_path = "hezarai/vit-roberta-fa-base"
 
 train_dataset = Dataset.load("hezarai/flickr30k-fa", split="train", preprocessor=base_model_path, max_length=128)

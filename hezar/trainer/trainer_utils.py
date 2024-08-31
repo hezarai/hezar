@@ -190,6 +190,7 @@ def get_distributed_logger(name: str, level: str = None, fmt: str = None):
 
     return logger
 
+
 def get_lr_scheduler_type(lr_scheduler, schedulers_mapping: dict):
     for name, scheduler_cls in schedulers_mapping.items():
         if isinstance(lr_scheduler, scheduler_cls):

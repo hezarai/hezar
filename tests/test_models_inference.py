@@ -10,7 +10,6 @@ from hezar.utils import clean_cache, set_seed
 
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
-
 TESTABLE_MODELS = {
     "speech-recognition": {
         "path": "hezarai/whisper-small-fa",

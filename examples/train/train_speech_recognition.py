@@ -2,7 +2,6 @@ from hezar.models import Model
 from hezar.data import Dataset
 from hezar.trainer import Trainer, TrainerConfig
 
-
 dataset_path = "hezarai/common-voice-13-fa"
 base_model_path = "hezarai/whisper-small"
 

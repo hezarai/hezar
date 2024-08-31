@@ -3,7 +3,6 @@ from hezar.data import Dataset
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 
-
 base_model_path = "hezarai/bert-base-fa"
 
 train_dataset = Dataset.load("hezarai/lscp-pos-500k", split="train", preprocessor=base_model_path)

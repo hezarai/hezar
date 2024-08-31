@@ -8,7 +8,6 @@ from hezar.utils import clean_cache
 
 CI_MODE = os.environ.get("CI_MODE", "FALSE")
 
-
 TESTABLE_EMBEDDINGS = {
     "word2vec-skipgram": "hezarai/word2vec-skipgram-fa-wikipedia",
     "word2vec-cbow": "hezarai/word2vec-cbow-fa-wikipedia",

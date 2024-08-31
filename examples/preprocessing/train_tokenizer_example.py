@@ -9,7 +9,6 @@ from hezar.preprocessors import (
     WordPieceTokenizer,
 )
 
-
 data = [
     "Beautiful is better than ugly."
     "Explicit is better than implicit."

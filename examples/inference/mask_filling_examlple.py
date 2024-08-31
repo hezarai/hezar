@@ -1,6 +1,5 @@
 from hezar.models import Model
 
-
 path = "hezarai/roberta-fa-mask-filling"
 text = ["سلام بچه ها حالتون <mask>"]
 model = Model.load(path)
