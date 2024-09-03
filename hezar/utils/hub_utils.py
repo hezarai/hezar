@@ -1,10 +1,10 @@
 import os
+from pathlib import Path
 
 from huggingface_hub import HfApi, Repository
 
 from ..constants import HEZAR_CACHE_DIR, RepoType
 from ..utils.logging import Logger
-
 
 __all__ = [
     "get_local_cache_path",
