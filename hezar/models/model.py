@@ -83,7 +83,7 @@ class Model(nn.Module):
 
     def __repr__(self):
         representation = super().__repr__()
-        pattern = r"\('?_criterion'?\): [^\)]+\)\s*"
+        pattern = r"\('?_loss_func'?\): [^\)]+\)\s*"
         representation = re.sub(pattern, '', representation)
         return representation
 
