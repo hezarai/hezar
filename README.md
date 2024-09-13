@@ -116,7 +116,7 @@ print(transcripts)
 ```
 [{'text': 'و این تنها محدود به محیط کار نیست'}]
 ```
-- **Text Detection**
+- **Text Detection (Pre-OCR)**
 ```python
 from hezar.models import Model
 from hezar.utils import load_image, draw_boxes, show_image
