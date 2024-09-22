@@ -190,9 +190,9 @@ PreprocessorsContainer(
 ```
 ### Passing kwargs to `predict()`
 You can also pass in additional parameters corresponding to any of the methods and the `predict()` method will figure out
-how each arg should be passed to the write method (`preprocess`, `forward` or `post_process`).
+how each arg should be passed to the right method (`preprocess`, `forward` or `post_process`).
 
-Suppose you model's methods take parameters like below:
+Suppose your model's methods take parameters like below:
 - `preprocess(raw_inputs, return_attention_mask=False)`
 - `post_process(model_inputs, output_all_scores=False)`
 You can pass in parameters for such model like below:

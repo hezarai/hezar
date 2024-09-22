@@ -109,9 +109,9 @@ class Model(nn.Module):
         """
         Load the model from local path or hub.
 
-        It's recommended to actually use this method with :class:`hezar.Model` rather than any other model class
-        unless you actually know that the class is the same as the one on the Hub, because the output will always be
-        the one specified on the Hub!
+        It's recommended to actually use this method with :class:`hezar.models.Model` rather than any other model class
+        unless you actually know that the class is the same as the one in the config, because the output will always be
+        of the type specified in the config!
 
         Args:
             hub_or_local_path: Path to the model living on the Hub or local disk.
