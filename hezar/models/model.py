@@ -354,7 +354,7 @@ class Model(nn.Module):
         """
         return raw_inputs
 
-    def post_process(self, *model_outputs: Dict[str, torch.Tensor] | torch.Tensor, **kwargs) -> List[Any]:
+    def post_process(self, *model_outputs: torch.Tensor | Any, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
