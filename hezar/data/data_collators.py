@@ -22,15 +22,12 @@ class TextPaddingDataCollator:
     A data collator that pads a batch of tokenized inputs.
 
     Args:
-        tokenizer (Tokenizer): A Hezar tokenizer instance. (only its config is going to be used)
-        padding_type (str): Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
-         `max_length` cannot be None)
-        padding_side (str): Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
-         `left`.
-        max_length (int): If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
-         have this value as length.
-        return_tensors (str): Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
-         can also be `np` or `list`.
+        tokenizer (Tokenizer): A Hezar tokenizer instance.
+        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
+        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+            this value as length.
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
 
     def __init__(
@@ -112,16 +109,14 @@ class TextGenerationDataCollator:
     A data collator for text to text generation
 
     Args:
-        tokenizer (Tokenizer): A Hezar tokenizer instance. (only its config is going to be used)
-        padding_type (str): Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
-         `max_length` cannot be None)
-        padding_side (str): Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
-         `left`.
-        max_length (int): If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
-         have this value as length.
+        tokenizer (Tokenizer): A Hezar tokenizer instance.
+        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
+        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+            this value as length.
         max_target_length (int): Maximum target length for text generation.
-        return_tensors (str): Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
-         can also be `np` or `list`.
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
+
     """
 
     def __init__(
@@ -183,6 +178,17 @@ class TextGenerationDataCollator:
 
 
 class ImageCaptioningDataCollator:
+    """
+    Data collator for image captioning.
+
+    Args:
+        tokenizer (Tokenizer): A Hezar tokenizer instance.
+        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
+        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+            this value as length.
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
+    """
     def __init__(
         self,
         tokenizer: Tokenizer,
@@ -271,16 +277,13 @@ class SequenceLabelingDataCollator:
     A data collator for sequence labeling.
 
     Args:
-        tokenizer (Tokenizer): A Hezar tokenizer instance. (only its config is going to be used)
-        padding_type (str): Specifies padding strategy. Defaults to `longest`, but can also be `max_length` (in this case
-         `max_length` cannot be None)
-        padding_side (str): Specifies from which side of each tensor to add paddings. Defaults to `right`, but can also be
-         `left`.
+        tokenizer (Tokenizer): A Hezar tokenizer instance.
+        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
         label_pad_token_id (int): Token ID for padding labels.
-        max_length (int): If `padding_type` is set to `max_length` this parameter must be specified. Forces all tensors to
-         have this value as length.
-        return_tensors (str): Specifies the dtype of the returning tensors in the batch. Defaults to `pt(torch.Tensor)`, but
-         can also be `np` or `list`.
+        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+            this value as length.
+        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
 
     def __init__(
