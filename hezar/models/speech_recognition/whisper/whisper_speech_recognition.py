@@ -91,6 +91,7 @@ class WhisperSpeechRecognition(Model):
     def generate(
         self,
         input_features,
+        attention_mask=None,
         forced_decoder_ids=None,
         generation_config=None,
         logits_processor=None,
@@ -111,6 +112,7 @@ class WhisperSpeechRecognition(Model):
 
         generation_outputs = self.whisper.generate(
             input_features=input_features,
+            attention_mask=attention_mask,
             generation_config=generation_config,
             logits_processor=logits_processor,
             stopping_criteria=stopping_criteria,
@@ -177,7 +179,12 @@ class WhisperSpeechRecognition(Model):
         language = language or tokenizer.language
 
         forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=language, task="transcribe")
-        inputs = feature_extractor(inputs, sampling_rate=self.config.sampling_rate, return_tensors="torch")
+        inputs = feature_extractor(
+            inputs,
+            sampling_rate=self.config.sampling_rate,
+            return_attention_mask=True,
+            return_tensors="torch"
+        )
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
 
