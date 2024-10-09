@@ -192,7 +192,7 @@ class WhisperSpeechRecognition(Model):
         self,
         model_outputs,
         skip_special_tokens=True,
-        decode_with_timestamps=True,
+        decode_with_timestamps=False,
         output_offsets=False,
         **kwargs,
     ):
