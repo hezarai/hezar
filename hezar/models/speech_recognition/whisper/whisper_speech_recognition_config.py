@@ -15,6 +15,7 @@ class WhisperSpeechRecognitionGenerationConfig:
     is_multilingual: bool = True
     max_initial_timestamp_index: int = 50
     max_length: int = 448
+    max_new_tokens: int = 448
     no_timestamps_token_id: int = 50363
     pad_token_id: int = 50257
     prev_sot_token_id: int = 50361
