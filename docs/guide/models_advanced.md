@@ -106,7 +106,7 @@ from hezar.registry import models_registry
 
 bert = models_registry["bert"].module_class(models_registry["bert"].config_class())
 ```
-Obviously, this is so ugly and long so lets use the build method `build_model`. This method takes in 3 paramters:
+Obviously, this is so ugly and long so lets use the build method `build_model`. This method takes in 3 parameters:
 - `name`: The model name which must be present in `model_registry` keys
 - `config`: Optional model config
 - `**kwargs`: Extra config parameters as keyword arguments that overwrites the default config parameters.
@@ -140,7 +140,7 @@ The `predict()` method itself, calls three main methods in order:
 ### Preprocessing/Post-processing
 These steps are performed by two methods:
 - `preprocess()`: takes in raw inputs and processes them to create direct model inputs and returns a dictionary of named
-inputs that is unpacked for model's `forward`/`generate` method. Each model can handle raw inputs however necessary.
+inputs that are unpacked for model's `forward`/`generate` method. Each model can handle raw inputs however necessary.
 But ready-to-use models in Hezar, all use preprocessor modules. preprocessor modules can be tokenizers, feature extractors,
 normalizers, etc. The `Model` class has a `preprocessor` property that stores a dictionary of the required preprocessors
 for the model. These preprocessors are named after their original name in config or registry like `bpe_tokenizer`, `image_processor`, etc.

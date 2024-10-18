@@ -110,7 +110,7 @@ train_config = TrainerConfig(
 ```
 - Setting `init_weights_from=base_model_path` loads the model weights from `base_model_path`. Note that this will warn
 that some weights are not compatible or missing which is fine since the base model does not have the final classifier layer.
-- For this classification task we choose to use [`f1`, `accuracty`, `precision`, `recall`]
+- For this classification task we choose to use [`f1`, `accuracy`, `precision`, `recall`]
 - Other training arguments can also be modified or set. Refer to the [Trainer's tutorial](trainer.md)
 
 
