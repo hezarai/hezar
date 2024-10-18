@@ -45,7 +45,7 @@ def list_available_embeddings():
     return sorted(registry.keys())
 
 
-def _get_registry_from_type(registry_type: RegistryType):
+def _get_registry_from_type(registry_type: RegistryType | str):
     if registry_type == RegistryType.MODEL:
         from ..models import Model  # noqa
         from ..registry import models_registry  # noqa
@@ -84,7 +84,7 @@ def _get_registry_from_type(registry_type: RegistryType):
     return registry
 
 
-def get_registry_point(registry_key: str, registry_type: RegistryType):
+def get_registry_point(registry_key: str, registry_type: RegistryType | str):
     """
     Get the registry item by registry key name in a specific registry
 
@@ -101,7 +101,7 @@ def get_registry_point(registry_key: str, registry_type: RegistryType):
     return registry
 
 
-def get_module_config_class(name: str, registry_type: RegistryType):
+def get_module_config_class(name: str, registry_type: RegistryType | str):
     """
     Get the config class for a given module based on its registry name.
 
@@ -121,7 +121,7 @@ def get_module_config_class(name: str, registry_type: RegistryType):
     return config_cls
 
 
-def get_module_class(name: str, registry_type: RegistryType):
+def get_module_class(name: str, registry_type: RegistryType | str):
     """
     Get module class based on registry name
 
@@ -139,7 +139,7 @@ def get_module_class(name: str, registry_type: RegistryType):
     return module_cls
 
 
-def get_registry_key_by_module_class(module_class: type, registry_type: RegistryType):
+def get_registry_key_by_module_class(module_class: type, registry_type: RegistryType | str):
     """
     Given the module class, return the registry key if exists
 
