@@ -79,7 +79,7 @@ name there.
 
 ## Sending a PR
 
-In order to apply any change to the repo, you have to follow these step:
+In order to apply any change to the repo, you have to follow these steps:
 
 1. Fork the Hezar repository.
 2. Create a new branch for your feature, bug fix, etc.
