@@ -42,7 +42,7 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     encoder_layerdrop: float = 0.0
     decoder_layerdrop: float = 0.0
     decoder_start_token_id: int = 50257
-    use_cache: bool = True
+    use_cache: bool = False
     sampling_rate: int = 16000
     is_encoder_decoder: bool = True
     activation_function: str = "gelu"
