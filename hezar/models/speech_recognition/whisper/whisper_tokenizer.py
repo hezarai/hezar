@@ -255,11 +255,11 @@ ADDITIONAL_SPECIAL_TOKENS = [
 class WhisperBPEConfig(BPEConfig):
     name = "whisper_bpe_tokenizer"
     max_length: int = 448
-    truncation_strategy: str = "longest_first"
-    truncation_direction: str = "right"
+    truncation: str = "longest_first"
+    truncation_side: str = "right"
     stride: int = 0
-    padding_strategy: str = "longest"
-    padding_direction: str = "right"
+    padding: str = "longest"
+    padding_side: str = "right"
     pad_to_multiple_of: int = 0
     pad_token: str = "<|endoftext|>"
     unk_token: str = "<|endoftext|>"

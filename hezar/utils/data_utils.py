@@ -71,28 +71,28 @@ def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: l
 
 def resolve_inputs_length_for_padding(
     inputs: List[List[Any]],
-    padding_type: str | PaddingType = None,
+    padding: str | PaddingType = None,
     max_length: Optional[bool | int] = None,
     truncation: Optional[bool] = True,
 ):
     """
-    Resolve final inputs length based on padding_strategy and max_length values
+    Resolve final inputs length based on padding and max_length values
     """
     inputs_max_length = max([len(x) for x in inputs])
 
     # Resolve padding and max_length values first
-    if padding_type is None:
+    if padding is None:
         if max_length is not None:
-            padding_type = "max_length"
+            padding = "max_length"
         else:
-            padding_type = "longest"
+            padding = "longest"
 
     # Now lets resolve any conflicts
-    if padding_type == "longest":
+    if padding == "longest":
         if max_length is not None and max_length < inputs_max_length:
             if not truncation:
                 logger.warning(
-                    f"Setting padding_type to `longest` and a max_length={max_length} which is below the "
+                    f"Setting padding to `longest` and a max_length={max_length} which is below the "
                     f"inputs longest value {inputs_max_length} requires truncation to be True, "
                     f"got truncation={truncation}. Falling back to truncating inputs to max_length={max_length}."
                 )
@@ -102,7 +102,7 @@ def resolve_inputs_length_for_padding(
         else:
             inputs_length = inputs_max_length
 
-    elif padding_type == "max_length":
+    elif padding == "max_length":
         if max_length is None:
             logger.warning(
                 "Setting padding='max_length' but no max_length value is provided! Falling back to padding='longest'"
@@ -119,14 +119,14 @@ def resolve_inputs_length_for_padding(
             else:
                 inputs_length = max_length
     else:
-        raise ValueError(f"Invalid padding value `{padding_type}`, expected either `max_length` or `longest`")
+        raise ValueError(f"Invalid padding value `{padding}`, expected either `max_length` or `longest`")
 
     return inputs_length
 
 
 def pad_batch_items(
     inputs: List[List[int | float]],
-    padding_type: str | PaddingType = None,
+    padding: str | PaddingType = None,
     padding_side: Literal["right", "left"] = "right",
     pad_id: int = 0,
     max_length: Optional[bool | int] = None,
@@ -136,10 +136,10 @@ def pad_batch_items(
     Given a nested container of unequal sized iterables e.g, batch of token ids, pad them based on padding strategy
     Args:
         inputs: A nested iterable of unequal sized iterables (e.g, list of lists)
-        padding_type: Padding strategy, either max_length or longest
+        padding: Padding strategy, either max_length or longest
         padding_side: Where to add padding ids, `left` or `right`, defaults to `right`
         pad_id: Pad token id, defaults to `0`
-        max_length: Max input length after padding, only applicable when padding_strategy == "max_length"
+        max_length: Max input length after padding, only applicable when padding == "max_length"
         truncation: Whether to truncate if an input in the batch is longer than max_length
 
     Returns:
@@ -148,7 +148,7 @@ def pad_batch_items(
 
     inputs_length = resolve_inputs_length_for_padding(
         inputs,
-        padding_type=padding_type,
+        padding=padding,
         max_length=max_length,
         truncation=truncation,
     )

@@ -97,7 +97,7 @@ class TextClassificationDataset(Dataset):
         inputs = self.tokenizer(
             text,
             return_tensors="torch",
-            truncation_strategy="longest_first",
+            truncation=True,
             padding="longest",
             return_attention_mask=True,
         )

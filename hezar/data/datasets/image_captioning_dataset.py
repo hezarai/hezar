@@ -48,7 +48,7 @@ class ImageCaptioningDataset(Dataset):
         self.tokenizer = self.preprocessor.tokenizer
         self.data_collator = ImageCaptioningDataCollator(
             self.tokenizer,
-            padding_type="max_length" if self.config.max_length is not None else "longest",
+            padding="max_length" if self.config.max_length is not None else "longest",
             max_length=self.config.max_length
         )
 

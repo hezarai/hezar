@@ -22,9 +22,9 @@ class SpeechRecognitionDatasetConfig(DatasetConfig):
     task = TaskType.SPEECH_RECOGNITION
     path: str = None
     sampling_rate: int = 16000
-    audio_array_padding_type: bool | str | PaddingType = "longest"
+    audio_array_padding: bool | str | PaddingType = "longest"
     max_audio_array_length: int = None
-    labels_padding_type: bool | str | PaddingType = "longest"
+    labels_padding: bool | str | PaddingType = "longest"
     labels_max_length: int = None
     audio_file_path_column: str = "path"
     audio_column: str = "audio"
@@ -43,9 +43,9 @@ class SpeechRecognitionDataset(Dataset):
         self.data_collator = SpeechRecognitionDataCollator(
             self.feature_extractor,
             self.tokenizer,
-            inputs_padding_type=self.config.audio_array_padding_type,
+            inputs_padding=self.config.audio_array_padding,
             inputs_max_length=self.config.max_audio_array_length,
-            labels_padding_type=self.config.labels_padding_type,
+            labels_padding=self.config.labels_padding,
             labels_max_length=self.config.labels_max_length,
         )
 
@@ -67,7 +67,7 @@ class SpeechRecognitionDataset(Dataset):
 
         labels = self.tokenizer(
             transcript,
-            padding_strategy=self.config.labels_padding_type,
+            padding=self.config.labels_padding,
             max_length=self.config.labels_max_length,
             return_tensors="torch",
         )

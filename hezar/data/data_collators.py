@@ -23,9 +23,9 @@ class TextPaddingDataCollator:
 
     Args:
         tokenizer (Tokenizer): A Hezar tokenizer instance.
-        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding (str): Specifies padding strategy, either `longest` or `max_length`.
         padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
-        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+        max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
@@ -33,13 +33,13 @@ class TextPaddingDataCollator:
     def __init__(
         self,
         tokenizer: Tokenizer,
-        padding_type: str = "longest",
+        padding: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
         return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
-        self.padding_type = padding_type
+        self.padding = padding
         self.padding_side = padding_side
         self.max_length = max_length
         self.return_tensors = return_tensors
@@ -52,10 +52,10 @@ class TextPaddingDataCollator:
             "attention_mask": 0,
         }
 
-        if padding_type == "longest" and max_length is not None:
+        if padding == "longest" and max_length is not None:
             logger.warning(
-                "You passed `max_length` while also setting `padding_type` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                "You passed `max_length` while also setting `padding` to `longest` which are "
+                "incompatible! Instead leave `max_length` as None or set `padding` to `max_length`! "
                 "Ignoring `max_length`"
             )
             self.max_length = None
@@ -110,9 +110,9 @@ class TextGenerationDataCollator:
 
     Args:
         tokenizer (Tokenizer): A Hezar tokenizer instance.
-        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding (str): Specifies padding strategy, either `longest` or `max_length`.
         padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
-        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+        max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
         max_target_length (int): Maximum target length for text generation.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
@@ -122,23 +122,23 @@ class TextGenerationDataCollator:
     def __init__(
         self,
         tokenizer: Tokenizer,
-        padding_type: str = "longest",
+        padding: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
         max_target_length: int = None,
         return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
-        self.padding_type = padding_type
+        self.padding = padding
         self.padding_side = padding_side
         self.max_length = max_length
         self.max_target_length = max_target_length
         self.return_tensors = return_tensors
 
-        if padding_type == "longest" and max_length is not None:
+        if padding == "longest" and max_length is not None:
             logger.warning(
-                "You passed `max_length` while also setting `padding_type` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                "You passed `max_length` while also setting `padding` to `longest` which are "
+                "incompatible! Instead leave `max_length` as None or set `padding` to `max_length`! "
                 "Ignoring `max_length`"
             )
             self.max_length = None
@@ -161,14 +161,14 @@ class TextGenerationDataCollator:
 
         padded_batch = self.tokenizer.pad_encoded_batch(
             permuted_batch,
-            padding=self.padding_type,
+            padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["labels"],
             return_tensors=self.return_tensors,
         )
         padded_batch = self.tokenizer.pad_encoded_batch(
             padded_batch,
-            padding=self.padding_type,
+            padding=self.padding,
             max_length=self.max_target_length,
             include_keys=["labels"],
             return_tensors=self.return_tensors,
@@ -183,30 +183,30 @@ class ImageCaptioningDataCollator:
 
     Args:
         tokenizer (Tokenizer): A Hezar tokenizer instance.
-        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding (str): Specifies padding strategy, either `longest` or `max_length`.
         padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
-        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+        max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
     def __init__(
         self,
         tokenizer: Tokenizer,
-        padding_type: str = "longest",
+        padding: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
         return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
-        self.padding_type = padding_type
+        self.padding = padding
         self.padding_side = padding_side
         self.max_length = max_length
         self.return_tensors = return_tensors
 
-        if padding_type == "longest" and max_length is not None:
+        if padding == "longest" and max_length is not None:
             logger.warning(
-                "You passed `max_length` while also setting `padding_type` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding_type` to `max_length`! "
+                "You passed `max_length` while also setting `padding` to `longest` which are "
+                "incompatible! Instead leave `max_length` as None or set `padding` to `max_length`! "
                 "Ignoring `max_length`"
             )
             self.max_length = None
@@ -220,7 +220,7 @@ class ImageCaptioningDataCollator:
 
         padded_batch = self.tokenizer.pad_encoded_batch(
             permuted_batch,
-            padding=self.padding_type,
+            padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["pixel_values"],
             return_tensors=self.return_tensors,
@@ -235,16 +235,16 @@ class SpeechRecognitionDataCollator:
         self,
         feature_extractor: AudioFeatureExtractor,
         tokenizer: Tokenizer,
-        inputs_padding_type: str = "longest",
+        inputs_padding: str = "longest",
         inputs_max_length: int = None,
-        labels_padding_type: str = "longest",
+        labels_padding: str = "longest",
         labels_max_length: int = None,
     ):
         self.feature_extractor = feature_extractor
         self.tokenizer = tokenizer
-        self.inputs_padding_type = inputs_padding_type
+        self.inputs_padding = inputs_padding
         self.inputs_max_length = inputs_max_length
-        self.labels_padding_type = labels_padding_type
+        self.labels_padding = labels_padding
         self.labels_max_length = labels_max_length
 
     def __call__(self, input_batch):
@@ -256,7 +256,7 @@ class SpeechRecognitionDataCollator:
 
         inputs = self.tokenizer.pad_encoded_batch(
             inputs,
-            padding=self.labels_padding_type,
+            padding=self.labels_padding,
             max_length=self.labels_max_length,
             exclude_keys=["input_features"],
             return_tensors="torch"
@@ -264,7 +264,7 @@ class SpeechRecognitionDataCollator:
 
         inputs = self.feature_extractor.pad(
             inputs,
-            padding=self.inputs_padding_type,
+            padding=self.inputs_padding,
             max_length=self.inputs_max_length,
             return_tensors="torch",
         )
@@ -278,10 +278,10 @@ class SequenceLabelingDataCollator:
 
     Args:
         tokenizer (Tokenizer): A Hezar tokenizer instance.
-        padding_type (str): Specifies padding strategy, either `longest` or `max_length`.
+        padding (str): Specifies padding strategy, either `longest` or `max_length`.
         padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
         label_pad_token_id (int): Token ID for padding labels.
-        max_length (int): If `padding_type` is set to `max_length` this must be specified. Forces all tensors to have
+        max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
@@ -289,14 +289,14 @@ class SequenceLabelingDataCollator:
     def __init__(
         self,
         tokenizer: Tokenizer,
-        padding_type: str = "longest",
+        padding: str = "longest",
         padding_side: str = "right",
         label_pad_token_id: int = -100,
         max_length: int = None,
         return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
-        self.padding_type = padding_type
+        self.padding = padding
         self.padding_side = padding_side
         self.label_pad_token_id = label_pad_token_id
         self.max_length = max_length
@@ -314,10 +314,10 @@ class SequenceLabelingDataCollator:
         """
         label_name = "label" if "label" in encoded_batch[0].keys() else "labels"
         labels = [feature[label_name] for feature in encoded_batch] if label_name in encoded_batch[0].keys() else None
-        self.tokenizer.config.padding_direction = self.padding_side
+        self.tokenizer.config.padding_side = self.padding_side
         batch = self.tokenizer.pad_encoded_batch(
             encoded_batch,
-            padding=self.padding_type,  # noqa
+            padding=self.padding,  # noqa
             max_length=self.max_length,
             # Conversion to tensors will fail if we have labels as they are not of the same length yet.
             return_tensors="torch" if labels is None else None,

@@ -88,7 +88,7 @@ class AudioFeatureExtractor(Preprocessor):
                 first_element = required_input[index][0]
 
         # processed_features = convert_batch_dict_dtype(processed_features, dtype="numpy")
-        padding_strategy = self._get_padding_strategy(padding=padding, max_length=max_length)
+        padding = self._get_padding(padding=padding, max_length=max_length)
 
         required_input = processed_features[self.model_input_name]
 
@@ -108,10 +108,10 @@ class AudioFeatureExtractor(Preprocessor):
             )
             truncated_inputs.append(inputs_slice)
 
-        if padding_strategy == "longest":
+        if padding == "longest":
             # make sure that `max_length` cannot be longer than the longest truncated length
             max_length = max(len(input_slice[self.model_input_name]) for input_slice in truncated_inputs)
-            padding_strategy = "max_length"
+            padding = "max_length"
 
         batch_outputs = {}
         for i in range(batch_size):
@@ -119,7 +119,7 @@ class AudioFeatureExtractor(Preprocessor):
             outputs = self._pad(
                 truncated_inputs[i],
                 max_length=max_length,
-                padding_strategy=padding_strategy,
+                padding=padding,
                 pad_to_multiple_of=pad_to_multiple_of,
                 return_attention_mask=return_attention_mask,
             )
@@ -141,7 +141,7 @@ class AudioFeatureExtractor(Preprocessor):
         self,
         processed_features,
         max_length=None,
-        padding_strategy=None,
+        padding=None,
         pad_to_multiple_of=None,
         return_attention_mask=None,
     ) -> dict:
@@ -150,7 +150,7 @@ class AudioFeatureExtractor(Preprocessor):
 
         Args:
             processed_features: Processed inputs to add padding to
-            padding_strategy: Padding strategy which can be `longest`, `max_length`, `False`
+            padding: Padding strategy which can be `longest`, `max_length`, `False`
             max_length: Max input length (Only effective if padding is `max_length` too, ignored otherwise)
             pad_to_multiple_of: If set will pad the sequence to a multiple of the provided value.
             return_attention_mask:  Whether to return the attention mask.
@@ -160,13 +160,13 @@ class AudioFeatureExtractor(Preprocessor):
         """
         required_input = processed_features[self.model_input_name]
 
-        if padding_strategy == "longest":
+        if padding == "longest":
             max_length = len(required_input)
 
         if max_length is not None and pad_to_multiple_of is not None and (max_length % pad_to_multiple_of != 0):
             max_length = ((max_length // pad_to_multiple_of) + 1) * pad_to_multiple_of
 
-        needs_to_be_padded = padding_strategy is not None and len(required_input) < max_length
+        needs_to_be_padded = padding is not None and len(required_input) < max_length
 
         if return_attention_mask and "attention_mask" not in processed_features:
             processed_features["attention_mask"] = np.ones(len(required_input), dtype=np.int32)
@@ -192,24 +192,24 @@ class AudioFeatureExtractor(Preprocessor):
 
         return processed_features
 
-    def _get_padding_strategy(self, padding=False, max_length=None):
+    def _get_padding(self, padding=False, max_length=None):
         """
         Find the correct padding strategy
         """
         if padding == "longest" or padding is True:
-            padding_strategy = "longest"
+            padding = "longest"
             if self.config.padding_value is None:
-                raise ValueError(f"Setting padding to `{padding_strategy}`, but `config.padding_value` is `None`!")
+                raise ValueError(f"Setting padding to `{padding}`, but `config.padding_value` is `None`!")
 
         elif padding == "max_length":
             if max_length is None:
                 raise ValueError("Setting `padding=max_length` but leaving `max_length` as `None` is invalid!")
-            padding_strategy = "max_length"
+            padding = "max_length"
 
         else:
-            padding_strategy = None
+            padding = None
 
-        return padding_strategy
+        return padding
 
     def _truncate(
         self,

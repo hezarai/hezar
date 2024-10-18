@@ -59,7 +59,7 @@ class TextSummarizationDataset(Dataset):
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
             max_target_length=self.config.max_target_length,
-            padding_type="max_length" if self.config.max_length else "longest",
+            padding="max_length" if self.config.max_length else "longest",
         )
 
     def _load(self, split):

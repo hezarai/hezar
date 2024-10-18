@@ -43,11 +43,11 @@ class TokenizerConfig(PreprocessorConfig):
 
     Args:
         max_length (int): Maximum length of the tokenized sequences.
-        truncation_strategy (str): Truncation strategy for tokenization.
-        truncation_direction (str): Truncation direction for tokenization.
+        truncation (str): Truncation strategy for tokenization.
+        truncation_side (str): Truncation direction for tokenization.
         stride (int): Stride for tokenization.
-        padding_strategy (str): Padding strategy for tokenization.
-        padding_direction (str): Padding direction for tokenization.
+        padding (str): Padding type for tokenization e.g, max_length, longest, no_padding.
+        padding_side (str): Padding direction for tokenization.
         pad_to_multiple_of (int): Pad to a multiple of this value.
         pad_token_type_id (int): ID of the padding token type.
         bos_token (str): Beginning of sequence token.
@@ -62,11 +62,11 @@ class TokenizerConfig(PreprocessorConfig):
 
     name = "tokenizer"
     max_length: int = None
-    truncation_strategy: str = None
-    truncation_direction: str = None
+    truncation: str = None
+    truncation_side: str = None
+    padding: str = None
+    padding_side: str = None
     stride: int = None
-    padding_strategy: str = None
-    padding_direction: str = None
     pad_to_multiple_of: int = None
     pad_token_type_id: int = 0
     bos_token: str = None
@@ -229,8 +229,8 @@ class Tokenizer(Preprocessor):
                 pad_id = 0 if key == "attention_mask" else self.pad_token_id
                 padded_ids = pad_batch_items(
                     inputs[key],
-                    padding_type=padding,
-                    padding_side=self.config.padding_direction,
+                    padding=padding,
+                    padding_side=self.config.padding_side,
                     pad_id=pad_id,
                     max_length=max_length, truncation=truncation,
                 )
@@ -245,8 +245,8 @@ class Tokenizer(Preprocessor):
         inputs: List[str] | List[Tuple[str, str]],
         device: str | torch.device = None,
         add_special_tokens: bool = True,
-        padding_strategy=None,
-        truncation_strategy=None,
+        padding=None,
+        truncation=None,
         max_length: int = None,
         return_tensors: str = "list",
         stride: int = 0,
@@ -269,8 +269,8 @@ class Tokenizer(Preprocessor):
         Args:
             inputs: A list of string inputs to tokenize
             add_special_tokens: Whether to add special tokens or not
-            padding_strategy: Determines how to pad inputs
-            truncation_strategy: Determines how to truncate inputs
+            padding: Determines how to pad inputs
+            truncation: Determines how to truncate inputs
             max_length: Max input length of the sequences
             return_tensors: The type of the returning tensors in the batch e.g, pt, np, list
             stride: Stride level
@@ -292,23 +292,34 @@ class Tokenizer(Preprocessor):
         if isinstance(inputs, list) and not len(inputs):
             raise ValueError("Tokenizer cannot process an empty list!")
 
+        if "padding_strategy" in kwargs:
+            logger.warning(
+                "`padding_strategy` was deprecated in favor of `padding`!"
+                " This warning will change to an error in the future!"
+            )
+        if "truncation_strategy" in kwargs:
+            logger.warning(
+                "`truncation_strategy` was deprecated in favor of `truncation`!"
+                " This warning will change to an error in the future!"
+            )
+
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        if padding_strategy is None and max_length is not None:
-            padding_strategy = PaddingType.MAX_LENGTH
-        truncation_strategy = truncation_strategy or self.config.truncation_strategy
+        if padding is None and max_length is not None:
+            padding = PaddingType.MAX_LENGTH
+        truncation = truncation or self.config.truncation
         max_length = max_length or self.config.max_length
         pad_to_multiple_of = pad_to_multiple_of or self.config.pad_to_multiple_of
 
         self.set_truncation_and_padding(
-            padding_strategy=padding_strategy,
-            truncation_strategy=truncation_strategy,
-            padding_side=self.config.padding_direction,
-            truncation_side=self.config.truncation_direction,
+            padding=padding,
+            truncation=truncation,
+            padding_side=self.config.padding_side,
+            truncation_side=self.config.truncation_side,
             max_length=max_length,
             stride=self.config.stride,
-            pad_to_multiple_of=pad_to_multiple_of,
+            pad_to_multiple_of=pad_to_multiple_of
         )
         encodings = self.encode(
             inputs,
@@ -357,8 +368,8 @@ class Tokenizer(Preprocessor):
 
     def set_truncation_and_padding(
         self,
-        padding_strategy=None,
-        truncation_strategy=None,
+        padding=None,
+        truncation=None,
         padding_side=None,
         truncation_side=None,
         max_length: int = None,
@@ -366,14 +377,16 @@ class Tokenizer(Preprocessor):
         pad_to_multiple_of: int = None,
     ):
         # Set truncation and padding on the backend tokenizer
-        if truncation_strategy == "no_truncation" or truncation_strategy is None:
+        if truncation == "no_truncation" or truncation is None:
             if self.truncation is not None:
                 self.no_truncation()
         else:
+            if truncation is True:
+                truncation = "longest_first"
             target = {
                 "max_length": max_length,
                 "stride": stride,
-                "strategy": truncation_strategy,
+                "strategy": truncation,
                 "direction": truncation_side,
             }
             if self.truncation is None:
@@ -384,12 +397,12 @@ class Tokenizer(Preprocessor):
             if current != target:
                 self.enable_truncation(**target)
 
-        if padding_strategy == "no_padding":
+        if padding == "no_padding":
             if self.padding is not None:
                 self.no_padding()
         else:
             target = {
-                "length": max_length if padding_strategy == PaddingType.MAX_LENGTH else None,
+                "length": max_length if padding == PaddingType.MAX_LENGTH else None,
                 "direction": padding_side,
                 "pad_id": self.token_to_id(self.pad_token),
                 "pad_token": self.pad_token,
