@@ -175,4 +175,4 @@ def test_trainer(task):
 
     # Clean cache so that CI environment does not run out of space
     if CI_MODE == "TRUE":
-        clean_cache(delay=1)
+        clean_cache(cache_dir=os.path.join(os.path.expanduser("~"), ".cache"), delay=1)
