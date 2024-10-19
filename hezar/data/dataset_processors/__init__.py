@@ -1,5 +1,6 @@
 from .dataset_processor import DatasetProcessor
 from .image_captioning_processor import ImageCaptioningDatasetProcessor
+from .ocr_processor import OCRDatasetProcessor
 from .sequence_labeling_processor import SequenceLabelingDatasetProcessor
 from .text_classification_processor import TextClassificationDatasetProcessor
 from .text_summarization_processor import TextSummarizationDatasetProcessor
