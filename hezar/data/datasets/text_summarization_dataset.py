@@ -26,7 +26,7 @@ class TextSummarizationDatasetConfig(DatasetConfig):
         summary_field (str): Field name for summary in the dataset.
         title_field (str): Field name for title in the dataset.
         max_length (int): Maximum length of text.
-        max_target_length (int): Maximum length of the target summary.
+        labels_max_length (int): Maximum length of the target summary.
     """
 
     name = "text_summarization"
@@ -37,7 +37,7 @@ class TextSummarizationDatasetConfig(DatasetConfig):
     summary_field: str = None
     title_field: str = None
     max_length: int = None
-    max_target_length: int = None
+    labels_max_length: int = None
 
 
 @register_dataset("text_summarization", config_class=TextSummarizationDatasetConfig)
@@ -58,7 +58,7 @@ class TextSummarizationDataset(Dataset):
         self.data_collator = TextGenerationDataCollator(
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
-            max_target_length=self.config.max_target_length,
+            labels_max_length=self.config.labels_max_length,
             padding="max_length" if self.config.max_length else "longest",
         )
 
@@ -103,7 +103,7 @@ class TextSummarizationDataset(Dataset):
             summary,
             return_tensors="torch",
             max_length=self.config.max_length,
-            padding="max_length" if self.config.max_target_length else "longest",
+            padding="max_length" if self.config.labels_max_length else "longest",
             return_attention_mask=True,
         )
 

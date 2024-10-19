@@ -114,7 +114,7 @@ class TextGenerationDataCollator:
         padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
         max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
-        max_target_length (int): Maximum target length for text generation.
+        labels_max_length (int): Maximum target length for text generation.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
 
     """
@@ -125,14 +125,14 @@ class TextGenerationDataCollator:
         padding: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
-        max_target_length: int = None,
+        labels_max_length: int = None,
         return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding = padding
         self.padding_side = padding_side
         self.max_length = max_length
-        self.max_target_length = max_target_length
+        self.labels_max_length = labels_max_length
         self.return_tensors = return_tensors
 
         if padding == "longest" and max_length is not None:
@@ -169,7 +169,7 @@ class TextGenerationDataCollator:
         padded_batch = self.tokenizer.pad_encoded_batch(
             padded_batch,
             padding=self.padding,
-            max_length=self.max_target_length,
+            max_length=self.labels_max_length,
             include_keys=["labels"],
             return_tensors=self.return_tensors,
         )
