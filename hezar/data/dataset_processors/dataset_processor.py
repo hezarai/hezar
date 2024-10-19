@@ -12,42 +12,48 @@ Example:
 >>> dataset = dataset.map(data_processor, batched=True, batch_size=1000)
 
 """
+from ...constants import Backends
+from ...utils import is_backend_available, verify_dependencies
+
+
+if is_backend_available(Backends.DATASETS):
+    from datasets.formatting.formatting import LazyBatch, LazyRow
 
 
 class DatasetProcessor:
-    def __init__(self, batched=False, *args, **kwargs):
+    required_backends = [Backends.DATASETS]
+
+    def __init__(self, *args, **kwargs):
         """
         Base constructor that accepts a `batched` flag and any other arguments for child class initialization.
-
-        Args:
-            batched (bool): Whether to process data in batches or not.
         """
-        self.batched = batched
+        verify_dependencies(self, self.required_backends)
         self.args = args
         self.kwargs = kwargs
 
-    def __call__(self, examples, **fn_kwargs):
+    def __call__(self, data: LazyBatch | LazyRow, **kwargs):
         """
         Method called when using the map function.
-        Decides whether to call `process()` or `batch_process()` based on the `batched` flag.
+        Decides whether to call `process_single()` or `process_batch()` based on the data values.
 
         Args:
-            examples (dict or list of dict): Data to process.
-            **fn_kwargs: Additional keyword arguments passed through the `map` function as `fn_kwargs`.
-                         For example, `fn_kwargs` can contain custom settings like `sampling_rate`.
+            data: A dict of feature name -> sample or batch of samples mapping.
+            **kwargs: Additional keyword arguments passed through the `map` function as `kwargs`.
         """
-        if self.batched:
-            return self.batch_process(examples, **fn_kwargs)
+        if isinstance(data, LazyRow):
+            return self.process_single(data, **kwargs)
+        elif isinstance(data, LazyBatch):
+            return self.process_batch(data, **kwargs)
         else:
-            return self.process(examples, **fn_kwargs)
+            raise ValueError(f"The input data must be either `LazyBatch` or `LazyRow`, got `{type(data)}`!")
 
-    def process(self, example, **kwargs):
+    def process_single(self, data: LazyRow, **kwargs):
         """
         Method to process a single example
         """
         raise NotImplementedError
 
-    def batch_process(self, examples, **kwargs):
+    def process_batch(self, data: LazyBatch, **kwargs):
         """
         Method to process a batch of examples.
         """

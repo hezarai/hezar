@@ -1,2 +1,3 @@
 from .dataset_processor import DatasetProcessor
+from .image_captioning_processor import ImageCaptioningDatasetProcessor
 from .text_classification_processor import TextClassificationDatasetProcessor
