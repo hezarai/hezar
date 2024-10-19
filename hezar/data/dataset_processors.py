@@ -1,0 +1,619 @@
+"""
+Dataset processors are a bunch of callable classes to be passed as map functions for any dataset on the Hub.
+Note that the main dataset classes are already implemented in a way that the processing is done in the `__getitem__`
+method and these classes are only used for when the dataset has been loaded using the HuggingFace datasets library,
+and you want to get advantage of the multiprocessing/batch processing/caching functionalities of the HF datasets.
+
+Example:
+>>> from datasets import load_dataset
+>>> from hezar.data import SpeechRecognitionDatasetProcessor
+
+>>> data_processor = SpeechRecognitionDatasetProcessor(tokenizer=tokenizer, feature_extractor=feature_extractor)
+>>> dataset = load_dataset("hezarai/common-voice-13-fa")
+>>> dataset = dataset.map(data_processor, batched=True, batch_size=1000)
+"""
+import torch
+
+from ..constants import Backends
+from ..utils import is_backend_available, reverse_string_digits, shift_tokens_right, verify_dependencies
+
+
+if is_backend_available(Backends.DATASETS):
+    from datasets.formatting.formatting import LazyBatch, LazyRow
+
+__all__ = [
+    "DatasetProcessor",
+    "ImageCaptioningDatasetProcessor",
+    "OCRDatasetProcessor",
+    "SequenceLabelingDatasetProcessor",
+    "SpeechRecognitionDatasetProcessor",
+    "TextClassificationDatasetProcessor",
+    "TextSummarizationDatasetProcessor",
+]
+
+
+class DatasetProcessor:
+    """
+    The base callable dataset processor class that can handle both single and batched mode dataset mapping.
+    """
+    required_backends = [Backends.DATASETS]
+
+    def __init__(self, *args, **kwargs):
+        verify_dependencies(self, self.required_backends)
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, data: LazyBatch | LazyRow, **kwargs):
+        """
+        Method called when using the map function.
+        Decides whether to call `process_single()` or `process_batch()` based on the data values.
+
+        Args:
+            data: A dict of feature name -> sample or batch of samples mapping.
+            **kwargs: Additional keyword arguments passed through the `map` function as `kwargs`.
+        """
+        if isinstance(data, LazyRow):
+            return self.process_single(data, **kwargs)
+        elif isinstance(data, LazyBatch):
+            return self.process_batch(data, **kwargs)
+        else:
+            raise ValueError(f"The input data must be either `LazyBatch` or `LazyRow`, got `{type(data)}`!")
+
+    def process_single(self, data: LazyRow, **kwargs):
+        """
+        Method to process a single example
+        """
+        raise NotImplementedError
+
+    def process_batch(self, data: LazyBatch, **kwargs):
+        """
+        Method to process a batch of examples.
+        """
+        raise NotImplementedError
+
+
+class ImageCaptioningDatasetProcessor(DatasetProcessor):
+    """
+    Dataset processor for image captioning datasets. This class handles tokenization and image processing.
+    """
+
+    def __init__(self, image_processor, tokenizer, max_length=None, padding=None):
+        super().__init__()
+        self.image_processor = image_processor
+        self.tokenizer = tokenizer
+        self.max_length = max_length
+        self.padding = padding
+
+    def process_single(self, data, padding=None, max_length=None):
+        """
+        Process image and tokenize captions for a single data sample.
+
+        Args:
+            data: A data example containing the image and its caption
+            padding: Padding type e.g, max_length, longest.
+            max_length: Max length value if padding is set to max_length or the labels must be truncated.
+
+        Returns:
+            A dict of pixel values tensor of the processed image and labels token ids and attention mask.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+
+        path = data["image_path"]
+        text = data["label"]
+
+        tokenized_inputs = self.tokenizer(text, padding=padding, max_length=max_length, return_tensors="torch")
+
+        data["pixel_values"] = self.image_processor(path, return_tensors="torch")["pixel_values"]
+        data["labels"] = tokenized_inputs["token_ids"]
+        data["attention_mask"] = tokenized_inputs["attention_mask"]
+        data["decoder_input_ids"] = shift_tokens_right(
+            data["labels"],
+            pad_token_id=self.tokenizer.pad_token_id,
+            decoder_start_token_id=self.tokenizer.bos_token_id,
+        )
+
+        return data
+
+    def process_batch(self, data, padding=None, max_length=None):
+        """
+        Process image and tokenize captions for a batch of data samples.
+
+        Args:
+            data: A batch of data examples containing the images and their captions
+            padding: Padding type e.g, max_length, longest.
+            max_length: Max length value if padding is set to max_length or the labels must be truncated.
+
+        Returns:
+            A dict of pixel values tensor of the processed images and labels token ids and attention masks.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+
+        paths = data["image_path"]
+        texts = data["label"]
+
+        tokenized_inputs = self.tokenizer(texts, padding=padding, max_length=max_length, return_tensors="torch")
+
+        data["pixel_values"] = self.image_processor(paths, return_tensors="torch")["pixel_values"]
+        data["labels"] = tokenized_inputs["token_ids"]
+        data["attention_mask"] = tokenized_inputs["attention_mask"]
+        data["decoder_input_ids"] = shift_tokens_right(
+            data["labels"],
+            pad_token_id=self.tokenizer.pad_token_id,
+            decoder_start_token_id=self.tokenizer.bos_token_id,
+        )
+
+        return data
+
+
+class OCRDatasetProcessor(DatasetProcessor):
+    """
+    Dataset processor class for OCR which can handle both tokenizer-based or character-split-based datasets.
+    """
+
+    def __init__(
+        self,
+        image_processor,
+        tokenizer=None,
+        text_split_type="char_split",
+        max_length=None,
+        reverse_digits=False,
+        id2label=None,
+        image_field="image_path",
+        text_field="text",
+    ):
+        super().__init__()
+        self.image_processor = image_processor
+        self.tokenizer = tokenizer
+        self.text_split_type = text_split_type
+        self.max_length = max_length
+        self.reverse_digits = reverse_digits
+        self.id2label = id2label
+        self.image_field = image_field
+        self.text_field = text_field
+
+    def _text_to_tensor(self, text):
+        """
+        Convert text to tensor based on the configured text_split_type.
+
+        Args:
+            text (str): The raw text.
+
+        Returns:
+            torch.Tensor: The output tensor.
+
+        """
+        if self.text_split_type == "tokenize":
+            token_ids = self.tokenizer(text, padding="max_length", max_length=self.max_length)["input_ids"]
+            token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
+            labels = torch.tensor(token_ids)
+        elif self.text_split_type == "char_split":
+            if self.reverse_digits:
+                text = reverse_string_digits(text)
+            label2id = {v: k for k, v in self.id2label.items()}
+            labels = [label2id[char] for char in text]
+            labels = torch.LongTensor(labels)
+        else:
+            raise ValueError(f"Invalid `text_split_type={self.text_split_type}`")
+        return labels
+
+    def process_single(self, data):
+        """
+        Process a single image-to-text OCR example.
+
+        Args:
+            data: A data example containing an image path and corresponding text.
+
+        Returns:
+            dict: Processed inputs with pixel values and text labels.
+        """
+        path = data[self.image_field]
+        text = data[self.text_field]
+        pixel_values = self.image_processor(path, return_tensors="torch")["pixel_values"][0]
+        labels = self._text_to_tensor(text)
+        return {"pixel_values": pixel_values, "labels": labels}
+
+    def process_batch(self, data):
+        """
+        Process a batch of image-to-text OCR examples.
+
+        Args:
+            data: A batch of data examples containing image paths and corresponding texts.
+
+        Returns:
+            dict: Batch of processed inputs with pixel values and text labels.
+        """
+        paths = data[self.image_field]
+        texts = data[self.text_field]
+
+        # Process images in batch
+        pixel_values = self.image_processor(paths, return_tensors="torch")["pixel_values"]
+
+        # Process text labels in batch
+        labels = []
+        for text in texts:
+            labels.append(self._text_to_tensor(text))
+
+        return {"pixel_values": pixel_values, "labels": labels}
+
+
+class SequenceLabelingDatasetProcessor(DatasetProcessor):
+    """
+    Dataset processor class for sequence labeling datasets. Handles tokenization and label alignment.
+    """
+
+    def __init__(self, tokenizer, label_all_tokens=True, ignore_index=-100, max_length=None, padding=None):
+        super().__init__()
+        self.tokenizer = tokenizer
+        self.label_all_tokens = label_all_tokens
+        self.ignore_index = ignore_index
+        self.max_length = max_length
+        self.padding = padding
+
+    def _tokenize_and_align(self, tokens, labels, padding=None, max_length=None):
+        """
+        Tokenize and align tokens and labels for sequence labeling tasks.
+
+        Args:
+            tokens: List of tokens (for single examples) or list of lists (for batches).
+            labels: List of labels (for single examples) or list of lists (for batches).
+            padding: Padding strategy for tokenization.
+            max_length: Maximum sequence length to truncate/pad.
+
+        Returns:
+            dict: Tokenized and aligned inputs with labels.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+
+        # Tokenize and return word IDs for mapping labels to subword tokens
+        tokenized_inputs = self.tokenizer(
+            tokens,
+            is_split_into_words=True,
+            return_word_ids=True,
+            padding=padding,
+            truncation=True,
+            max_length=max_length,
+            return_tensors="torch"
+        )
+        word_ids = tokenized_inputs["word_ids"]
+
+        # Align labels with tokens
+        aligned_labels = []
+        for batch_idx, batch_word_ids in enumerate(word_ids):
+            previous_word_idx = None
+            label_ids = []
+            for word_idx in batch_word_ids:
+                # Assign ignore index for special tokens
+                if word_idx is None:
+                    label_ids.append(self.ignore_index)
+                elif word_idx != previous_word_idx:
+                    # Assign the label for the first token of each word
+                    label_ids.append(labels[batch_idx][word_idx])
+                else:
+                    # Assign label for subword tokens (if label_all_tokens is True)
+                    label_ids.append(labels[batch_idx][word_idx] if self.label_all_tokens else self.ignore_index)
+                previous_word_idx = word_idx
+            aligned_labels.append(label_ids)
+
+        tokenized_inputs["labels"] = torch.tensor(aligned_labels, dtype=torch.long)
+        return tokenized_inputs
+
+    def process_single(self, data, padding=None, max_length=None):
+        """
+        Process a single example of sequence labeling data.
+
+        Args:
+            data: A single data example containing tokens and labels.
+            padding: Padding strategy.
+            max_length: Maximum sequence length.
+
+        Returns:
+            dict: Tokenized and aligned input data.
+        """
+        tokens = data["tokens"]
+        labels = data["pos_tags"]
+
+        tokenized_inputs = self._tokenize_and_align([tokens], [labels], padding=padding, max_length=max_length)
+
+        data.update(tokenized_inputs)
+
+        return data
+
+    def process_batch(self, data, padding=None, max_length=None):
+        """
+        Process a batch of sequence labeling examples.
+
+        Args:
+            data: A batch of examples, containing tokens and labels.
+            padding: Padding strategy.
+            max_length: Maximum sequence length.
+
+        Returns:
+            dict: Tokenized and aligned batch data.
+        """
+        tokens = data["tokens"]
+        labels = data["pos_tags"]
+
+        tokenized_inputs = self._tokenize_and_align(tokens, labels, padding=padding, max_length=max_length)
+
+        data.update(tokenized_inputs)
+
+        return data
+
+
+class SpeechRecognitionDatasetProcessor(DatasetProcessor):
+    """
+    Processor class for speech recognition datasets. Handles audio feature extraction and labels tokenization.
+    """
+
+    def __init__(
+        self,
+        feature_extractor,
+        tokenizer,
+        sampling_rate=16000,
+        audio_array_padding="longest",
+        max_audio_array_length=None,
+        labels_padding="longest",
+        labels_max_length=None,
+        audio_field="audio",
+        transcript_field="transcript",
+    ):
+        super().__init__()
+        self.feature_extractor = feature_extractor
+        self.tokenizer = tokenizer
+        self.sampling_rate = sampling_rate
+        self.audio_array_padding = audio_array_padding
+        self.max_audio_array_length = max_audio_array_length
+        self.labels_padding = labels_padding
+        self.labels_max_length = labels_max_length
+        self.audio_field = audio_field
+        self.transcript_field = transcript_field
+
+    def process_single(self, data):
+        """
+        Process a single speech recognition example.
+
+        Args:
+            data: A data example containing audio and its transcript.
+
+        Returns:
+            dict: Processed input features and labels.
+        """
+        audio_array = data[self.audio_field]["array"]
+        transcript = data[self.transcript_field]
+
+        # Extract input features from audio
+        input_features = self.feature_extractor(
+            audio_array,
+            sampling_rate=self.sampling_rate,
+            padding=self.audio_array_padding,
+            max_length=self.max_audio_array_length,
+            return_tensors="torch",
+        )["input_features"]
+
+        # Tokenize the transcript
+        labels = self.tokenizer(
+            transcript,
+            padding=self.labels_padding,
+            max_length=self.labels_max_length,
+            return_tensors="torch",
+        )
+
+        data["input_features"] = input_features
+        data["labels"] = labels["token_ids"]
+        data["attention_mask"] = labels["attention_mask"]
+
+        return data
+
+    def process_batch(self, data):
+        """
+        Process a batch of speech recognition examples.
+
+        Args:
+            data: A batch of data examples containing audio arrays and their corresponding transcripts.
+
+        Returns:
+            dict: Batch of processed input features and labels.
+        """
+        audio_arrays = [x["array"] for x in data[self.audio_field]]
+        transcripts = data[self.transcript_field]
+
+        # Extract input features in batch
+        input_features = self.feature_extractor(
+            audio_arrays,
+            sampling_rate=self.sampling_rate,
+            padding=self.audio_array_padding,
+            max_length=self.max_audio_array_length,
+            return_tensors="torch",
+        )["input_features"]
+
+        # Tokenize transcripts in batch
+        labels = self.tokenizer(
+            transcripts,
+            padding=self.labels_padding,
+            max_length=self.labels_max_length,
+            return_tensors="torch",
+        )
+
+        data["input_features"] = input_features
+        data["labels"] = labels["token_ids"]
+        data["attention_mask"] = labels["attention_mask"]
+
+        return data
+
+
+class TextClassificationDatasetProcessor(DatasetProcessor):
+    """
+    Processor class for text classification datasets. Handles tokenization of the texts.
+    """
+
+    def __init__(self, tokenizer, max_length=None, padding=None):
+        super().__init__()
+        self.tokenizer = tokenizer
+        self.padding = padding
+        self.max_length = max_length
+
+    def process_single(self, data, padding=None, max_length=None):
+        """
+        Process a single example.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+
+        text = data["text"]
+        label = data["label"]
+
+        inputs = self.tokenizer(
+            text,
+            return_tensors="torch",
+            truncation="longest_first",
+            padding=padding,
+            max_length=max_length,
+            return_attention_mask=True,
+        )
+        data.update(inputs)
+        data["labels"] = torch.tensor([label], dtype=torch.long)
+
+        return data
+
+    def process_batch(self, data, padding=None, max_length=None):
+        """
+        Process a batch of examples.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+
+        texts = data["text"]
+        labels = data["label"]
+
+        inputs = self.tokenizer(
+            texts,
+            return_tensors="torch",
+            truncation=True,
+            padding=padding,
+            max_length=max_length,
+            return_attention_mask=True,
+        )
+        data.update(inputs)
+        data["labels"] = torch.tensor(labels, dtype=torch.long)
+
+        return data
+
+
+class TextSummarizationDatasetProcessor(DatasetProcessor):
+    """
+    Processor class for text summarization datasets. Handles tokenization of the inputs and labels.
+    """
+
+    def __init__(
+        self,
+        tokenizer,
+        prefix=None,
+        max_length=None,
+        labels_max_length=None,
+        text_field="text",
+        summary_field="summary",
+        padding="longest",
+    ):
+        super().__init__()
+        self.tokenizer = tokenizer
+        self.prefix = prefix
+        self.max_length = max_length
+        self.labels_max_length = labels_max_length
+        self.text_field = text_field
+        self.summary_field = summary_field
+        self.padding = padding
+
+    def process_single(self, data, padding=None, max_length=None, labels_max_length=None):
+        """
+        Process a single example for text summarization.
+
+        Args:
+            data: A data example containing text and summary.
+            padding: Padding strategy.
+            max_length: Max length for input text.
+            labels_max_length: Max length for summary labels.
+
+        Returns:
+            dict: Tokenized inputs and labels for summarization task.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+        labels_max_length = labels_max_length or self.labels_max_length
+
+        text = data[self.text_field]
+        summary = data[self.summary_field]
+
+        # Add prefix if needed for conditional generation
+        if self.prefix is not None:
+            text = self.prefix + text
+
+        # Tokenize inputs and labels
+        inputs = self.tokenizer(
+            text,
+            return_tensors="torch",
+            max_length=max_length,
+            padding=padding,
+            return_attention_mask=True,
+            truncation=True
+        )
+        labels = self.tokenizer(
+            summary,
+            return_tensors="torch",
+            max_length=labels_max_length,
+            padding=padding,
+            return_attention_mask=True,
+            truncation=True
+        )
+
+        inputs["labels"] = labels["token_ids"].clone()
+
+        return inputs
+
+    def process_batch(self, data, padding=None, max_length=None, labels_max_length=None):
+        """
+        Process a batch of examples for text summarization.
+
+        Args:
+            data: A batch of examples containing texts and summaries.
+            padding: Padding strategy.
+            max_length: Max length for input texts.
+            labels_max_length: Max length for summary labels.
+
+        Returns:
+            dict: Tokenized inputs and labels for summarization task.
+        """
+        padding = padding or self.padding
+        max_length = max_length or self.max_length
+        labels_max_length = labels_max_length or self.labels_max_length
+
+        texts = data[self.text_field]
+        summaries = data[self.summary_field]
+
+        # Add prefix if needed for conditional generation
+        if self.prefix is not None:
+            texts = [self.prefix + text for text in texts]
+
+        # Tokenize inputs and labels in batch
+        inputs = self.tokenizer(
+            texts,
+            return_tensors="torch",
+            max_length=max_length,
+            padding=padding,
+            return_attention_mask=True,
+            truncation=True
+        )
+        labels = self.tokenizer(
+            summaries,
+            return_tensors="torch",
+            max_length=labels_max_length,
+            padding=padding,
+            return_attention_mask=True,
+            truncation=True
+        )
+
+        inputs["labels"] = labels["token_ids"].clone()
+
+        return inputs
