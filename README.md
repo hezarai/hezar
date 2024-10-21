@@ -1,5 +1,5 @@
 
-<div align="center">
+<div align="center" id="top">
   <img src="https://raw.githubusercontent.com/hezarai/hezar/main/hezar.png"/>
 </div>
 
@@ -348,3 +348,7 @@ If you found this project useful in your work or research please cite it by usin
   year =         {2023}
 }
 ```
+
+<p align="right">
+  <a href="#top">⬆️ Back to Top</a>
+</p>
