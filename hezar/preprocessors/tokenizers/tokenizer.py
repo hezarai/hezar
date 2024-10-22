@@ -354,12 +354,6 @@ class Tokenizer(Preprocessor):
                 overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
-        if return_tensors == "list" or return_tensors is None:
-            sanitized_outputs = {
-                key: value[0] if len(value) > 0 and isinstance(value[0], list) else value
-                for key, value in sanitized_outputs.items()
-            }
-
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
         if device and return_tensors == "torch":
             outputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in outputs.items()}
