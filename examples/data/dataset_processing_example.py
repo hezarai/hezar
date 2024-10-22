@@ -117,19 +117,28 @@
 # print(processed_dataset[0])
 
 from datasets import load_dataset
+from torch.utils.data import DataLoader
 
-from hezar.data import SpeechRecognitionDatasetProcessor
+from hezar.data import SpeechRecognitionDatasetProcessor, SpeechRecognitionDataCollator
 from hezar.preprocessors import Tokenizer, AudioFeatureExtractor
 
-dataset = load_dataset("hezarai/common-voice-13-fa", split="train[:100]")
+dataset = load_dataset("parquet", split="train", data_files=["train-00001-of-00002.parquet"]).select(list(range(100)))
+dataset = dataset.select_columns(["sentence", "audio"])
 tokenizer = Tokenizer.load("hezarai/whisper-small-fa")
 feature_extractor = AudioFeatureExtractor.load("hezarai/whisper-small-fa")
 dataset_processor = SpeechRecognitionDatasetProcessor(
     tokenizer=tokenizer,
     feature_extractor=feature_extractor,
     transcript_field="sentence",
+    labels_padding=None,
+    audio_array_padding="max_length",
 )
-
+data_collator = SpeechRecognitionDataCollator(
+    feature_extractor=feature_extractor,
+    tokenizer=tokenizer,
+    labels_padding="max_length",
+    labels_max_length=256,
+)
 processed_dataset = dataset.map(
     dataset_processor,
     batched=True,
@@ -138,5 +147,8 @@ processed_dataset = dataset.map(
     # num_proc=10,
     desc="Processing dataset..."
 )
+processed_dataset = processed_dataset.select_columns(["input_features", "labels", "attention_mask"])
 processed_dataset.set_format("torch")
-print(processed_dataset[0])
+data_loader = DataLoader(processed_dataset, batch_size=16, collate_fn=data_collator)
+x = next(iter(data_loader))
+print(x)
