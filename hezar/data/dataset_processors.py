@@ -8,7 +8,7 @@ Example:
 >>> from datasets import load_dataset
 >>> from hezar.data import SpeechRecognitionDatasetProcessor
 
->>> data_processor = SpeechRecognitionDatasetProcessor(tokenizer=tokenizer, feature_extractor=feature_extractor)
+>>> data_processor = SpeechRecognitionDatasetProcessor(feature_extractor=feature_extractor,tokenizer=tokenizer)
 >>> dataset = load_dataset("hezarai/common-voice-13-fa")
 >>> dataset = dataset.map(data_processor, batched=True, batch_size=1000)
 """
@@ -192,7 +192,7 @@ class OCRDatasetProcessor(DatasetProcessor):
         self.image_field = image_field
         self.text_field = text_field
 
-    def _text_to_tensor(self, text):
+    def _text_to_ids(self, text):
         """
         Convert text to tensor based on the configured text_split_type.
 
@@ -205,14 +205,12 @@ class OCRDatasetProcessor(DatasetProcessor):
         """
         if self.text_split_type == "tokenize":
             token_ids = self.tokenizer(text, padding="max_length", max_length=self.max_length)["input_ids"]
-            token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
-            labels = torch.tensor(token_ids)
+            labels = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
         elif self.text_split_type == "char_split":
             if self.reverse_digits:
                 text = reverse_string_digits(text)
             label2id = {v: k for k, v in self.id2label.items()}
             labels = [label2id[char] for char in text]
-            labels = torch.LongTensor(labels)
         else:
             raise ValueError(f"Invalid `text_split_type={self.text_split_type}`")
         return labels
@@ -231,7 +229,7 @@ class OCRDatasetProcessor(DatasetProcessor):
         path = data[self.image_field]
         text = data[self.text_field]
         pixel_values = self.image_processor(path, return_tensors=return_tensors)["pixel_values"][0]
-        labels = self._text_to_tensor(text)
+        labels = self._text_to_ids(text)
         return {"pixel_values": pixel_values, "labels": labels}
 
     def process_batch(self, data, return_tensors=None):
@@ -254,7 +252,7 @@ class OCRDatasetProcessor(DatasetProcessor):
         # Process text labels in batch
         labels = []
         for text in texts:
-            labels.append(self._text_to_tensor(text))
+            labels.append(self._text_to_ids(text))
 
         return {"pixel_values": pixel_values, "labels": labels}
 
@@ -393,8 +391,8 @@ class SpeechRecognitionDatasetProcessor(DatasetProcessor):
         max_audio_array_length=None,
         labels_padding=None,
         labels_max_length=None,
-        audio_field="audio",
-        transcript_field="transcript",
+        audio_column="audio",
+        transcript_column="transcript",
     ):
         super().__init__()
         self.feature_extractor = feature_extractor
@@ -404,8 +402,8 @@ class SpeechRecognitionDatasetProcessor(DatasetProcessor):
         self.max_audio_array_length = max_audio_array_length
         self.labels_padding = labels_padding
         self.labels_max_length = labels_max_length
-        self.audio_field = audio_field
-        self.transcript_field = transcript_field
+        self.audio_column = audio_column
+        self.transcript_column = transcript_column
 
     def process_single(self, data, return_tensors=None):
         """
@@ -418,8 +416,8 @@ class SpeechRecognitionDatasetProcessor(DatasetProcessor):
         Returns:
             dict: Processed input features and labels.
         """
-        audio_array = data[self.audio_field]["array"]
-        transcript = data[self.transcript_field]
+        audio_array = data[self.audio_column]["array"]
+        transcript = data[self.transcript_column]
 
         # Extract input features from audio
         input_features = self.feature_extractor(
@@ -455,8 +453,8 @@ class SpeechRecognitionDatasetProcessor(DatasetProcessor):
         Returns:
             dict: Batch of processed input features and labels.
         """
-        audio_arrays = [x["array"] for x in data[self.audio_field]]
-        transcripts = data[self.transcript_field]
+        audio_arrays = [x["array"] for x in data[self.audio_column]]
+        transcripts = data[self.transcript_column]
 
         # Extract input features in batch
         input_features = self.feature_extractor(
