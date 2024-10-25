@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy as np
 import torch
 
@@ -189,6 +191,7 @@ class ImageCaptioningDataCollator:
             this value as length.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
+
     def __init__(
         self,
         tokenizer: Tokenizer,
@@ -249,17 +252,17 @@ class SpeechRecognitionDataCollator:
 
     def __call__(self, input_batch):
         input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
-        inputs = {}
-        for key in input_batch[0].keys():
-            stack = [e for item in input_batch for e in item[key]]
-            inputs[key] = stack
-
+        inputs = defaultdict(list)
+        for item in input_batch:
+            for key, value in item.items():
+                inputs[key].append(value)
+        inputs = dict(inputs)
         inputs = self.tokenizer.pad_encoded_batch(
             inputs,
             padding=self.labels_padding,
             max_length=self.labels_max_length,
             exclude_keys=["input_features"],
-            return_tensors="torch"
+            return_tensors="torch",
         )
 
         inputs = self.feature_extractor.pad(
@@ -279,7 +282,7 @@ class SequenceLabelingDataCollator:
     Args:
         tokenizer (Tokenizer): A Hezar tokenizer instance.
         padding (str): Specifies padding strategy, either `longest` or `max_length`.
-        padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
+        padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`.
         label_pad_token_id (int): Token ID for padding labels.
         max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
