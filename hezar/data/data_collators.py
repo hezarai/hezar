@@ -367,12 +367,15 @@ class CharLevelOCRDataCollator:
         """
         if isinstance(input_batch, (list, tuple)) and isinstance(input_batch[0], dict):
             input_batch = {key: [example[key] for example in input_batch] for key in input_batch[0].keys()}
-        input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"], 0)
+
+        if not isinstance(input_batch["pixel_values"][0], torch.Tensor):
+            input_batch["pixel_values"] = torch.tensor(input_batch["pixel_values"])
+        elif isinstance(input_batch["pixel_values"], list) and isinstance(input_batch["pixel_values"][0], torch.Tensor):
+            input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"])
 
         max_length = max(map(len, input_batch["labels"]))
         all_labels = []
         for labels in input_batch["labels"]:
-            labels = labels.numpy().tolist()
             labels += [self.pad_token_id] * (max_length - len(labels))
             all_labels.append(labels)
         input_batch["labels"] = torch.tensor(all_labels)
