@@ -59,7 +59,7 @@ class TextSummarizationDataset(Dataset):
             tokenizer=self.tokenizer,
             max_length=self.config.max_length,
             labels_max_length=self.config.labels_max_length,
-            padding="max_length" if self.config.max_length else "longest",
+            padding="max_length" if self.config.max_length else None,
         )
 
     def _load(self, split):
@@ -94,16 +94,14 @@ class TextSummarizationDataset(Dataset):
 
         inputs = self.tokenizer(
             text,
-            return_tensors="torch",
             max_length=self.config.max_length,
-            padding="max_length" if self.config.max_length else "longest",
+            padding="max_length" if self.config.max_length else None,
             return_attention_mask=True,
         )
         labels = self.tokenizer(
             summary,
-            return_tensors="torch",
             max_length=self.config.max_length,
-            padding="max_length" if self.config.labels_max_length else "longest",
+            padding="max_length" if self.config.labels_max_length else None,
             return_attention_mask=True,
         )
 

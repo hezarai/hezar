@@ -94,14 +94,7 @@ class TextClassificationDataset(Dataset):
         """
         text = self.data[index][self.config.text_field]
         label = self.data[index][self.config.label_field]
-        inputs = self.tokenizer(
-            text,
-            return_tensors="torch",
-            truncation=True,
-            padding="longest",
-            return_attention_mask=True,
-        )
-        label_idx = torch.tensor([label], dtype=torch.long)  # noqa
-        inputs["labels"] = label_idx
+        inputs = self.tokenizer(text, return_attention_mask=True)
+        inputs["labels"] = label
 
         return inputs
