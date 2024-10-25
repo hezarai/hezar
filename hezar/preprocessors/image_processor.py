@@ -88,7 +88,7 @@ class ImageProcessor(Preprocessor):
 
     def __call__(
         self,
-        images: List,
+        images: str | List,
         device: str = None,
         mean: float = None,
         std: float = None,
@@ -104,7 +104,7 @@ class ImageProcessor(Preprocessor):
         Perform sequential image processing on a list of input images.
 
         Args:
-            images (List): A list of input images of types torch, numpy, pillow.
+            images (str | List): A list of input images (torch, numpy, pillow) OR path or list of paths to images.
             mean (float): Image mean value for normalization.
             std (float): Image std value for normalization.
             rescale (float): Scale factor for rescaling the image.
@@ -126,8 +126,10 @@ class ImageProcessor(Preprocessor):
         mirror = mirror or self.config.mirror
         gray_scale = gray_scale or self.config.gray_scale
 
+        is_single = False
         if not isinstance(images, list) or isinstance(images, str) or isinstance(images, np.ndarray):
             images = [images]
+            is_single = True
 
         # Load images if inputs are list of files
         images = [load_image(x, return_type="numpy") if isinstance(x, str) else x for x in images]
@@ -162,10 +164,13 @@ class ImageProcessor(Preprocessor):
 
         images = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)
 
-        if device:
+        if device and return_tensors == "torch":
             import torch
 
             images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}
+
+        if is_single and return_tensors == "list":
+            images = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in images.items()}
 
         return images
 

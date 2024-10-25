@@ -232,7 +232,8 @@ class Tokenizer(Preprocessor):
                     padding=padding,
                     padding_side=self.config.padding_side,
                     pad_id=pad_id,
-                    max_length=max_length, truncation=truncation,
+                    max_length=max_length,
+                    truncation=truncation,
                 )
                 inputs[key] = padded_ids
 
@@ -303,8 +304,13 @@ class Tokenizer(Preprocessor):
                 " This warning will change to an error in the future!"
             )
 
+        return_tensors = return_tensors or "list"
+
         if isinstance(inputs, str):
             inputs = [inputs]
+            is_single = True
+        else:
+            is_single = False
 
         if padding is None and max_length is not None:
             padding = PaddingType.MAX_LENGTH
@@ -357,6 +363,10 @@ class Tokenizer(Preprocessor):
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
         if device and return_tensors == "torch":
             outputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in outputs.items()}
+
+        # Squeeze tensor if the original input is a single string and return_tensors is `list`
+        if is_single and return_tensors == "list":
+            outputs = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in outputs.items()}
 
         return outputs
 
