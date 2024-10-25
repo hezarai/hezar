@@ -391,7 +391,7 @@ class Tokenizer(Preprocessor):
             if current != target:
                 self.enable_truncation(**target)
 
-        if padding == "no_padding":
+        if padding == "no_padding" or padding is None:
             if self.padding is not None:
                 self.no_padding()
         else:
