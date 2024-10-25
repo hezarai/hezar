@@ -146,7 +146,7 @@ CRNN Output: [{'text': 'چه میشه کرد، باید صبر کنیم'}]
 ```python
 from hezar.models import Model
 
-model = Model.load("hezarai/crnn-fa-license-plate-recognition")
+model = Model.load("hezarai/crnn-fa-license-plate-recognition-v2")
 plate_text = model.predict("assets/license_plate_ocr_example.jpg")
 print(plate_text)  # Persian text of mixed numbers and characters might not show correctly in the console
 ```
