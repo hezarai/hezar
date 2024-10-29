@@ -232,7 +232,8 @@ class Tokenizer(Preprocessor):
                     padding=padding,
                     padding_side=self.config.padding_side,
                     pad_id=pad_id,
-                    max_length=max_length, truncation=truncation,
+                    max_length=max_length,
+                    truncation=truncation,
                 )
                 inputs[key] = padded_ids
 
@@ -303,8 +304,12 @@ class Tokenizer(Preprocessor):
                 " This warning will change to an error in the future!"
             )
 
-        if isinstance(inputs, str):
+        # Convert to batch if input is a single string or a list of words (is split into words for sequence labeling)
+        if isinstance(inputs, str) or (is_split_into_words and not isinstance(inputs[0], list)):
             inputs = [inputs]
+            is_batch = False
+        else:
+            is_batch = True
 
         if padding is None and max_length is not None:
             padding = PaddingType.MAX_LENGTH
@@ -353,6 +358,12 @@ class Tokenizer(Preprocessor):
             for i, encodings_ in enumerate(encodings_dict):
                 overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
+
+        if (return_tensors == "list" or return_tensors is None) and not is_batch:
+            sanitized_outputs = {
+                key: value[0] if len(value) > 0 and isinstance(value[0], list) else value
+                for key, value in sanitized_outputs.items()
+            }
 
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
         if device and return_tensors == "torch":

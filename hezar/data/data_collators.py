@@ -189,6 +189,7 @@ class ImageCaptioningDataCollator:
             this value as length.
         return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
+
     def __init__(
         self,
         tokenizer: Tokenizer,
@@ -337,7 +338,9 @@ class SequenceLabelingDataCollator:
                 [self.label_pad_token_id] * (sequence_length - len(label)) + list(label) for label in labels
             ]
 
-        batch = {k: torch.tensor(v, dtype=torch.int64) for k, v in batch.items()}
+        batch = {
+            k: torch.tensor(v, dtype=torch.int64) if not isinstance(v, torch.Tensor) else v for k, v in batch.items()
+        }
         return batch
 
 
