@@ -567,7 +567,7 @@ class TextSummarizationDatasetProcessor(DatasetProcessor):
         labels_max_length=None,
         text_field="text",
         summary_field="summary",
-        padding="longest",
+        padding=None,
     ):
         super().__init__()
         self.tokenizer = tokenizer
@@ -619,7 +619,7 @@ class TextSummarizationDatasetProcessor(DatasetProcessor):
             return_tensors=return_tensors,
         )
 
-        inputs["labels"] = labels["token_ids"].clone()
+        inputs["labels"] = labels["token_ids"]
 
         return inputs
 
@@ -664,6 +664,6 @@ class TextSummarizationDatasetProcessor(DatasetProcessor):
             return_tensors=return_tensors,
         )
 
-        inputs["labels"] = labels["token_ids"].clone()
+        inputs["labels"] = labels["token_ids"]
 
         return inputs
