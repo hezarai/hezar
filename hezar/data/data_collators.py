@@ -54,14 +54,6 @@ class TextPaddingDataCollator:
             "attention_mask": 0,
         }
 
-        if padding == "longest" and max_length is not None:
-            logger.warning(
-                "You passed `max_length` while also setting `padding` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding` to `max_length`! "
-                "Ignoring `max_length`"
-            )
-            self.max_length = None
-
     def __call__(self, encoded_batch):
         """
         Add padding to every item in the batch
@@ -73,12 +65,7 @@ class TextPaddingDataCollator:
             Dict: The same batch dictionary but padded
         """
         encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
-        permuted_batch = {}
-        for key in encoded_batch[0].keys():
-            stack = [e for item in encoded_batch for e in item[key]]
-            permuted_batch[key] = stack
 
-        encoded_batch = permuted_batch.copy()
         if "label" in encoded_batch:
             encoded_batch["labels"] = encoded_batch["label"]
             del encoded_batch["label"]
@@ -137,14 +124,6 @@ class TextGenerationDataCollator:
         self.labels_max_length = labels_max_length
         self.return_tensors = return_tensors
 
-        if padding == "longest" and max_length is not None:
-            logger.warning(
-                "You passed `max_length` while also setting `padding` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding` to `max_length`! "
-                "Ignoring `max_length`"
-            )
-            self.max_length = None
-
     def __call__(self, encoded_batch):
         """
         Add padding to every item in the batch
@@ -156,13 +135,9 @@ class TextGenerationDataCollator:
             Dict: The same batch dictionary but padded
         """
         encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
-        permuted_batch = {}
-        for key in encoded_batch[0].keys():
-            stack = [e for item in encoded_batch for e in item[key]]
-            permuted_batch[key] = stack
 
         padded_batch = self.tokenizer.pad_encoded_batch(
-            permuted_batch,
+            encoded_batch,
             padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["labels"],
@@ -206,23 +181,11 @@ class ImageCaptioningDataCollator:
         self.max_length = max_length
         self.return_tensors = return_tensors
 
-        if padding == "longest" and max_length is not None:
-            logger.warning(
-                "You passed `max_length` while also setting `padding` to `longest` which are "
-                "incompatible! Instead leave `max_length` as None or set `padding` to `max_length`! "
-                "Ignoring `max_length`"
-            )
-            self.max_length = None
-
     def __call__(self, encoded_batch):
         encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
-        permuted_batch = {}
-        for key in encoded_batch[0].keys():
-            stack = [e for item in encoded_batch for e in item[key]]
-            permuted_batch[key] = stack
 
         padded_batch = self.tokenizer.pad_encoded_batch(
-            permuted_batch,
+            encoded_batch,
             padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["pixel_values"],
