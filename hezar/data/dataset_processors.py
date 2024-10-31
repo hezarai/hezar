@@ -12,10 +12,11 @@ Example:
 >>> dataset = load_dataset("hezarai/common-voice-13-fa")
 >>> dataset = dataset.map(data_processor, batched=True, batch_size=1000)
 """
+
 import torch
 
 from ..constants import Backends
-from ..utils import is_backend_available, reverse_string_digits, shift_tokens_right, verify_dependencies
+from ..utils import is_backend_available, reverse_string_digits, verify_dependencies
 
 
 if is_backend_available(Backends.DATASETS):
@@ -101,6 +102,25 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
         self.max_length = max_length
         self.padding = padding
 
+    @staticmethod
+    def _shift_tokens_right(input_ids: list[list[int]], pad_token_id: int, decoder_start_token_id: int):
+        """
+        Shift input ids one token to the right.
+        """
+        # Initialize shifted_input_ids as a list of lists with the same shape as input_ids
+        shifted_input_ids = [[0] * len(row) for row in input_ids]
+
+        for i, row in enumerate(input_ids):
+            # Shift each row one token to the right
+            shifted_input_ids[i][1:] = row[:-1]
+            # Set the first token to decoder_start_token_id
+            shifted_input_ids[i][0] = decoder_start_token_id
+
+            # Replace any -100 values with pad_token_id
+            shifted_input_ids[i] = [pad_token_id if token == -100 else token for token in shifted_input_ids[i]]
+
+        return shifted_input_ids
+
     def process_single(self, data, return_tensors=None, padding=None, max_length=None):
         """
         Process image and tokenize captions for a single data sample.
@@ -125,7 +145,7 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
         data["pixel_values"] = self.image_processor(path, return_tensors=return_tensors)["pixel_values"]
         data["labels"] = tokenized_inputs["token_ids"]
         data["attention_mask"] = tokenized_inputs["attention_mask"]
-        data["decoder_input_ids"] = shift_tokens_right(
+        data["decoder_input_ids"] = self._shift_tokens_right(
             data["labels"],
             pad_token_id=self.tokenizer.pad_token_id,
             decoder_start_token_id=self.tokenizer.bos_token_id,
@@ -157,7 +177,7 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
         data["pixel_values"] = self.image_processor(paths, return_tensors=return_tensors)["pixel_values"]
         data["labels"] = tokenized_inputs["token_ids"]
         data["attention_mask"] = tokenized_inputs["attention_mask"]
-        data["decoder_input_ids"] = shift_tokens_right(
+        data["decoder_input_ids"] = self._shift_tokens_right(
             data["labels"],
             pad_token_id=self.tokenizer.pad_token_id,
             decoder_start_token_id=self.tokenizer.bos_token_id,
@@ -317,7 +337,7 @@ class SequenceLabelingDatasetProcessor(DatasetProcessor):
                 previous_word_idx = word_idx
             aligned_labels.append(label_ids)
 
-        tokenized_inputs["labels"] = torch.tensor(aligned_labels, dtype=torch.long)
+        tokenized_inputs["labels"] = aligned_labels
         return tokenized_inputs
 
     def process_single(self, data, return_tensors=None, padding=None, max_length=None):
