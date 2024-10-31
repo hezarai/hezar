@@ -61,13 +61,13 @@ class TokenizerConfig(PreprocessorConfig):
     """
 
     name = "tokenizer"
-    max_length: int = None
-    truncation: str = None
+    max_length: int = "deprecated"
+    truncation: str = "deprecated"
     truncation_side: str = None
-    padding: str = None
+    padding: str = "deprecated"
     padding_side: str = None
     stride: int = None
-    pad_to_multiple_of: int = None
+    pad_to_multiple_of: int = "deprecated"
     pad_token_type_id: int = 0
     bos_token: str = None
     eos_token: str = None
@@ -77,6 +77,21 @@ class TokenizerConfig(PreprocessorConfig):
     cls_token: str = None
     mask_token: str = None
     additional_special_tokens: List[str] = None
+
+    def __post_init__(self):
+        super().__post_init__()
+        if self.max_length != "deprecated":
+            logger.warning(
+                "Setting `max_length` in the tokenizer config is deprecated and will be removed in the future!"
+            )
+        if self.padding != "deprecated":
+            logger.warning(
+                "Setting `padding` in the tokenizer config is deprecated and will be removed in the future!"
+            )
+        if self.truncation != "deprecated":
+            logger.warning(
+                "Setting `truncation` in the tokenizer config is deprecated and will be removed in the future!"
+            )
 
 
 class Tokenizer(Preprocessor):
@@ -312,12 +327,6 @@ class Tokenizer(Preprocessor):
             is_batch = False
         else:
             is_batch = True
-
-        if padding is None and max_length is not None:
-            padding = PaddingType.MAX_LENGTH
-        truncation = truncation or self.config.truncation
-        max_length = max_length or self.config.max_length
-        pad_to_multiple_of = pad_to_multiple_of or self.config.pad_to_multiple_of
 
         self.set_truncation_and_padding(
             padding=padding,
