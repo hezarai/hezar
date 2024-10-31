@@ -176,7 +176,7 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
 
         data["pixel_values"] = self.image_processor(paths, return_tensors=return_tensors)["pixel_values"]
         data["labels"] = tokenized_inputs["token_ids"]
-        data["attention_mask"] = tokenized_inputs["attention_mask"]
+        data["decoder_attention_mask"] = tokenized_inputs["attention_mask"]
         data["decoder_input_ids"] = self._shift_tokens_right(
             data["labels"],
             pad_token_id=self.tokenizer.pad_token_id,
