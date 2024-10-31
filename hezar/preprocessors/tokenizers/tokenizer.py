@@ -306,11 +306,12 @@ class Tokenizer(Preprocessor):
 
         return_tensors = return_tensors or "list"
 
-        if isinstance(inputs, str):
+        # Convert to batch if input is a single string or a list of words (is split into words for sequence labeling)
+        if isinstance(inputs, str) or (is_split_into_words and not isinstance(inputs[0], list)):
             inputs = [inputs]
-            is_single = True
+            is_batch = False
         else:
-            is_single = False
+            is_batch = True
 
         if padding is None and max_length is not None:
             padding = PaddingType.MAX_LENGTH
@@ -360,13 +361,17 @@ class Tokenizer(Preprocessor):
                 overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
+        # Squeeze tensor if the original input is a single string and return_tensors is `list`
+        if (return_tensors == "list" or return_tensors is None) and not is_batch:
+            sanitized_outputs = {
+                key: value[0] if len(value) > 0 and isinstance(value[0], list) else value
+                for key, value in sanitized_outputs.items()
+            }
+
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
+
         if device and return_tensors == "torch":
             outputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in outputs.items()}
-
-        # Squeeze tensor if the original input is a single string and return_tensors is `list`
-        if is_single and return_tensors == "list":
-            outputs = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in outputs.items()}
 
         return outputs
 
