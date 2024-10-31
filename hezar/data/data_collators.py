@@ -19,6 +19,24 @@ __all__ = [
 logger = Logger(__name__)
 
 
+def _convert_to_batch_dict(dicts_list: list[dict]):
+    """
+    Convert a list of dicts to a dict of batched values.
+
+    Args:
+        dicts_list: A list of dictionaries containing the same set of keys
+
+    Returns:
+        A dictionary of the batches
+    """
+    batch_dict = defaultdict(list)
+    for item in dicts_list:
+        for key, value in item.items():
+            batch_dict[key].append(value)
+    batch_dict = dict(batch_dict)
+    return batch_dict
+
+
 class TextPaddingDataCollator:
     """
     A data collator that pads a batch of tokenized inputs.
@@ -54,26 +72,22 @@ class TextPaddingDataCollator:
             "attention_mask": 0,
         }
 
-    def __call__(self, encoded_batch):
+    def __call__(self, input_batch):
         """
         Add padding to every item in the batch
 
         Args:
-            encoded_batch: A batch dictionary
+            input_batch: A batch dictionary
 
         Returns:
             Dict: The same batch dictionary but padded
         """
-        encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
+        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
+        input_batch = _convert_to_batch_dict(input_batch)
+        labels = input_batch.pop("labels")
+        input_length = self.max_length or max(len(x) for x in input_batch["token_ids"])
 
-        if "label" in encoded_batch:
-            encoded_batch["labels"] = encoded_batch["label"]
-            del encoded_batch["label"]
-
-        labels = encoded_batch.pop("labels")
-        input_length = self.max_length or max(len(x) for x in encoded_batch["token_ids"])
-
-        for field, batch in encoded_batch.items():
+        for field, batch in input_batch.items():
             padded_batch = []
             for x in batch:
                 if isinstance(x, torch.Tensor):
@@ -84,13 +98,13 @@ class TextPaddingDataCollator:
                 paddings = [self.field_to_pad_id_mapping[field]] * difference
                 padded_x = x + paddings if self.padding_side == "right" else paddings + x
                 padded_batch.append(padded_x)
-            encoded_batch[field] = padded_batch
+            input_batch[field] = padded_batch
 
-        encoded_batch["labels"] = labels
+        input_batch["labels"] = labels
 
-        encoded_batch = convert_batch_dict_dtype(encoded_batch, dtype=self.return_tensors)
+        input_batch = convert_batch_dict_dtype(input_batch, dtype=self.return_tensors)
 
-        return encoded_batch
+        return input_batch
 
 
 class TextGenerationDataCollator:
@@ -124,20 +138,20 @@ class TextGenerationDataCollator:
         self.labels_max_length = labels_max_length
         self.return_tensors = return_tensors
 
-    def __call__(self, encoded_batch):
+    def __call__(self, input_batch):
         """
         Add padding to every item in the batch
 
         Args:
-            encoded_batch (List[Dict]): A batch dictionary
+            input_batch (List[Dict]): A batch dictionary
 
         Returns:
             Dict: The same batch dictionary but padded
         """
-        encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
-
+        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
+        input_batch = _convert_to_batch_dict(input_batch)
         padded_batch = self.tokenizer.pad_encoded_batch(
-            encoded_batch,
+            input_batch,
             padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["labels"],
@@ -181,11 +195,11 @@ class ImageCaptioningDataCollator:
         self.max_length = max_length
         self.return_tensors = return_tensors
 
-    def __call__(self, encoded_batch):
-        encoded_batch = [convert_batch_dict_dtype(x, dtype="list") for x in encoded_batch]
-
+    def __call__(self, input_batch):
+        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
+        input_batch = _convert_to_batch_dict(input_batch)
         padded_batch = self.tokenizer.pad_encoded_batch(
-            encoded_batch,
+            input_batch,
             padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["pixel_values"],
@@ -215,13 +229,9 @@ class SpeechRecognitionDataCollator:
 
     def __call__(self, input_batch):
         input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
-        inputs = defaultdict(list)
-        for item in input_batch:
-            for key, value in item.items():
-                inputs[key].append(value)
-        inputs = dict(inputs)
+        input_batch = _convert_to_batch_dict(input_batch)
         inputs = self.tokenizer.pad_encoded_batch(
-            inputs,
+            input_batch,
             padding=self.labels_padding,
             max_length=self.labels_max_length,
             exclude_keys=["input_features"],
@@ -268,43 +278,41 @@ class SequenceLabelingDataCollator:
         self.max_length = max_length
         self.return_tensors = return_tensors
 
-    def __call__(self, encoded_batch):
+    def __call__(self, input_batch):
         """
         Add padding to every item in the batch
 
         Args:
-            encoded_batch (List[Dict]): A batch dictionary
+            input_batch (List[Dict]): A batch dictionary
 
         Returns:
             Dict: The same batch dictionary but padded
         """
-        label_name = "label" if "label" in encoded_batch[0].keys() else "labels"
-        labels = [feature[label_name] for feature in encoded_batch] if label_name in encoded_batch[0].keys() else None
+        input_batch = _convert_to_batch_dict(input_batch)
+        labels = input_batch["labels"]
         self.tokenizer.config.padding_side = self.padding_side
-        batch = self.tokenizer.pad_encoded_batch(
-            encoded_batch,
+        input_batch = self.tokenizer.pad_encoded_batch(
+            input_batch,
             padding=self.padding,  # noqa
             max_length=self.max_length,
-            # Conversion to tensors will fail if we have labels as they are not of the same length yet.
-            return_tensors="torch" if labels is None else None,
         )
 
         if labels is None:
-            return batch
+            return input_batch
 
-        batch.pop("word_ids", None)
-        sequence_length = torch.tensor(batch["token_ids"]).shape[1]
+        input_batch.pop("word_ids", None)
+        sequence_length = torch.tensor(input_batch["token_ids"]).shape[1]
         if self.padding_side == "right":
-            batch[label_name] = [
+            input_batch["labels"] = [
                 list(label) + [self.label_pad_token_id] * (sequence_length - len(label)) for label in labels
             ]
         else:
-            batch[label_name] = [
+            input_batch["labels"] = [
                 [self.label_pad_token_id] * (sequence_length - len(label)) + list(label) for label in labels
             ]
 
-        batch = {k: torch.tensor(v, dtype=torch.int64) for k, v in batch.items()}
-        return batch
+        input_batch = {k: torch.tensor(v, dtype=torch.int64) for k, v in input_batch.items()}
+        return input_batch
 
 
 class CharLevelOCRDataCollator:
@@ -328,8 +336,7 @@ class CharLevelOCRDataCollator:
         Returns:
             Dict: Padded input batch.
         """
-        if isinstance(input_batch, (list, tuple)) and isinstance(input_batch[0], dict):
-            input_batch = {key: [example[key] for example in input_batch] for key in input_batch[0].keys()}
+        input_batch = _convert_to_batch_dict(input_batch)
 
         if not isinstance(input_batch["pixel_values"][0], torch.Tensor):
             input_batch["pixel_values"] = torch.tensor(input_batch["pixel_values"])
