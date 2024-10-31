@@ -395,7 +395,7 @@ class Tokenizer(Preprocessor):
         pad_to_multiple_of: int = None,
     ):
         # Set truncation and padding on the backend tokenizer
-        if truncation == "no_truncation" or truncation is None:
+        if truncation == "no_truncation" or truncation is None or max_length is None:
             if self.truncation is not None:
                 self.no_truncation()
         else:
