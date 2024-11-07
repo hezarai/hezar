@@ -118,7 +118,6 @@ class TextGenerationDataCollator:
         max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
         labels_max_length (int): Maximum target length for text generation.
-        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
 
     """
 
@@ -129,14 +128,12 @@ class TextGenerationDataCollator:
         padding_side: str = "right",
         max_length: int = None,
         labels_max_length: int = None,
-        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding = padding
         self.padding_side = padding_side
         self.max_length = max_length
         self.labels_max_length = labels_max_length
-        self.return_tensors = return_tensors
 
     def __call__(self, input_batch):
         """
@@ -155,14 +152,14 @@ class TextGenerationDataCollator:
             padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["labels"],
-            return_tensors=self.return_tensors,
+            return_tensors="torch",
         )
         padded_batch = self.tokenizer.pad_encoded_batch(
             padded_batch,
             padding=self.padding,
             max_length=self.labels_max_length,
             include_keys=["labels"],
-            return_tensors=self.return_tensors,
+            return_tensors="torch",
         )
 
         return padded_batch
@@ -178,7 +175,6 @@ class ImageCaptioningDataCollator:
         padding_side (str): Specifies from which side of each tensor to add paddings, either `left` or `right`
         max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
-        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
 
     def __init__(
@@ -187,27 +183,30 @@ class ImageCaptioningDataCollator:
         padding: str = "longest",
         padding_side: str = "right",
         max_length: int = None,
-        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding = padding
         self.padding_side = padding_side
         self.max_length = max_length
-        self.return_tensors = return_tensors
 
     def __call__(self, input_batch):
-        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
         input_batch = _convert_to_batch_dict(input_batch)
-        padded_batch = self.tokenizer.pad_encoded_batch(
+        input_batch = self.tokenizer.pad_encoded_batch(
             input_batch,
             padding=self.padding,
             max_length=self.max_length,
             exclude_keys=["pixel_values"],
-            return_tensors=self.return_tensors,
+            return_tensors="torch",
         )
-        padded_batch = convert_batch_dict_dtype(padded_batch, dtype="torch")
+        if isinstance(input_batch["pixel_values"], list):
+            if isinstance(input_batch["pixel_values"][0], list):
+                input_batch["pixel_values"] = torch.tensor(input_batch["pixel_values"])
+            elif isinstance(input_batch["pixel_values"][0], torch.Tensor):
+                input_batch["pixel_values"] = torch.stack(input_batch["pixel_values"])
+            elif isinstance(input_batch["pixel_values"][0], np.ndarray):
+                input_batch["pixel_values"] = torch.stack([torch.from_numpy(x) for x in input_batch["pixel_values"]])
 
-        return padded_batch
+        return input_batch
 
 
 class SpeechRecognitionDataCollator:
@@ -228,7 +227,6 @@ class SpeechRecognitionDataCollator:
         self.labels_max_length = labels_max_length
 
     def __call__(self, input_batch):
-        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
         input_batch = _convert_to_batch_dict(input_batch)
         inputs = self.tokenizer.pad_encoded_batch(
             input_batch,
@@ -259,7 +257,6 @@ class SequenceLabelingDataCollator:
         label_pad_token_id (int): Token ID for padding labels.
         max_length (int): If `padding` is set to `max_length` this must be specified. Forces all tensors to have
             this value as length.
-        return_tensors (str): Specifies the dtype of the returning tensors in the batch. (`numpy`, `list`, `torch`)
     """
 
     def __init__(
@@ -269,14 +266,12 @@ class SequenceLabelingDataCollator:
         padding_side: str = "right",
         label_pad_token_id: int = -100,
         max_length: int = None,
-        return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
         self.padding = padding
         self.padding_side = padding_side
         self.label_pad_token_id = label_pad_token_id
         self.max_length = max_length
-        self.return_tensors = return_tensors
 
     def __call__(self, input_batch):
         """
@@ -295,13 +290,14 @@ class SequenceLabelingDataCollator:
             input_batch,
             padding=self.padding,  # noqa
             max_length=self.max_length,
+            return_tensors="torch",
         )
 
         if labels is None:
             return input_batch
 
         input_batch.pop("word_ids", None)
-        sequence_length = torch.tensor(input_batch["token_ids"]).shape[1]
+        sequence_length = input_batch["token_ids"].shape[1]
         if self.padding_side == "right":
             input_batch["labels"] = [
                 list(label) + [self.label_pad_token_id] * (sequence_length - len(label)) for label in labels
@@ -311,7 +307,10 @@ class SequenceLabelingDataCollator:
                 [self.label_pad_token_id] * (sequence_length - len(label)) + list(label) for label in labels
             ]
 
-        input_batch = {k: torch.tensor(v, dtype=torch.int64) for k, v in input_batch.items()}
+        input_batch = {
+            k: torch.tensor(v) if not isinstance(v, torch.Tensor) else v for k, v in input_batch.items()
+        }
+
         return input_batch
 
 
