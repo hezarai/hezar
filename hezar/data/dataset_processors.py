@@ -144,12 +144,12 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
 
         data["pixel_values"] = self.image_processor(path, return_tensors=return_tensors)["pixel_values"]
         data["labels"] = tokenized_inputs["token_ids"]
-        data["attention_mask"] = tokenized_inputs["attention_mask"]
+        data["decoder_attention_mask"] = tokenized_inputs["attention_mask"]
         data["decoder_input_ids"] = self._shift_tokens_right(
-            data["labels"],
+            [data["labels"]],
             pad_token_id=self.tokenizer.pad_token_id,
             decoder_start_token_id=self.tokenizer.bos_token_id,
-        )
+        )[0]
 
         return data
 
@@ -270,9 +270,7 @@ class OCRDatasetProcessor(DatasetProcessor):
         pixel_values = self.image_processor(paths, return_tensors=return_tensors)["pixel_values"]
 
         # Process text labels in batch
-        labels = []
-        for text in texts:
-            labels.append(self._text_to_ids(text))
+        labels = [self._text_to_ids(text) for text in texts]
 
         return {"pixel_values": pixel_values, "labels": labels}
 
@@ -363,7 +361,7 @@ class SequenceLabelingDatasetProcessor(DatasetProcessor):
             padding=padding,
             max_length=max_length,
         )
-
+        tokenized_inputs = {k: v[0] for k, v in tokenized_inputs.items()}
         data.update(tokenized_inputs)
 
         return data
@@ -538,7 +536,7 @@ class TextClassificationDatasetProcessor(DatasetProcessor):
             return_tensors=return_tensors,
         )
         data.update(inputs)
-        data["labels"] = torch.tensor([label], dtype=torch.long)
+        data["labels"] = torch.tensor(label, dtype=torch.long)
 
         return data
 
