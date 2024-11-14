@@ -123,7 +123,7 @@ class OCRDataset(Dataset):
         data = data.select(valid_indices)
         return data
 
-    def _text_to_tensor(self, text):
+    def _text_to_ids(self, text):
         """
         Convert text to tensor based on the configured text_split_type.
 
@@ -139,14 +139,12 @@ class OCRDataset(Dataset):
             token_ids = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)["token_ids"]
             # Make sure to ignore pad tokens by the loss function
             token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
-            labels = torch.tensor(token_ids)
         # If split text is not tokenizer-based
         elif self.config.text_split_type == TextSplitType.CHAR_SPLIT:
             if self.config.reverse_digits:
                 text = reverse_string_digits(text)
             label2id = {v: k for k, v in self.config.id2label.items()}
             labels = [label2id[x] for x in text]
-            labels = torch.LongTensor(labels)
         else:
             raise ValueError(f"Invalid `text_split_type={self.config.text_split_type}`")
 
@@ -165,7 +163,7 @@ class OCRDataset(Dataset):
         """
         path, text = self.data[index].values()
         pixel_values = self.image_processor(path, return_tensors="torch")["pixel_values"][0]
-        labels = self._text_to_tensor(text)
+        labels = self._text_to_ids(text)
         inputs = {
             "pixel_values": pixel_values,
             "labels": labels,

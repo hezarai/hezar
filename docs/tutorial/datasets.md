@@ -118,7 +118,96 @@ class ImageCaptioningDataset(Dataset):
         pass
 ```
 
-## Loading Regular HF Datasets
+## Loading with 🤗Datasets
+You can load all Hezar datasets using the 🤗Datasets library too. Doing so has the following pros and cons:
+
+**Pros**:
+- You can work with any dataset on the Hub and use it easily with Hezar.
+- You can leverage multiprocessing and batch processing feature of such datasets (which is not available using torch datasets).
+- You can leverage mapped dataset caching provided by 🤗Datasets.
+- No integration needed for your old data pipeline codes to make them work with Hezar.
+
+**Cons**:
+- You have to take care of the data processing yourself unless one of the dataset processors at `hezar.data.dataset_processors` suits your needs.
+
+### Using Hezar's Dataset Processors
+In order to replicate the same behavior of the `hezar.data.Dataset` classes for 🤗 loaded dataset, Hezar also implements
+a group of dataset processor classes so that you can use them to map the loaded datasets and get the same processed instances
+when iterating over your loaded 🤗 datasets.
+
+Below is a comparison of both methods, using Hezar's torch compatible datasets vs 🤗 Datasets:
+
+**Loading and Processing with Hezar**
+
+```python
+from torch.utils.data import DataLoader
+from hezar.data import SpeechRecognitionDataset, SpeechRecognitionDatasetConfig
+
+# You can also use the regular `Dataset.load("hezarai/common-voice-13-fa")`, below is for better understanding.
+dataset = SpeechRecognitionDataset(
+    SpeechRecognitionDatasetConfig(
+        path="hezarai/common-voice-13-fa",
+        sampling_rate=16000,
+        audio_file_path_column="path",
+        audio_column="audio",
+        audio_array_column="array",
+        transcript_column="sentence",
+    ),
+    split="train",
+    preprocessor="hezarai/whisper-small-fa",
+)
+
+loader = DataLoader(dataset, batch_size=16, collate_fn=dataset.data_collator)
+itr = iter(loader)
+print(next(itr))
+```
+
+**Loading and Processing with 🤗Datasets and Hezar Dataset Processors**
+
+```python
+from datasets import load_dataset, Audio
+from torch.utils.data import DataLoader
+
+from hezar.data import SpeechRecognitionDatasetProcessor, SpeechRecognitionDataCollator
+from hezar.preprocessors import Preprocessor
+
+dataset = load_dataset("hezarai/common-voice-13-fa", split="train")
+dataset = dataset.cast_column("audio", Audio(sampling_rate=16000))
+dataset = dataset.select_columns(["sentence", "audio"])
+preprocesssor = Preprocessor.load("hezarai/whisper-small-fa")
+
+dataset_processor = SpeechRecognitionDatasetProcessor(
+    tokenizer=preprocesssor.tokenizer,
+    feature_extractor=preprocesssor.audio_feature_extractor,
+    transcript_column="sentence",
+    audio_array_padding="max_length",
+)
+data_collator = SpeechRecognitionDataCollator(
+    feature_extractor=preprocesssor.audio_feature_extractor,
+    tokenizer=preprocesssor.tokenizer,
+    labels_padding="max_length",
+    labels_max_length=256,
+)
+processed_dataset = dataset.map(
+    dataset_processor,
+    batched=True,
+    batch_size=100,
+    desc="Processing dataset..."
+)
+processed_dataset = processed_dataset.select_columns(["input_features", "labels", "attention_mask"])
+data_loader = DataLoader(processed_dataset, batch_size=16, collate_fn=data_collator)
+x = next(iter(data_loader))
+print(x)
+```
+Both codes above, give you the same kind of results. Although using dataset processors is more complicated, but it gives
+you more control and better integration with typical data pipelines used nowadays.
+
+```{note}
+You don't necessarily need to use the dataset processor classes in Hezar. They are just there to implement the same 
+procedures and reproduce the same results. This means that any code that uses 🤗 Datasets will work with Hezar's Trainer. 
+```
+
+### Loading Regular HF Datasets
 All the current datasets provided in Hezar's Hugging Face, have the `dataset_config.yaml` in their repos which does not
 exist for regular HF datasets. If you need to load such datasets (that have the correct structure and fields) in Hezar
 using the `Dataset.load()` method, you have to provide the dataset config manually.

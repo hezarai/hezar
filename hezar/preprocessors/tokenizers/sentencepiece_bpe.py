@@ -19,11 +19,8 @@ _required_backends = [
 @dataclass
 class SentencePieceBPEConfig(TokenizerConfig):
     name = "sentencepiece_bpe_tokenizer"
-    max_length: int = 512
-    truncation: str = "longest_first"
     truncation_side: str = "right"
     stride: int = 0
-    padding: str = "longest"
     padding_side: str = "right"
     bos_token: str = "<s>"
     eos_token: str = "</s>"

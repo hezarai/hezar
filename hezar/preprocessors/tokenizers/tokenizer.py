@@ -42,11 +42,8 @@ class TokenizerConfig(PreprocessorConfig):
     Configuration for the Tokenizer.
 
     Args:
-        max_length (int): Maximum length of the tokenized sequences.
-        truncation (str): Truncation strategy for tokenization.
         truncation_side (str): Truncation direction for tokenization.
         stride (int): Stride for tokenization.
-        padding (str): Padding type for tokenization e.g, max_length, longest, no_padding.
         padding_side (str): Padding direction for tokenization.
         pad_to_multiple_of (int): Pad to a multiple of this value.
         pad_token_type_id (int): ID of the padding token type.
@@ -61,13 +58,13 @@ class TokenizerConfig(PreprocessorConfig):
     """
 
     name = "tokenizer"
-    max_length: int = None
-    truncation: str = None
+    max_length: int = "deprecated"
+    truncation: str = "deprecated"
     truncation_side: str = None
-    padding: str = None
+    padding: str = "deprecated"
     padding_side: str = None
     stride: int = None
-    pad_to_multiple_of: int = None
+    pad_to_multiple_of: int = "deprecated"
     pad_token_type_id: int = 0
     bos_token: str = None
     eos_token: str = None
@@ -77,6 +74,21 @@ class TokenizerConfig(PreprocessorConfig):
     cls_token: str = None
     mask_token: str = None
     additional_special_tokens: List[str] = None
+
+    def __post_init__(self):
+        super().__post_init__()
+        if self.max_length != "deprecated":
+            logger.warning(
+                "Setting `max_length` in the tokenizer config is deprecated and will be removed in the future!"
+            )
+        if self.padding != "deprecated":
+            logger.warning(
+                "Setting `padding` in the tokenizer config is deprecated and will be removed in the future!"
+            )
+        if self.truncation != "deprecated":
+            logger.warning(
+                "Setting `truncation` in the tokenizer config is deprecated and will be removed in the future!"
+            )
 
 
 class Tokenizer(Preprocessor):
@@ -304,18 +316,14 @@ class Tokenizer(Preprocessor):
                 " This warning will change to an error in the future!"
             )
 
+        return_tensors = return_tensors or "list"
+
         # Convert to batch if input is a single string or a list of words (is split into words for sequence labeling)
         if isinstance(inputs, str) or (is_split_into_words and not isinstance(inputs[0], list)):
             inputs = [inputs]
             is_batch = False
         else:
             is_batch = True
-
-        if padding is None and max_length is not None:
-            padding = PaddingType.MAX_LENGTH
-        truncation = truncation or self.config.truncation
-        max_length = max_length or self.config.max_length
-        pad_to_multiple_of = pad_to_multiple_of or self.config.pad_to_multiple_of
 
         self.set_truncation_and_padding(
             padding=padding,
@@ -359,6 +367,7 @@ class Tokenizer(Preprocessor):
                 overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
+        # Squeeze tensor if the original input is a single string and return_tensors is `list`
         if (return_tensors == "list" or return_tensors is None) and not is_batch:
             sanitized_outputs = {
                 key: value[0] if len(value) > 0 and isinstance(value[0], list) else value
@@ -366,6 +375,7 @@ class Tokenizer(Preprocessor):
             }
 
         outputs = convert_batch_dict_dtype(sanitized_outputs, dtype=return_tensors, skip_keys=self.uncastable_keys)
+
         if device and return_tensors == "torch":
             outputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in outputs.items()}
 
@@ -382,7 +392,7 @@ class Tokenizer(Preprocessor):
         pad_to_multiple_of: int = None,
     ):
         # Set truncation and padding on the backend tokenizer
-        if truncation == "no_truncation" or truncation is None:
+        if truncation == "no_truncation" or truncation is None or max_length is None:
             if self.truncation is not None:
                 self.no_truncation()
         else:

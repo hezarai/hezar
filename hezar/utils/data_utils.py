@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
+import numpy as np
+import torch
 from omegaconf import DictConfig
 
 from ..constants import PaddingType
 from .logging import Logger
 
-
-if TYPE_CHECKING:
-    import torch
 
 __all__ = [
     "convert_batch_dict_dtype",
@@ -166,18 +165,50 @@ def pad_batch_items(
     return padded_inputs
 
 
-def shift_tokens_right(input_ids: "torch.Tensor", pad_token_id: int, decoder_start_token_id: int):
+def shift_tokens_right(
+    token_ids: list[list[int]] | "torch.Tensor" | "np.ndarray",
+    pad_token_id: int,
+    decoder_start_token_id: int
+):
     """
     Shift input ids one token to the right.
     """
-    shifted_input_ids = input_ids.new_zeros(input_ids.shape)
-    shifted_input_ids[:, 1:] = input_ids[:, :-1].clone()
-    shifted_input_ids[:, 0] = decoder_start_token_id
+    # Check if input is a list of lists
+    if isinstance(token_ids, list):
+        # Initialize shifted_input_ids with the same shape as input_ids
+        shifted_input_ids = [[0] * len(row) for row in token_ids]
 
-    # replace possible -100 values in labels by `pad_token_id`
-    shifted_input_ids.masked_fill_(shifted_input_ids == -100, pad_token_id)
+        for i, row in enumerate(token_ids):
+            # Shift each row one token to the right
+            shifted_input_ids[i][1:] = row[:-1]
+            # Set the first token to decoder_start_token_id
+            shifted_input_ids[i][0] = decoder_start_token_id
+            # Replace any -100 values with pad_token_id
+            shifted_input_ids[i] = [pad_token_id if token == -100 else token for token in shifted_input_ids[i]]
+        return shifted_input_ids
 
-    return shifted_input_ids
+    # Check if input is a NumPy array
+    elif isinstance(token_ids, np.ndarray):
+        # Initialize shifted_input_ids with zeros and the same shape as input_ids
+        shifted_input_ids = np.zeros_like(token_ids)
+        shifted_input_ids[:, 1:] = token_ids[:, :-1]
+        shifted_input_ids[:, 0] = decoder_start_token_id
+        # Replace any -100 values with pad_token_id
+        shifted_input_ids = np.where(shifted_input_ids == -100, pad_token_id, shifted_input_ids)
+        return shifted_input_ids
+
+    # Check if input is a PyTorch tensor
+    elif isinstance(token_ids, torch.Tensor):
+        # Initialize shifted_input_ids with zeros and the same shape as input_ids
+        shifted_input_ids = token_ids.new_zeros(token_ids.shape)
+        shifted_input_ids[:, 1:] = token_ids[:, :-1].clone()
+        shifted_input_ids[:, 0] = decoder_start_token_id
+        # Replace any -100 values with pad_token_id
+        shifted_input_ids = shifted_input_ids.masked_fill(shifted_input_ids == -100, pad_token_id)
+        return shifted_input_ids
+
+    else:
+        raise TypeError("Unsupported input type. Expected list, numpy array, or torch tensor.")
 
 
 def torch2numpy(*args):

@@ -60,7 +60,7 @@ tasks_setups = {
             "config": {
                 "max_size": 4,
                 "max_length": 128,
-                "max_target_length": 32,
+                "labels_max_length": 32,
             }
         },
         "model": {

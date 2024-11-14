@@ -19,11 +19,8 @@ _required_backends = [
 @dataclass
 class BPEConfig(TokenizerConfig):
     name = "bpe_tokenizer"
-    max_length: int = 512
-    truncation: str = "longest_first"
     truncation_side: str = "right"
     stride: int = 0
-    padding: str = "longest"
     padding_side: str = "right"
     pad_to_multiple_of: int = 0
     bos_token: str = "<s>"
