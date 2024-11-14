@@ -42,11 +42,8 @@ class TokenizerConfig(PreprocessorConfig):
     Configuration for the Tokenizer.
 
     Args:
-        max_length (int): Maximum length of the tokenized sequences.
-        truncation (str): Truncation strategy for tokenization.
         truncation_side (str): Truncation direction for tokenization.
         stride (int): Stride for tokenization.
-        padding (str): Padding type for tokenization e.g, max_length, longest, no_padding.
         padding_side (str): Padding direction for tokenization.
         pad_to_multiple_of (int): Pad to a multiple of this value.
         pad_token_type_id (int): ID of the padding token type.

@@ -19,11 +19,8 @@ _required_backends = [
 @dataclass
 class WordPieceConfig(TokenizerConfig):
     name = "wordpiece_tokenizer"
-    max_length: int = 512
-    truncation: str = "longest_first"
     truncation_side: str = "right"
     stride: int = 0
-    padding: str = "longest"
     padding_side: str = "right"
     pad_to_multiple_of: int = 0
     pad_token: str = "[PAD]"
