@@ -1,0 +1,7 @@
+hezar.utils.audio\_utils module
+===============================
+
+.. automodule:: hezar.utils.audio_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

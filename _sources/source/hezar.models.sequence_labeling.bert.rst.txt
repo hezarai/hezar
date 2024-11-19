@@ -1,0 +1,19 @@
+hezar.models.sequence\_labeling.bert package
+============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.sequence_labeling.bert.bert_sequence_labeling
+   hezar.models.sequence_labeling.bert.bert_sequence_labeling_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.sequence_labeling.bert
+   :members:
+   :undoc-members:
+   :show-inheritance:

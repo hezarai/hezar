@@ -1,0 +1,7 @@
+hezar.models.image2text.crnn.crnn\_decode\_utils module
+=======================================================
+
+.. automodule:: hezar.models.image2text.crnn.crnn_decode_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

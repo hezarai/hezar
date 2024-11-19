@@ -1,0 +1,27 @@
+hezar.metrics package
+=====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.metrics.accuracy
+   hezar.metrics.bleu
+   hezar.metrics.cer
+   hezar.metrics.f1
+   hezar.metrics.metric
+   hezar.metrics.precision
+   hezar.metrics.recall
+   hezar.metrics.rouge
+   hezar.metrics.seqeval
+   hezar.metrics.wer
+
+Module contents
+---------------
+
+.. automodule:: hezar.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:

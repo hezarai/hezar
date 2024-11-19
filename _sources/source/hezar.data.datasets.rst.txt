@@ -1,0 +1,24 @@
+hezar.data.datasets package
+===========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.data.datasets.dataset
+   hezar.data.datasets.image_captioning_dataset
+   hezar.data.datasets.ocr_dataset
+   hezar.data.datasets.sequence_labeling_dataset
+   hezar.data.datasets.speech_recognition_dataset
+   hezar.data.datasets.text_classification_dataset
+   hezar.data.datasets.text_summarization_dataset
+
+Module contents
+---------------
+
+.. automodule:: hezar.data.datasets
+   :members:
+   :undoc-members:
+   :show-inheritance:

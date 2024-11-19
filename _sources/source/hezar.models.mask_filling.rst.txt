@@ -1,0 +1,20 @@
+hezar.models.mask\_filling package
+==================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.mask_filling.bert
+   hezar.models.mask_filling.distilbert
+   hezar.models.mask_filling.roberta
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.mask_filling
+   :members:
+   :undoc-members:
+   :show-inheritance:

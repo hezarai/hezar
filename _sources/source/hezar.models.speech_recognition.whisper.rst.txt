@@ -1,0 +1,21 @@
+hezar.models.speech\_recognition.whisper package
+================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.speech_recognition.whisper.whisper_feature_extractor
+   hezar.models.speech_recognition.whisper.whisper_speech_recognition
+   hezar.models.speech_recognition.whisper.whisper_speech_recognition_config
+   hezar.models.speech_recognition.whisper.whisper_tokenizer
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.speech_recognition.whisper
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+hezar.models.image2text.vit\_roberta.vit\_roberta\_image2text\_config module
+============================================================================
+
+.. automodule:: hezar.models.image2text.vit_roberta.vit_roberta_image2text_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,1432 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="hezar.registry module" href="hezar.registry.html" /><link rel="prev" title="hezar.configs module" href="hezar.configs.html" />
+
+    <link rel="shortcut icon" href="../_static/hezar_logo.svg"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>hezar.constants module - Hezar Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-foreground-primary: #2C3E50;
+  --color-inline-code-background: #F1F1F1;
+  --color-background-border: white;
+  --color-toc-background: #F8F9FB;
+  --color-highlight-on-target: white;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Hezar Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/hezar_logo.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Hezar Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../get_started/index.html">Get Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Get Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../get_started/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../get_started/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../get_started/quick_tour.html">Quick Tour</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorial/index.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/embeddings.html">Embeddings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tutorial/training/index.html">Training Recipes</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Training Recipes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/trainer.html">Trainer Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/text_classification.html">Text Classification (Sentiment Analysis)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/sequence_labeling.html">Sequence Labeling (POS, NER, etc.)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/image_captioning.html">Image to Text (Image Captioning)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/license_plate_recognition.html">Image to Text (License Plate Recognition)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/speech_recognition.html">Speech Recognition</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guide/index.html">Developer Guides</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Developer Guides</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guide/hezar_architecture.html">Hazer’s Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/models_advanced.html">Advanced Guide on Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/dataset_processors.html">Dataset Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/advanced_training.html">Advanced Training</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Reference API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Reference API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="hezar.html">hezar package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of hezar package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.data.html">hezar.data package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of hezar.data package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.data.datasets.html">hezar.data.datasets package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of hezar.data.datasets package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.dataset.html">hezar.data.datasets.dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.image_captioning_dataset.html">hezar.data.datasets.image_captioning_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.ocr_dataset.html">hezar.data.datasets.ocr_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.sequence_labeling_dataset.html">hezar.data.datasets.sequence_labeling_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.speech_recognition_dataset.html">hezar.data.datasets.speech_recognition_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.text_classification_dataset.html">hezar.data.datasets.text_classification_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.text_summarization_dataset.html">hezar.data.datasets.text_summarization_dataset module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.data.data_collators.html">hezar.data.data_collators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.data.data_samplers.html">hezar.data.data_samplers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.data.dataset_processors.html">hezar.data.dataset_processors module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.embeddings.html">hezar.embeddings package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of hezar.embeddings package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.embeddings.embedding.html">hezar.embeddings.embedding module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.embeddings.fasttext.html">hezar.embeddings.fasttext module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.embeddings.word2vec.html">hezar.embeddings.word2vec module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.metrics.html">hezar.metrics package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of hezar.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.accuracy.html">hezar.metrics.accuracy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.bleu.html">hezar.metrics.bleu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.cer.html">hezar.metrics.cer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.f1.html">hezar.metrics.f1 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.metric.html">hezar.metrics.metric module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.precision.html">hezar.metrics.precision module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.recall.html">hezar.metrics.recall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.rouge.html">hezar.metrics.rouge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.seqeval.html">hezar.metrics.seqeval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.wer.html">hezar.metrics.wer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.models.html">hezar.models package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of hezar.models package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.backbone.html">hezar.models.backbone package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of hezar.models.backbone package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.bert.html">hezar.models.backbone.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.bert.bert.html">hezar.models.backbone.bert.bert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.bert.bert_config.html">hezar.models.backbone.bert.bert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.distilbert.html">hezar.models.backbone.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.distilbert.distilbert.html">hezar.models.backbone.distilbert.distilbert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.distilbert.distilbert_config.html">hezar.models.backbone.distilbert.distilbert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.roberta.html">hezar.models.backbone.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.roberta.roberta.html">hezar.models.backbone.roberta.roberta module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.roberta.roberta_config.html">hezar.models.backbone.roberta.roberta_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.vit.html">hezar.models.backbone.vit package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.vit package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.vit.vit.html">hezar.models.backbone.vit.vit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.vit.vit_config.html">hezar.models.backbone.vit.vit_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.image2text.html">hezar.models.image2text package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of hezar.models.image2text package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.beit_roberta.html">hezar.models.image2text.beit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.beit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.beit_roberta.beit_roberta_image2text.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.beit_roberta.beit_roberta_image2text_config.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.crnn.html">hezar.models.image2text.crnn package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.crnn package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.crnn.crnn_decode_utils.html">hezar.models.image2text.crnn.crnn_decode_utils module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.crnn.crnn_image2text.html">hezar.models.image2text.crnn.crnn_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.crnn.crnn_image2text_config.html">hezar.models.image2text.crnn.crnn_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.trocr.html">hezar.models.image2text.trocr package</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.trocr package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.trocr.trocr_image2text.html">hezar.models.image2text.trocr.trocr_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.trocr.trocr_image2text_config.html">hezar.models.image2text.trocr.trocr_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.vit_gpt2.html">hezar.models.image2text.vit_gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_gpt2.vit_gpt2_image2text.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.vit_roberta.html">hezar.models.image2text.vit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_roberta.vit_roberta_image2text.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_roberta.vit_roberta_image2text_config.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.mask_filling.html">hezar.models.mask_filling package</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.mask_filling.bert.html">hezar.models.mask_filling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.bert.bert_mask_filling.html">hezar.models.mask_filling.bert.bert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.bert.bert_mask_filling_config.html">hezar.models.mask_filling.bert.bert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.mask_filling.distilbert.html">hezar.models.mask_filling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.distilbert.distilbert_mask_filling.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.distilbert.distilbert_mask_filling_config.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.mask_filling.roberta.html">hezar.models.mask_filling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.roberta.roberta_mask_filling.html">hezar.models.mask_filling.roberta.roberta_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.roberta.roberta_mask_filling_config.html">hezar.models.mask_filling.roberta.roberta_mask_filling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.html">hezar.models.sequence_labeling package</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.bert.html">hezar.models.sequence_labeling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.bert.bert_sequence_labeling.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.bert.bert_sequence_labeling_config.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.distilbert.html">hezar.models.sequence_labeling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.roberta.html">hezar.models.sequence_labeling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.roberta.roberta_sequence_labeling.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.speech_recognition.html">hezar.models.speech_recognition package</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.speech_recognition.whisper.html">hezar.models.speech_recognition.whisper package</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition.whisper package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_feature_extractor.html">hezar.models.speech_recognition.whisper.whisper_feature_extractor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_speech_recognition.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_speech_recognition_config.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_tokenizer.html">hezar.models.speech_recognition.whisper.whisper_tokenizer module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.text_classification.html">hezar.models.text_classification package</a><input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_classification.bert.html">hezar.models.text_classification.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.bert.bert_text_classification.html">hezar.models.text_classification.bert.bert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.bert.bert_text_classification_config.html">hezar.models.text_classification.bert.bert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_classification.distilbert.html">hezar.models.text_classification.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.distilbert.distilbert_text_classification.html">hezar.models.text_classification.distilbert.distilbert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.distilbert.distilbert_text_classification_config.html">hezar.models.text_classification.distilbert.distilbert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_classification.roberta.html">hezar.models.text_classification.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.roberta.roberta_text_classification.html">hezar.models.text_classification.roberta.roberta_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.roberta.roberta_text_classification_config.html">hezar.models.text_classification.roberta.roberta_text_classification_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.text_detection.html">hezar.models.text_detection package</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_detection.craft.html">hezar.models.text_detection.craft package</a><input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection.craft package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_image_processor.html">hezar.models.text_detection.craft.craft_image_processor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_text_detection.html">hezar.models.text_detection.craft.craft_text_detection module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_text_detection_config.html">hezar.models.text_detection.craft.craft_text_detection_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_utils.html">hezar.models.text_detection.craft.craft_utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.text_generation.html">hezar.models.text_generation package</a><input class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_generation.gpt2.html">hezar.models.text_generation.gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.gpt2.gpt2_text_generation.html">hezar.models.text_generation.gpt2.gpt2_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.gpt2.gpt2_text_generation_config.html">hezar.models.text_generation.gpt2.gpt2_text_generation_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_generation.t5.html">hezar.models.text_generation.t5 package</a><input class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.t5 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.t5.t5_text_generation.html">hezar.models.text_generation.t5.t5_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.t5.t5_text_generation_config.html">hezar.models.text_generation.t5.t5_text_generation_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.models.model.html">hezar.models.model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.models.model_outputs.html">hezar.models.model_outputs module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.preprocessors.html">hezar.preprocessors package</a><input class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><div class="visually-hidden">Toggle navigation of hezar.preprocessors package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.preprocessors.tokenizers.html">hezar.preprocessors.tokenizers package</a><input class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><div class="visually-hidden">Toggle navigation of hezar.preprocessors.tokenizers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.bpe.html">hezar.preprocessors.tokenizers.bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.sentencepiece_bpe.html">hezar.preprocessors.tokenizers.sentencepiece_bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.sentencepiece_unigram.html">hezar.preprocessors.tokenizers.sentencepiece_unigram module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.tokenizer.html">hezar.preprocessors.tokenizers.tokenizer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.wordpiece.html">hezar.preprocessors.tokenizers.wordpiece module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.audio_feature_extractor.html">hezar.preprocessors.audio_feature_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.image_processor.html">hezar.preprocessors.image_processor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.preprocessor.html">hezar.preprocessors.preprocessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.text_normalizer.html">hezar.preprocessors.text_normalizer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.trainer.html">hezar.trainer package</a><input class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><div class="visually-hidden">Toggle navigation of hezar.trainer package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.trainer.metrics_handlers.html">hezar.trainer.metrics_handlers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.trainer.trainer.html">hezar.trainer.trainer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.trainer.trainer_utils.html">hezar.trainer.trainer_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.utils.html">hezar.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><div class="visually-hidden">Toggle navigation of hezar.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.audio_utils.html">hezar.utils.audio_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.common_utils.html">hezar.utils.common_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.data_utils.html">hezar.utils.data_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.hub_utils.html">hezar.utils.hub_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.image_utils.html">hezar.utils.image_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.integration_utils.html">hezar.utils.integration_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.logging.html">hezar.utils.logging module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.registry_utils.html">hezar.utils.registry_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.builders.html">hezar.builders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.configs.html">hezar.configs module</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">hezar.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.registry.html">hezar.registry module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Hezar</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/hezarai/hezar/blob/main/docs/source/hezar.constants.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/hezarai/hezar/edit/main/docs/source/hezar.constants.rst" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-hezar.constants">
+<span id="hezar-constants-module"></span><h1>hezar.constants module<a class="headerlink" href="#module-hezar.constants" title="Link to this heading">¶</a></h1>
+<p>Home to all constant variables in Hezar</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.Backends">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">Backends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#Backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.Backends" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>All required dependency packages and libraries. Note that the values here must be the exact module names used
+for importing, for example if you set PILLOW the value must be <cite>PIL</cite> not <cite>pillow</cite>, <cite>pil</cite>, etc.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.ACCELERATE">
+<span class="sig-name descname"><span class="pre">ACCELERATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'accelerate'</span></em><a class="headerlink" href="#hezar.constants.Backends.ACCELERATE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.DATASETS">
+<span class="sig-name descname"><span class="pre">DATASETS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'datasets'</span></em><a class="headerlink" href="#hezar.constants.Backends.DATASETS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.GENSIM">
+<span class="sig-name descname"><span class="pre">GENSIM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gensim'</span></em><a class="headerlink" href="#hezar.constants.Backends.GENSIM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.JIWER">
+<span class="sig-name descname"><span class="pre">JIWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'jiwer'</span></em><a class="headerlink" href="#hezar.constants.Backends.JIWER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.LIBROSA">
+<span class="sig-name descname"><span class="pre">LIBROSA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'librosa'</span></em><a class="headerlink" href="#hezar.constants.Backends.LIBROSA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.NLTK">
+<span class="sig-name descname"><span class="pre">NLTK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nltk'</span></em><a class="headerlink" href="#hezar.constants.Backends.NLTK" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.OPENCV">
+<span class="sig-name descname"><span class="pre">OPENCV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cv2'</span></em><a class="headerlink" href="#hezar.constants.Backends.OPENCV" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.PILLOW">
+<span class="sig-name descname"><span class="pre">PILLOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PIL'</span></em><a class="headerlink" href="#hezar.constants.Backends.PILLOW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.PYTORCH">
+<span class="sig-name descname"><span class="pre">PYTORCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'torch'</span></em><a class="headerlink" href="#hezar.constants.Backends.PYTORCH" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.ROUGE">
+<span class="sig-name descname"><span class="pre">ROUGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rouge_score'</span></em><a class="headerlink" href="#hezar.constants.Backends.ROUGE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.SCIKIT">
+<span class="sig-name descname"><span class="pre">SCIKIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sklearn'</span></em><a class="headerlink" href="#hezar.constants.Backends.SCIKIT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.SEQEVAL">
+<span class="sig-name descname"><span class="pre">SEQEVAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seqeval'</span></em><a class="headerlink" href="#hezar.constants.Backends.SEQEVAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.SOUNDFILE">
+<span class="sig-name descname"><span class="pre">SOUNDFILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'soundfile'</span></em><a class="headerlink" href="#hezar.constants.Backends.SOUNDFILE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.TENSORBOARD">
+<span class="sig-name descname"><span class="pre">TENSORBOARD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tensorboard'</span></em><a class="headerlink" href="#hezar.constants.Backends.TENSORBOARD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.TOKENIZERS">
+<span class="sig-name descname"><span class="pre">TOKENIZERS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tokenizers'</span></em><a class="headerlink" href="#hezar.constants.Backends.TOKENIZERS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.TORCHVISION">
+<span class="sig-name descname"><span class="pre">TORCHVISION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'torchvision'</span></em><a class="headerlink" href="#hezar.constants.Backends.TORCHVISION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.TRANSFORMERS">
+<span class="sig-name descname"><span class="pre">TRANSFORMERS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transformers'</span></em><a class="headerlink" href="#hezar.constants.Backends.TRANSFORMERS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Backends.WANDB">
+<span class="sig-name descname"><span class="pre">WANDB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'wandb'</span></em><a class="headerlink" href="#hezar.constants.Backends.WANDB" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.ChannelsAxisSide">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">ChannelsAxisSide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#ChannelsAxisSide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.ChannelsAxisSide" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ChannelsAxisSide.FIRST">
+<span class="sig-name descname"><span class="pre">FIRST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'first'</span></em><a class="headerlink" href="#hezar.constants.ChannelsAxisSide.FIRST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ChannelsAxisSide.LAST">
+<span class="sig-name descname"><span class="pre">LAST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'last'</span></em><a class="headerlink" href="#hezar.constants.ChannelsAxisSide.LAST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.Color">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">Color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#Color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.Color" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.BLUE">
+<span class="sig-name descname"><span class="pre">BLUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[94m'</span></em><a class="headerlink" href="#hezar.constants.Color.BLUE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.BOLD">
+<span class="sig-name descname"><span class="pre">BOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[1m'</span></em><a class="headerlink" href="#hezar.constants.Color.BOLD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.CYAN">
+<span class="sig-name descname"><span class="pre">CYAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[96m'</span></em><a class="headerlink" href="#hezar.constants.Color.CYAN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.GREEN">
+<span class="sig-name descname"><span class="pre">GREEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[92m'</span></em><a class="headerlink" href="#hezar.constants.Color.GREEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.GREY">
+<span class="sig-name descname"><span class="pre">GREY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[90m'</span></em><a class="headerlink" href="#hezar.constants.Color.GREY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.HEADER">
+<span class="sig-name descname"><span class="pre">HEADER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[95m'</span></em><a class="headerlink" href="#hezar.constants.Color.HEADER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.ITALIC">
+<span class="sig-name descname"><span class="pre">ITALIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[3m'</span></em><a class="headerlink" href="#hezar.constants.Color.ITALIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.NORMAL">
+<span class="sig-name descname"><span class="pre">NORMAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></em><a class="headerlink" href="#hezar.constants.Color.NORMAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.RED">
+<span class="sig-name descname"><span class="pre">RED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[91m'</span></em><a class="headerlink" href="#hezar.constants.Color.RED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.UNDERLINE">
+<span class="sig-name descname"><span class="pre">UNDERLINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[4m'</span></em><a class="headerlink" href="#hezar.constants.Color.UNDERLINE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.Color.YELLOW">
+<span class="sig-name descname"><span class="pre">YELLOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[93m'</span></em><a class="headerlink" href="#hezar.constants.Color.YELLOW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">ConfigType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#ConfigType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.ConfigType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.BASE">
+<span class="sig-name descname"><span class="pre">BASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'base'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.BASE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.CRITERION">
+<span class="sig-name descname"><span class="pre">CRITERION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'criterion'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.CRITERION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.DATASET">
+<span class="sig-name descname"><span class="pre">DATASET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.DATASET" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.EMBEDDING">
+<span class="sig-name descname"><span class="pre">EMBEDDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'embedding'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.EMBEDDING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.LR_SCHEDULER">
+<span class="sig-name descname"><span class="pre">LR_SCHEDULER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lr_scheduler'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.LR_SCHEDULER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.METRIC">
+<span class="sig-name descname"><span class="pre">METRIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'metric'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.METRIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.MODEL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.OPTIMIZER">
+<span class="sig-name descname"><span class="pre">OPTIMIZER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'optimizer'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.OPTIMIZER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.PREPROCESSOR">
+<span class="sig-name descname"><span class="pre">PREPROCESSOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'preprocessor'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.PREPROCESSOR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ConfigType.TRAINER">
+<span class="sig-name descname"><span class="pre">TRAINER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'trainer'</span></em><a class="headerlink" href="#hezar.constants.ConfigType.TRAINER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.ExplicitEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">ExplicitEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#ExplicitEnum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.ExplicitEnum" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hezar.constants.ExplicitEnum.list">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#ExplicitEnum.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.ExplicitEnum.list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.ImageType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">ImageType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#ImageType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.ImageType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ImageType.NUMPY">
+<span class="sig-name descname"><span class="pre">NUMPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'numpy'</span></em><a class="headerlink" href="#hezar.constants.ImageType.NUMPY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ImageType.PILLOW">
+<span class="sig-name descname"><span class="pre">PILLOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pillow'</span></em><a class="headerlink" href="#hezar.constants.ImageType.PILLOW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.ImageType.TORCH">
+<span class="sig-name descname"><span class="pre">TORCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'torch'</span></em><a class="headerlink" href="#hezar.constants.ImageType.TORCH" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">LRSchedulerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#LRSchedulerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.LRSchedulerType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.CONSTANT">
+<span class="sig-name descname"><span class="pre">CONSTANT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'constant'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.CONSTANT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.COSINE_ANEALING">
+<span class="sig-name descname"><span class="pre">COSINE_ANEALING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cosine_anealing'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.COSINE_ANEALING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.CYCLIC">
+<span class="sig-name descname"><span class="pre">CYCLIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cyclic'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.CYCLIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.EXPONENTIAL">
+<span class="sig-name descname"><span class="pre">EXPONENTIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'exponential'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.EXPONENTIAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.LAMBDA">
+<span class="sig-name descname"><span class="pre">LAMBDA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lambda'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.LAMBDA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'linear'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.LINEAR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.MULTI_STEP">
+<span class="sig-name descname"><span class="pre">MULTI_STEP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'multi_step'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.MULTI_STEP" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.ONE_CYCLE">
+<span class="sig-name descname"><span class="pre">ONE_CYCLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'one_cycle'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.ONE_CYCLE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.POLYNOMIAL">
+<span class="sig-name descname"><span class="pre">POLYNOMIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'polynomial'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.POLYNOMIAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.REDUCE_ON_PLATEAU">
+<span class="sig-name descname"><span class="pre">REDUCE_ON_PLATEAU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'reduce_on_plateau'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.REDUCE_ON_PLATEAU" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.SEQUENTIAL">
+<span class="sig-name descname"><span class="pre">SEQUENTIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sequential'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.SEQUENTIAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LRSchedulerType.STEP">
+<span class="sig-name descname"><span class="pre">STEP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'step'</span></em><a class="headerlink" href="#hezar.constants.LRSchedulerType.STEP" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.LossType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">LossType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#LossType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.LossType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.BCE">
+<span class="sig-name descname"><span class="pre">BCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bce'</span></em><a class="headerlink" href="#hezar.constants.LossType.BCE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.BCE_WITH_LOGITS">
+<span class="sig-name descname"><span class="pre">BCE_WITH_LOGITS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bce_with_logits'</span></em><a class="headerlink" href="#hezar.constants.LossType.BCE_WITH_LOGITS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.CROSS_ENTROPY">
+<span class="sig-name descname"><span class="pre">CROSS_ENTROPY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cross_entropy'</span></em><a class="headerlink" href="#hezar.constants.LossType.CROSS_ENTROPY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.CTC">
+<span class="sig-name descname"><span class="pre">CTC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ctc'</span></em><a class="headerlink" href="#hezar.constants.LossType.CTC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.GAUSSIAN_NLL">
+<span class="sig-name descname"><span class="pre">GAUSSIAN_NLL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gaussian_nll'</span></em><a class="headerlink" href="#hezar.constants.LossType.GAUSSIAN_NLL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.L1">
+<span class="sig-name descname"><span class="pre">L1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'l1'</span></em><a class="headerlink" href="#hezar.constants.LossType.L1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.MSE">
+<span class="sig-name descname"><span class="pre">MSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mse'</span></em><a class="headerlink" href="#hezar.constants.LossType.MSE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.NLL">
+<span class="sig-name descname"><span class="pre">NLL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nll'</span></em><a class="headerlink" href="#hezar.constants.LossType.NLL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.NLL_2D">
+<span class="sig-name descname"><span class="pre">NLL_2D</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nll_2d'</span></em><a class="headerlink" href="#hezar.constants.LossType.NLL_2D" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.POISSON_NLL">
+<span class="sig-name descname"><span class="pre">POISSON_NLL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'poisson_nll'</span></em><a class="headerlink" href="#hezar.constants.LossType.POISSON_NLL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.LossType.TRIPLE_MARGIN">
+<span class="sig-name descname"><span class="pre">TRIPLE_MARGIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'triple_margin'</span></em><a class="headerlink" href="#hezar.constants.LossType.TRIPLE_MARGIN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.MetricType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">MetricType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#MetricType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.MetricType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.ACCURACY">
+<span class="sig-name descname"><span class="pre">ACCURACY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'accuracy'</span></em><a class="headerlink" href="#hezar.constants.MetricType.ACCURACY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.BLEU">
+<span class="sig-name descname"><span class="pre">BLEU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bleu'</span></em><a class="headerlink" href="#hezar.constants.MetricType.BLEU" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.CER">
+<span class="sig-name descname"><span class="pre">CER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cer'</span></em><a class="headerlink" href="#hezar.constants.MetricType.CER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.F1">
+<span class="sig-name descname"><span class="pre">F1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'f1'</span></em><a class="headerlink" href="#hezar.constants.MetricType.F1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.PRECISION">
+<span class="sig-name descname"><span class="pre">PRECISION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'precision'</span></em><a class="headerlink" href="#hezar.constants.MetricType.PRECISION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.RECALL">
+<span class="sig-name descname"><span class="pre">RECALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'recall'</span></em><a class="headerlink" href="#hezar.constants.MetricType.RECALL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.ROUGE">
+<span class="sig-name descname"><span class="pre">ROUGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rouge'</span></em><a class="headerlink" href="#hezar.constants.MetricType.ROUGE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.SEQEVAL">
+<span class="sig-name descname"><span class="pre">SEQEVAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seqeval'</span></em><a class="headerlink" href="#hezar.constants.MetricType.SEQEVAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.MetricType.WER">
+<span class="sig-name descname"><span class="pre">WER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'wer'</span></em><a class="headerlink" href="#hezar.constants.MetricType.WER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.OptimizerType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">OptimizerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#OptimizerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.OptimizerType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.OptimizerType.ADAM">
+<span class="sig-name descname"><span class="pre">ADAM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'adam'</span></em><a class="headerlink" href="#hezar.constants.OptimizerType.ADAM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.OptimizerType.ADAMW">
+<span class="sig-name descname"><span class="pre">ADAMW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'adamw'</span></em><a class="headerlink" href="#hezar.constants.OptimizerType.ADAMW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.OptimizerType.SDG">
+<span class="sig-name descname"><span class="pre">SDG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sdg'</span></em><a class="headerlink" href="#hezar.constants.OptimizerType.SDG" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.PaddingType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">PaddingType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#PaddingType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.PaddingType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.PaddingType.LONGEST">
+<span class="sig-name descname"><span class="pre">LONGEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'longest'</span></em><a class="headerlink" href="#hezar.constants.PaddingType.LONGEST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.PaddingType.MAX_LENGTH">
+<span class="sig-name descname"><span class="pre">MAX_LENGTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'max_length'</span></em><a class="headerlink" href="#hezar.constants.PaddingType.MAX_LENGTH" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.PrecisionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">PrecisionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#PrecisionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.PrecisionType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.PrecisionType.BF16">
+<span class="sig-name descname"><span class="pre">BF16</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bf16'</span></em><a class="headerlink" href="#hezar.constants.PrecisionType.BF16" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.PrecisionType.FP16">
+<span class="sig-name descname"><span class="pre">FP16</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fp16'</span></em><a class="headerlink" href="#hezar.constants.PrecisionType.FP16" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.PrecisionType.FP8">
+<span class="sig-name descname"><span class="pre">FP8</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fp8'</span></em><a class="headerlink" href="#hezar.constants.PrecisionType.FP8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.PrecisionType.NO">
+<span class="sig-name descname"><span class="pre">NO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'no'</span></em><a class="headerlink" href="#hezar.constants.PrecisionType.NO" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">RegistryType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#RegistryType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.RegistryType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.CRITERION">
+<span class="sig-name descname"><span class="pre">CRITERION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'criterion'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.CRITERION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.DATASET">
+<span class="sig-name descname"><span class="pre">DATASET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.DATASET" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.EMBEDDING">
+<span class="sig-name descname"><span class="pre">EMBEDDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'embedding'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.EMBEDDING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.LR_SCHEDULER">
+<span class="sig-name descname"><span class="pre">LR_SCHEDULER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lr_scheduler'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.LR_SCHEDULER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.METRIC">
+<span class="sig-name descname"><span class="pre">METRIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'metric'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.METRIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.MODEL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.OPTIMIZER">
+<span class="sig-name descname"><span class="pre">OPTIMIZER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'optimizer'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.OPTIMIZER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.PREPROCESSOR">
+<span class="sig-name descname"><span class="pre">PREPROCESSOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'preprocessor'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.PREPROCESSOR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RegistryType.TRAINER">
+<span class="sig-name descname"><span class="pre">TRAINER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'trainer'</span></em><a class="headerlink" href="#hezar.constants.RegistryType.TRAINER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.RepoType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">RepoType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#RepoType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.RepoType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RepoType.DATASET">
+<span class="sig-name descname"><span class="pre">DATASET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#hezar.constants.RepoType.DATASET" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.RepoType.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model'</span></em><a class="headerlink" href="#hezar.constants.RepoType.MODEL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.SplitType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">SplitType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#SplitType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.SplitType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.SplitType.EVAL">
+<span class="sig-name descname"><span class="pre">EVAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'eval'</span></em><a class="headerlink" href="#hezar.constants.SplitType.EVAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.SplitType.TEST">
+<span class="sig-name descname"><span class="pre">TEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'test'</span></em><a class="headerlink" href="#hezar.constants.SplitType.TEST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.SplitType.TRAIN">
+<span class="sig-name descname"><span class="pre">TRAIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'train'</span></em><a class="headerlink" href="#hezar.constants.SplitType.TRAIN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.SplitType.VALID">
+<span class="sig-name descname"><span class="pre">VALID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'validation'</span></em><a class="headerlink" href="#hezar.constants.SplitType.VALID" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hezar.constants.TaskType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hezar.constants.</span></span><span class="sig-name descname"><span class="pre">TaskType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/constants.html#TaskType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.constants.TaskType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#hezar.constants.ExplicitEnum" title="hezar.constants.ExplicitEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.AUDIO_CLASSIFICATION">
+<span class="sig-name descname"><span class="pre">AUDIO_CLASSIFICATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'audio_classification'</span></em><a class="headerlink" href="#hezar.constants.TaskType.AUDIO_CLASSIFICATION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.BACKBONE">
+<span class="sig-name descname"><span class="pre">BACKBONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'backbone'</span></em><a class="headerlink" href="#hezar.constants.TaskType.BACKBONE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.IMAGE2TEXT">
+<span class="sig-name descname"><span class="pre">IMAGE2TEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'image2text'</span></em><a class="headerlink" href="#hezar.constants.TaskType.IMAGE2TEXT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.LANGUAGE_MODELING">
+<span class="sig-name descname"><span class="pre">LANGUAGE_MODELING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'language_modeling'</span></em><a class="headerlink" href="#hezar.constants.TaskType.LANGUAGE_MODELING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.MASK_FILLING">
+<span class="sig-name descname"><span class="pre">MASK_FILLING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mask_filling'</span></em><a class="headerlink" href="#hezar.constants.TaskType.MASK_FILLING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.SEQUENCE_LABELING">
+<span class="sig-name descname"><span class="pre">SEQUENCE_LABELING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sequence_labeling'</span></em><a class="headerlink" href="#hezar.constants.TaskType.SEQUENCE_LABELING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.SPEECH_RECOGNITION">
+<span class="sig-name descname"><span class="pre">SPEECH_RECOGNITION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'speech_recognition'</span></em><a class="headerlink" href="#hezar.constants.TaskType.SPEECH_RECOGNITION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.TEXT_CLASSIFICATION">
+<span class="sig-name descname"><span class="pre">TEXT_CLASSIFICATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'text_classification'</span></em><a class="headerlink" href="#hezar.constants.TaskType.TEXT_CLASSIFICATION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.TEXT_DETECTION">
+<span class="sig-name descname"><span class="pre">TEXT_DETECTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'text_detection'</span></em><a class="headerlink" href="#hezar.constants.TaskType.TEXT_DETECTION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hezar.constants.TaskType.TEXT_GENERATION">
+<span class="sig-name descname"><span class="pre">TEXT_GENERATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'text_generation'</span></em><a class="headerlink" href="#hezar.constants.TaskType.TEXT_GENERATION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="hezar.registry.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">hezar.registry module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="hezar.configs.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">hezar.configs module</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Hezar AI Team &amp; contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/hezarai/hezar" aria-label="GitHub"><i class="fa-brands fa-github fa-2x" style="color: #343d4c;"></i></a>
+              <a class="muted-link " href="https://t.me/hezarai" aria-label="Telegram"><i class="fa-brands fa-telegram fa-2x" style="color: #229ed9;"></i></a>
+              <a class="muted-link " href="https://huggingface.co/hezarai" aria-label="Hugging Face"> <img style="width:32px;height:32px;" src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">hezar.constants module</a><ul>
+<li><a class="reference internal" href="#hezar.constants.Backends"><code class="docutils literal notranslate"><span class="pre">Backends</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.Backends.ACCELERATE"><code class="docutils literal notranslate"><span class="pre">Backends.ACCELERATE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.DATASETS"><code class="docutils literal notranslate"><span class="pre">Backends.DATASETS</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.GENSIM"><code class="docutils literal notranslate"><span class="pre">Backends.GENSIM</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.JIWER"><code class="docutils literal notranslate"><span class="pre">Backends.JIWER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.LIBROSA"><code class="docutils literal notranslate"><span class="pre">Backends.LIBROSA</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.NLTK"><code class="docutils literal notranslate"><span class="pre">Backends.NLTK</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.OPENCV"><code class="docutils literal notranslate"><span class="pre">Backends.OPENCV</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.PILLOW"><code class="docutils literal notranslate"><span class="pre">Backends.PILLOW</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.PYTORCH"><code class="docutils literal notranslate"><span class="pre">Backends.PYTORCH</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.ROUGE"><code class="docutils literal notranslate"><span class="pre">Backends.ROUGE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.SCIKIT"><code class="docutils literal notranslate"><span class="pre">Backends.SCIKIT</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.SEQEVAL"><code class="docutils literal notranslate"><span class="pre">Backends.SEQEVAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.SOUNDFILE"><code class="docutils literal notranslate"><span class="pre">Backends.SOUNDFILE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.TENSORBOARD"><code class="docutils literal notranslate"><span class="pre">Backends.TENSORBOARD</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.TOKENIZERS"><code class="docutils literal notranslate"><span class="pre">Backends.TOKENIZERS</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.TORCHVISION"><code class="docutils literal notranslate"><span class="pre">Backends.TORCHVISION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.TRANSFORMERS"><code class="docutils literal notranslate"><span class="pre">Backends.TRANSFORMERS</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Backends.WANDB"><code class="docutils literal notranslate"><span class="pre">Backends.WANDB</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.ChannelsAxisSide"><code class="docutils literal notranslate"><span class="pre">ChannelsAxisSide</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.ChannelsAxisSide.FIRST"><code class="docutils literal notranslate"><span class="pre">ChannelsAxisSide.FIRST</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ChannelsAxisSide.LAST"><code class="docutils literal notranslate"><span class="pre">ChannelsAxisSide.LAST</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.Color"><code class="docutils literal notranslate"><span class="pre">Color</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.Color.BLUE"><code class="docutils literal notranslate"><span class="pre">Color.BLUE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.BOLD"><code class="docutils literal notranslate"><span class="pre">Color.BOLD</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.CYAN"><code class="docutils literal notranslate"><span class="pre">Color.CYAN</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.GREEN"><code class="docutils literal notranslate"><span class="pre">Color.GREEN</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.GREY"><code class="docutils literal notranslate"><span class="pre">Color.GREY</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.HEADER"><code class="docutils literal notranslate"><span class="pre">Color.HEADER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.ITALIC"><code class="docutils literal notranslate"><span class="pre">Color.ITALIC</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.NORMAL"><code class="docutils literal notranslate"><span class="pre">Color.NORMAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.RED"><code class="docutils literal notranslate"><span class="pre">Color.RED</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.UNDERLINE"><code class="docutils literal notranslate"><span class="pre">Color.UNDERLINE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.Color.YELLOW"><code class="docutils literal notranslate"><span class="pre">Color.YELLOW</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType"><code class="docutils literal notranslate"><span class="pre">ConfigType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.BASE"><code class="docutils literal notranslate"><span class="pre">ConfigType.BASE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.CRITERION"><code class="docutils literal notranslate"><span class="pre">ConfigType.CRITERION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.DATASET"><code class="docutils literal notranslate"><span class="pre">ConfigType.DATASET</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.EMBEDDING"><code class="docutils literal notranslate"><span class="pre">ConfigType.EMBEDDING</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.LR_SCHEDULER"><code class="docutils literal notranslate"><span class="pre">ConfigType.LR_SCHEDULER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.METRIC"><code class="docutils literal notranslate"><span class="pre">ConfigType.METRIC</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.MODEL"><code class="docutils literal notranslate"><span class="pre">ConfigType.MODEL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.OPTIMIZER"><code class="docutils literal notranslate"><span class="pre">ConfigType.OPTIMIZER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.PREPROCESSOR"><code class="docutils literal notranslate"><span class="pre">ConfigType.PREPROCESSOR</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ConfigType.TRAINER"><code class="docutils literal notranslate"><span class="pre">ConfigType.TRAINER</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.ExplicitEnum"><code class="docutils literal notranslate"><span class="pre">ExplicitEnum</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.ExplicitEnum.list"><code class="docutils literal notranslate"><span class="pre">ExplicitEnum.list()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.ImageType"><code class="docutils literal notranslate"><span class="pre">ImageType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.ImageType.NUMPY"><code class="docutils literal notranslate"><span class="pre">ImageType.NUMPY</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ImageType.PILLOW"><code class="docutils literal notranslate"><span class="pre">ImageType.PILLOW</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.ImageType.TORCH"><code class="docutils literal notranslate"><span class="pre">ImageType.TORCH</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.CONSTANT"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.CONSTANT</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.COSINE_ANEALING"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.COSINE_ANEALING</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.CYCLIC"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.CYCLIC</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.EXPONENTIAL"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.EXPONENTIAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.LAMBDA"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.LAMBDA</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.LINEAR"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.LINEAR</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.MULTI_STEP"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.MULTI_STEP</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.ONE_CYCLE"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.ONE_CYCLE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.POLYNOMIAL"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.POLYNOMIAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.REDUCE_ON_PLATEAU"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.REDUCE_ON_PLATEAU</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.SEQUENTIAL"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.SEQUENTIAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LRSchedulerType.STEP"><code class="docutils literal notranslate"><span class="pre">LRSchedulerType.STEP</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.LossType"><code class="docutils literal notranslate"><span class="pre">LossType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.LossType.BCE"><code class="docutils literal notranslate"><span class="pre">LossType.BCE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.BCE_WITH_LOGITS"><code class="docutils literal notranslate"><span class="pre">LossType.BCE_WITH_LOGITS</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.CROSS_ENTROPY"><code class="docutils literal notranslate"><span class="pre">LossType.CROSS_ENTROPY</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.CTC"><code class="docutils literal notranslate"><span class="pre">LossType.CTC</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.GAUSSIAN_NLL"><code class="docutils literal notranslate"><span class="pre">LossType.GAUSSIAN_NLL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.L1"><code class="docutils literal notranslate"><span class="pre">LossType.L1</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.MSE"><code class="docutils literal notranslate"><span class="pre">LossType.MSE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.NLL"><code class="docutils literal notranslate"><span class="pre">LossType.NLL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.NLL_2D"><code class="docutils literal notranslate"><span class="pre">LossType.NLL_2D</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.POISSON_NLL"><code class="docutils literal notranslate"><span class="pre">LossType.POISSON_NLL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.LossType.TRIPLE_MARGIN"><code class="docutils literal notranslate"><span class="pre">LossType.TRIPLE_MARGIN</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.MetricType"><code class="docutils literal notranslate"><span class="pre">MetricType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.MetricType.ACCURACY"><code class="docutils literal notranslate"><span class="pre">MetricType.ACCURACY</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.BLEU"><code class="docutils literal notranslate"><span class="pre">MetricType.BLEU</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.CER"><code class="docutils literal notranslate"><span class="pre">MetricType.CER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.F1"><code class="docutils literal notranslate"><span class="pre">MetricType.F1</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.PRECISION"><code class="docutils literal notranslate"><span class="pre">MetricType.PRECISION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.RECALL"><code class="docutils literal notranslate"><span class="pre">MetricType.RECALL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.ROUGE"><code class="docutils literal notranslate"><span class="pre">MetricType.ROUGE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.SEQEVAL"><code class="docutils literal notranslate"><span class="pre">MetricType.SEQEVAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.MetricType.WER"><code class="docutils literal notranslate"><span class="pre">MetricType.WER</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.OptimizerType"><code class="docutils literal notranslate"><span class="pre">OptimizerType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.OptimizerType.ADAM"><code class="docutils literal notranslate"><span class="pre">OptimizerType.ADAM</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.OptimizerType.ADAMW"><code class="docutils literal notranslate"><span class="pre">OptimizerType.ADAMW</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.OptimizerType.SDG"><code class="docutils literal notranslate"><span class="pre">OptimizerType.SDG</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.PaddingType"><code class="docutils literal notranslate"><span class="pre">PaddingType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.PaddingType.LONGEST"><code class="docutils literal notranslate"><span class="pre">PaddingType.LONGEST</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.PaddingType.MAX_LENGTH"><code class="docutils literal notranslate"><span class="pre">PaddingType.MAX_LENGTH</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.PrecisionType"><code class="docutils literal notranslate"><span class="pre">PrecisionType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.PrecisionType.BF16"><code class="docutils literal notranslate"><span class="pre">PrecisionType.BF16</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.PrecisionType.FP16"><code class="docutils literal notranslate"><span class="pre">PrecisionType.FP16</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.PrecisionType.FP8"><code class="docutils literal notranslate"><span class="pre">PrecisionType.FP8</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.PrecisionType.NO"><code class="docutils literal notranslate"><span class="pre">PrecisionType.NO</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType"><code class="docutils literal notranslate"><span class="pre">RegistryType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.CRITERION"><code class="docutils literal notranslate"><span class="pre">RegistryType.CRITERION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.DATASET"><code class="docutils literal notranslate"><span class="pre">RegistryType.DATASET</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.EMBEDDING"><code class="docutils literal notranslate"><span class="pre">RegistryType.EMBEDDING</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.LR_SCHEDULER"><code class="docutils literal notranslate"><span class="pre">RegistryType.LR_SCHEDULER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.METRIC"><code class="docutils literal notranslate"><span class="pre">RegistryType.METRIC</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.MODEL"><code class="docutils literal notranslate"><span class="pre">RegistryType.MODEL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.OPTIMIZER"><code class="docutils literal notranslate"><span class="pre">RegistryType.OPTIMIZER</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.PREPROCESSOR"><code class="docutils literal notranslate"><span class="pre">RegistryType.PREPROCESSOR</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RegistryType.TRAINER"><code class="docutils literal notranslate"><span class="pre">RegistryType.TRAINER</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.RepoType"><code class="docutils literal notranslate"><span class="pre">RepoType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.RepoType.DATASET"><code class="docutils literal notranslate"><span class="pre">RepoType.DATASET</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.RepoType.MODEL"><code class="docutils literal notranslate"><span class="pre">RepoType.MODEL</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.SplitType"><code class="docutils literal notranslate"><span class="pre">SplitType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.SplitType.EVAL"><code class="docutils literal notranslate"><span class="pre">SplitType.EVAL</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.SplitType.TEST"><code class="docutils literal notranslate"><span class="pre">SplitType.TEST</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.SplitType.TRAIN"><code class="docutils literal notranslate"><span class="pre">SplitType.TRAIN</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.SplitType.VALID"><code class="docutils literal notranslate"><span class="pre">SplitType.VALID</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hezar.constants.TaskType"><code class="docutils literal notranslate"><span class="pre">TaskType</span></code></a><ul>
+<li><a class="reference internal" href="#hezar.constants.TaskType.AUDIO_CLASSIFICATION"><code class="docutils literal notranslate"><span class="pre">TaskType.AUDIO_CLASSIFICATION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.BACKBONE"><code class="docutils literal notranslate"><span class="pre">TaskType.BACKBONE</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.IMAGE2TEXT"><code class="docutils literal notranslate"><span class="pre">TaskType.IMAGE2TEXT</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.LANGUAGE_MODELING"><code class="docutils literal notranslate"><span class="pre">TaskType.LANGUAGE_MODELING</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.MASK_FILLING"><code class="docutils literal notranslate"><span class="pre">TaskType.MASK_FILLING</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.SEQUENCE_LABELING"><code class="docutils literal notranslate"><span class="pre">TaskType.SEQUENCE_LABELING</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.SPEECH_RECOGNITION"><code class="docutils literal notranslate"><span class="pre">TaskType.SPEECH_RECOGNITION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.TEXT_CLASSIFICATION"><code class="docutils literal notranslate"><span class="pre">TaskType.TEXT_CLASSIFICATION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.TEXT_DETECTION"><code class="docutils literal notranslate"><span class="pre">TaskType.TEXT_DETECTION</span></code></a></li>
+<li><a class="reference internal" href="#hezar.constants.TaskType.TEXT_GENERATION"><code class="docutils literal notranslate"><span class="pre">TaskType.TEXT_GENERATION</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

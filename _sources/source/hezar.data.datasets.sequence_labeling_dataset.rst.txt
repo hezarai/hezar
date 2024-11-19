@@ -1,0 +1,7 @@
+hezar.data.datasets.sequence\_labeling\_dataset module
+======================================================
+
+.. automodule:: hezar.data.datasets.sequence_labeling_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

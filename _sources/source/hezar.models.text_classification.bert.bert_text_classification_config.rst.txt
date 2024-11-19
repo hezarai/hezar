@@ -1,0 +1,7 @@
+hezar.models.text\_classification.bert.bert\_text\_classification\_config module
+================================================================================
+
+.. automodule:: hezar.models.text_classification.bert.bert_text_classification_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

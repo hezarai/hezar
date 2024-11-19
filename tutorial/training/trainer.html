@@ -1,0 +1,987 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Text Classification (Sentiment Analysis)" href="text_classification.html" /><link rel="prev" title="Training Recipes" href="index.html" />
+
+    <link rel="shortcut icon" href="../../_static/hezar_logo.svg"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>Trainer Overview - Hezar Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-foreground-primary: #2C3E50;
+  --color-inline-code-background: #F1F1F1;
+  --color-background-border: white;
+  --color-toc-background: #F8F9FB;
+  --color-highlight-on-target: white;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Hezar Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/hezar_logo.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Hezar Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get_started/index.html">Get Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Get Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get_started/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get_started/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get_started/quick_tour.html">Quick Tour</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../embeddings.html">Embeddings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Training Recipes</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Training Recipes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Trainer Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="text_classification.html">Text Classification (Sentiment Analysis)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sequence_labeling.html">Sequence Labeling (POS, NER, etc.)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image_captioning.html">Image to Text (Image Captioning)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license_plate_recognition.html">Image to Text (License Plate Recognition)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="speech_recognition.html">Speech Recognition</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../guide/index.html">Developer Guides</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Developer Guides</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/hezar_architecture.html">Hazer’s Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/models_advanced.html">Advanced Guide on Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/dataset_processors.html">Dataset Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/advanced_training.html">Advanced Training</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../source/index.html">Reference API</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Reference API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../source/hezar.html">hezar package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of hezar package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.data.html">hezar.data package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of hezar.data package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.data.datasets.html">hezar.data.datasets package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of hezar.data.datasets package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.dataset.html">hezar.data.datasets.dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.image_captioning_dataset.html">hezar.data.datasets.image_captioning_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.ocr_dataset.html">hezar.data.datasets.ocr_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.sequence_labeling_dataset.html">hezar.data.datasets.sequence_labeling_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.speech_recognition_dataset.html">hezar.data.datasets.speech_recognition_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.text_classification_dataset.html">hezar.data.datasets.text_classification_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.text_summarization_dataset.html">hezar.data.datasets.text_summarization_dataset module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.data.data_collators.html">hezar.data.data_collators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.data.data_samplers.html">hezar.data.data_samplers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.data.dataset_processors.html">hezar.data.dataset_processors module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.embeddings.html">hezar.embeddings package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of hezar.embeddings package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.embeddings.embedding.html">hezar.embeddings.embedding module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.embeddings.fasttext.html">hezar.embeddings.fasttext module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.embeddings.word2vec.html">hezar.embeddings.word2vec module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.metrics.html">hezar.metrics package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of hezar.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.accuracy.html">hezar.metrics.accuracy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.bleu.html">hezar.metrics.bleu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.cer.html">hezar.metrics.cer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.f1.html">hezar.metrics.f1 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.metric.html">hezar.metrics.metric module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.precision.html">hezar.metrics.precision module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.recall.html">hezar.metrics.recall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.rouge.html">hezar.metrics.rouge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.seqeval.html">hezar.metrics.seqeval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.wer.html">hezar.metrics.wer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.models.html">hezar.models package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of hezar.models package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.html">hezar.models.backbone package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of hezar.models.backbone package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.bert.html">hezar.models.backbone.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.bert.bert.html">hezar.models.backbone.bert.bert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.bert.bert_config.html">hezar.models.backbone.bert.bert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.distilbert.html">hezar.models.backbone.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.distilbert.distilbert.html">hezar.models.backbone.distilbert.distilbert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.distilbert.distilbert_config.html">hezar.models.backbone.distilbert.distilbert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.roberta.html">hezar.models.backbone.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.roberta.roberta.html">hezar.models.backbone.roberta.roberta module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.roberta.roberta_config.html">hezar.models.backbone.roberta.roberta_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.vit.html">hezar.models.backbone.vit package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.vit package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.vit.vit.html">hezar.models.backbone.vit.vit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.vit.vit_config.html">hezar.models.backbone.vit.vit_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.html">hezar.models.image2text package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of hezar.models.image2text package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.beit_roberta.html">hezar.models.image2text.beit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.beit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.beit_roberta.beit_roberta_image2text.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.beit_roberta.beit_roberta_image2text_config.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.html">hezar.models.image2text.crnn package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.crnn package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.crnn_decode_utils.html">hezar.models.image2text.crnn.crnn_decode_utils module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.crnn_image2text.html">hezar.models.image2text.crnn.crnn_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.crnn_image2text_config.html">hezar.models.image2text.crnn.crnn_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.trocr.html">hezar.models.image2text.trocr package</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.trocr package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.trocr.trocr_image2text.html">hezar.models.image2text.trocr.trocr_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.trocr.trocr_image2text_config.html">hezar.models.image2text.trocr.trocr_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.vit_gpt2.html">hezar.models.image2text.vit_gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_gpt2.vit_gpt2_image2text.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.vit_roberta.html">hezar.models.image2text.vit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_roberta.vit_roberta_image2text.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_roberta.vit_roberta_image2text_config.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.html">hezar.models.mask_filling package</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.bert.html">hezar.models.mask_filling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.bert.bert_mask_filling.html">hezar.models.mask_filling.bert.bert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.bert.bert_mask_filling_config.html">hezar.models.mask_filling.bert.bert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.distilbert.html">hezar.models.mask_filling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.distilbert.distilbert_mask_filling.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.distilbert.distilbert_mask_filling_config.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.roberta.html">hezar.models.mask_filling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.roberta.roberta_mask_filling.html">hezar.models.mask_filling.roberta.roberta_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.roberta.roberta_mask_filling_config.html">hezar.models.mask_filling.roberta.roberta_mask_filling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.html">hezar.models.sequence_labeling package</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.bert.html">hezar.models.sequence_labeling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.bert.bert_sequence_labeling.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.bert.bert_sequence_labeling_config.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.distilbert.html">hezar.models.sequence_labeling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.roberta.html">hezar.models.sequence_labeling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.roberta.roberta_sequence_labeling.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.speech_recognition.html">hezar.models.speech_recognition package</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.html">hezar.models.speech_recognition.whisper package</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition.whisper package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_feature_extractor.html">hezar.models.speech_recognition.whisper.whisper_feature_extractor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_speech_recognition.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_speech_recognition_config.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_tokenizer.html">hezar.models.speech_recognition.whisper.whisper_tokenizer module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.html">hezar.models.text_classification package</a><input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.bert.html">hezar.models.text_classification.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.bert.bert_text_classification.html">hezar.models.text_classification.bert.bert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.bert.bert_text_classification_config.html">hezar.models.text_classification.bert.bert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.distilbert.html">hezar.models.text_classification.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.distilbert.distilbert_text_classification.html">hezar.models.text_classification.distilbert.distilbert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.distilbert.distilbert_text_classification_config.html">hezar.models.text_classification.distilbert.distilbert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.roberta.html">hezar.models.text_classification.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.roberta.roberta_text_classification.html">hezar.models.text_classification.roberta.roberta_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.roberta.roberta_text_classification_config.html">hezar.models.text_classification.roberta.roberta_text_classification_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.text_detection.html">hezar.models.text_detection package</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.html">hezar.models.text_detection.craft package</a><input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection.craft package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_image_processor.html">hezar.models.text_detection.craft.craft_image_processor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_text_detection.html">hezar.models.text_detection.craft.craft_text_detection module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_text_detection_config.html">hezar.models.text_detection.craft.craft_text_detection_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_utils.html">hezar.models.text_detection.craft.craft_utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.text_generation.html">hezar.models.text_generation package</a><input class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_generation.gpt2.html">hezar.models.text_generation.gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.gpt2.gpt2_text_generation.html">hezar.models.text_generation.gpt2.gpt2_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.gpt2.gpt2_text_generation_config.html">hezar.models.text_generation.gpt2.gpt2_text_generation_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_generation.t5.html">hezar.models.text_generation.t5 package</a><input class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.t5 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.t5.t5_text_generation.html">hezar.models.text_generation.t5.t5_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.t5.t5_text_generation_config.html">hezar.models.text_generation.t5.t5_text_generation_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.models.model.html">hezar.models.model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.models.model_outputs.html">hezar.models.model_outputs module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.preprocessors.html">hezar.preprocessors package</a><input class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><div class="visually-hidden">Toggle navigation of hezar.preprocessors package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.html">hezar.preprocessors.tokenizers package</a><input class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><div class="visually-hidden">Toggle navigation of hezar.preprocessors.tokenizers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.bpe.html">hezar.preprocessors.tokenizers.bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.sentencepiece_bpe.html">hezar.preprocessors.tokenizers.sentencepiece_bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.sentencepiece_unigram.html">hezar.preprocessors.tokenizers.sentencepiece_unigram module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.tokenizer.html">hezar.preprocessors.tokenizers.tokenizer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.wordpiece.html">hezar.preprocessors.tokenizers.wordpiece module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.audio_feature_extractor.html">hezar.preprocessors.audio_feature_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.image_processor.html">hezar.preprocessors.image_processor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.preprocessor.html">hezar.preprocessors.preprocessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.text_normalizer.html">hezar.preprocessors.text_normalizer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.trainer.html">hezar.trainer package</a><input class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><div class="visually-hidden">Toggle navigation of hezar.trainer package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.trainer.metrics_handlers.html">hezar.trainer.metrics_handlers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.trainer.trainer.html">hezar.trainer.trainer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.trainer.trainer_utils.html">hezar.trainer.trainer_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.utils.html">hezar.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><div class="visually-hidden">Toggle navigation of hezar.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.audio_utils.html">hezar.utils.audio_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.common_utils.html">hezar.utils.common_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.data_utils.html">hezar.utils.data_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.hub_utils.html">hezar.utils.hub_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.image_utils.html">hezar.utils.image_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.integration_utils.html">hezar.utils.integration_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.logging.html">hezar.utils.logging module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.registry_utils.html">hezar.utils.registry_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.builders.html">hezar.builders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.configs.html">hezar.configs module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.constants.html">hezar.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.registry.html">hezar.registry module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to Hezar</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/hezarai/hezar/blob/main/docs/tutorial/training/trainer.md?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/hezarai/hezar/edit/main/docs/tutorial/training/trainer.md" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section class="tex2jax_ignore mathjax_ignore" id="trainer-overview">
+<h1>Trainer Overview<a class="headerlink" href="#trainer-overview" title="Link to this heading">¶</a></h1>
+<p>Before exploring training recipes for different tasks, lets dive into the Trainer itself! The <code class="docutils literal notranslate"><span class="pre">Trainer</span></code> is the base
+super class that handles everything needed in order to train any model in Hezar on a given dataset. So let’s begin.</p>
+<section id="a-simple-example">
+<h2>A Simple Example<a class="headerlink" href="#a-simple-example" title="Link to this heading">¶</a></h2>
+<p>The Trainer abstracts all the unnecessary details so that your training script is as minimal as possible. Below is an
+example to train a CRNN model for license plate recognition.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hezar.models</span> <span class="kn">import</span> <span class="n">CRNNImage2TextConfig</span><span class="p">,</span> <span class="n">CRNNImage2Text</span>
+<span class="kn">from</span> <span class="nn">hezar.preprocessors</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+<span class="kn">from</span> <span class="nn">hezar.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">hezar.trainer</span> <span class="kn">import</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">TrainerConfig</span>
+
+<span class="n">base_model_path</span> <span class="o">=</span> <span class="s2">&quot;hezarai/crnn-fa-printed-96-long&quot;</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+    <span class="s2">&quot;hezarai/persian-license-plate-v1&quot;</span><span class="p">,</span> 
+    <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+    <span class="n">preprocessor</span><span class="o">=</span><span class="n">base_model_path</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+    <span class="n">reverse_digits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">eval_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+    <span class="s2">&quot;hezarai/persian-license-plate-v1&quot;</span><span class="p">,</span> 
+    <span class="n">split</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+    <span class="n">preprocessor</span><span class="o">=</span><span class="n">base_model_path</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+    <span class="n">reverse_digits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">CRNNImage2Text</span><span class="p">(</span><span class="n">CRNNImage2TextConfig</span><span class="p">(</span><span class="n">id2label</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">id2label</span><span class="p">))</span>
+<span class="n">preprocessor</span> <span class="o">=</span> <span class="n">Preprocessor</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">base_model_path</span><span class="p">)</span>
+
+<span class="n">train_config</span> <span class="o">=</span> <span class="n">TrainerConfig</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;crnn-plate-fa-v1&quot;</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;image2text&quot;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
+    <span class="n">init_weights_from</span><span class="o">=</span><span class="n">base_model_path</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cer&quot;</span><span class="p">],</span>
+    <span class="n">metric_for_best_model</span><span class="o">=</span><span class="s2">&quot;cer&quot;</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">train_config</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">eval_dataset</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">data_collator</span><span class="p">,</span>
+    <span class="n">preprocessor</span><span class="o">=</span><span class="n">preprocessor</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="trainer-api">
+<h2>Trainer API<a class="headerlink" href="#trainer-api" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Trainer</span></code> class is a full training/evaluation loop for models in Hezar (and with some tweaks, any PyTorch model).
+You only pass a couple of necessary objects (trainer config, model, datasets, preprocessor, etc.) to the Trainer, and
+it takes care of the rest. Besides, you can also customize every way you can imagine! We’ve covered those low-level
+parts
+in the guides too.</p>
+</section>
+<section id="trainer-building-blocks">
+<h2>Trainer Building Blocks<a class="headerlink" href="#trainer-building-blocks" title="Link to this heading">¶</a></h2>
+<p>Let’s explore what the Trainer is made of and how it works under the hood.</p>
+<section id="trainerconfig">
+<h3>TrainerConfig<a class="headerlink" href="#trainerconfig" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">TrainerConfig</span></code> is the main controlling part of the Trainer and all the training arguments are gathered by this
+class.</p>
+<p>Let’s explore all the available parameters:</p>
+<ul class="simple">
+<li><p><strong>task</strong> (str, TaskType): The training task. Must be a valid name from <code class="docutils literal notranslate"><span class="pre">TaskType</span></code>.</p></li>
+<li><p><strong>output_dir</strong> (str): Path to the directory to save trainer properties.</p></li>
+<li><p><strong>device</strong> (str): Hardware device e.g, <code class="docutils literal notranslate"><span class="pre">cuda:0</span></code>, <code class="docutils literal notranslate"><span class="pre">cpu</span></code>, etc.</p></li>
+<li><p><strong>num_epochs</strong> (int):Number of total epochs to train the model.</p></li>
+<li><p><strong>init_weights_from</strong> (str): Path to a model from disk or Hub to load the initial weights from. Note that this only
+loads the model. weights and ignores other checkpoint-related states if the path is a checkpoint. To resume training
+from a checkpoint use the <code class="docutils literal notranslate"><span class="pre">resume_from_checkpoint</span></code> parameter.</p></li>
+<li><p><strong>resume_from_checkpoint</strong> (bool, str, os.PathLike): Resume training from a checkpoint. If set to True, the trainer
+will load the latest checkpoint, otherwise if a path to a checkpoint is given, it will load that checkpoint and all
+the other states corresponding to that checkpoint.</p></li>
+<li><p><strong>max_steps</strong> (int): Maximum number of iterations to train. This helps to limit how many batches you want to train in
+total.</p></li>
+<li><p><strong>num_dataloader_workers</strong> (int): Number of dataloader workers, defaults to 4 .</p></li>
+<li><p><strong>dataloader_shuffle</strong> (bool): Control dataloaders <code class="docutils literal notranslate"><span class="pre">shuffle</span></code> argument.</p></li>
+<li><p><strong>seed</strong> (int): Control determinism of the run by setting a seed value. defaults to 42.</p></li>
+<li><p><strong>optimizer</strong> (OptimizerType): Name of the optimizer, available values include properties in <code class="docutils literal notranslate"><span class="pre">OptimizerType</span></code> enum.</p></li>
+<li><p><strong>learning_rate</strong> (float): Initial learning rate for the optimizer.</p></li>
+<li><p><strong>weight_decay</strong> (float): Optimizer weight decay value.</p></li>
+<li><p><strong>lr_scheduler</strong> (LRSchedulerType): Optional learning rate scheduler among <code class="docutils literal notranslate"><span class="pre">LRSchedulerType</span></code> enum.</p></li>
+<li><p><strong>lr_scheduler_kwargs</strong> (Dict[str, Any]): LR scheduler instructor kwargs depending on the scheduler type</p></li>
+<li><p><strong>lr_scheduling_steps</strong> (int): Number of steps to perform scheduler stepping. If left as None, will default to the steps in one full epoch.</p></li>
+<li><p><strong>batch_size</strong> (int): Training batch size.</p></li>
+<li><p><strong>eval_batch_size</strong> (int): Evaluation batch size, defaults to <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> if None.</p></li>
+<li><p><strong>gradient_accumulation_steps</strong> (int): Number of updates steps to accumulate before performing a backward/update pass,
+defaults to 1.</p></li>
+<li><p><strong>distributed</strong> (bool): Whether to use distributed training (via the <code class="docutils literal notranslate"><span class="pre">accelerate</span></code> package)</p></li>
+<li><p><strong>mixed_precision</strong> (PrecisionType | str): Mixed precision type e.g, fp16, bf16, etc. (disabled by default)</p></li>
+<li><p><strong>use_cpu</strong> (bool): Whether to train using the CPU only even if CUDA is available.</p></li>
+<li><p><strong>do_evaluate</strong> (bool): Whether to run evaluation when calling <code class="docutils literal notranslate"><span class="pre">Trainer.train</span></code>. (defaults to True)</p></li>
+<li><p><strong>evaluate_with_generate</strong> (bool): Whether to use <code class="docutils literal notranslate"><span class="pre">generate()</span></code> in the evaluation step or not. (only applicable for
+generative models).</p></li>
+<li><p><strong>metrics</strong> (List[str | MetricConfig]): A list of metrics. Depending on the <code class="docutils literal notranslate"><span class="pre">valid_metrics</span></code> in the specific
+<code class="docutils literal notranslate"><span class="pre">MetricsHandler</span></code> of the Trainer.</p></li>
+<li><p><strong>metric_for_best_model</strong> (str):Reference metric key to watch for the best model.
+Recommended to have a {<code class="docutils literal notranslate"><span class="pre">train.</span></code> | <code class="docutils literal notranslate"><span class="pre">evaluation.</span></code>} prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults
+to <code class="docutils literal notranslate"><span class="pre">evaluation.{metric_for_best_model}</span></code>.</p></li>
+<li><p><strong>save_steps</strong> (int): Save the trainer outputs every <code class="docutils literal notranslate"><span class="pre">save_steps</span></code> steps. Leave as None to ignore saving in-between training steps.
+If set to a float value between 0 and 1, it will be interpreted as a fraction of the total steps.</p></li>
+<li><p><strong>log_steps</strong> (int): Save training metrics every <code class="docutils literal notranslate"><span class="pre">log_steps</span></code> steps. If set to a float value between 0 and 1, it will be
+interpreted as a fraction of the total steps.</p></li>
+<li><p><strong>checkpoints_dir</strong> (str): Path to the checkpoints’ folder. The actual files will be saved under <code class="docutils literal notranslate"><span class="pre">{output_dir}/{checkpoints_dir}</span></code>.</p></li>
+<li><p><strong>logs_dir</strong> (str): Path to the logs’ folder. The actual log files will be saved under <code class="docutils literal notranslate"><span class="pre">{output_dir}/{logs_dir}</span></code>.</p></li>
+</ul>
+</section>
+<section id="datasets">
+<h3>Datasets<a class="headerlink" href="#datasets" title="Link to this heading">¶</a></h3>
+<p>The datasets must be explicitly passed to the Trainer when instantiating it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Trainer</span><span class="p">(</span>
+    <span class="o">...</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+<span class="n">eval_dataset</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+<span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The datasets passed to the Trainer can be any PyTorch-like dataset class. It’s recommended to pass
+a <code class="docutils literal notranslate"><span class="pre">hezar.data.Dataset</span></code>
+instance so that all special features are enabled. To find out how you can define your own dataset by subclassing
+a <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> class in Hezar, refer to the <a class="reference internal" href="../datasets.html"><span class="std std-doc">datasets tutorial</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, any class that has the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> and <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> methods implemented is supported. (e.g, PyTorch’s <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> class)</p>
+</div>
+</section>
+<section id="model">
+<h3>Model<a class="headerlink" href="#model" title="Link to this heading">¶</a></h3>
+<p>The model passed to the Trainer can be any <code class="docutils literal notranslate"><span class="pre">hezar.models.Model</span></code> instance. You can easily create your own custom models
+by subclassing this base class. For more info, refer to the <a class="reference internal" href="../models.html"><span class="std std-doc">models tutorial</span></a>.</p>
+<p>You won’t need to map your model to a device since that’s handled by the Trainer (by setting the <code class="docutils literal notranslate"><span class="pre">device</span></code> parameter in
+the <code class="docutils literal notranslate"><span class="pre">TrainerConfig</span></code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All device placements regarding model, data, etc. is handled internally by the Trainer and there
+is no need to manually do so beforehand. Just specify the <code class="docutils literal notranslate"><span class="pre">device</span></code> parameter and the rest is taken
+care of.</p>
+</div>
+<p>How about pretrained weights? well, if you want to finetune the same model on new data, the simplest way is to just load
+it beforehand and then pass it to the Trainer like below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pretrained_path</span><span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>But, if you want to finetune a model for a different task but load the pretrained weights onto it (e.g, Loading the
+pretrained weights of <code class="docutils literal notranslate"><span class="pre">bert-base</span></code> on a <code class="docutils literal notranslate"><span class="pre">BertTextClassification</span></code> that has an additional classification head) you can
+specify the <code class="docutils literal notranslate"><span class="pre">init_weights_from</span></code> parameter in the Trainer’s config.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_path</span> <span class="o">=</span> <span class="s2">&quot;hezarai/bert-base-fa&quot;</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">BertTextClassification</span><span class="p">(</span><span class="n">BertTextClassificationConfig</span><span class="p">(</span><span class="n">id2label</span><span class="o">=</span><span class="n">id2label</span><span class="p">))</span>  <span class="c1"># Randomly initialized model</span>
+
+<span class="n">trainer_config</span> <span class="o">=</span> <span class="n">TrainerConfig</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">init_weights_from</span><span class="o">=</span><span class="n">base_model_path</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">trainer_config</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="optional-parameters">
+<h3>Optional Parameters<a class="headerlink" href="#optional-parameters" title="Link to this heading">¶</a></h3>
+<p>The Trainer’s instantiation requires the trainer config, model and training dataset. Now let’s explore optional inputs
+to the Trainer’s <code class="docutils literal notranslate"><span class="pre">__init__</span></code> function.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">eval_dataset</span></code>: The evaluation dataset to evaluate the model performance on it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_collator</span></code>: Custom data collator or collate function. This will default to the <code class="docutils literal notranslate"><span class="pre">data_collator</span></code> attribute of the
+dataset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">preprocessor</span></code>: If the model’s <code class="docutils literal notranslate"><span class="pre">preprocessor</span></code> is None, you must pass the <code class="docutils literal notranslate"><span class="pre">preprocessor</span></code> to the Trainer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metrics_handler</span></code>: A custom <code class="docutils literal notranslate"><span class="pre">MetricsHandler</span></code> instance responsible for custom evaluation metrics implementations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">optimizer</span></code>: A custom optimizer (<code class="docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code>). Pass custom optimizer to this parameter since casual ones (
+Adam, AdamW, SGD) are supported by the Trainer and can be set in <code class="docutils literal notranslate"><span class="pre">TrainerConfig.optimizer</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lr_scheduler</span></code>: Same as the optimizer. Can be also set by name in <code class="docutils literal notranslate"><span class="pre">TrainerConfig.lr_scheduler</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accelerator</span></code>: A custom <code class="docutils literal notranslate"><span class="pre">Accelerator</span></code> instance to handle model and data sharding for distributed environments the
+Trainer. Uses the 🤗 Accelerate package which also takes care of mixed precision, gradient accumulation, distributed
+logging, etc.</p></li>
+</ul>
+</section>
+<section id="what-actually-happens-in-trainers-init">
+<h3>What Actually Happens in Trainer’s <code class="docutils literal notranslate"><span class="pre">__init__</span></code>?<a class="headerlink" href="#what-actually-happens-in-trainers-init" title="Link to this heading">¶</a></h3>
+<p>When the Trainer instantiates the following properties are created:</p>
+<ul class="simple">
+<li><p>Model’s weight initialization</p></li>
+<li><p>Accelerator</p></li>
+<li><p>Optimizer and LR Scheduler (If provided)</p></li>
+<li><p>Metrics handler</p></li>
+<li><p>All info regarding the training steps and criteria</p></li>
+<li><p>Loading checkpoint (if available and set in the config)</p></li>
+<li><p>Logging modules (Tensorboard and CSV writer)</p></li>
+<li><p>Trainer state (A module for tracking the state of the trainer on different events)</p></li>
+<li><p>Global seeding</p></li>
+<li><p>Training loss tracker</p></li>
+</ul>
+</section>
+</section>
+<section id="training-loop">
+<h2>Training Loop<a class="headerlink" href="#training-loop" title="Link to this heading">¶</a></h2>
+<p>After initializing the Trainer, the only step left is to call the <code class="docutils literal notranslate"><span class="pre">.train()</span></code> method. But a lot of magic happens inside
+so that a model gets trained. Let’s explore them.</p>
+<section id="inner-training-loop">
+<h3>Inner Training Loop<a class="headerlink" href="#inner-training-loop" title="Link to this heading">¶</a></h3>
+<p>The inner training loop (<code class="docutils literal notranslate"><span class="pre">Trainer.inner_training_loop(epoch_num)</span></code>) trains the model on the whole train
+dataset.</p>
+<p><strong>1. Create the train data loader</strong></p>
+<p>The dataloader is created from the train dataset but not necessarily the whole data
+but depending on the <code class="docutils literal notranslate"><span class="pre">max_steps</span></code> or resuming from checkpoint the data loader might be different among different epochs.
+(The sampler’s indices order is always the same even if shuffle is enabled among different runs and calls).
+The method responsible for this is <code class="docutils literal notranslate"><span class="pre">create_train_dataloader(dataset)</span></code> and can be overridden in custom Trainers.</p>
+<p><strong>2. Start Training Iteration</strong></p>
+<p>The inner training loop to train the model on the whole data loader batches starts and repeats the following loop for
+the number of batches present in the data loader:</p>
+<ol class="arabic simple">
+<li><p>Prepare input batch (<code class="docutils literal notranslate"><span class="pre">prepare_input_batch()</span></code>): Responsible for casting and other sanitizations on the data batches if
+needed. The default behavior does absolutely nothing and the main usage of this method is for custom Trainers.</p></li>
+<li><p>Training step (<code class="docutils literal notranslate"><span class="pre">training_step()</span></code>): Does the forward/backward operation and returns the loss. Note that optimizer step
+does not happen here since it has its own method.</p></li>
+<li><p>Optimization step (<code class="docutils literal notranslate"><span class="pre">optimization_step</span></code>): Does the optimizer stepping and zeros gradients afterward. (Gradient
+accumulation is handled by the accelerator)</p></li>
+<li><p>LR scheduling: Depending on <code class="docutils literal notranslate"><span class="pre">lr_scheduling_steps</span></code>, perform one step of LR scheduling.</p></li>
+<li><p>Update loss tracker and the trainer states.</p></li>
+<li><p>Update and show the loss moving average in the progress bar.</p></li>
+<li><p>Perform saving and logging according to <code class="docutils literal notranslate"><span class="pre">save_steps</span></code> and <code class="docutils literal notranslate"><span class="pre">log_steps</span></code>.</p></li>
+<li><p>Return average loss up until now. (This value is accumulated and averaged since the beginning of the whole training
+process and does not demonstrate the mean loss value throughout individual epochs.)</p></li>
+</ol>
+</section>
+<section id="evaluation-loop">
+<h3>Evaluation Loop<a class="headerlink" href="#evaluation-loop" title="Link to this heading">¶</a></h3>
+<p>The evaluation loop (<code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code>) evaluates the current model on the evaluation dataset.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">evaluate()</span></code> method can also be called independently. It can also be called to evaluate the model on a custom dataset (<code class="docutils literal notranslate"><span class="pre">trainer.evaluate(eval_dataset)</span></code>). But note that no logging happens when calling this method like that!</p>
+</div>
+<p>The evaluation loop simply runs prediction on the samples and the metrics handler computes the metric results (Based
+on <code class="docutils literal notranslate"><span class="pre">TrainerConfig.task</span></code>). Each task has its own metrics handler class which you can find
+at <code class="docutils literal notranslate"><span class="pre">hezar.trainer.metrics_handlers</span></code> that leverage the <code class="docutils literal notranslate"><span class="pre">hezar.metrics</span></code> modules.</p>
+</section>
+<section id="post-training-evaluation-steps">
+<h3>Post Training/Evaluation Steps<a class="headerlink" href="#post-training-evaluation-steps" title="Link to this heading">¶</a></h3>
+<p>After one training loop on the <code class="docutils literal notranslate"><span class="pre">train_dataset</span></code> and a full evaluation on the <code class="docutils literal notranslate"><span class="pre">eval_dataset</span></code>, the results
+are gathered by the trackers and logged to logging modules (Tensorboard, CSV, etc.) and checkpoints are saved.</p>
+</section>
+</section>
+<section id="additional-operations">
+<h2>Additional Operations<a class="headerlink" href="#additional-operations" title="Link to this heading">¶</a></h2>
+<section id="resuming-training">
+<h3>Resuming Training<a class="headerlink" href="#resuming-training" title="Link to this heading">¶</a></h3>
+<p>By default, the Trainer will only save checkpoints at the end of each epoch, but you can change this behavior by setting
+the <code class="docutils literal notranslate"><span class="pre">save_steps</span></code> argument in the Trainer’s config. Note that a step means a single call to the <code class="docutils literal notranslate"><span class="pre">training_step()</span></code>.
+The total number of steps in one epoch equals to <code class="docutils literal notranslate"><span class="pre">len(train_dataset)</span></code>/<code class="docutils literal notranslate"><span class="pre">batch_size</span></code> and the total steps equals to
+<code class="docutils literal notranslate"><span class="pre">len(train_dataset)</span></code>/<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>*<code class="docutils literal notranslate"><span class="pre">num_train_epochs</span></code>.</p>
+<p>To enable resuming from checkpoint, you just need to set <code class="docutils literal notranslate"><span class="pre">resume_from_checkpoint=True</span></code> in the Trainer’s config:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer_config</span> <span class="o">=</span> <span class="n">TrainerConfig</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">resume_from_checkpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For large models or datasets, it’s recommended to also set the <code class="docutils literal notranslate"><span class="pre">save_steps</span></code> argument in the Trainer’s config:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer_config</span> <span class="o">=</span> <span class="n">TrainerConfig</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">resume_from_checkpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Checkpoints will be saved at the end of each epoch anyway so there’s no need to set the <code class="docutils literal notranslate"><span class="pre">save_steps</span></code> to something dividable by the length of the data loader.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a checkpoint is set to a step in the middle of the epoch, the Trainer will resume from that point in the data loader
+using a ranged sampler that firstly, handles creating the same indices with the same order even on shuffle mode and
+secondly, the correct batch indice to continue from.</p>
+</div>
+<p>You can also set the <code class="docutils literal notranslate"><span class="pre">resume_from_checkpoint</span></code> to a path to a checkpoint. By doing so, model and optimizer state dicts will be loaded from that path and the trainer state will figure out other parameters based on the name of the checkpoint
+if possible (since checkpoint names are based on the number of the <code class="docutils literal notranslate"><span class="pre">global_step</span></code>).</p>
+</section>
+<section id="distributed-training">
+<h3>Distributed Training<a class="headerlink" href="#distributed-training" title="Link to this heading">¶</a></h3>
+<p>Hezar’s Trainer is compatible with 🤗 Accelerate. You just set the <code class="docutils literal notranslate"><span class="pre">distributed</span></code> argument to <code class="docutils literal notranslate"><span class="pre">True</span></code> in the Trainer’s config
+and the rest is handled by the 🤗 Accelerate package by running the <code class="docutils literal notranslate"><span class="pre">accelerate</span> <span class="pre">launch</span></code> command.
+Refer to <a class="reference external" href="https://huggingface.co/docs/accelerate/en/basic_tutorials/launch#using-accelerate-launch">🤗 Accelerate docs</a>
+for more info.</p>
+</section>
+<section id="mixed-precision">
+<h3>Mixed Precision<a class="headerlink" href="#mixed-precision" title="Link to this heading">¶</a></h3>
+<p>Mixed precision can also be achieved by setting the <code class="docutils literal notranslate"><span class="pre">mixed_precision</span></code> argument in the Trainer’s config.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer_config</span> <span class="o">=</span> <span class="n">TrainerConfig</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">mixed_precision</span><span class="o">=</span><span class="s2">&quot;bf16&quot;</span><span class="p">,</span>  <span class="c1"># Also accepts `fp16` and `full`</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="gradient-accumulation">
+<h3>Gradient Accumulation<a class="headerlink" href="#gradient-accumulation" title="Link to this heading">¶</a></h3>
+<p>Gradient accumulation is a technique for training on larger batch sizes without increasing the batch size directly. If
+the <code class="docutils literal notranslate"><span class="pre">gradient_accumulation_steps</span></code> is set to T and batch size is N, it simulates training with a batch size of N*T by
+accumulating the losses for every T steps and averaging over them and then performing the backward operation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting the <code class="docutils literal notranslate"><span class="pre">gradient_accumulation_steps</span></code> to 1 (default behavior) is exactly what happens in the regular training without
+any accumulation.</p>
+</div>
+</section>
+<section id="saving-pushing-to-the-hub">
+<h3>Saving &amp; Pushing to the Hub<a class="headerlink" href="#saving-pushing-to-the-hub" title="Link to this heading">¶</a></h3>
+<p>The Trainer files can also be saved and pushed to the Hub. These files include:</p>
+<ul class="simple">
+<li><p>Model weights</p></li>
+<li><p>Preprocessor files</p></li>
+<li><p>Configs</p></li>
+<li><p>Logs</p></li>
+<li><p>Optimizers states</p></li>
+<li><p>Trainer state file</p></li>
+</ul>
+<section id="save">
+<h4>Save<a class="headerlink" href="#save" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;my-awesome-model&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="push-to-hub">
+<h4>Push to Hub<a class="headerlink" href="#push-to-hub" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="o">.</span><span class="n">push_to_hub</span><span class="p">(</span><span class="n">repo_id</span><span class="o">=</span><span class="s2">&quot;path/to/hub&quot;</span><span class="p">,</span> <span class="n">commit_message</span><span class="o">=</span><span class="s2">&quot;Upload my awesome model and files&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="custom-trainer">
+<h2>Custom Trainer<a class="headerlink" href="#custom-trainer" title="Link to this heading">¶</a></h2>
+<p>To implement your own custom Trainer, refer to <a class="reference internal" href="../../guide/advanced_training.html"><span class="std std-doc">this tutorial</span></a>.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="text_classification.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Text Classification (Sentiment Analysis)</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Training Recipes</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Hezar AI Team &amp; contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/hezarai/hezar" aria-label="GitHub"><i class="fa-brands fa-github fa-2x" style="color: #343d4c;"></i></a>
+              <a class="muted-link " href="https://t.me/hezarai" aria-label="Telegram"><i class="fa-brands fa-telegram fa-2x" style="color: #229ed9;"></i></a>
+              <a class="muted-link " href="https://huggingface.co/hezarai" aria-label="Hugging Face"> <img style="width:32px;height:32px;" src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Trainer Overview</a><ul>
+<li><a class="reference internal" href="#a-simple-example">A Simple Example</a></li>
+<li><a class="reference internal" href="#trainer-api">Trainer API</a></li>
+<li><a class="reference internal" href="#trainer-building-blocks">Trainer Building Blocks</a><ul>
+<li><a class="reference internal" href="#trainerconfig">TrainerConfig</a></li>
+<li><a class="reference internal" href="#datasets">Datasets</a></li>
+<li><a class="reference internal" href="#model">Model</a></li>
+<li><a class="reference internal" href="#optional-parameters">Optional Parameters</a></li>
+<li><a class="reference internal" href="#what-actually-happens-in-trainers-init">What Actually Happens in Trainer’s <code class="docutils literal notranslate"><span class="pre">__init__</span></code>?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#training-loop">Training Loop</a><ul>
+<li><a class="reference internal" href="#inner-training-loop">Inner Training Loop</a></li>
+<li><a class="reference internal" href="#evaluation-loop">Evaluation Loop</a></li>
+<li><a class="reference internal" href="#post-training-evaluation-steps">Post Training/Evaluation Steps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-operations">Additional Operations</a><ul>
+<li><a class="reference internal" href="#resuming-training">Resuming Training</a></li>
+<li><a class="reference internal" href="#distributed-training">Distributed Training</a></li>
+<li><a class="reference internal" href="#mixed-precision">Mixed Precision</a></li>
+<li><a class="reference internal" href="#gradient-accumulation">Gradient Accumulation</a></li>
+<li><a class="reference internal" href="#saving-pushing-to-the-hub">Saving &amp; Pushing to the Hub</a><ul>
+<li><a class="reference internal" href="#save">Save</a></li>
+<li><a class="reference internal" href="#push-to-hub">Push to Hub</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#custom-trainer">Custom Trainer</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

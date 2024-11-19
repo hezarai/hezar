@@ -1,0 +1,19 @@
+hezar.models.sequence\_labeling.roberta package
+===============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.sequence_labeling.roberta.roberta_sequence_labeling
+   hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.sequence_labeling.roberta
+   :members:
+   :undoc-members:
+   :show-inheritance:

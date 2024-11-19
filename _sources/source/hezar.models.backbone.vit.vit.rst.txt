@@ -1,0 +1,7 @@
+hezar.models.backbone.vit.vit module
+====================================
+
+.. automodule:: hezar.models.backbone.vit.vit
+   :members:
+   :undoc-members:
+   :show-inheritance:

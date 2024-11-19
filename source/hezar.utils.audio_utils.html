@@ -1,0 +1,872 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="hezar.utils.common_utils module" href="hezar.utils.common_utils.html" /><link rel="prev" title="hezar.utils package" href="hezar.utils.html" />
+
+    <link rel="shortcut icon" href="../_static/hezar_logo.svg"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>hezar.utils.audio_utils module - Hezar Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-foreground-primary: #2C3E50;
+  --color-inline-code-background: #F1F1F1;
+  --color-background-border: white;
+  --color-toc-background: #F8F9FB;
+  --color-highlight-on-target: white;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Hezar Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/hezar_logo.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Hezar Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../get_started/index.html">Get Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Get Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../get_started/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../get_started/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../get_started/quick_tour.html">Quick Tour</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorial/index.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/embeddings.html">Embeddings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tutorial/training/index.html">Training Recipes</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Training Recipes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/trainer.html">Trainer Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/text_classification.html">Text Classification (Sentiment Analysis)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/sequence_labeling.html">Sequence Labeling (POS, NER, etc.)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/image_captioning.html">Image to Text (Image Captioning)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/license_plate_recognition.html">Image to Text (License Plate Recognition)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial/training/speech_recognition.html">Speech Recognition</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guide/index.html">Developer Guides</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Developer Guides</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guide/hezar_architecture.html">Hazer’s Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/models_advanced.html">Advanced Guide on Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/dataset_processors.html">Dataset Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/advanced_training.html">Advanced Training</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Reference API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Reference API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="hezar.html">hezar package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of hezar package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.data.html">hezar.data package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of hezar.data package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.data.datasets.html">hezar.data.datasets package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of hezar.data.datasets package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.dataset.html">hezar.data.datasets.dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.image_captioning_dataset.html">hezar.data.datasets.image_captioning_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.ocr_dataset.html">hezar.data.datasets.ocr_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.sequence_labeling_dataset.html">hezar.data.datasets.sequence_labeling_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.speech_recognition_dataset.html">hezar.data.datasets.speech_recognition_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.text_classification_dataset.html">hezar.data.datasets.text_classification_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.data.datasets.text_summarization_dataset.html">hezar.data.datasets.text_summarization_dataset module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.data.data_collators.html">hezar.data.data_collators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.data.data_samplers.html">hezar.data.data_samplers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.data.dataset_processors.html">hezar.data.dataset_processors module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.embeddings.html">hezar.embeddings package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of hezar.embeddings package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.embeddings.embedding.html">hezar.embeddings.embedding module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.embeddings.fasttext.html">hezar.embeddings.fasttext module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.embeddings.word2vec.html">hezar.embeddings.word2vec module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.metrics.html">hezar.metrics package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of hezar.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.accuracy.html">hezar.metrics.accuracy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.bleu.html">hezar.metrics.bleu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.cer.html">hezar.metrics.cer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.f1.html">hezar.metrics.f1 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.metric.html">hezar.metrics.metric module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.precision.html">hezar.metrics.precision module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.recall.html">hezar.metrics.recall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.rouge.html">hezar.metrics.rouge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.seqeval.html">hezar.metrics.seqeval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.metrics.wer.html">hezar.metrics.wer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.models.html">hezar.models package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of hezar.models package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.backbone.html">hezar.models.backbone package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of hezar.models.backbone package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.bert.html">hezar.models.backbone.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.bert.bert.html">hezar.models.backbone.bert.bert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.bert.bert_config.html">hezar.models.backbone.bert.bert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.distilbert.html">hezar.models.backbone.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.distilbert.distilbert.html">hezar.models.backbone.distilbert.distilbert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.distilbert.distilbert_config.html">hezar.models.backbone.distilbert.distilbert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.roberta.html">hezar.models.backbone.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.roberta.roberta.html">hezar.models.backbone.roberta.roberta module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.roberta.roberta_config.html">hezar.models.backbone.roberta.roberta_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.backbone.vit.html">hezar.models.backbone.vit package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.vit package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.vit.vit.html">hezar.models.backbone.vit.vit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.backbone.vit.vit_config.html">hezar.models.backbone.vit.vit_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.image2text.html">hezar.models.image2text package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of hezar.models.image2text package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.beit_roberta.html">hezar.models.image2text.beit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.beit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.beit_roberta.beit_roberta_image2text.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.beit_roberta.beit_roberta_image2text_config.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.crnn.html">hezar.models.image2text.crnn package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.crnn package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.crnn.crnn_decode_utils.html">hezar.models.image2text.crnn.crnn_decode_utils module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.crnn.crnn_image2text.html">hezar.models.image2text.crnn.crnn_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.crnn.crnn_image2text_config.html">hezar.models.image2text.crnn.crnn_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.trocr.html">hezar.models.image2text.trocr package</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.trocr package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.trocr.trocr_image2text.html">hezar.models.image2text.trocr.trocr_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.trocr.trocr_image2text_config.html">hezar.models.image2text.trocr.trocr_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.vit_gpt2.html">hezar.models.image2text.vit_gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_gpt2.vit_gpt2_image2text.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.image2text.vit_roberta.html">hezar.models.image2text.vit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_roberta.vit_roberta_image2text.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.image2text.vit_roberta.vit_roberta_image2text_config.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.mask_filling.html">hezar.models.mask_filling package</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.mask_filling.bert.html">hezar.models.mask_filling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.bert.bert_mask_filling.html">hezar.models.mask_filling.bert.bert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.bert.bert_mask_filling_config.html">hezar.models.mask_filling.bert.bert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.mask_filling.distilbert.html">hezar.models.mask_filling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.distilbert.distilbert_mask_filling.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.distilbert.distilbert_mask_filling_config.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.mask_filling.roberta.html">hezar.models.mask_filling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.roberta.roberta_mask_filling.html">hezar.models.mask_filling.roberta.roberta_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.mask_filling.roberta.roberta_mask_filling_config.html">hezar.models.mask_filling.roberta.roberta_mask_filling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.html">hezar.models.sequence_labeling package</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.bert.html">hezar.models.sequence_labeling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.bert.bert_sequence_labeling.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.bert.bert_sequence_labeling_config.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.distilbert.html">hezar.models.sequence_labeling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.sequence_labeling.roberta.html">hezar.models.sequence_labeling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.roberta.roberta_sequence_labeling.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.speech_recognition.html">hezar.models.speech_recognition package</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.speech_recognition.whisper.html">hezar.models.speech_recognition.whisper package</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition.whisper package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_feature_extractor.html">hezar.models.speech_recognition.whisper.whisper_feature_extractor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_speech_recognition.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_speech_recognition_config.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.speech_recognition.whisper.whisper_tokenizer.html">hezar.models.speech_recognition.whisper.whisper_tokenizer module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.text_classification.html">hezar.models.text_classification package</a><input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_classification.bert.html">hezar.models.text_classification.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.bert.bert_text_classification.html">hezar.models.text_classification.bert.bert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.bert.bert_text_classification_config.html">hezar.models.text_classification.bert.bert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_classification.distilbert.html">hezar.models.text_classification.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.distilbert.distilbert_text_classification.html">hezar.models.text_classification.distilbert.distilbert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.distilbert.distilbert_text_classification_config.html">hezar.models.text_classification.distilbert.distilbert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_classification.roberta.html">hezar.models.text_classification.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.roberta.roberta_text_classification.html">hezar.models.text_classification.roberta.roberta_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_classification.roberta.roberta_text_classification_config.html">hezar.models.text_classification.roberta.roberta_text_classification_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.text_detection.html">hezar.models.text_detection package</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_detection.craft.html">hezar.models.text_detection.craft package</a><input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection.craft package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_image_processor.html">hezar.models.text_detection.craft.craft_image_processor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_text_detection.html">hezar.models.text_detection.craft.craft_text_detection module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_text_detection_config.html">hezar.models.text_detection.craft.craft_text_detection_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_detection.craft.craft_utils.html">hezar.models.text_detection.craft.craft_utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.models.text_generation.html">hezar.models.text_generation package</a><input class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_generation.gpt2.html">hezar.models.text_generation.gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.gpt2.gpt2_text_generation.html">hezar.models.text_generation.gpt2.gpt2_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.gpt2.gpt2_text_generation_config.html">hezar.models.text_generation.gpt2.gpt2_text_generation_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="hezar.models.text_generation.t5.html">hezar.models.text_generation.t5 package</a><input class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.t5 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.t5.t5_text_generation.html">hezar.models.text_generation.t5.t5_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="hezar.models.text_generation.t5.t5_text_generation_config.html">hezar.models.text_generation.t5.t5_text_generation_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.models.model.html">hezar.models.model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.models.model_outputs.html">hezar.models.model_outputs module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.preprocessors.html">hezar.preprocessors package</a><input class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><div class="visually-hidden">Toggle navigation of hezar.preprocessors package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="hezar.preprocessors.tokenizers.html">hezar.preprocessors.tokenizers package</a><input class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><div class="visually-hidden">Toggle navigation of hezar.preprocessors.tokenizers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.bpe.html">hezar.preprocessors.tokenizers.bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.sentencepiece_bpe.html">hezar.preprocessors.tokenizers.sentencepiece_bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.sentencepiece_unigram.html">hezar.preprocessors.tokenizers.sentencepiece_unigram module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.tokenizer.html">hezar.preprocessors.tokenizers.tokenizer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="hezar.preprocessors.tokenizers.wordpiece.html">hezar.preprocessors.tokenizers.wordpiece module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.audio_feature_extractor.html">hezar.preprocessors.audio_feature_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.image_processor.html">hezar.preprocessors.image_processor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.preprocessor.html">hezar.preprocessors.preprocessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.preprocessors.text_normalizer.html">hezar.preprocessors.text_normalizer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="hezar.trainer.html">hezar.trainer package</a><input class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><div class="visually-hidden">Toggle navigation of hezar.trainer package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="hezar.trainer.metrics_handlers.html">hezar.trainer.metrics_handlers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.trainer.trainer.html">hezar.trainer.trainer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.trainer.trainer_utils.html">hezar.trainer.trainer_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="hezar.utils.html">hezar.utils package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><div class="visually-hidden">Toggle navigation of hezar.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">hezar.utils.audio_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.common_utils.html">hezar.utils.common_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.data_utils.html">hezar.utils.data_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.hub_utils.html">hezar.utils.hub_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.image_utils.html">hezar.utils.image_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.integration_utils.html">hezar.utils.integration_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.logging.html">hezar.utils.logging module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hezar.utils.registry_utils.html">hezar.utils.registry_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.builders.html">hezar.builders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.configs.html">hezar.configs module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.constants.html">hezar.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hezar.registry.html">hezar.registry module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Hezar</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/hezarai/hezar/blob/main/docs/source/hezar.utils.audio_utils.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/hezarai/hezar/edit/main/docs/source/hezar.utils.audio_utils.rst" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-hezar.utils.audio_utils">
+<span id="hezar-utils-audio-utils-module"></span><h1>hezar.utils.audio_utils module<a class="headerlink" href="#module-hezar.utils.audio_utils" title="Link to this heading">¶</a></h1>
+<p>Common audio utils taken from <cite>transformers.audio_utils</cite></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.amplitude_to_db">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">amplitude_to_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrogram</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#amplitude_to_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.amplitude_to_db" title="Link to this definition">¶</a></dt>
+<dd><p>Converts an amplitude spectrogram to the decibel scale. This computes <cite>20 * log10(spectrogram / reference)</cite>, using
+basic logarithm properties for numerical stability.</p>
+<p>The motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a
+linear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.
+This means that large variations in energy may not sound all that different if the sound is loud to begin with.
+This compression operation makes the (mel) spectrogram features match more closely what humans actually hear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrogram</strong> (<cite>np.ndarray</cite>) – The input amplitude (mel) spectrogram.</p></li>
+<li><p><strong>reference</strong> (<cite>float</cite>, <em>optional</em>, defaults to 1.0) – Sets the input spectrogram value that corresponds to 0 dB. For example, use <cite>np.max(spectrogram)</cite> to set
+the loudest part to 0 dB. Must be greater than zero.</p></li>
+<li><p><strong>min_value</strong> (<cite>float</cite>, <em>optional</em>, defaults to <cite>1e-5</cite>) – The spectrogram will be clipped to this minimum value before conversion to decibels, to avoid taking
+<cite>log(0)</cite>. The default of <cite>1e-5</cite> corresponds to a minimum of -100 dB. Must be greater than zero.</p></li>
+<li><p><strong>db_range</strong> (<cite>float</cite>, <em>optional</em>) – Sets the maximum dynamic range in decibels. For example, if <cite>db_range = 80</cite>, the difference between the
+peak value and the smallest value will never be more than 80 dB. Must be greater than zero.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the spectrogram in decibels</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>np.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.hertz_to_mel">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">hertz_to_mel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mel_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'htk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#hertz_to_mel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.hertz_to_mel" title="Link to this definition">¶</a></dt>
+<dd><p>Convert frequency from hertz to mels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<cite>float</cite> or <cite>np.ndarray</cite>) – The frequency, or multiple frequencies, in hertz (Hz).</p></li>
+<li><p><strong>mel_scale</strong> (<cite>str</cite>, <em>optional</em>, defaults to <cite>“htk”</cite>) – The mel frequency scale to use, <cite>“htk”</cite> or <cite>“slaney”</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The frequencies on the mel scale.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>float</cite> or <cite>np.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.load_audio_files">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">load_audio_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">16000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#load_audio_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.load_audio_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.mel_filter_bank">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">mel_filter_bank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_frequency_bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mel_filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mel_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'htk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#mel_filter_bank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.mel_filter_bank" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a frequency bin conversion matrix used to obtain a mel spectrogram. This is called a <em>mel filter bank</em>, and
+various implementation exist, which differ in the number of filters, the shape of the filters, the way the filters
+are spaced, the bandwidth of the filters, and the manner in which the spectrum is warped. The goal of these
+features is to approximate the non-linear human perception of the variation in pitch with respect to the frequency.</p>
+<p>Different banks of mel filters were introduced in the literature. The following variations are supported:</p>
+<ul class="simple">
+<li><p>MFCC FB-20: introduced in 1980 by Davis and Mermelstein, it assumes a sampling frequency of 10 kHz and a speech
+bandwidth of <cite>[0, 4600]</cite> Hz.</p></li>
+<li><p>MFCC FB-24 HTK: from the Cambridge HMM Toolkit (HTK) (1995) uses a filter bank of 24 filters for a speech
+bandwidth of <cite>[0, 8000]</cite> Hz. This assumes sampling rate ≥ 16 kHz.</p></li>
+<li><p>MFCC FB-40: from the Auditory Toolbox for MATLAB written by Slaney in 1998, assumes a sampling rate of 16 kHz and
+speech bandwidth of <cite>[133, 6854]</cite> Hz. This version also includes area normalization.</p></li>
+<li><p>HFCC-E FB-29 (Human Factor Cepstral Coefficients) of Skowronski and Harris (2004), assumes a sampling rate of
+12.5 kHz and speech bandwidth of <cite>[0, 6250]</cite> Hz.</p></li>
+</ul>
+<p>This code is adapted from <em>torchaudio</em> and <em>librosa</em>. Note that the default parameters of torchaudio’s
+<cite>melscale_fbanks</cite> implement the <cite>“htk”</cite> filters while librosa uses the <cite>“slaney”</cite> implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_frequency_bins</strong> (<cite>int</cite>) – Number of frequencies used to compute the spectrogram (should be the same as in <cite>stft</cite>).</p></li>
+<li><p><strong>num_mel_filters</strong> (<cite>int</cite>) – Number of mel filters to generate.</p></li>
+<li><p><strong>min_frequency</strong> (<cite>float</cite>) – Lowest frequency of interest in Hz.</p></li>
+<li><p><strong>max_frequency</strong> (<cite>float</cite>) – Highest frequency of interest in Hz. This should not exceed <cite>sampling_rate / 2</cite>.</p></li>
+<li><p><strong>sampling_rate</strong> (<cite>int</cite>) – Sample rate of the audio waveform.</p></li>
+<li><p><strong>norm</strong> (<cite>str</cite>, <em>optional</em>) – If <cite>“slaney”</cite>, divide the triangular mel weights by the width of the mel band (area normalization).</p></li>
+<li><p><strong>mel_scale</strong> (<cite>str</cite>, <em>optional</em>, defaults to <cite>“htk”</cite>) – The mel frequency scale to use, <cite>“htk”</cite> or <cite>“slaney”</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Triangular filter bank matrix. This is a
+projection matrix to go from a spectrogram to a mel spectrogram.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>np.ndarray</cite> of shape (<cite>num_frequency_bins</cite>, <cite>num_mel_filters</cite>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.mel_to_hertz">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">mel_to_hertz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mel_scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'htk'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#mel_to_hertz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.mel_to_hertz" title="Link to this definition">¶</a></dt>
+<dd><p>Convert frequency from mels to hertz.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mels</strong> (<cite>float</cite> or <cite>np.ndarray</cite>) – The frequency, or multiple frequencies, in mels.</p></li>
+<li><p><strong>mel_scale</strong> (<cite>str</cite>, <em>optional</em>, <cite>“htk”</cite>) – The mel frequency scale to use, <cite>“htk”</cite> or <cite>“slaney”</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The frequencies in hertz.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>float</cite> or <cite>np.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.power_to_db">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">power_to_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrogram</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#power_to_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.power_to_db" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a power spectrogram to the decibel scale. This computes <cite>10 * log10(spectrogram / reference)</cite>, using basic
+logarithm properties for numerical stability.</p>
+<p>The motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a
+linear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.
+This means that large variations in energy may not sound all that different if the sound is loud to begin with.
+This compression operation makes the (mel) spectrogram features match more closely what humans actually hear.</p>
+<p>Based on the implementation of <cite>librosa.power_to_db</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectrogram</strong> (<cite>np.ndarray</cite>) – The input power (mel) spectrogram. Note that a power spectrogram has the amplitudes squared!</p></li>
+<li><p><strong>reference</strong> (<cite>float</cite>, <em>optional</em>, defaults to 1.0) – Sets the input spectrogram value that corresponds to 0 dB. For example, use <cite>np.max(spectrogram)</cite> to set
+the loudest part to 0 dB. Must be greater than zero.</p></li>
+<li><p><strong>min_value</strong> (<cite>float</cite>, <em>optional</em>, defaults to <cite>1e-10</cite>) – The spectrogram will be clipped to this minimum value before conversion to decibels, to avoid taking
+<cite>log(0)</cite>. The default of <cite>1e-10</cite> corresponds to a minimum of -100 dB. Must be greater than zero.</p></li>
+<li><p><strong>db_range</strong> (<cite>float</cite>, <em>optional</em>) – Sets the maximum dynamic range in decibels. For example, if <cite>db_range = 80</cite>, the difference between the
+peak value and the smallest value will never be more than 80 dB. Must be greater than zero.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the spectrogram in decibels</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>np.ndarray</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.spectrogram">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">spectrogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform:</span> <span class="pre">~numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window:</span> <span class="pre">~numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_length:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hop_length:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fft_length:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_mode:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'reflect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onesided:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preemphasis:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mel_filters:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mel_floor:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_mel:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_value:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_range:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype:</span> <span class="pre">~numpy.dtype</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float32'&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#spectrogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.spectrogram" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates a spectrogram over one waveform using the Short-Time Fourier Transform.</p>
+<p>This function can create the following kinds of spectrograms:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>amplitude spectrogram (<cite>power = 1.0</cite>)</p></li>
+<li><p>power spectrogram (<cite>power = 2.0</cite>)</p></li>
+<li><p>complex-valued spectrogram (<cite>power = None</cite>)</p></li>
+<li><p>log spectrogram (use <cite>log_mel</cite> argument)</p></li>
+<li><p>mel spectrogram (provide <cite>mel_filters</cite>)</p></li>
+<li><p>log-mel spectrogram (provide <cite>mel_filters</cite> and <cite>log_mel</cite>)</p></li>
+</ul>
+</div></blockquote>
+<p>How this works:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>The input waveform is split into frames of size <cite>frame_length</cite> that are partially overlapping by <cite>frame_length
+- hop_length</cite> samples.</p></li>
+<li><p>Each frame is multiplied by the window and placed into a buffer of size <cite>fft_length</cite>.</p></li>
+<li><p>The DFT is taken of each windowed frame.</p></li>
+<li><p>The results are stacked into a spectrogram.</p></li>
+</ol>
+</div></blockquote>
+<p>We make a distinction between the following “blocks” of sample data, each of which may have a different lengths:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The analysis frame. This is the size of the time slices that the input waveform is split into.</p></li>
+<li><p>The window. Each analysis frame is multiplied by the window to avoid spectral leakage.</p></li>
+<li><p>The FFT input buffer. The length of this determines how many frequency bins are in the spectrogram.</p></li>
+</ul>
+</div></blockquote>
+<p>In this implementation, the window is assumed to be zero-padded to have the same size as the analysis frame. A
+padded window can be obtained from <cite>window_function()</cite>. The FFT input buffer may be larger than the analysis frame,
+typically the next power of two.</p>
+<p>Note: This function is not optimized for speed yet. It should be mostly compatible with <cite>librosa.stft</cite> and
+<cite>torchaudio.functional.transforms.Spectrogram</cite>, although it is more flexible due to the different ways spectrograms
+can be constructed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>waveform</strong> (<cite>np.ndarray</cite> of shape <cite>(length,)</cite>) – The input waveform. This must be a single real-valued, mono waveform.</p></li>
+<li><p><strong>window</strong> (<cite>np.ndarray</cite> of shape <cite>(frame_length,)</cite>) – The windowing function to apply, including zero-padding if necessary. The actual window length may be
+shorter than <cite>frame_length</cite>, but we’re assuming the array has already been zero-padded.</p></li>
+<li><p><strong>frame_length</strong> (<cite>int</cite>) – The length of the analysis frames in samples. With librosa this is always equal to <cite>fft_length</cite> but we also
+allow smaller sizes.</p></li>
+<li><p><strong>hop_length</strong> (<cite>int</cite>) – The stride between successive analysis frames in samples.</p></li>
+<li><p><strong>fft_length</strong> (<cite>int</cite>, <em>optional</em>) – The size of the FFT buffer in samples. This determines how many frequency bins the spectrogram will have.
+For optimal speed, this should be a power of two. If <cite>None</cite>, uses <cite>frame_length</cite>.</p></li>
+<li><p><strong>power</strong> (<cite>float</cite>, <em>optional</em>, defaults to 1.0) – If 1.0, returns the amplitude spectrogram. If 2.0, returns the power spectrogram. If <cite>None</cite>, returns
+complex numbers.</p></li>
+<li><p><strong>center</strong> (<cite>bool</cite>, <em>optional</em>, defaults to <cite>True</cite>) – Whether to pad the waveform so that frame <cite>t</cite> is centered around time <cite>t * hop_length</cite>. If <cite>False</cite>, frame
+<cite>t</cite> will start at time <cite>t * hop_length</cite>.</p></li>
+<li><p><strong>pad_mode</strong> (<cite>str</cite>, <em>optional</em>, defaults to <cite>“reflect”</cite>) – Padding mode used when <cite>center</cite> is <cite>True</cite>. Possible values are: <cite>“constant”</cite> (pad with zeros), <cite>“edge”</cite>
+(pad with edge values), <cite>“reflect”</cite> (pads with mirrored values).</p></li>
+<li><p><strong>onesided</strong> (<cite>bool</cite>, <em>optional</em>, defaults to <cite>True</cite>) – If True, only computes the positive frequencies and returns a spectrogram containing <cite>fft_length // 2 + 1</cite>
+frequency bins. If False, also computes the negative frequencies and returns <cite>fft_length</cite> frequency bins.</p></li>
+<li><p><strong>preemphasis</strong> (<cite>float</cite>, <em>optional</em>) – Coefficient for a low-pass filter that applies pre-emphasis before the DFT.</p></li>
+<li><p><strong>mel_filters</strong> (<cite>np.ndarray</cite> of shape <cite>(num_freq_bins, num_mel_filters)</cite>, <em>optional</em>) – The mel filter bank. If supplied, applies a this filter bank to create a mel spectrogram.</p></li>
+<li><p><strong>mel_floor</strong> (<cite>float</cite>, <em>optional</em>, defaults to 1e-10) – Minimum value of mel frequency banks.</p></li>
+<li><p><strong>log_mel</strong> (<cite>str</cite>, <em>optional</em>) – How to convert the spectrogram to log scale. Possible options are: <cite>None</cite> (don’t convert), <cite>“log”</cite> (take
+the natural logarithm) <cite>“log10”</cite> (take the base-10 logarithm), <cite>“dB”</cite> (convert to decibels). Can only be
+used when <cite>power</cite> is not <cite>None</cite>.</p></li>
+<li><p><strong>reference</strong> (<cite>float</cite>, <em>optional</em>, defaults to 1.0) – Sets the input spectrogram value that corresponds to 0 dB. For example, use <cite>np.max(spectrogram)</cite> to set
+the loudest part to 0 dB. Must be greater than zero.</p></li>
+<li><p><strong>min_value</strong> (<cite>float</cite>, <em>optional</em>, defaults to <cite>1e-10</cite>) – The spectrogram will be clipped to this minimum value before conversion to decibels, to avoid taking
+<cite>log(0)</cite>. For a power spectrogram, the default of <cite>1e-10</cite> corresponds to a minimum of -100 dB. For an
+amplitude spectrogram, the value <cite>1e-5</cite> corresponds to -100 dB. Must be greater than zero.</p></li>
+<li><p><strong>db_range</strong> (<cite>float</cite>, <em>optional</em>) – Sets the maximum dynamic range in decibels. For example, if <cite>db_range = 80</cite>, the difference between the
+peak value and the smallest value will never be more than 80 dB. Must be greater than zero.</p></li>
+<li><p><strong>dtype</strong> (<cite>np.dtype</cite>, <em>optional</em>, defaults to <cite>np.float32</cite>) – Data type of the spectrogram tensor. If <cite>power</cite> is None, this argument is ignored and the dtype will be
+<cite>np.complex64</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>nd.array</cite> containing a spectrogram of shape <cite>(num_frequency_bins, length)</cite> for a regular spectrogram or shape
+<cite>(num_mel_filters, length)</cite> for a mel spectrogram.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hezar.utils.audio_utils.window_function">
+<span class="sig-prename descclassname"><span class="pre">hezar.utils.audio_utils.</span></span><span class="sig-name descname"><span class="pre">window_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/hezar/utils/audio_utils.html#window_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hezar.utils.audio_utils.window_function" title="Link to this definition">¶</a></dt>
+<dd><p>Returns an array containing the specified window. This window is intended to be used with <cite>stft</cite>.</p>
+<p>The following window types are supported:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>“boxcar”</cite>: a rectangular window</p></li>
+<li><p><cite>“hamming”</cite>: the Hamming window</p></li>
+<li><p><cite>“hann”</cite>: the Hann window</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window_length</strong> (<cite>int</cite>) – The length of the window in samples.</p></li>
+<li><p><strong>name</strong> (<cite>str</cite>, <em>optional</em>, defaults to <cite>“hann”</cite>) – The name of the window function.</p></li>
+<li><p><strong>periodic</strong> (<cite>bool</cite>, <em>optional</em>, defaults to <cite>True</cite>) – Whether the window is periodic or symmetric.</p></li>
+<li><p><strong>frame_length</strong> (<cite>int</cite>, <em>optional</em>) – The length of the analysis frames in samples. Provide a value for <cite>frame_length</cite> if the window is smaller
+than the frame length, so that it will be zero-padded.</p></li>
+<li><p><strong>center</strong> (<cite>bool</cite>, <em>optional</em>, defaults to <cite>True</cite>) – Whether to center the window inside the FFT buffer. Only used when <cite>frame_length</cite> is provided.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>np.ndarray</cite> of shape <cite>(window_length,)</cite> or <cite>(frame_length,)</cite> containing the window.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="hezar.utils.common_utils.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">hezar.utils.common_utils module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="hezar.utils.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">hezar.utils package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Hezar AI Team &amp; contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/hezarai/hezar" aria-label="GitHub"><i class="fa-brands fa-github fa-2x" style="color: #343d4c;"></i></a>
+              <a class="muted-link " href="https://t.me/hezarai" aria-label="Telegram"><i class="fa-brands fa-telegram fa-2x" style="color: #229ed9;"></i></a>
+              <a class="muted-link " href="https://huggingface.co/hezarai" aria-label="Hugging Face"> <img style="width:32px;height:32px;" src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">hezar.utils.audio_utils module</a><ul>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.amplitude_to_db"><code class="docutils literal notranslate"><span class="pre">amplitude_to_db()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.hertz_to_mel"><code class="docutils literal notranslate"><span class="pre">hertz_to_mel()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.load_audio_files"><code class="docutils literal notranslate"><span class="pre">load_audio_files()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.mel_filter_bank"><code class="docutils literal notranslate"><span class="pre">mel_filter_bank()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.mel_to_hertz"><code class="docutils literal notranslate"><span class="pre">mel_to_hertz()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.power_to_db"><code class="docutils literal notranslate"><span class="pre">power_to_db()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.spectrogram"><code class="docutils literal notranslate"><span class="pre">spectrogram()</span></code></a></li>
+<li><a class="reference internal" href="#hezar.utils.audio_utils.window_function"><code class="docutils literal notranslate"><span class="pre">window_function()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

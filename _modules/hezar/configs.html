@@ -1,0 +1,1152 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <link rel="shortcut icon" href="../../_static/hezar_logo.svg"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>hezar.configs - Hezar Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-foreground-primary: #2C3E50;
+  --color-inline-code-background: #F1F1F1;
+  --color-background-border: white;
+  --color-toc-background: #F8F9FB;
+  --color-highlight-on-target: white;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #263238;
+  --color-code-foreground: #EEFFFF;
+  --color-foreground-primary: #CEDDEB;
+  --color-inline-code-background: #1A1C1E;
+  --color-background-primary: #1A1A1B;
+  --color-background-border: #1A1B1C;
+  --color-toc-background: #1A1C1E;
+  --color-highlight-on-target: #1A1A1B;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Hezar Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/hezar_logo.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Hezar Documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get_started/index.html">Get Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Get Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get_started/overview.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get_started/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get_started/quick_tour.html">Quick Tour</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorial/index.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/embeddings.html">Embeddings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/preprocessors.html">Preprocessors</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorial/training/index.html">Training Recipes</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Training Recipes</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial/training/trainer.html">Trainer Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial/training/text_classification.html">Text Classification (Sentiment Analysis)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial/training/sequence_labeling.html">Sequence Labeling (POS, NER, etc.)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial/training/image_captioning.html">Image to Text (Image Captioning)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial/training/license_plate_recognition.html">Image to Text (License Plate Recognition)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial/training/speech_recognition.html">Speech Recognition</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../guide/index.html">Developer Guides</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Developer Guides</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/hezar_architecture.html">Hazer’s Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/models_advanced.html">Advanced Guide on Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/dataset_processors.html">Dataset Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/advanced_training.html">Advanced Training</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../source/index.html">Reference API</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Reference API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../source/hezar.html">hezar package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of hezar package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.data.html">hezar.data package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of hezar.data package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.data.datasets.html">hezar.data.datasets package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of hezar.data.datasets package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.dataset.html">hezar.data.datasets.dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.image_captioning_dataset.html">hezar.data.datasets.image_captioning_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.ocr_dataset.html">hezar.data.datasets.ocr_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.sequence_labeling_dataset.html">hezar.data.datasets.sequence_labeling_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.speech_recognition_dataset.html">hezar.data.datasets.speech_recognition_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.text_classification_dataset.html">hezar.data.datasets.text_classification_dataset module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.data.datasets.text_summarization_dataset.html">hezar.data.datasets.text_summarization_dataset module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.data.data_collators.html">hezar.data.data_collators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.data.data_samplers.html">hezar.data.data_samplers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.data.dataset_processors.html">hezar.data.dataset_processors module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.embeddings.html">hezar.embeddings package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of hezar.embeddings package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.embeddings.embedding.html">hezar.embeddings.embedding module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.embeddings.fasttext.html">hezar.embeddings.fasttext module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.embeddings.word2vec.html">hezar.embeddings.word2vec module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.metrics.html">hezar.metrics package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of hezar.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.accuracy.html">hezar.metrics.accuracy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.bleu.html">hezar.metrics.bleu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.cer.html">hezar.metrics.cer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.f1.html">hezar.metrics.f1 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.metric.html">hezar.metrics.metric module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.precision.html">hezar.metrics.precision module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.recall.html">hezar.metrics.recall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.rouge.html">hezar.metrics.rouge module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.seqeval.html">hezar.metrics.seqeval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.metrics.wer.html">hezar.metrics.wer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.models.html">hezar.models package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of hezar.models package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.html">hezar.models.backbone package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of hezar.models.backbone package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.bert.html">hezar.models.backbone.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.bert.bert.html">hezar.models.backbone.bert.bert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.bert.bert_config.html">hezar.models.backbone.bert.bert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.distilbert.html">hezar.models.backbone.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.distilbert.distilbert.html">hezar.models.backbone.distilbert.distilbert module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.distilbert.distilbert_config.html">hezar.models.backbone.distilbert.distilbert_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.roberta.html">hezar.models.backbone.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.roberta.roberta.html">hezar.models.backbone.roberta.roberta module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.roberta.roberta_config.html">hezar.models.backbone.roberta.roberta_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.backbone.vit.html">hezar.models.backbone.vit package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of hezar.models.backbone.vit package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.vit.vit.html">hezar.models.backbone.vit.vit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.backbone.vit.vit_config.html">hezar.models.backbone.vit.vit_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.html">hezar.models.image2text package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of hezar.models.image2text package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.beit_roberta.html">hezar.models.image2text.beit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.beit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.beit_roberta.beit_roberta_image2text.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.beit_roberta.beit_roberta_image2text_config.html">hezar.models.image2text.beit_roberta.beit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.html">hezar.models.image2text.crnn package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.crnn package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.crnn_decode_utils.html">hezar.models.image2text.crnn.crnn_decode_utils module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.crnn_image2text.html">hezar.models.image2text.crnn.crnn_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.crnn.crnn_image2text_config.html">hezar.models.image2text.crnn.crnn_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.trocr.html">hezar.models.image2text.trocr package</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.trocr package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.trocr.trocr_image2text.html">hezar.models.image2text.trocr.trocr_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.trocr.trocr_image2text_config.html">hezar.models.image2text.trocr.trocr_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.vit_gpt2.html">hezar.models.image2text.vit_gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_gpt2.vit_gpt2_image2text.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config.html">hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.image2text.vit_roberta.html">hezar.models.image2text.vit_roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><div class="visually-hidden">Toggle navigation of hezar.models.image2text.vit_roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_roberta.vit_roberta_image2text.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.image2text.vit_roberta.vit_roberta_image2text_config.html">hezar.models.image2text.vit_roberta.vit_roberta_image2text_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.html">hezar.models.mask_filling package</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.bert.html">hezar.models.mask_filling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.bert.bert_mask_filling.html">hezar.models.mask_filling.bert.bert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.bert.bert_mask_filling_config.html">hezar.models.mask_filling.bert.bert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.distilbert.html">hezar.models.mask_filling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.distilbert.distilbert_mask_filling.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.distilbert.distilbert_mask_filling_config.html">hezar.models.mask_filling.distilbert.distilbert_mask_filling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.mask_filling.roberta.html">hezar.models.mask_filling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of hezar.models.mask_filling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.roberta.roberta_mask_filling.html">hezar.models.mask_filling.roberta.roberta_mask_filling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.mask_filling.roberta.roberta_mask_filling_config.html">hezar.models.mask_filling.roberta.roberta_mask_filling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.html">hezar.models.sequence_labeling package</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.bert.html">hezar.models.sequence_labeling.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" role="switch" type="checkbox"/><label for="toctree-checkbox-28"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.bert.bert_sequence_labeling.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.bert.bert_sequence_labeling_config.html">hezar.models.sequence_labeling.bert.bert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.distilbert.html">hezar.models.sequence_labeling.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" role="switch" type="checkbox"/><label for="toctree-checkbox-29"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config.html">hezar.models.sequence_labeling.distilbert.distilbert_sequence_labeling_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.roberta.html">hezar.models.sequence_labeling.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" role="switch" type="checkbox"/><label for="toctree-checkbox-30"><div class="visually-hidden">Toggle navigation of hezar.models.sequence_labeling.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.roberta.roberta_sequence_labeling.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config.html">hezar.models.sequence_labeling.roberta.roberta_sequence_labeling_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.speech_recognition.html">hezar.models.speech_recognition package</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" role="switch" type="checkbox"/><label for="toctree-checkbox-31"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.html">hezar.models.speech_recognition.whisper package</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" role="switch" type="checkbox"/><label for="toctree-checkbox-32"><div class="visually-hidden">Toggle navigation of hezar.models.speech_recognition.whisper package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_feature_extractor.html">hezar.models.speech_recognition.whisper.whisper_feature_extractor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_speech_recognition.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_speech_recognition_config.html">hezar.models.speech_recognition.whisper.whisper_speech_recognition_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.speech_recognition.whisper.whisper_tokenizer.html">hezar.models.speech_recognition.whisper.whisper_tokenizer module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.html">hezar.models.text_classification package</a><input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" role="switch" type="checkbox"/><label for="toctree-checkbox-33"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.bert.html">hezar.models.text_classification.bert package</a><input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" role="switch" type="checkbox"/><label for="toctree-checkbox-34"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.bert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.bert.bert_text_classification.html">hezar.models.text_classification.bert.bert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.bert.bert_text_classification_config.html">hezar.models.text_classification.bert.bert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.distilbert.html">hezar.models.text_classification.distilbert package</a><input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" role="switch" type="checkbox"/><label for="toctree-checkbox-35"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.distilbert package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.distilbert.distilbert_text_classification.html">hezar.models.text_classification.distilbert.distilbert_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.distilbert.distilbert_text_classification_config.html">hezar.models.text_classification.distilbert.distilbert_text_classification_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_classification.roberta.html">hezar.models.text_classification.roberta package</a><input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" role="switch" type="checkbox"/><label for="toctree-checkbox-36"><div class="visually-hidden">Toggle navigation of hezar.models.text_classification.roberta package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.roberta.roberta_text_classification.html">hezar.models.text_classification.roberta.roberta_text_classification module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_classification.roberta.roberta_text_classification_config.html">hezar.models.text_classification.roberta.roberta_text_classification_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.text_detection.html">hezar.models.text_detection package</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" role="switch" type="checkbox"/><label for="toctree-checkbox-37"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.html">hezar.models.text_detection.craft package</a><input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" role="switch" type="checkbox"/><label for="toctree-checkbox-38"><div class="visually-hidden">Toggle navigation of hezar.models.text_detection.craft package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_image_processor.html">hezar.models.text_detection.craft.craft_image_processor module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_text_detection.html">hezar.models.text_detection.craft.craft_text_detection module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_text_detection_config.html">hezar.models.text_detection.craft.craft_text_detection_config module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_detection.craft.craft_utils.html">hezar.models.text_detection.craft.craft_utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.models.text_generation.html">hezar.models.text_generation package</a><input class="toctree-checkbox" id="toctree-checkbox-39" name="toctree-checkbox-39" role="switch" type="checkbox"/><label for="toctree-checkbox-39"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_generation.gpt2.html">hezar.models.text_generation.gpt2 package</a><input class="toctree-checkbox" id="toctree-checkbox-40" name="toctree-checkbox-40" role="switch" type="checkbox"/><label for="toctree-checkbox-40"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.gpt2 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.gpt2.gpt2_text_generation.html">hezar.models.text_generation.gpt2.gpt2_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.gpt2.gpt2_text_generation_config.html">hezar.models.text_generation.gpt2.gpt2_text_generation_config module</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../source/hezar.models.text_generation.t5.html">hezar.models.text_generation.t5 package</a><input class="toctree-checkbox" id="toctree-checkbox-41" name="toctree-checkbox-41" role="switch" type="checkbox"/><label for="toctree-checkbox-41"><div class="visually-hidden">Toggle navigation of hezar.models.text_generation.t5 package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.t5.t5_text_generation.html">hezar.models.text_generation.t5.t5_text_generation module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../source/hezar.models.text_generation.t5.t5_text_generation_config.html">hezar.models.text_generation.t5.t5_text_generation_config module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.models.model.html">hezar.models.model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.models.model_outputs.html">hezar.models.model_outputs module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.preprocessors.html">hezar.preprocessors package</a><input class="toctree-checkbox" id="toctree-checkbox-42" name="toctree-checkbox-42" role="switch" type="checkbox"/><label for="toctree-checkbox-42"><div class="visually-hidden">Toggle navigation of hezar.preprocessors package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.html">hezar.preprocessors.tokenizers package</a><input class="toctree-checkbox" id="toctree-checkbox-43" name="toctree-checkbox-43" role="switch" type="checkbox"/><label for="toctree-checkbox-43"><div class="visually-hidden">Toggle navigation of hezar.preprocessors.tokenizers package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.bpe.html">hezar.preprocessors.tokenizers.bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.sentencepiece_bpe.html">hezar.preprocessors.tokenizers.sentencepiece_bpe module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.sentencepiece_unigram.html">hezar.preprocessors.tokenizers.sentencepiece_unigram module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.tokenizer.html">hezar.preprocessors.tokenizers.tokenizer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../source/hezar.preprocessors.tokenizers.wordpiece.html">hezar.preprocessors.tokenizers.wordpiece module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.audio_feature_extractor.html">hezar.preprocessors.audio_feature_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.image_processor.html">hezar.preprocessors.image_processor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.preprocessor.html">hezar.preprocessors.preprocessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.preprocessors.text_normalizer.html">hezar.preprocessors.text_normalizer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.trainer.html">hezar.trainer package</a><input class="toctree-checkbox" id="toctree-checkbox-44" name="toctree-checkbox-44" role="switch" type="checkbox"/><label for="toctree-checkbox-44"><div class="visually-hidden">Toggle navigation of hezar.trainer package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.trainer.metrics_handlers.html">hezar.trainer.metrics_handlers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.trainer.trainer.html">hezar.trainer.trainer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.trainer.trainer_utils.html">hezar.trainer.trainer_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../source/hezar.utils.html">hezar.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-45" name="toctree-checkbox-45" role="switch" type="checkbox"/><label for="toctree-checkbox-45"><div class="visually-hidden">Toggle navigation of hezar.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.audio_utils.html">hezar.utils.audio_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.common_utils.html">hezar.utils.common_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.data_utils.html">hezar.utils.data_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.hub_utils.html">hezar.utils.hub_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.image_utils.html">hezar.utils.image_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.integration_utils.html">hezar.utils.integration_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.logging.html">hezar.utils.logging module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../source/hezar.utils.registry_utils.html">hezar.utils.registry_utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.builders.html">hezar.builders module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.configs.html">hezar.configs module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.constants.html">hezar.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../source/hezar.registry.html">hezar.registry module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to Hezar</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for hezar.configs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Configs are at the core of Hezar. All core modules like `Model`, `Preprocessor`, `Trainer`, etc. take their parameters</span>
+<span class="sd">as a config container which is an instance of `Config` or its derivatives. A `Config` is a Python dataclass with</span>
+<span class="sd">auxiliary methods for loading, saving, uploading to the hub, etc.</span>
+
+<span class="sd">Examples:</span>
+<span class="sd">    &gt;&gt;&gt; from hezar.configs import ModelConfig</span>
+<span class="sd">    &gt;&gt;&gt; config = ModelConfig.load(&quot;hezarai/bert-base-fa&quot;)</span>
+
+<span class="sd">    &gt;&gt;&gt; from hezar.models import BertMaskFillingConfig</span>
+<span class="sd">    &gt;&gt;&gt; bert_config = BertMaskFillingConfig(vocab_size=50000, hidden_size=768)</span>
+<span class="sd">    &gt;&gt;&gt; bert_config.save(&quot;saved/bert&quot;, filename=&quot;model_config.yaml&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; bert_config.push_to_hub(&quot;hezarai/bert-custom&quot;, filename=&quot;model_config.yaml&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">huggingface_hub</span> <span class="kn">import</span> <span class="n">create_repo</span><span class="p">,</span> <span class="n">hf_hub_download</span><span class="p">,</span> <span class="n">upload_file</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
+
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_MODEL_CONFIG_FILE</span><span class="p">,</span>
+    <span class="n">HEZAR_CACHE_DIR</span><span class="p">,</span>
+    <span class="n">ConfigType</span><span class="p">,</span>
+    <span class="n">LRSchedulerType</span><span class="p">,</span>
+    <span class="n">OptimizerType</span><span class="p">,</span>
+    <span class="n">PrecisionType</span><span class="p">,</span>
+    <span class="n">TaskType</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">get_module_config_class</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ModelConfig&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PreprocessorConfig&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TrainerConfig&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DatasetConfig&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EmbeddingConfig&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MetricConfig&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">CONFIG_CLASS_VARS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;config_type&quot;</span><span class="p">]</span>
+
+<span class="n">_config_to_type_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ModelConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">MODEL</span><span class="p">,</span>
+    <span class="s2">&quot;PreprocessorConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">PREPROCESSOR</span><span class="p">,</span>
+    <span class="s2">&quot;TrainerConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">TRAINER</span><span class="p">,</span>
+    <span class="s2">&quot;DatasetConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">DATASET</span><span class="p">,</span>
+    <span class="s2">&quot;EmbeddingConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">EMBEDDING</span><span class="p">,</span>
+    <span class="s2">&quot;CriterionConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">CRITERION</span><span class="p">,</span>
+    <span class="s2">&quot;MetricConfig&quot;</span><span class="p">:</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">METRIC</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_type_to_config_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_config_to_type_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<div class="viewcode-block" id="Config">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all configs in Hezar.</span>
+
+<span class="sd">    All configs are simple dataclasses that have some customized functionalities to manage their attributes. There are</span>
+<span class="sd">    also some Hezar specific methods: `load`, `save` and `push_to_hub`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">BASE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Class variables cannot be init-able</span>
+        <span class="n">fields_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">CONFIG_CLASS_VARS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fields_dict</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">init</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># noqa</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The parameter `</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">` in a config should be either non-initable or unannotated! &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">You should define it as either:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> = &#39;</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;`&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; or &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">: str = field(default=&#39;</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;, init=False)`&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Convert enums to values</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">),</span> <span class="n">Enum</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` does not have the parameter `</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">`!&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Config.fields">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.fields">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__dataclass_fields__</span></div>
+
+
+<div class="viewcode-block" id="Config.dict">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the config object as a dictionary (works on nested dataclasses too)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The config object as a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Config.keys">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Config.get">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Config.update">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update config with a given dictionary or keyword arguments. If a key does not exist in the attributes, prints a</span>
+<span class="sd">        warning but sets it anyway.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d: A dictionary</span>
+<span class="sd">            **kwargs: Key/value pairs in the form of keyword arguments</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The config object itself but the operation happens in-place anyway</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="si">}</span><span class="s2">` does not take `</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">` as a config parameter!&quot;</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Config.load">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.load">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">hub_or_local_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subfolder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">repo_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Config&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load config from Hub or locally if it already exists on disk (handled by HfApi)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hub_or_local_path: Local or Hub path for the config</span>
+<span class="sd">            filename: Configuration filename</span>
+<span class="sd">            subfolder: Optional subfolder path where the config is in</span>
+<span class="sd">            repo_type: Repo type e.g, model, dataset, etc</span>
+<span class="sd">            cache_dir: Path to cache directory</span>
+<span class="sd">            **kwargs: Manual config parameters to override</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A Config instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="n">DEFAULT_MODEL_CONFIG_FILE</span>
+        <span class="n">subfolder</span> <span class="o">=</span> <span class="n">subfolder</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hub_or_local_path</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">is_local</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">hub_or_local_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_local</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Path `</span><span class="si">{</span><span class="n">hub_or_local_path</span><span class="si">}</span><span class="s2">` exists locally but the config file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> is missing!&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># if the file or repo_id does not exist locally, load from the Hub</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_local</span><span class="p">:</span>
+            <span class="n">config_path</span> <span class="o">=</span> <span class="n">hf_hub_download</span><span class="p">(</span>
+                <span class="n">hub_or_local_path</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                <span class="n">subfolder</span><span class="o">=</span><span class="n">subfolder</span><span class="p">,</span>
+                <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span> <span class="ow">or</span> <span class="n">HEZAR_CACHE_DIR</span><span class="p">,</span>
+                <span class="n">repo_type</span><span class="o">=</span><span class="n">repo_type</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># Load config file and convert to dictionary</span>
+        <span class="n">dict_config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">dict_config</span><span class="p">)</span>
+        <span class="c1"># Check if config_type in the file and class are equal</span>
+        <span class="n">config_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;config_type&quot;</span><span class="p">,</span> <span class="n">ConfigType</span><span class="o">.</span><span class="n">BASE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config_type</span> <span class="ow">in</span> <span class="n">_config_to_type_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">config_type</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">config_type</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The `config_type` for `</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` is `</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">config_type</span><span class="si">}</span><span class="s2">` &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;which is different from the `config_type` parameter in `</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">` which is `</span><span class="si">{</span><span class="n">config_type</span><span class="si">}</span><span class="s2">`!&quot;</span>
+                <span class="p">)</span>
+        <span class="n">config_cls</span> <span class="o">=</span> <span class="n">get_module_config_class</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">registry_type</span><span class="o">=</span><span class="n">config_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config_cls</span> <span class="o">=</span> <span class="bp">cls</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="Config.from_dict">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dict_config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">|</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load config from a dict-like object. Nested configs are also recursively converted to their classes if possible.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update config parameters with kwargs</span>
+        <span class="n">dict_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="s2">&quot;config_type&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="n">config_cls</span> <span class="o">=</span> <span class="n">get_module_config_class</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;config_type&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">config_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">dict_config</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="n">dict_config</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fields</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fields</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">init</span><span class="p">}</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">dict_config</span><span class="p">)</span>  <span class="c1"># noqa</span>
+
+        <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="Config.save">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.save">[docs]</a>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">subfolder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip_none_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the `*config.yaml` file to a local path</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">             save_dir: Save directory path</span>
+<span class="sd">             filename: Config file name</span>
+<span class="sd">             subfolder: Subfolder to save the config file</span>
+<span class="sd">             skip_none_fields (bool): Whether to skip saving None values or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subfolder</span> <span class="o">=</span> <span class="n">subfolder</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">skip_none_fields</span><span class="p">:</span>
+            <span class="c1"># exclude None items</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="c1"># make and save to directory</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">OmegaConf</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">save_path</span></div>
+
+
+<div class="viewcode-block" id="Config.push_to_hub">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.Config.push_to_hub">[docs]</a>
+    <span class="k">def</span> <span class="nf">push_to_hub</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">repo_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">subfolder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">repo_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="n">skip_none_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">private</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">commit_message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Push the config file to the hub</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            repo_id (str): Repo name or id on the Hub</span>
+<span class="sd">            filename (str): config file name</span>
+<span class="sd">            subfolder (str): subfolder to save the config</span>
+<span class="sd">            repo_type (str): Type of the repo e.g, model, dataset, space</span>
+<span class="sd">            skip_none_fields (bool): Whether to skip saving None values or not</span>
+<span class="sd">            private (bool): Whether the repo type should be private or not (ignored if the repo exists)</span>
+<span class="sd">            commit_message (str): Push commit message</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path_in_repo</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subfolder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">subfolder</span> <span class="k">else</span> <span class="n">filename</span>
+        <span class="n">subfolder</span> <span class="o">=</span> <span class="n">subfolder</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># create remote repo</span>
+        <span class="n">create_repo</span><span class="p">(</span><span class="n">repo_id</span><span class="p">,</span> <span class="n">repo_type</span><span class="o">=</span><span class="n">repo_type</span><span class="p">,</span> <span class="n">private</span><span class="o">=</span><span class="n">private</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># save to tmp and prepare for push</span>
+        <span class="n">cache_path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cache_path</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">subfolder</span><span class="o">=</span><span class="n">subfolder</span><span class="p">,</span> <span class="n">skip_none_fields</span><span class="o">=</span><span class="n">skip_none_fields</span><span class="p">)</span>
+        <span class="c1"># push to hub</span>
+        <span class="k">if</span> <span class="n">commit_message</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">commit_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Hezar: Upload </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">upload_file</span><span class="p">(</span>
+            <span class="n">path_or_fileobj</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span>
+            <span class="n">path_in_repo</span><span class="o">=</span><span class="n">path_in_repo</span><span class="p">,</span>
+            <span class="n">repo_id</span><span class="o">=</span><span class="n">repo_id</span><span class="p">,</span>
+            <span class="n">repo_type</span><span class="o">=</span><span class="n">repo_type</span><span class="p">,</span>
+            <span class="n">commit_message</span><span class="o">=</span><span class="n">commit_message</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">log_upload_success</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span><span class="p">,</span> <span class="n">target_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repo_id</span><span class="p">,</span> <span class="n">path_in_repo</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ModelConfig">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.ModelConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ModelConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base dataclass for all model configs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">MODEL</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PreprocessorConfig">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.PreprocessorConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PreprocessorConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base dataclass for all preprocessor configs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">PREPROCESSOR</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DatasetConfig">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.DatasetConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DatasetConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base dataclass for all dataset configs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str):</span>
+<span class="sd">            Path to the dataset either on the Hub or local. Supported syntax is either `&lt;path&gt;` or `&lt;path&gt;:&lt;name&gt;` where</span>
+<span class="sd">            &lt;name&gt; is the parameter `name` in the `load_dataset()`</span>
+<span class="sd">        task (str):</span>
+<span class="sd">            A supported task for the dataset</span>
+<span class="sd">        max_size (int | float):</span>
+<span class="sd">            Maximum number of data samples. Overwrites the main length of the dataset when calling `len(dataset)`.</span>
+<span class="sd">            If set to a float value between 0 and 1, will be interpreted as a fraction value, e.g, 0.3 means 30% of the</span>
+<span class="sd">            whole length.</span>
+<span class="sd">        hf_load_kwargs (dict):</span>
+<span class="sd">            Keyword arguments to pass to the HF `datasets.load_dataset()`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">DATASET</span><span class="p">)</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">TaskType</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">TaskType</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="s2">&quot;Name of the task(s) this dataset is built for&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">hf_load_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">config_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hf_load_kwargs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config_name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hf_load_kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hf_load_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hf_load_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hf_load_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hf_load_kwargs</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+
+<div class="viewcode-block" id="EmbeddingConfig">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.EmbeddingConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">EmbeddingConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base dataclass for all embedding configs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">EMBEDDING</span><span class="p">)</span>
+    <span class="n">bypass_version_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to bypass checking gensim/numpy/hezar version compatibility&quot;</span><span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MetricConfig">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.MetricConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MetricConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base dataclass config for all metric configs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">METRIC</span><span class="p">)</span>
+    <span class="n">objective</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span> <span class="s2">&quot;minimize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">output_keys</span><span class="p">:</span> <span class="n">List</span> <span class="o">|</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">n_decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+
+<div class="viewcode-block" id="TrainerConfig">
+<a class="viewcode-back" href="../../source/hezar.configs.html#hezar.configs.TrainerConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TrainerConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base dataclass for all trainer configs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task (str, TaskType):</span>
+<span class="sd">            The training task. Must be a valid name from `TaskType`.</span>
+<span class="sd">        output_dir (str):</span>
+<span class="sd">            Path to the directory to save trainer properties.</span>
+<span class="sd">        device (str):</span>
+<span class="sd">            Hardware device e.g, `cuda:0`, `cpu`, etc.</span>
+<span class="sd">        num_epochs (int):</span>
+<span class="sd">            Number of total epochs to train the model.</span>
+<span class="sd">        init_weights_from (str):</span>
+<span class="sd">            Path to a model from disk or Hub to load the initial weights from. Note that this only loads the model</span>
+<span class="sd">            weights and ignores other checkpoint-related states if the path is a checkpoint. To resume training from</span>
+<span class="sd">            a checkpoint use the `resume` parameter.</span>
+<span class="sd">        resume_from_checkpoint (bool, str, os.PathLike):</span>
+<span class="sd">            Resume training from a checkpoint. If set to True, the trainer will load the latest checkpoint, otherwise if</span>
+<span class="sd">            a path to a checkpoint is given, it will load that checkpoint and all the other states corresponding to that</span>
+<span class="sd">            checkpoint.</span>
+<span class="sd">        max_steps (int):</span>
+<span class="sd">            Maximum number of iterations to train. This helps to limit how many batches you want to train in total.</span>
+<span class="sd">        num_dataloader_workers (int):</span>
+<span class="sd">            Number of dataloader workers, defaults to 4 .</span>
+<span class="sd">        dataloader_shuffle (bool):</span>
+<span class="sd">            Control dataloaders `shuffle` argument.</span>
+<span class="sd">        seed (int):</span>
+<span class="sd">            Control determinism of the run by setting a seed value. defaults to 42.</span>
+<span class="sd">        optimizer (OptimizerType):</span>
+<span class="sd">            Name of the optimizer, available values include properties in `OptimizerType` enum.</span>
+<span class="sd">        learning_rate (float):</span>
+<span class="sd">            Initial learning rate for the optimizer.</span>
+<span class="sd">        weight_decay (float):</span>
+<span class="sd">            Optimizer weight decay value.</span>
+<span class="sd">        lr_scheduler (LRSchedulerType):</span>
+<span class="sd">            Optional learning rate scheduler among `LRSchedulerType` enum.</span>
+<span class="sd">        lr_scheduler_kwargs (Dict[str, Any]):</span>
+<span class="sd">            LR scheduler instructor kwargs depending on the scheduler type</span>
+<span class="sd">        lr_scheduling_steps (int):</span>
+<span class="sd">            Number of steps to perform scheduler stepping. If left as None, will default to the steps in one full epoch.</span>
+<span class="sd">        batch_size (int):</span>
+<span class="sd">            Training batch size.</span>
+<span class="sd">        eval_batch_size (int):</span>
+<span class="sd">            Evaluation batch size, defaults to `batch_size` if None.</span>
+<span class="sd">        gradient_accumulation_steps (int):</span>
+<span class="sd">            Number of updates steps to accumulate before performing a backward/update pass, defaults to 1.</span>
+<span class="sd">        distributed (bool):</span>
+<span class="sd">            Whether to use distributed training (via the `accelerate` package)</span>
+<span class="sd">        mixed_precision (PrecisionType | str):</span>
+<span class="sd">            Mixed precision type e.g, fp16, bf16, etc. (disabled by default)</span>
+<span class="sd">        use_cpu (bool):</span>
+<span class="sd">            Whether to train using the CPU only even if CUDA is available.</span>
+<span class="sd">        do_evaluate (bool):</span>
+<span class="sd">            Whether to run evaluation when calling `Trainer.train`</span>
+<span class="sd">        evaluate_with_generate (bool):</span>
+<span class="sd">            Whether to use `generate()` in the evaluation step or not. (only applicable for generative models).</span>
+<span class="sd">        metrics (List[str | MetricConfig]):</span>
+<span class="sd">            A list of metrics. Depending on the `valid_metrics` in the specific MetricsHandler of the Trainer.</span>
+<span class="sd">        metric_for_best_model (str):</span>
+<span class="sd">            Reference metric key to watch for determining the best model. Recommended to have a {train. | evaluation.}</span>
+<span class="sd">            prefix (e.g, evaluation.f1, train.accuracy, etc.) but if not, defaults to</span>
+<span class="sd">            `evaluation.{metric_for_best_model}`.</span>
+<span class="sd">        save_freq (int) (DEPRECATED):</span>
+<span class="sd">            Deprecated and renamed to `save_steps`.</span>
+<span class="sd">        save_enabled (bool):</span>
+<span class="sd">            Whether to save checkpoints at all. `False` disables even the saves in-between the epochs.</span>
+<span class="sd">        save_steps (int):</span>
+<span class="sd">            Save the trainer outputs every `save_steps` steps. Leave as None to ignore saving in-between training steps.</span>
+<span class="sd">            If set to a float value between 0 and 1, it will be interpreted as a fraction of the total steps.</span>
+<span class="sd">        log_steps (int):</span>
+<span class="sd">            Save training metrics every `log_steps` steps. If set to a float value between 0 and 1, it will be</span>
+<span class="sd">            interpreted as a fraction of the total steps.</span>
+<span class="sd">        checkpoints_dir (str):</span>
+<span class="sd">            Path to the checkpoints&#39; folder. The actual files will be saved under `{output_dir}/{checkpoints_dir}`.</span>
+<span class="sd">        logs_dir (str):</span>
+<span class="sd">            Path to the logs&#39; folder. The actual log files will be saved under `{output_dir}/{logs_dir}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;trainer&quot;</span><span class="p">)</span>
+    <span class="n">config_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ConfigType</span><span class="o">.</span><span class="n">TRAINER</span><span class="p">)</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TaskType</span>
+    <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
+    <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">init_weights_from</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">resume_from_checkpoint</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_dataloader_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">dataloader_shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span>
+    <span class="n">optimizer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">OptimizerType</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2e-5</span>
+    <span class="n">weight_decay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">lr_scheduler</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">LRSchedulerType</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lr_scheduler_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lr_scheduling_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">eval_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">gradient_accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">mixed_precision</span><span class="p">:</span> <span class="n">PrecisionType</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">use_cpu</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">do_evaluate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">evaluate_with_generate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">MetricConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">metric_for_best_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span>
+    <span class="n">save_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">save_freq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;deprecated&quot;</span>
+    <span class="n">save_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">log_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">checkpoints_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;checkpoints&quot;</span>
+    <span class="n">logs_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logs&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform some argument sanitization and filtering here to avoid unexpected behavior in the trainer.</span>
+<span class="sd">        The need for having this method is that some fields in the Trainer&#39;s config have correlations with each other</span>
+<span class="sd">        and not controlling them can lead to conflicts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="c1"># Validate `task`</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">TaskType</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid task `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">` passed to `TrainerConfig`. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Available options are </span><span class="si">{</span><span class="n">TaskType</span><span class="o">.</span><span class="n">list</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># Validate `metric_for_best_model`</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_for_best_model</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;evaluation&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_for_best_model</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metric_for_best_model</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;evaluation.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_for_best_model</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metric_for_best_model</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;train.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_for_best_model</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Validate steps</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_steps</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">gradient_accumulation_steps</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;It&#39;s recommended to set a `save_steps` dividable by `gradient_accumulation_steps`, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;otherwise, the saved model will have non-updated weights!</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`save_steps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_steps</span><span class="si">}</span><span class="s2">`, `gradient_accumulation_steps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gradient_accumulation_steps</span><span class="si">}</span><span class="s2">`&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Validate deprecated fields</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_freq</span> <span class="o">!=</span> <span class="s2">&quot;deprecated&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Trainer argument `save_freq` is deprecated! Use `save_steps` (number of training steps per save).&quot;</span>
+                <span class="s2">&quot;Note that saving is also done at the end of each epoch unless you set `save_enabled` to `False` !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Distributed mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Distributed mode is experimental and might have bugs. &quot;</span>
+                <span class="s2">&quot;Use with caution and don&#39;t forget to submit any issues!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Disable tokenizers parallelism if num_dataloader_workers is more than 1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_dataloader_workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TOKENIZERS_PARALLELISM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Hezar AI Team &amp; contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/hezarai/hezar" aria-label="GitHub"><i class="fa-brands fa-github fa-2x" style="color: #343d4c;"></i></a>
+              <a class="muted-link " href="https://t.me/hezarai" aria-label="Telegram"><i class="fa-brands fa-telegram fa-2x" style="color: #229ed9;"></i></a>
+              <a class="muted-link " href="https://huggingface.co/hezarai" aria-label="Hugging Face"> <img style="width:32px;height:32px;" src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

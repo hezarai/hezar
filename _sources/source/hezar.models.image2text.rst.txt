@@ -1,0 +1,22 @@
+hezar.models.image2text package
+===============================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.image2text.beit_roberta
+   hezar.models.image2text.crnn
+   hezar.models.image2text.trocr
+   hezar.models.image2text.vit_gpt2
+   hezar.models.image2text.vit_roberta
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.image2text
+   :members:
+   :undoc-members:
+   :show-inheritance:

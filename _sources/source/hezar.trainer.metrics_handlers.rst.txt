@@ -1,0 +1,7 @@
+hezar.trainer.metrics\_handlers module
+======================================
+
+.. automodule:: hezar.trainer.metrics_handlers
+   :members:
+   :undoc-members:
+   :show-inheritance:

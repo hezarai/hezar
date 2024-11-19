@@ -1,0 +1,7 @@
+hezar.data.datasets.image\_captioning\_dataset module
+=====================================================
+
+.. automodule:: hezar.data.datasets.image_captioning_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

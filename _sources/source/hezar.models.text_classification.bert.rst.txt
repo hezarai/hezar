@@ -1,0 +1,19 @@
+hezar.models.text\_classification.bert package
+==============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.text_classification.bert.bert_text_classification
+   hezar.models.text_classification.bert.bert_text_classification_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.text_classification.bert
+   :members:
+   :undoc-members:
+   :show-inheritance:

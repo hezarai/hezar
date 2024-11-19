@@ -1,0 +1,7 @@
+hezar.preprocessors.audio\_feature\_extractor module
+====================================================
+
+.. automodule:: hezar.preprocessors.audio_feature_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:

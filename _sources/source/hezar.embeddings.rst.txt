@@ -1,0 +1,20 @@
+hezar.embeddings package
+========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.embeddings.embedding
+   hezar.embeddings.fasttext
+   hezar.embeddings.word2vec
+
+Module contents
+---------------
+
+.. automodule:: hezar.embeddings
+   :members:
+   :undoc-members:
+   :show-inheritance:

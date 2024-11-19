@@ -1,0 +1,7 @@
+hezar.trainer.trainer module
+============================
+
+.. automodule:: hezar.trainer.trainer
+   :members:
+   :undoc-members:
+   :show-inheritance:

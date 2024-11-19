@@ -1,0 +1,7 @@
+hezar.models.image2text.vit\_gpt2.vit\_gpt2\_image2text\_config module
+======================================================================
+
+.. automodule:: hezar.models.image2text.vit_gpt2.vit_gpt2_image2text_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

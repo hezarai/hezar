@@ -1,0 +1,7 @@
+hezar.models.speech\_recognition.whisper.whisper\_tokenizer module
+==================================================================
+
+.. automodule:: hezar.models.speech_recognition.whisper.whisper_tokenizer
+   :members:
+   :undoc-members:
+   :show-inheritance:

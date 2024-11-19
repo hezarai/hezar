@@ -1,0 +1,7 @@
+hezar.models.mask\_filling.distilbert.distilbert\_mask\_filling\_config module
+==============================================================================
+
+.. automodule:: hezar.models.mask_filling.distilbert.distilbert_mask_filling_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

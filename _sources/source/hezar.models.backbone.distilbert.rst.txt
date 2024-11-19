@@ -1,0 +1,19 @@
+hezar.models.backbone.distilbert package
+========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.backbone.distilbert.distilbert
+   hezar.models.backbone.distilbert.distilbert_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.backbone.distilbert
+   :members:
+   :undoc-members:
+   :show-inheritance:

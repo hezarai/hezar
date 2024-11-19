@@ -1,0 +1,19 @@
+hezar.models.backbone.vit package
+=================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   hezar.models.backbone.vit.vit
+   hezar.models.backbone.vit.vit_config
+
+Module contents
+---------------
+
+.. automodule:: hezar.models.backbone.vit
+   :members:
+   :undoc-members:
+   :show-inheritance:

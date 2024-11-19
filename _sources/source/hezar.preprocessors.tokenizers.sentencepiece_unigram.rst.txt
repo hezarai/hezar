@@ -1,0 +1,7 @@
+hezar.preprocessors.tokenizers.sentencepiece\_unigram module
+============================================================
+
+.. automodule:: hezar.preprocessors.tokenizers.sentencepiece_unigram
+   :members:
+   :undoc-members:
+   :show-inheritance:

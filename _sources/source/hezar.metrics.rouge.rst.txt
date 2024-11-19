@@ -1,0 +1,7 @@
+hezar.metrics.rouge module
+==========================
+
+.. automodule:: hezar.metrics.rouge
+   :members:
+   :undoc-members:
+   :show-inheritance:

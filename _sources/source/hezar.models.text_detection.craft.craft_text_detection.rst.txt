@@ -1,0 +1,7 @@
+hezar.models.text\_detection.craft.craft\_text\_detection module
+================================================================
+
+.. automodule:: hezar.models.text_detection.craft.craft_text_detection
+   :members:
+   :undoc-members:
+   :show-inheritance:

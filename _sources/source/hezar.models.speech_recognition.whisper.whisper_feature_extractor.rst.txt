@@ -1,0 +1,7 @@
+hezar.models.speech\_recognition.whisper.whisper\_feature\_extractor module
+===========================================================================
+
+.. automodule:: hezar.models.speech_recognition.whisper.whisper_feature_extractor
+   :members:
+   :undoc-members:
+   :show-inheritance:

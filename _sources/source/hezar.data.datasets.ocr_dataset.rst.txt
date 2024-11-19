@@ -1,0 +1,7 @@
+hezar.data.datasets.ocr\_dataset module
+=======================================
+
+.. automodule:: hezar.data.datasets.ocr_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

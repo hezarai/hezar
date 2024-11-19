@@ -1,0 +1,7 @@
+hezar.models.model module
+=========================
+
+.. automodule:: hezar.models.model
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+hezar.utils.registry\_utils module
+==================================
+
+.. automodule:: hezar.utils.registry_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

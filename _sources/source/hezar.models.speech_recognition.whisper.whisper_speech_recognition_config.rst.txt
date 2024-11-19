@@ -1,0 +1,7 @@
+hezar.models.speech\_recognition.whisper.whisper\_speech\_recognition\_config module
+====================================================================================
+
+.. automodule:: hezar.models.speech_recognition.whisper.whisper_speech_recognition_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

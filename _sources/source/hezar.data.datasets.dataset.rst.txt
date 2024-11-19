@@ -1,0 +1,7 @@
+hezar.data.datasets.dataset module
+==================================
+
+.. automodule:: hezar.data.datasets.dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

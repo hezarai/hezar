@@ -1,0 +1,7 @@
+hezar.models.backbone.distilbert.distilbert module
+==================================================
+
+.. automodule:: hezar.models.backbone.distilbert.distilbert
+   :members:
+   :undoc-members:
+   :show-inheritance:
