@@ -1,9 +1,10 @@
 import csv
 import os
+from typing import Dict, List, Tuple, Iterator, Optional
 
 import datasets
 from tqdm import tqdm
-
+import logging
 
 _DESCRIPTION = """\
 Persian portion of the common voice 13 dataset, gathered and maintained by Hezar AI.
@@ -20,15 +21,12 @@ _CITATION = """\
 """
 
 _HOMEPAGE = "https://commonvoice.mozilla.org/en/datasets"
-
 _LICENSE = "https://creativecommons.org/publicdomain/zero/1.0/"
-
 _BASE_URL = "https://huggingface.co/datasets/hezarai/common-voice-13-fa/resolve/main/"
-
 _AUDIO_URL = _BASE_URL + "audio/{split}.zip"
-
 _TRANSCRIPT_URL = _BASE_URL + "transcripts/{split}.tsv"
 
+logger = logging.getLogger(__name__)
 
 class CommonVoiceFaConfig(datasets.BuilderConfig):
     """BuilderConfig for CommonVoice."""
@@ -38,6 +36,8 @@ class CommonVoiceFaConfig(datasets.BuilderConfig):
 
 
 class CommonVoice(datasets.GeneratorBasedBuilder):
+    """Dataset loader for the Persian Common Voice dataset."""
+
     DEFAULT_WRITER_BATCH_SIZE = 1000
 
     BUILDER_CONFIGS = [
@@ -48,7 +48,8 @@ class CommonVoice(datasets.GeneratorBasedBuilder):
         )
     ]
 
-    def _info(self):
+    def _info(self) -> datasets.DatasetInfo:
+        """Returns the dataset metadata."""
         features = datasets.Features(
             {
                 "client_id": datasets.Value("string"),
@@ -76,7 +77,8 @@ class CommonVoice(datasets.GeneratorBasedBuilder):
             version=self.config.version,
         )
 
-    def _split_generators(self, dl_manager):
+    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
+        """Returns SplitGenerators."""
         splits = ("train", "dev", "test")
         audio_urls = {split: _AUDIO_URL.format(split=split) for split in splits}
 
@@ -106,12 +108,35 @@ class CommonVoice(datasets.GeneratorBasedBuilder):
 
         return split_generators
 
-    def _generate_examples(self, local_extracted_archive_paths, archives, transcript_path):
+    def _generate_examples(
+        self,
+        local_extracted_archive_paths: Optional[str],
+        archives: List[Iterator[Tuple[str, bytes]]],
+        transcript_path: str,
+    ) -> Iterator[Tuple[str, Dict]]:
+        """Yields examples."""
         data_fields = list(self._info().features.keys())
+        metadata = self._load_metadata(transcript_path, data_fields)
+
+        for i, audio_archive in enumerate(archives):
+            for path, file in tqdm(audio_archive, desc=f"Processing audio files (archive {i+1})"):
+                _, filename = os.path.split(path)
+                if filename in metadata:
+                    result = dict(metadata[filename])
+                    # set the audio feature and the path to the extracted file
+                    path = os.path.join(local_extracted_archive_paths[i],
+                                        path) if local_extracted_archive_paths else path
+                    result["audio"] = {"path": path, "bytes": file.read()}
+                    result["path"] = path
+                    yield path, result
+
+    @staticmethod
+    def _load_metadata(transcript_path: str, data_fields: List[str]) -> Dict[str, Dict]:
+        """Loads and validates metadata from the transcript file."""
         metadata = {}
         with open(transcript_path, encoding="utf-8") as f:
             reader = csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE)
-            for row in tqdm(reader, desc="Reading metadata..."):
+            for row in tqdm(reader, desc="Reading metadata"):
                 if not row["path"].endswith(".mp3"):
                     row["path"] += ".mp3"
                 # accent -> accents in CV 8.0
@@ -122,16 +147,25 @@ class CommonVoice(datasets.GeneratorBasedBuilder):
                 for field in data_fields:
                     if field not in row:
                         row[field] = ""
+                
+                # Validate numeric fields
+                try:
+                    row["up_votes"] = int(row["up_votes"])
+                    row["down_votes"] = int(row["down_votes"])
+                except ValueError:
+                    logger.warning(f"Invalid vote count for {row['path']}, skipping")
+                    continue
+
                 metadata[row["path"]] = row
 
-        for i, audio_archive in enumerate(archives):
-            for path, file in audio_archive:
-                _, filename = os.path.split(path)
-                if filename in metadata:
-                    result = dict(metadata[filename])
-                    # set the audio feature and the path to the extracted file
-                    path = os.path.join(local_extracted_archive_paths[i],
-                                        path) if local_extracted_archive_paths else path
-                    result["audio"] = {"path": path, "bytes": file.read()}
-                    result["path"] = path
-                    yield path, result
+        return metadata
+
+    @staticmethod
+    def _get_audio_format(file_path: str) -> str:
+        """Determines the audio format based on the file extension."""
+        _, ext = os.path.splitext(file_path)
+        return ext.lower()[1:]  # Remove the leading dot
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    datasets.load_dataset(__file__)
