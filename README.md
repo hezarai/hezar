@@ -16,7 +16,9 @@
 [![Telegram Channel](https://img.shields.io/badge/Telegram_Channel-blue?logo=telegram&link=https%3A%2F%2Ft.me%2Fhezarai)](https://t.me/hezarai)
 [![Donation](https://img.shields.io/badge/Donate_Us-%23881AE4?logo=githubsponsors)](https://daramet.com/hezarai)
 </div>
-
+<div align="center">
+<a href="https://trendshift.io/repositories/3474" target="_blank"><img src="https://trendshift.io/api/badge/repositories/3474" alt="hezarai%2Fhezar | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+</div>
 
 **Hezar** (meaning **_thousand_** in Persian) is a multipurpose AI library built to make AI easy for the Persian community!
 
