@@ -3,7 +3,7 @@ from hezar.models import CRNNImage2TextConfig, CRNNImage2Text
 from hezar.preprocessors import ImageProcessor
 from hezar.trainer import Trainer, TrainerConfig
 
-image_processor = ImageProcessor.load("hezarai/crnn-fa-printed-96-long")
+image_processor = ImageProcessor.load("hezarai/crnn-base-fa-v2")
 
 train_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="train", preprocessor=image_processor)
 eval_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="test", preprocessor=image_processor)

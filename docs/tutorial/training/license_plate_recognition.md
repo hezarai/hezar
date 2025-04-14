@@ -8,7 +8,7 @@ from hezar.data import Dataset
 from hezar.models import CRNNImage2TextConfig, CRNNImage2Text
 from hezar.preprocessors import Preprocessor
 
-base_model_path = "hezarai/crnn-fa-printed-96-long"
+base_model_path = "hezarai/crnn-base-fa-v2"
 ```
 
 ## Dataset
@@ -90,7 +90,7 @@ class ALPRDataset(OCRDataset):
 You can customize this class further according to your needs.
 
 ## Model
-For the model we'll use the `CRNN` model with pretrained weights from `hezarai/crnn-fa-printed-96-long` which was trained
+For the model we'll use the `CRNN` model with pretrained weights from `hezarai/crnn-base-fa-v2` which was trained
 on a large Persian corpus with millions of synthetic samples. 
 ```python
 model_config = CRNNImage2TextConfig.load(base_model_path, id2label=train_dataset.config.id2label)
@@ -148,7 +148,7 @@ Missing keys: []
   Output Directory: crnn-plate-fa
   Task: image2text
   Model: CRNNImage2Text
-  Init Weights: hezarai/crnn-fa-printed-96-long
+  Init Weights: hezarai/crnn-base-fa-v2
   Device(s): cuda
   Batch Size: 8
   Epochs: 10

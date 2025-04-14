@@ -3,7 +3,7 @@ from hezar.models import Model
 from hezar.utils import load_image, crop_boxes, save_image
 
 detector_model = Model.load("hezarai/CRAFT", device="cuda")
-recognition_model = Model.load("hezarai/crnn-fa-printed-96-long", device="cuda")
+recognition_model = Model.load("hezarai/crnn-base-fa-v2", device="cuda")
 
 image = load_image("../assets/text_detection_example.png")
 

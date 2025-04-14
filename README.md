@@ -135,7 +135,7 @@ show_image(result_image, "result")
 ```python
 from hezar.models import Model
 # OCR with CRNN
-model = Model.load("hezarai/crnn-fa-printed-96-long")
+model = Model.load("hezarai/crnn-base-fa-v2")
 texts = model.predict("examples/assets/ocr_example.jpg")
 print(f"CRNN Output: {texts}")
 ```
@@ -227,7 +227,7 @@ from hezar.data import Dataset
 sentiment_dataset = Dataset.load("hezarai/sentiment-dksf", preprocessor="hezarai/bert-base-fa")  # A TextClassificationDataset instance
 lscp_dataset = Dataset.load("hezarai/lscp-pos-500k", preprocessor="hezarai/bert-base-fa")  # A SequenceLabelingDataset instance
 xlsum_dataset = Dataset.load("hezarai/xlsum-fa", preprocessor="hezarai/t5-base-fa")  # A TextSummarizationDataset instance
-alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1", preprocessor="hezarai/crnn-fa-printed-96-long")  # An OCRDataset instance
+alpr_ocr_dataset = Dataset.load("hezarai/persian-license-plate-v1", preprocessor="hezarai/crnn-base-fa-v2")  # An OCRDataset instance
 flickr30k_dataset = Dataset.load("hezarai/flickr30k-fa", preprocessor="hezarai/vit-roberta-fa-base")  # An ImageCaptioningDataset instance
 commonvoice_dataset = Dataset.load("hezarai/common-voice-13-fa", preprocessor="hezarai/whisper-small-fa")  # A SpeechRecognitionDataset instance
 ...

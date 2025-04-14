@@ -21,7 +21,7 @@ DATASETS_MAPPING = {
     },
     "ocr": {
         "path": "hezarai/persian-license-plate-v1",
-        "preprocessor": "hezarai/crnn-fa-printed-96-long",
+        "preprocessor": "hezarai/crnn-base-fa-v2",
     },
     "image-captioning": {
         "path": "hezarai/flickr30k-fa",

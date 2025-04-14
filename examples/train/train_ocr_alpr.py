@@ -3,7 +3,7 @@ from hezar.preprocessors import Preprocessor
 from hezar.data import Dataset
 from hezar.trainer import Trainer, TrainerConfig
 
-base_model_path = "hezarai/crnn-fa-printed-96-long"
+base_model_path = "hezarai/crnn-base-fa-v2"
 preprocessor = Preprocessor.load(base_model_path)
 
 train_dataset = Dataset.load(
