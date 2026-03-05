@@ -33,22 +33,30 @@ Hezar is a library that:
 - and more!
 
 ## Installation
-Hezar is available on PyPI and can be installed with pip (**Python 3.10 and later**):
+Hezar is available on PyPI and can be installed with `pip` or added as a dependency to your dev environment with `uv` (**Python 3.10 and later**):
 ```
 pip install hezar
 ```
+Or if you prefer `uv` and are in a `uv`-compatible environment:
+```
+uv add hezar
+```
 Note that Hezar is a collection of models and tools, hence having different installation variants:
 ```
-pip install hezar[all]  # For a full installation
-pip install hezar[nlp]  # For NLP
-pip install hezar[vision]  # For computer vision models
-pip install hezar[audio]  # For audio and speech
-pip install hezar[embeddings]  # For word embedding models
+pip install hezar[all]  # Options: all, nlp, vision, audio, embeddings
+# or
+uv add hezar[all] # Options: all, nlp, vision, audio, embeddings
 ```
 You can also install the latest version from the source:
 ```
 git clone https://github.com/hezarai/hezar.git
-pip install ./hezar
+cd hezar
+
+# Option 1: use uv
+uv sync
+
+# Option 2: use pip
+pip install .
 ```
 ## Documentation
 Explore Hezar to learn more on the [docs](https://hezarai.github.io/hezar/index.html) page or explore the key concepts:
