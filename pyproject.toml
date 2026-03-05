@@ -32,28 +32,28 @@ exclude = [
 
 [tool.poetry.dependencies]
 python = ">=3.10.0"
-torch = ">=1.10.0"
+torch = ">=2.0.0"
 omegaconf = ">=2.3.0"
-transformers = ">=4.28.0"
+transformers = ">=4.30.0,<6"
 tokenizers = ">=0.13.0"
-huggingface_hub = ">=0.12.0"
-datasets = {version=">=2.9.0", optional=true}
-pandas = {version="*", optional=true}
+huggingface_hub = ">=0.20.0,<1"
+datasets = {version=">=2.9.0,<4", optional=true}
+pandas = {version=">=1.5.0", optional=true}
 scikit-learn = {version=">=1.0.0", optional=true}
 tensorboard = {version=">=2.10.0", optional=true}
-torchvision = {version="*", optional=true}
-opencv-python = { version = "*", optional = true}
-accelerate = {version=">=0.27.0", optional=true}
-numpy = {version="1.24.*", optional=true}
-scipy = {version="1.11.4", optional=true}
-gensim = {version="4.3.2", optional=true}
+torchvision = {version=">=0.15.0", optional=true}
+opencv-python = {version=">=4.5.0", optional=true}
+accelerate = {version=">=0.27.0,<2", optional=true}
+numpy = {version=">=1.24.0,<3", optional=true}
+scipy = {version=">=1.11.0", optional=true}
+gensim = {version=">=4.3.0", optional=true}
 seqeval = {version=">=1.2.0", optional=true}
-jiwer = {version=">=3.*", optional=true}
+jiwer = {version=">=3.0.0", optional=true}
 soundfile = {version=">=0.12.0", optional=true}
 librosa = {version=">=0.10.0", optional=true}
-pillow = {version=">=9.*,<=10.*", optional=true}
+pillow = {version=">=9.0.0", optional=true}
 nltk = {version=">=3.8.0", optional=true}
-rouge_score = {version="*", optional=true}
+rouge_score = {version=">=0.1.2", optional=true}
 
 [tool.poetry.extras]
 nlp = ["seqeval", "jiwer", "nltk", "rouge_score"]
