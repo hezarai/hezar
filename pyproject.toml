@@ -31,7 +31,7 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10.0"
+python = ">=3.10.0,<3.13.0"
 torch = ">=2.0.0"
 omegaconf = ">=2.3.0"
 transformers = ">=4.30.0,<6"
@@ -45,7 +45,7 @@ torchvision = {version=">=0.15.0", optional=true}
 opencv-python = {version=">=4.5.0", optional=true}
 accelerate = {version=">=0.27.0,<2", optional=true}
 numpy = {version=">=1.24.0,<2", optional=true}
-scipy = {version=">=1.11.0", optional=true}
+scipy = {version="1.11.0", optional=true}
 gensim = {version="4.3.2", optional=true}
 seqeval = {version=">=1.2.0", optional=true}
 jiwer = {version=">=3.0.0", optional=true}
