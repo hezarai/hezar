@@ -1,22 +1,33 @@
 name: Build & Deploy Docs
+
 on: [workflow_call, workflow_dispatch]
+
 permissions:
-    contents: write
+  contents: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Install dependencies
-        run: |
-          pip install sphinx myst-parser furo sphinx-copybutton hezar[all]
+        run: uv sync --extra dev
+
       - name: Sphinx build
         run: |
-          sphinx-apidoc -e -o docs/source hezar/
-          sphinx-build docs _build
+          uv run sphinx-apidoc -e -o docs/source hezar/
+          uv run sphinx-build docs _build
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
