@@ -369,7 +369,7 @@ class EmbeddingConfig(Config):
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.EMBEDDING)
     bypass_version_check: bool = field(
-        default=False,
+        default=True,
         metadata={"help": "Whether to bypass checking gensim/numpy/hezar version compatibility"},
     )
 
