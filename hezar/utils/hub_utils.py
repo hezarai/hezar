@@ -1,6 +1,6 @@
 import os
 
-from huggingface_hub import HfApi, Repository
+from huggingface_hub import HfApi
 
 from ..constants import HEZAR_CACHE_DIR, RepoType
 from ..utils.logging import Logger
@@ -10,7 +10,6 @@ __all__ = [
     "get_local_cache_path",
     "exists_in_cache",
     "exists_on_hub",
-    "clone_repo",
     "list_repo_files",
     "get_state_dict_from_hub",
     "clean_cache",
@@ -63,21 +62,6 @@ def exists_on_hub(hub_path: str, repo_type="model"):
         raise ValueError(f"Unknown type: {repo_type}! Use `model`, `dataset`, `space`, etc.")
 
     return hub_path in [path.id for path in paths]
-
-
-def clone_repo(repo_id: str, save_path: str, **kwargs):
-    """
-    Clone a repo on the hub to local directory
-
-    Args:
-        repo_id: Repo name or id
-        save_path: Path to clone the repo to
-
-    Returns:
-        the local path to the repo
-    """
-    repo = Repository(local_dir=save_path, clone_from=repo_id, **kwargs)
-    return repo.local_dir
 
 
 def list_repo_files(hub_or_local_path: str, subfolder: str = None, repo_type: str | RepoType = RepoType.MODEL):
