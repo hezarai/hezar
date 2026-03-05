@@ -82,9 +82,7 @@ class TokenizerConfig(PreprocessorConfig):
                 "Setting `max_length` in the tokenizer config is deprecated and will be removed in the future!"
             )
         if self.padding != "deprecated":
-            logger.warning(
-                "Setting `padding` in the tokenizer config is deprecated and will be removed in the future!"
-            )
+            logger.warning("Setting `padding` in the tokenizer config is deprecated and will be removed in the future!")
         if self.truncation != "deprecated":
             logger.warning(
                 "Setting `truncation` in the tokenizer config is deprecated and will be removed in the future!"
@@ -332,7 +330,7 @@ class Tokenizer(Preprocessor):
             truncation_side=self.config.truncation_side,
             max_length=max_length,
             stride=self.config.stride,
-            pad_to_multiple_of=pad_to_multiple_of
+            pad_to_multiple_of=pad_to_multiple_of,
         )
         encodings = self.encode(
             inputs,
@@ -342,6 +340,7 @@ class Tokenizer(Preprocessor):
         encodings_dict = [
             self._convert_encodings(
                 encoding=encoding,
+                original_text=inp if isinstance(inp, str) else None,
                 return_tokens=return_tokens,
                 return_token_type_ids=return_token_type_ids,
                 return_attention_mask=return_attention_mask,
@@ -351,7 +350,7 @@ class Tokenizer(Preprocessor):
                 return_length=return_length,
                 return_word_ids=return_word_ids,
             )
-            for encoding in encodings
+            for encoding, inp in zip(encodings, inputs)
         ]
         # Permute output dict from [batch_0: Dict[key, value], ...] to Dict[key, [batch_0, batch_1, ...], ...]
         sanitized_outputs = {}
@@ -430,6 +429,7 @@ class Tokenizer(Preprocessor):
     def _convert_encodings(
         self,
         encoding,
+        original_text: str | None = None,
         return_tokens: bool = None,
         return_token_type_ids: bool = None,
         return_attention_mask: bool = None,
@@ -459,8 +459,7 @@ class Tokenizer(Preprocessor):
             if return_length:
                 encoding_dict["length"].append(len(e.ids))
             if return_tokens:
-                text = self._tokenizer.decode(e.ids)
-                tokens = self.get_tokens_from_offsets(text, e.ids, e.offsets)
+                tokens = self.get_tokens_from_encoding(e, original_text=original_text)
                 encoding_dict["tokens"].append(tokens)
             if return_word_ids:
                 encoding_dict["word_ids"].append(e.word_ids)
@@ -550,21 +549,76 @@ class Tokenizer(Preprocessor):
         """
         return self._tokenizer.get_vocab_size(with_added_tokens=True)
 
+    def _is_byte_level(self) -> bool:
+        """
+        Return True if the underlying tokenizer uses a byte-level decoder (e.g. BPE).
+
+        Byte-level tokenizers encode each byte of a UTF-8 character as a separate
+        symbol, so ``encoding.tokens`` contains unreadable byte-level strings like
+        ``'Ø§ÙĪ'`` instead of the original Persian word ``'او'``.  In that case we
+        must reconstruct token strings by slicing the original input text with the
+        offset mapping instead.
+        """
+        if self._tokenizer.decoder is None:
+            return False
+        return type(self._tokenizer.decoder).__name__ == "ByteLevel"
+
+    def get_tokens_from_encoding(self, encoding, original_text: str | None = None):
+        """
+        Extract human-readable tokens from the HF ``Encoding`` object.
+
+        Two strategies are used depending on the tokenizer type:
+
+        * **Non-byte-level** (WordPiece, Unigram, …): ``encoding.tokens`` already
+          holds the correct human-readable subword strings (e.g. ``'##زم'``), so we
+          return them directly.
+        * **Byte-level BPE**: ``encoding.tokens`` contains unreadable byte-encoded
+          strings.  Here we slice ``original_text`` with ``encoding.offsets``, which
+          always map back to the original input correctly.
+
+        .. note::
+            Never use ``tokenizer.decode(ids)`` + offsets here.  The decoder rewrites
+            the text (removes zero-width non-joiners, re-spaces punctuation, …) so the
+            character positions in the offsets no longer align.
+
+        Args:
+            encoding: An ``Encoding`` object returned by the HF tokenizers backend.
+            original_text: The original input string, required for byte-level BPE.
+
+        Returns:
+            List[str]: A list of human-readable token strings.
+        """
+        if self._is_byte_level():
+            if original_text is None:
+                # Fallback: return raw tokens if original text is unavailable
+                return list(encoding.tokens)
+            return self.get_tokens_from_offsets(original_text, encoding.ids, encoding.offsets)
+        return list(encoding.tokens)
+
     def get_tokens_from_offsets(
         self,
-        text: str | List[str],
+        text: str,
         ids: List[int],
         offsets_mapping: List[Tuple[int, int]],
     ):
         """
-        Extract human-readable tokens using the original text and offsets mapping
+        Extract human-readable tokens by slicing *text* with the provided offsets.
+
+        .. warning::
+            *text* **must** be the same string that was originally fed to the tokenizer
+            (or its normalised form if a normalizer is configured).  Never pass the
+            output of ``tokenizer.decode(ids)`` here: the decoder rewrites the text
+            (removes zero-width characters, re-spaces punctuation, …) so the character
+            positions in *offsets_mapping* will no longer align correctly, resulting in
+            garbled tokens.
+
         Args:
-            text: Raw string text
-            ids: Token ids
-            offsets_mapping: A list of tuples representing offsets
+            text: The original (or normalised) input string.
+            ids: Token ids corresponding to the offsets.
+            offsets_mapping: A list of (start, end) character offset tuples into *text*.
 
         Returns:
-            A list of tokens
+            List[str]: A list of token strings.
         """
         if not isinstance(text, str):
             raise ValueError(f"Expected str type for `text`, got `{type(text)}({text})`")
