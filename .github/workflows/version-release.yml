@@ -3,7 +3,8 @@ name: Version Release
 on:
   push:
     tags:
-      - '\d+\.\d+\.\d+' # Push events to matching d.d.d, i.e. 1.0.0, 15.26.35
+      - '[0-9]+.[0-9]+.[0-9]+' # Stable: 1.0.0, 15.26.35
+      - '[0-9]+.[0-9]+.[0-9]+[a|b|rc]*[0-9]+' # Pre-release: 1.0.0rc0, 1.0.0a1, 1.0.0b2
 
 jobs:
   run-tests:
