@@ -1,79 +1,65 @@
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
+[project]
 name = "hezar"
-version = "0.43.0"
+version = "0.44.0rc0"
 packages = [{ include = "hezar" }]
 description = "Hezar: The all-in-one AI library for Persian, supporting a wide variety of tasks and modalities!"
-license = "Apache-2.0"
-authors = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
-maintainers = ["Aryan Shekarlaban <arxyzan@gmail.com>"]
-repository = "https://github.com/hezarai/hezar"
-homepage = "https://github.com/hezarai"
-readme = ["README.md"]
-keywords = ["packaging", "poetry"]
-documentation = "https://hezarai.github.io/hezar/"
+license = { text = "Apache-2.0" }
+readme = "README.md"
+authors = [{ name = "Aryan Shekarlaban", email = "arxyzan@gmail.com" }]
+maintainers = [{ name = "Aryan Shekarlaban", email = "arxyzan@gmail.com" }]
+keywords = ["nlp", "persian", "ai", "deep-learning", "transformers"]
+requires-python = ">=3.10.0"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Intended Audience :: Developers",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Software Development :: Libraries :: Python Modules"
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-exclude = [
-    "docs",
-    "examples",
-    "tests",
-    ".gitignore",
-    ".git"
+dependencies = [
+    "torch>=2.0.0",
+    "omegaconf>=2.3.0",
+    "transformers>=4.30.0",
+    "tokenizers>=0.13.0",
+    "huggingface_hub",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.10.0"
-torch = ">=2.0.0"
-omegaconf = ">=2.3.0"
-transformers = ">=4.30.0"
-tokenizers = ">=0.13.0"
-huggingface_hub = "*"
-datasets = {version=">=2.9.0,<4", optional=true}
-pandas = {version=">=1.5.0", optional=true}
-scikit-learn = {version=">=1.0.0", optional=true}
-tensorboard = {version=">=2.10.0", optional=true}
-torchvision = {version=">=0.15.0", optional=true}
-opencv-python = {version=">=4.5.0", optional=true}
-accelerate = {version=">=0.27.0,<2", optional=true}
-scipy = {version="<2", optional=true}
-gensim = {version="<5", optional=true}
-seqeval = {version=">=1.2.0", optional=true}
-jiwer = {version=">=3.0.0", optional=true}
-soundfile = {version=">=0.12.0", optional=true}
-librosa = {version=">=0.10.0", optional=true}
-pillow = {version=">=9.0.0", optional=true}
-nltk = {version=">=3.8.0", optional=true}
-rouge_score = {version=">=0.1.2", optional=true}
-
-[tool.poetry.extras]
-nlp = ["seqeval", "jiwer", "nltk", "rouge_score"]
-audio = ["soundfile", "librosa", "jiwer"]
-vision = ["pillow", "torchvision", "opencv-python"]
-metrics = ["scikit-learn", "jiwer", "nltk", "rouge_score", "seqeval"]
-trainer = ["accelerate", "pandas", "tensorboard"]
-embeddings = ["gensim", "numpy", "scipy"]
+[project.optional-dependencies]
+nlp = ["seqeval>=1.2.0", "jiwer>=3.0.0", "nltk>=3.8.0", "rouge_score>=0.1.2"]
+audio = ["soundfile>=0.12.0", "librosa>=0.10.0", "jiwer>=3.0.0"]
+vision = ["pillow>=9.0.0", "torchvision>=0.15.0", "opencv-python>=4.5.0"]
+metrics = ["scikit-learn>=1.0.0", "jiwer>=3.0.0", "nltk>=3.8.0", "rouge_score>=0.1.2", "seqeval>=1.2.0"]
+trainer = ["accelerate>=0.27.0,<2", "pandas>=1.5.0", "tensorboard>=2.10.0"]
+embeddings = ["gensim<5", "scipy<2"]
 dev = ["pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"]
 all = [
-    "datasets", "accelerate", "pandas", "tensorboard",  # Trainer
-    "numpy", "gensim", "scipy", # Embeddings
-    "scikit-learn", "jiwer", "nltk", "rouge_score", "seqeval",  # Metrics
-    "soundfile", "librosa",  # Speech
-    "torchvision", "pillow", "opencv-python",  # Vision
-    "pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton"  # Dev, docs, tests
+    "datasets>=2.9.0,<4",
+    "accelerate>=0.27.0,<2", "pandas>=1.5.0", "tensorboard>=2.10.0",  # Trainer
+    "gensim<5", "scipy<2",  # Embeddings
+    "scikit-learn>=1.0.0", "jiwer>=3.0.0", "nltk>=3.8.0", "rouge_score>=0.1.2", "seqeval>=1.2.0",  # Metrics
+    "soundfile>=0.12.0", "librosa>=0.10.0",  # Speech
+    "torchvision>=0.15.0", "pillow>=9.0.0", "opencv-python>=4.5.0",  # Vision
+    "pytest", "ruff", "sphinx", "myst-parser", "furo", "sphinx-copybutton",  # Dev / docs / tests
 ]
+
+[project.urls]
+Repository = "https://github.com/hezarai/hezar"
+Homepage = "https://github.com/hezarai"
+Documentation = "https://hezarai.github.io/hezar/"
+
+[tool.hatch.build.targets.wheel]
+packages = ["hezar"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["docs", "examples", "tests", ".gitignore", ".git"]
 
 [tool.black]
 line-length = 120
-target-version = ['py310', 'py311', 'py312']
+target-version = ['py310', 'py311', 'py312', 'py313']
 
 [tool.ruff]
 lint.ignore = ["C901", "E501", "E741", "W605", "F403", "F405"]
