@@ -31,6 +31,7 @@ class RecallConfig(MetricConfig):
         zero_division (str | float): Strategy for zero-division, default is 0.0.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.RECALL
     objective: str = "maximize"
     pos_label: int = 1
@@ -49,6 +50,7 @@ class Recall(Metric):
         config (RecallConfig): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: RecallConfig, **kwargs):
@@ -100,9 +102,12 @@ class Recall(Metric):
             zero_division=zero_division,
         )
 
-        score = float(score) if score.size == 1 else score
+        if getattr(score, "size", 1) > 1:
+            score = [round(float(x), n_decimals) for x in score]
+        else:
+            score = round(float(score), n_decimals)
 
-        results = {"recall": round(float(score), n_decimals)}
+        results = {"recall": score}
 
         if output_keys:
             results = {k: v for k, v in results.items() if k in output_keys}

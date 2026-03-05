@@ -28,6 +28,7 @@ class F1Config(MetricConfig):
         sample_weight (Iterable[float]): Sample weights for the F1 score.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.F1
     objective: str = "maximize"
     pos_label: int = 1
@@ -45,6 +46,7 @@ class F1(Metric):
         config (F1Config): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: F1Config, **kwargs):
@@ -95,9 +97,12 @@ class F1(Metric):
             zero_division=zero_division,
         )
 
-        score = float(score) if score.size == 1 else score
+        if getattr(score, "size", 1) > 1:
+            score = [round(float(x), n_decimals) for x in score]
+        else:
+            score = round(float(score), n_decimals)
 
-        results = {"f1": round(float(score), n_decimals)}
+        results = {"f1": score}
 
         if output_keys:
             results = {k: v for k, v in results.items() if k in output_keys}
