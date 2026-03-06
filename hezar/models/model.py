@@ -79,7 +79,7 @@ class Model(nn.Module):
         verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
-        self._preprocessor: PreprocessorsContainer
+        self._preprocessor: PreprocessorsContainer = None
         self._loss_func = self._set_loss_func(self.loss_func_name, **self.loss_func_kwargs)
         self._inference_fn = self.generate if self.is_generative else self.__call__
 
