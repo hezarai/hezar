@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
 from ..configs import MetricConfig
 from ..constants import Backends
 from ..utils import verify_dependencies

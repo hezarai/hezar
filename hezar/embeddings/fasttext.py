@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import List, Literal
+from typing import Literal
 
 from ..constants import Backends
 from ..registry import register_embedding

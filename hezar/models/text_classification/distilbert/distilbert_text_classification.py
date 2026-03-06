@@ -4,8 +4,6 @@ A DistilBERT model for text classification built using HuggingFace Transformers
 
 from __future__ import annotations
 
-from typing import Dict, List
-
 import torch
 from torch import nn
 

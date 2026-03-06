@@ -3,7 +3,6 @@ from __future__ import annotations
 import importlib.util
 from functools import wraps
 from importlib.metadata import version
-from typing import List
 
 from ..constants import Backends
 

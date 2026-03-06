@@ -48,7 +48,7 @@ class Accuracy(Metric):
         sample_weight=None,
         n_decimals=None,
         output_keys=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Compute the accuracy score for the given predictions against targets.

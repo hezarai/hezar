@@ -25,7 +25,7 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 """
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, Optional, Type
+from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:

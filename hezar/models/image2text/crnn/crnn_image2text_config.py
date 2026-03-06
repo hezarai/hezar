@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict
 
 from ....configs import ModelConfig
 

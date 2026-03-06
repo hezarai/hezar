@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import tempfile
-from typing import Dict, List, Self
+from typing import Self
 
 from huggingface_hub import HfApi, hf_hub_download
 

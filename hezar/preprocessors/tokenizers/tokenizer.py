@@ -5,7 +5,7 @@ import tempfile
 from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Self
+from typing import Optional, Self
 
 import numpy as np
 import torch

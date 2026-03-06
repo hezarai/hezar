@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import torch
 
 from ....constants import Backends

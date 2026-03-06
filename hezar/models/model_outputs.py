@@ -3,7 +3,7 @@ Define all model outputs here
 """
 
 from dataclasses import asdict, dataclass
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 __all__ = [

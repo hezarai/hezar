@@ -1,8 +1,8 @@
 """
 CRAFT utility functions copied and modified based on https://github.com/clovaai/CRAFT-pytorch/blob/master/craft_utils.py
 """
+
 import math
-from typing import Any
 
 import numpy as np
 

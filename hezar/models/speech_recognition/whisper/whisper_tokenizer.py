@@ -376,13 +376,15 @@ class WhisperBPETokenizer(BPETokenizer):
             if len(sliced_tokens) > 1:
                 start_timestamp_position = sliced_tokens[0].item() - timestamp_begin
                 end_timestamp_position = sliced_tokens[-1].item() - timestamp_begin
-                offsets.append({
-                    "text": self.decode(sliced_tokens),
-                    "timestamp": (
-                        start_timestamp_position * time_precision,
-                        end_timestamp_position * time_precision,
-                    ),
-                })
+                offsets.append(
+                    {
+                        "text": self.decode(sliced_tokens),
+                        "timestamp": (
+                            start_timestamp_position * time_precision,
+                            end_timestamp_position * time_precision,
+                        ),
+                    }
+                )
             last_slice = current_slice
 
         return offsets
@@ -429,7 +431,9 @@ class WhisperBPETokenizer(BPETokenizer):
 
         return token_ids
 
-    def set_prefix_tokens(self, language: str | None = None, task: str | None = None, predict_timestamps: bool | None = None):
+    def set_prefix_tokens(
+        self, language: str | None = None, task: str | None = None, predict_timestamps: bool | None = None
+    ):
         self.language = language if language is not None else self.language
         self.task = task if task is not None else self.task
         self.predict_timestamps = predict_timestamps if predict_timestamps is not None else self.predict_timestamps

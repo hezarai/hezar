@@ -4,8 +4,6 @@ A DistilBERT base language model (HuggingFace Transformers) wrapped by a Hezar M
 
 from __future__ import annotations
 
-from typing import List
-
 from ....constants import Backends
 from ....models import Model
 from ....registry import register_model

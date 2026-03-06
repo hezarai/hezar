@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import inspect
 import re
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from time import perf_counter
-from typing import Dict, List
 
 from ..constants import Color
 

@@ -73,10 +73,12 @@ class SentencePieceBPETokenizer(Tokenizer):
             )
         )
         tokenizer.pre_tokenizer = pre_tokenizers.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space  # ty:ignore
+            replacement=self.config.replacement,
+            add_prefix_space=self.config.add_prefix_space,  # ty:ignore
         )
         tokenizer.decoder = decoders.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space  # ty:ignore
+            replacement=self.config.replacement,
+            add_prefix_space=self.config.add_prefix_space,  # ty:ignore
         )
 
         return tokenizer
