@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Tuple
 
 from ....configs import ModelConfig
 from ....constants import TaskType
@@ -9,8 +8,8 @@ from ....constants import TaskType
 class RobertaSequenceLabelingConfig(ModelConfig):
     name = "roberta_sequence_labeling"
     task: str = TaskType.SEQUENCE_LABELING
-    num_labels: int = None
-    id2label: dict = None
+    num_labels: int | None = None
+    id2label: dict | None = None
     attention_probs_dropout_prob: float = 0.1
     bos_token_id: int = 0
     eos_token_id: int = 2
@@ -18,8 +17,8 @@ class RobertaSequenceLabelingConfig(ModelConfig):
     hidden_act: str = "gelu"
     hidden_dropout_prob: float = 0.1
     hidden_size: int = 768
-    classifier_dropout: float = None
-    initializer_range: int = 0.02
+    classifier_dropout: float | None = None
+    initializer_range: float = 0.02
     intermediate_size: int = 3072
     layer_norm_eps: float = 1e-12
     max_position_embeddings: int = 514
@@ -30,4 +29,4 @@ class RobertaSequenceLabelingConfig(ModelConfig):
     type_vocab_size: int = 1
     use_cache: bool = True
     vocab_size: int = 42000
-    prediction_skip_tokens: Tuple[str] = ("<s>", "</s>, <pad>")
+    prediction_skip_tokens: tuple = ("<s>", "</s>, <pad>")

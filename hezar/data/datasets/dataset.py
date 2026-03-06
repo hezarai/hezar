@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import os
-from typing import List
+from typing import Self
 
 from torch.utils.data import Dataset as TorchDataset
 
@@ -38,15 +38,16 @@ class Dataset(TorchDataset):
         cache_dir (str): Default cache directory for the dataset.
 
     """
-    required_backends: List[str | Backends] = [Backends.DATASETS]
+
+    required_backends: list[str | Backends] = [Backends.DATASETS]
     config_filename = DEFAULT_DATASET_CONFIG_FILE
     cache_dir = os.path.join(HEZAR_CACHE_DIR, "datasets")
 
     def __init__(
         self,
         config: DatasetConfig,
-        split: str = "train",
-        preprocessor: str | Preprocessor | PreprocessorsContainer = None,
+        split: str | SplitType | None = "train",
+        preprocessor: str | Preprocessor | PreprocessorsContainer | None = None,
         **kwargs,
     ):
         verify_dependencies(self, self.required_backends)
@@ -64,7 +65,7 @@ class Dataset(TorchDataset):
         pass
 
     @staticmethod
-    def create_preprocessor(preprocessor: str | Preprocessor | PreprocessorsContainer):
+    def create_preprocessor(preprocessor: str | Preprocessor | PreprocessorsContainer | None):
         """
         Create the preprocessor for the dataset.
 
@@ -125,14 +126,14 @@ class Dataset(TorchDataset):
     @classmethod
     def load(
         cls,
-        hub_path: str | os.PathLike,
-        split: str | SplitType = None,
-        preprocessor: str | Preprocessor | PreprocessorsContainer = None,
-        config: DatasetConfig = None,
-        config_filename: str = None,
-        cache_dir: str = None,
+        hub_path: str,
+        split: str | SplitType | None = None,
+        preprocessor: str | Preprocessor | PreprocessorsContainer | None = None,
+        config: DatasetConfig | None = None,
+        config_filename: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
-    ) -> "Dataset":
+    ) -> Self:
         """
         Load the dataset from a hub path.
 
@@ -145,7 +146,7 @@ class Dataset(TorchDataset):
                 Preprocessor object for the dataset
             config: (DatasetConfig):
                 A config object to ignore the config in the repo or in case the repo has no `dataset_config.yaml` file
-            config_filename (Optional[str]):
+            config_filename (str | None):
                 Dataset config file name. Falls back to `dataset_config.yaml` if not given.
             cache_dir (str):
                 Path to cache directory, defaults to Hezar's cache directory

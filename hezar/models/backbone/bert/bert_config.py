@@ -23,4 +23,4 @@ class BERTConfig(ModelConfig):
     pad_token_id: int = 0
     position_embedding_type: str = "absolute"
     use_cache: bool = True
-    classifier_dropout: float = None
+    classifier_dropout: float | None = None

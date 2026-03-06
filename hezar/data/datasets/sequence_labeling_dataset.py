@@ -31,10 +31,10 @@ class SequenceLabelingDatasetConfig(DatasetConfig):
 
     name = "sequence_labeling"
     task: TaskType = TaskType.SEQUENCE_LABELING
-    path: str = None
-    tags_field: str = None
-    tokens_field: str = None
-    max_length: int = None
+    path: str | None = None
+    tags_field: str | None = None
+    tokens_field: str | None = None
+    max_length: int | None = None
     ignore_index: int = -100
     label_all_tokens: bool = True
     is_iob_schema: bool = False  # Usually set to True for NER & Chunker and set to False for POS

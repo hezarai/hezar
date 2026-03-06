@@ -31,13 +31,13 @@ class TextSummarizationDatasetConfig(DatasetConfig):
 
     name = "text_summarization"
     task: TaskType = TaskType.TEXT_GENERATION
-    path: str = None
-    prefix: str = None
-    text_field: str = None
-    summary_field: str = None
-    title_field: str = None
-    max_length: int = None
-    labels_max_length: int = None
+    path: str | None = None
+    prefix: str | None = None
+    text_field: str | None = None
+    summary_field: str | None = None
+    title_field: str | None = None
+    max_length: int | None = None
+    labels_max_length: int | None = None
 
 
 @register_dataset("text_summarization", config_class=TextSummarizationDatasetConfig)

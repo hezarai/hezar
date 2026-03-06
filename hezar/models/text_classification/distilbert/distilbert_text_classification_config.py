@@ -8,8 +8,8 @@ from ....constants import TaskType
 class DistilBertTextClassificationConfig(ModelConfig):
     name = "distilbert_text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
-    num_labels: int = None
-    id2label: dict = None
+    num_labels: int | None = None
+    id2label: dict | None = None
     activation: str = "gelu"
     attention_dropout: float = 0.1
     dim: int = 768

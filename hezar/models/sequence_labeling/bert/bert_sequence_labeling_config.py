@@ -7,9 +7,9 @@ from ....constants import TaskType
 @dataclass
 class BertSequenceLabelingConfig(ModelConfig):
     name = "bert_sequence_labeling"
-    task: str = TaskType.SEQUENCE_LABELING
-    num_labels: int = None
-    id2label: dict = None
+    task: str = field(init=False, default=TaskType.SEQUENCE_LABELING)
+    num_labels: int
+    id2label: dict
     vocab_size: int = 42000
     hidden_size: int = 768
     num_hidden_layers: int = 12
@@ -25,5 +25,5 @@ class BertSequenceLabelingConfig(ModelConfig):
     pad_token_id: int = 0
     position_embedding_type: str = "absolute"
     use_cache: bool = True
-    classifier_dropout: float = None
+    classifier_dropout: float | None = None
     prediction_skip_tokens: list = field(default_factory=lambda: ["[SEP]", "[CLS]"])

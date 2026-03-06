@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-import torch
-
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...registry import register_dataset
@@ -30,10 +28,10 @@ class TextClassificationDatasetConfig(DatasetConfig):
 
     name = "text_classification"
     task: TaskType = TaskType.TEXT_CLASSIFICATION
-    path: str = None
-    label_field: str = None
-    text_field: str = None
-    max_length: int = None
+    path: str | None = None
+    label_field: str | None = None
+    text_field: str | None = None
+    max_length: int | None = None
 
 
 @register_dataset("text_classification", config_class=TextClassificationDatasetConfig)
@@ -53,10 +51,14 @@ class TextClassificationDataset(Dataset):
         super().__init__(config, split=split, preprocessor=preprocessor, **kwargs)
         self._extract_labels()
         self.tokenizer = self.preprocessor.tokenizer
-        self.data_collator = TextPaddingDataCollator(
-            tokenizer=self.tokenizer,
-            max_length=self.config.max_length,
-        ) if self.tokenizer else None
+        self.data_collator = (
+            TextPaddingDataCollator(
+                tokenizer=self.tokenizer,
+                max_length=self.config.max_length,
+            )
+            if self.tokenizer
+            else None
+        )
 
     def _load(self, split):
         """

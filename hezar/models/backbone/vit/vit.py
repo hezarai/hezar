@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
 import numpy as np
 import torch
 
@@ -52,12 +50,12 @@ class ViT(Model):
 
         return outputs
 
-    def preprocess(self, inputs: List[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
+    def preprocess(self, inputs: list[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
         image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs
 
-    def post_process(self, model_outputs: Dict[str, torch.Tensor]):
+    def post_process(self, model_outputs: dict[str, torch.Tensor]):
         outputs = {
             "last_hidden_state": model_outputs.get("last_hidden_state", None),
             "pooler_output": model_outputs.get("pooler_output", None),

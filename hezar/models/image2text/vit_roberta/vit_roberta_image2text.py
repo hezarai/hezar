@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import numpy as np
 import torch
 
@@ -82,14 +80,14 @@ class ViTRobertaImage2Text(Model):
     def generate(self, pixel_values, generation_config=None, **kwargs):
         tokenizer = self.preprocessor.tokenizer
         if generation_config is None:
-            generation_config = self.config.dict()["generation"]
+            generation_config = self.config.to_dict()["generation"]
             generation_config["decoder_start_token_id"] = tokenizer.pad_token_id
         generation_config = GenerationConfig(**generation_config)
         outputs = self.vit_roberta.generate(inputs=pixel_values, generation_config=generation_config, **kwargs)
 
         return outputs
 
-    def preprocess(self, inputs: List[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
+    def preprocess(self, inputs: list[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
         image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs

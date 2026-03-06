@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import OrderedDict
-from typing import List
+from typing import Self
 
 from huggingface_hub import hf_hub_download
 from omegaconf import OmegaConf
@@ -20,7 +20,7 @@ class Preprocessor:
         config: Preprocessor properties
     """
 
-    required_backends: List[str | Backends] = []
+    required_backends: list[str | Backends] = []
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
@@ -29,12 +29,12 @@ class Preprocessor:
 
         self.config = config.update(kwargs)
 
-    def __call__(self, inputs, **kwargs):
+    def __call__(self, *args, **kwargs):
         """
         An abstract call method for a preprocessor. All preprocessors must implement this.
 
         Args:
-            inputs: Raw inputs to process. Usually a list or a dict
+            args: Raw inputs to process. Usually a list or a dict
             **kwargs: Extra keyword arguments depending on the preprocessor
         """
         raise NotImplementedError
@@ -44,10 +44,11 @@ class Preprocessor:
 
     def push_to_hub(
         self,
-        repo_id,
-        subfolder=None,
-        commit_message=None,
-        private=None,
+        repo_id: str,
+        subfolder: str | None = None,
+        commit_message: str | None = None,
+        private: bool | None = None,
+        config_filename: str | None = None,
         **kwargs,
     ):
         raise NotImplementedError
@@ -55,12 +56,13 @@ class Preprocessor:
     @classmethod
     def load(
         cls,
-        hub_or_local_path,
-        subfolder: str = None,
+        hub_or_local_path: str,
+        subfolder: str | None = None,
+        cache_dir: str | None = None,
+        *,
         force_return_dict: bool = False,
-        cache_dir: str = None,
-        **kwargs
-    ):
+        **kwargs,
+    ) -> Self | PreprocessorsContainer:
         """
         Load a preprocessor or a pipeline of preprocessors from a local or Hub path. This method automatically detects
         any preprocessor in the path. If there's only one preprocessor, returns it and if there are more, returns a
@@ -96,7 +98,7 @@ class Preprocessor:
                         cache_dir=cache_dir,
                     )
                 config = OmegaConf.load(config_file)
-                name = config.get("name", None)
+                name = config.get("name", None)  # ty:ignore
                 if name:
                     preprocessor_cls = get_module_class(name, registry_type=RegistryType.PREPROCESSOR)
                     preprocessor = preprocessor_cls.load(hub_or_local_path, subfolder=subfolder, cache_dir=cache_dir)
@@ -131,7 +133,7 @@ class PreprocessorsContainer(OrderedDict):
         """
         Save every preprocessor item in the container
         """
-        for name, preprocessor in self.items():
+        for _name, preprocessor in self.items():
             preprocessor.save(path)
 
     def push_to_hub(
@@ -144,7 +146,7 @@ class PreprocessorsContainer(OrderedDict):
         """
         Push every preprocessor item in the container
         """
-        for name, preprocessor in self.items():
+        for _name, preprocessor in self.items():
             preprocessor.push_to_hub(repo_id, subfolder=subfolder, commit_message=commit_message, private=private)
 
     @property

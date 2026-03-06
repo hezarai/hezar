@@ -15,7 +15,7 @@ class RobertaMaskFillingConfig(ModelConfig):
     hidden_act: str = "gelu"
     hidden_dropout_prob: float = 0.1
     hidden_size: int = 768
-    initializer_range: int = 0.02
+    initializer_range: float = 0.02
     intermediate_size: int = 3072
     layer_norm_eps: float = 1e-12
     max_position_embeddings: int = 514

@@ -32,7 +32,7 @@ class GPT2TextGenerationConfig(ModelConfig):
     n_ctx: int = 1024
     n_embd: int = 768
     n_head: int = 12
-    n_inner: int = None
+    n_inner: int | None = None
     n_layer: int = 12
     n_positions: int = 1024
     resid_pdrop: float = 0.1

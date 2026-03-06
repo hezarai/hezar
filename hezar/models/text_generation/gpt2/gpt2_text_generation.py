@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import torch
 
 from ....constants import Backends
@@ -47,7 +45,7 @@ class GPT2TextGeneration(Model):
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
-        **kwargs
+        **kwargs,
     ):
         outputs = self.gpt2(
             input_ids=token_ids,
@@ -82,7 +80,7 @@ class GPT2TextGeneration(Model):
         generated_ids = self.gpt2.generate(token_ids, generation_config=generation_config)
         return generated_ids
 
-    def preprocess(self, texts: str | List[str], **kwargs):
+    def preprocess(self, texts: str | list[str], **kwargs):
         tokenizer = self.preprocessor.tokenizer
         inputs = tokenizer(texts, return_tensors="torch", device=self.device)
         return inputs

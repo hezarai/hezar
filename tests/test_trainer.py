@@ -27,15 +27,12 @@ tasks_setups = {
             "preprocessor": "hezarai/bert-base-fa",
             "config": {
                 "max_size": 4,
-            }
+            },
         },
         "model": {
             "path": "hezarai/bert-fa-sentiment-dksf",
         },
-        "config": {
-            "task": "text_classification",
-            "metrics": ["accuracy", "f1", "precision", "recall"]
-        }
+        "config": {"task": "text_classification", "metrics": ["accuracy", "f1", "precision", "recall"]},
     },
     "sequence_labeling": {
         "dataset": {
@@ -43,15 +40,12 @@ tasks_setups = {
             "preprocessor": "hezarai/bert-base-fa",
             "config": {
                 "max_size": 4,
-            }
+            },
         },
         "model": {
             "path": "hezarai/distilbert-fa-pos-lscp-500k",
         },
-        "config": {
-            "task": "sequence_labeling",
-            "metrics": ["seqeval"]
-        }
+        "config": {"task": "sequence_labeling", "metrics": ["seqeval"]},
     },
     "text_summarization": {
         "dataset": {
@@ -61,15 +55,12 @@ tasks_setups = {
                 "max_size": 4,
                 "max_length": 128,
                 "labels_max_length": 32,
-            }
+            },
         },
         "model": {
             "path": "hezarai/t5-base-fa",
         },
-        "config": {
-            "task": "text_generation",
-            "metrics": ["rouge"]
-        }
+        "config": {"task": "text_generation", "metrics": ["rouge"]},
     },
     "ocr": {
         "dataset": {
@@ -79,15 +70,12 @@ tasks_setups = {
                 "max_size": 4,
                 "max_length": 8,
                 "reverse_digits": True,
-            }
+            },
         },
         "model": {
             "path": "hezarai/crnn-fa-license-plate-recognition-v2",
         },
-        "config": {
-            "task": "image2text",
-            "metrics": ["cer"]
-        }
+        "config": {"task": "image2text", "metrics": ["cer"]},
     },
     "image-captioning": {
         "dataset": {
@@ -96,15 +84,12 @@ tasks_setups = {
             "config": {
                 "max_size": 2,
                 "max_length": 16,
-            }
+            },
         },
         "model": {
             "path": "hezarai/vit-roberta-fa-base",
         },
-        "config": {
-            "task": "image2text",
-            "metrics": ["wer"]
-        }
+        "config": {"task": "image2text", "metrics": ["wer"]},
     },
     "speech-recognition": {
         "dataset": {
@@ -113,16 +98,11 @@ tasks_setups = {
             "config": {
                 "max_size": 2,
                 "labels_max_length": 16,
-            }
+            },
         },
-        "model": {
-            "path": "hezarai/whisper-small-fa"
-        },
-        "config": {
-            "task": "speech_recognition",
-            "metrics": ["wer", "cer"]
-        },
-    }
+        "model": {"path": "hezarai/whisper-small-fa"},
+        "config": {"task": "speech_recognition", "metrics": ["wer", "cer"]},
+    },
 }
 
 common_train_config = {
@@ -131,7 +111,7 @@ common_train_config = {
     "num_epochs": 1,
     "gradient_accumulation_steps": 2,
     "mixed_precision": "fp16",
-    "use_cpu": True
+    "use_cpu": True,
 }
 
 
@@ -141,32 +121,32 @@ def test_trainer(task):
 
     # Datasets
     train_dataset = Dataset.load(
-        setup["dataset"]["path"],
+        setup["dataset"]["path"],  # type: ignore
         split="train",
-        preprocessor=setup["dataset"]["preprocessor"],
-        **setup["dataset"]["config"],
+        preprocessor=setup["dataset"]["preprocessor"],  # type: ignore
+        **setup["dataset"]["config"],  # type: ignore
     )
     eval_dataset = Dataset.load(
-        setup["dataset"]["path"],
+        setup["dataset"]["path"],  # type: ignore
         split="test",
-        preprocessor=setup["dataset"]["preprocessor"],
-        **setup["dataset"]["config"],
+        preprocessor=setup["dataset"]["preprocessor"],  # type: ignore
+        **setup["dataset"]["config"],  # type: ignore
     )
 
     # Model & Preprocessor
-    model_config = ModelConfig.load(setup["model"]["path"])
+    model_config = ModelConfig.load(setup["model"]["path"])  # type: ignore
     model = build_model(model_config.name, config=model_config)
-    preprocessor = Preprocessor.load(setup["model"]["path"])
+    preprocessor = Preprocessor.load(setup["model"]["path"])  # type: ignore
 
     # Trainer config
-    config = TrainerConfig(**common_train_config, **setup["config"])
+    config = TrainerConfig(**common_train_config, **setup["config"])  # type: ignore
 
     trainer = Trainer(
         config=config,
         model=model,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        preprocessor=preprocessor
+        preprocessor=preprocessor,
     )
     trainer.train()
 

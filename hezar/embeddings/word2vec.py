@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import List, Literal
+from typing import Literal
 
 from ..constants import Backends
 from ..registry import register_embedding
@@ -40,7 +40,7 @@ class Word2VecConfig(EmbeddingConfig):
     """
 
     name = "word2vec"
-    dataset_path: str = None
+    dataset_path: str | None = None
     vector_size: int = 300
     window: int = 5
     alpha: float = 0.025
@@ -68,7 +68,9 @@ class Word2Vec(Embedding):
 
     required_backends = _required_backends
 
-    def __init__(self, config: Word2VecConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
+    def __init__(
+        self, config: Word2VecConfig, embedding_file: str | None = None, vectors_file: str | None = None, **kwargs
+    ):
         super().__init__(config, embedding_file=embedding_file, vectors_file=vectors_file, **kwargs)
 
     def build(self):
@@ -115,7 +117,7 @@ class Word2Vec(Embedding):
 
     def train(
         self,
-        dataset: List[str],
+        dataset: list[str],
         epochs: int = 5,
     ):
         """
@@ -136,10 +138,10 @@ class Word2Vec(Embedding):
     def save(
         self,
         path: str | os.PathLike,
-        filename: str = None,
-        subfolder: str = None,
+        filename: str | None = None,
+        subfolder: str | None = None,
         save_config: bool = True,
-        config_filename: str = None,
+        config_filename: str | None = None,
     ):
         """
         Save the Word2Vec embedding model to a specified path.
@@ -174,13 +176,12 @@ class Word2Vec(Embedding):
         """
         if not isinstance(word1, str) or not isinstance(word2, str):
             raise ValueError(
-                f"`Embedding.similarity()` takes two string objects!\n"
-                f"`word1`: {type(word1)}, `word2`: {type(word2)}"
+                f"`Embedding.similarity()` takes two string objects!\n`word1`: {type(word1)}, `word2`: {type(word2)}"
             )
         similarity = self.word_vectors.similarity(word1, word2)
         return similarity
 
-    def doesnt_match(self, words: List[str]):
+    def doesnt_match(self, words: list[str]):
         """
         Get the word that doesn't match the others in a list.
 

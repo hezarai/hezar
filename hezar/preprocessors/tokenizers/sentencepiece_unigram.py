@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, Backends
 from ...registry import register_preprocessor
@@ -29,9 +28,9 @@ class SentencePieceUnigramConfig(TokenizerConfig):
     pad_token: str = "<pad>"
     cls_token: str = "<cls>"
     mask_token: str = "<mask>"
-    additional_special_tokens: List[str] = None
+    additional_special_tokens: list[str] | None = None
     pad_to_multiple_of: int = 0
-    dropout: float = None
+    dropout: float | None = None
     continuing_subword_prefix: str = ""
     replacement: str = "_"
     add_prefix_space: bool = True
@@ -65,23 +64,18 @@ class SentencePieceUnigramTokenizer(Tokenizer):
 
     def build(self):
         tokenizer = HFTokenizer(models.Unigram())  # noqa
-        tokenizer.normalizer = normalizers.Sequence(  # noqa
-            [  # noqa
-                normalizers.Nmt(),  # noqa
-                normalizers.NFKC(),  # noqa
-                normalizers.Replace(Regex(" {2,}"), " "),  # noqa
-            ]  # noqa
-        )  # noqa
         tokenizer.pre_tokenizer = pre_tokenizers.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space
+            replacement=self.config.replacement,
+            add_prefix_space=self.config.add_prefix_space,  # ty:ignore
         )
         tokenizer.decoder = decoders.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space
+            replacement=self.config.replacement,
+            add_prefix_space=self.config.add_prefix_space,  # ty:ignore
         )
 
         return tokenizer
 
-    def train(self, files: List[str], **train_kwargs):
+    def train(self, files: list[str], **train_kwargs):
         """Train the model using the given files"""
         self.config.update(train_kwargs)
 
@@ -96,7 +90,7 @@ class SentencePieceUnigramTokenizer(Tokenizer):
             files = [files]
         self._tokenizer.train(files, trainer=trainer)
 
-    def train_from_iterator(self, dataset: List[str], **train_kwargs):
+    def train_from_iterator(self, dataset: list[str], **train_kwargs):
         """Train the model using the given files"""
         self.config.update(train_kwargs)
 

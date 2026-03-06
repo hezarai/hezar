@@ -8,8 +8,8 @@ from ....constants import TaskType
 class RobertaTextClassificationConfig(ModelConfig):
     name = "roberta_text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
-    num_labels: int = None
-    id2label: dict = None
+    num_labels: int | None = None
+    id2label: dict | None = None
     attention_probs_dropout_prob: float = 0.1
     bos_token_id: int = 0
     eos_token_id: int = 2
@@ -17,8 +17,8 @@ class RobertaTextClassificationConfig(ModelConfig):
     hidden_act: str = "gelu"
     hidden_dropout_prob: float = 0.1
     hidden_size: int = 768
-    classifier_dropout: float = None
-    initializer_range: int = 0.02
+    classifier_dropout: float | None = None
+    initializer_range: float = 0.02
     intermediate_size: int = 3072
     layer_norm_eps: float = 1e-12
     max_position_embeddings: int = 514

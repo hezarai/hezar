@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable, List
 
 import numpy as np
 
@@ -21,9 +21,9 @@ from ....utils import (
 @dataclass
 class CraftImageProcessorConfig(ImageProcessorConfig):
     name = "craft_image_processor"
-    mean: tuple[float] = (123.675, 116.28, 103.53)
-    std: tuple[float] = (58.395, 57.12, 57.375)
-    rescale: float = None
+    mean: tuple = (123.675, 116.28, 103.53)
+    std: tuple = (58.395, 57.12, 57.375)
+    rescale: float | None = None
     square_size: int = 2560
     mag_ratio: float = 1.0
 
@@ -33,7 +33,7 @@ class CraftImageProcessor(ImageProcessor):
     def __init__(self, config: CraftImageProcessorConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
-    def get_ratio(self, image, square_size: int = None, mag_ratio: float = None):
+    def get_ratio(self, image, square_size: int | None = None, mag_ratio: float | None = None):
         square_size = square_size or self.config.square_size
         mag_ratio = mag_ratio or self.config.mag_ratio
 
@@ -46,7 +46,7 @@ class CraftImageProcessor(ImageProcessor):
 
         return ratio
 
-    def _resize(self, image, square_size: int, mag_ratio: float):
+    def _resize(self, image, square_size: int | tuple, mag_ratio: float):
         """
         Resizes the image by pasting it into a bigger canvas
         """
@@ -76,21 +76,22 @@ class CraftImageProcessor(ImageProcessor):
 
     def __call__(
         self,
-        images: List,
-        device: str = None,
-        mean: float = None,
-        std: float = None,
-        rescale: float = None,
-        square_size: tuple[int] = None,
-        mag_ratio: float = None,
-        mirror: bool = None,
-        gray_scale: bool = None,
+        images: str | list,
+        device: str | None = None,
+        mean: float | None = None,
+        std: float | None = None,
+        rescale: float | None = None,
+        size: tuple[int, int] | int | None = None,
+        resample: float | None = None,
+        mirror: bool | None = None,
+        gray_scale: bool | None = None,
         return_tensors: str = "torch",
+        mag_ratio: float | None = None,
         **kwargs,
     ):
         mean = mean or self.config.mean
         std = std or self.config.std
-        square_size = square_size or self.config.square_size
+        size = size or self.config.square_size
         mag_ratio = mag_ratio or self.config.mag_ratio
         mirror = mirror or self.config.mirror
 
@@ -108,7 +109,7 @@ class CraftImageProcessor(ImageProcessor):
             images = [mirror_image(image, return_type="numpy") for image in images]
 
         ratio_values = [self.get_ratio(image) for image in images]
-        images = [self._resize(image, square_size=square_size, mag_ratio=mag_ratio) for image in images]
+        images = [self._resize(image, square_size=size, mag_ratio=mag_ratio) for image in images]
 
         if mean is not None and std is not None:
             images = [normalize_image(image, mean=mean, std=std, channel_axis="last") for image in images]
@@ -117,7 +118,7 @@ class CraftImageProcessor(ImageProcessor):
         images = [transpose_channels_axis_side(image, axis_side="first") for image in images]
 
         # Return images batch dict
-        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)
+        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)  # ty:ignore
 
         outputs = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)
 

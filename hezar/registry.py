@@ -25,7 +25,7 @@ Note: In case of adding a new registry container, make sure to add to `__all__` 
 """
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, Optional, Type
+from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
@@ -61,23 +61,23 @@ logger = Logger(__name__)
 @dataclass
 class Registry:
     module_class: type
-    config_class: type = None
-    description: Optional[str] = None
+    config_class: type | None = None
+    description: str | None = None
 
 
-models_registry: Dict[str, Registry] = {}
-preprocessors_registry: Dict[str, Registry] = {}
-datasets_registry: Dict[str, Registry] = {}
-embeddings_registry: Dict[str, Registry] = {}
-metrics_registry: Dict[str, Registry] = {}
+models_registry: dict[str, Registry] = {}
+preprocessors_registry: dict[str, Registry] = {}
+datasets_registry: dict[str, Registry] = {}
+embeddings_registry: dict[str, Registry] = {}
+metrics_registry: dict[str, Registry] = {}
 
 
 def _register_module(
-    cls: Type,
-    registry: Dict[str, Registry],
+    cls: type,
+    registry: dict[str, Registry],
     module_name: str,
-    config_class: Type["Config"],
-    description: str = None
+    config_class: type["Config"],
+    description: str | None = None,
 ):
     """
     Add module to the registry.
@@ -101,7 +101,7 @@ def _register_module(
     registry[module_name] = Registry(module_class=cls, config_class=config_class, description=description)
 
 
-def register_model(model_name: str, config_class: Type["ModelConfig"], description: str = None):
+def register_model(model_name: str, config_class: type["ModelConfig"], description: str | None = None):
     """
     A class decorator that adds the model class and the config class to the `models_registry`
 
@@ -119,7 +119,7 @@ def register_model(model_name: str, config_class: Type["ModelConfig"], descripti
     return register
 
 
-def register_dataset(dataset_name: str, config_class: Type["DatasetConfig"], description: str = None):
+def register_dataset(dataset_name: str, config_class: type["DatasetConfig"], description: str | None = None):
     """
     A class decorator that adds the dataset class and the config class to the `datasets_registry`
 
@@ -137,7 +137,9 @@ def register_dataset(dataset_name: str, config_class: Type["DatasetConfig"], des
     return register
 
 
-def register_preprocessor(preprocessor_name: str, config_class: Type["PreprocessorConfig"], description: str = None):
+def register_preprocessor(
+    preprocessor_name: str, config_class: type["PreprocessorConfig"], description: str | None = None
+):
     """
     A class decorator that adds the preprocessor class and the config class to the `preprocessors_registry`
 
@@ -155,7 +157,7 @@ def register_preprocessor(preprocessor_name: str, config_class: Type["Preprocess
     return register
 
 
-def register_embedding(embedding_name: str, config_class: Type["EmbeddingConfig"], description: str = None):
+def register_embedding(embedding_name: str, config_class: type["EmbeddingConfig"], description: str | None = None):
     """
     A class decorator that adds the embedding class and the config class to the `embeddings_registry`
 
@@ -173,7 +175,7 @@ def register_embedding(embedding_name: str, config_class: Type["EmbeddingConfig"
     return register
 
 
-def register_metric(metric_name: str, config_class: Type["MetricConfig"], description: str = None):
+def register_metric(metric_name: str, config_class: type["MetricConfig"], description: str | None = None):
     """
     A class decorator that adds the metric class and the config class to the `metrics_registry`
 

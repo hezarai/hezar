@@ -27,6 +27,7 @@ class WERConfig(MetricConfig):
         concatenate_texts (bool): Flag to indicate whether to concatenate texts before WER calculation.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.WER
     objective: str = "minimize"
     concatenate_texts: bool = False
@@ -42,6 +43,7 @@ class WER(Metric):
         config (WERConfig): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: WERConfig, **kwargs):
@@ -49,11 +51,11 @@ class WER(Metric):
 
     def compute(
         self,
-        predictions=None,
-        targets=None,
-        concatenate_texts=None,
-        n_decimals=None,
-        output_keys=None,
+        predictions: list[str],
+        targets: list[str],
+        concatenate_texts: bool | None = None,
+        n_decimals: int | None = None,
+        output_keys: tuple | None = None,
         **kwargs,
     ):
         """
@@ -77,7 +79,7 @@ class WER(Metric):
         else:
             incorrect = 0
             total = 0
-            for prediction, reference in zip(predictions, targets):
+            for prediction, reference in zip(predictions, targets, strict=True):
                 measures = jiwer.process_words(reference, prediction)
                 incorrect += measures.substitutions + measures.deletions + measures.insertions
                 total += measures.substitutions + measures.deletions + measures.hits

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
 from ..configs import MetricConfig
 from ..constants import Backends
 from ..utils import verify_dependencies
@@ -16,7 +14,7 @@ class Metric:
     such a module, is to make sure the metrics are treated the same all over the framework.
     """
 
-    required_backends: List[str | Backends] = []
+    required_backends: list[str | Backends] = []
 
     def __init__(self, config: MetricConfig, **kwargs):
         # Check if all the required dependencies are installed
@@ -24,7 +22,7 @@ class Metric:
 
         self.config = config.update(kwargs)
 
-    def compute(self, predictions=None, targets=None, **kwargs) -> Dict:
+    def compute(self, predictions, targets, **kwargs) -> dict:
         """
         Compute metric value for the given predictions against the targets
         Args:

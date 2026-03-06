@@ -1,9 +1,8 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
-from __future__ import annotations
 
-from typing import List
+from __future__ import annotations
 
 import torch
 
@@ -69,7 +68,7 @@ class RobertaMaskFilling(Model):
         loss = self.loss_func(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
 
@@ -83,8 +82,8 @@ class RobertaMaskFilling(Model):
         return inputs
 
     def post_process(self, model_outputs: dict, top_k=1):
-        output_logits = model_outputs.get("logits")
-        token_ids = model_outputs.get("token_ids")
+        output_logits = model_outputs["logits"]
+        token_ids = model_outputs["token_ids"]
 
         tokenizer = self.preprocessor.tokenizer
         mask_token_id = tokenizer.mask_token_id
@@ -105,7 +104,7 @@ class RobertaMaskFilling(Model):
                 top_fill_token_ids = top_fill_token_ids.squeeze()
 
             row = []
-            for i, (prob, token_id) in enumerate(zip(probs, top_fill_token_ids)):
+            for _, (prob, token_id) in enumerate(zip(probs, top_fill_token_ids, strict=True)):
                 candidate = unfilled_token_ids[batch_i].copy()
                 candidate[masked_index.item()] = token_id
                 row.append(

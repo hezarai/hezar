@@ -1,5 +1,6 @@
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable, List, Tuple
+from typing import Self
 
 import numpy as np
 
@@ -52,12 +53,13 @@ class ImageProcessorConfig(PreprocessorConfig):
     """
     Configuration class for the ImageProcessor.
     """
+
     name = "image_processor"
-    mean: List[float] = None
-    std: List[float] = None
-    rescale: float = None
-    resample: int = None
-    size: Tuple[int, int] = field(
+    mean: list[float] | None = None
+    std: list[float] | None = None
+    rescale: float | None = None
+    resample: int | None = None
+    size: tuple[int, int] | None = field(
         default=None,
         metadata={"description": "Image size tuple (width, height)"},
     )
@@ -88,15 +90,15 @@ class ImageProcessor(Preprocessor):
 
     def __call__(
         self,
-        images: str | List,
-        device: str = None,
-        mean: float = None,
-        std: float = None,
-        rescale: float = None,
-        size: Tuple[int, int] = None,
-        resample: float = None,
-        mirror: bool = None,
-        gray_scale: bool = None,
+        images: str | list,
+        device: str | None = None,
+        mean: float | None = None,
+        std: float | None = None,
+        rescale: float | None = None,
+        size: tuple[int, int] | None = None,
+        resample: float | None = None,
+        mirror: bool | None = None,
+        gray_scale: bool | None = None,
         return_tensors: str = "torch",
         **kwargs,
     ):
@@ -160,29 +162,30 @@ class ImageProcessor(Preprocessor):
         images = [transpose_channels_axis_side(image, axis_side="first") for image in images]
 
         # Return images batch dict
-        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)
+        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)  # type: ignore
 
-        images = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)
+        images = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)  # type: ignore
 
         if device and return_tensors == "torch":
             import torch
 
-            images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}
+            images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}  # type: ignore
 
         if is_single and return_tensors == "list":
-            images = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in images.items()}
+            images = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in images.items()}  # type: ignore
 
         return images
 
     @classmethod
     def load(
         cls,
-        hub_or_local_path,
-        subfolder: str = None,
-        config_filename: str = None,
-        cache_dir: str = None,
+        hub_or_local_path: str,
+        subfolder: str | None = None,
+        cache_dir: str | None = None,
+        config_filename: str | None = None,
+        force_return_dict: bool = False,
         **kwargs,
-    ) -> "ImageProcessor":
+    ) -> Self:
         """
         Load an ImageProcessor from a specified path.
 
@@ -212,6 +215,7 @@ class ImageProcessor(Preprocessor):
         path,
         subfolder=None,
         config_filename=None,
+        **kwargs,
     ):
         """
         Save the ImageProcessor configuration.
@@ -225,14 +229,7 @@ class ImageProcessor(Preprocessor):
         config_filename = config_filename or self.image_processor_config_file
         self.config.save(path, subfolder=subfolder, filename=config_filename)
 
-    def push_to_hub(
-        self,
-        repo_id,
-        subfolder=None,
-        commit_message=None,
-        private=None,
-        config_filename=None
-    ):
+    def push_to_hub(self, repo_id, subfolder=None, commit_message=None, private=None, config_filename=None, **kwargs):
         """
         Push the ImageProcessor configuration to the hub.
 

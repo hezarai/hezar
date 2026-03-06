@@ -8,7 +8,9 @@ base_model_path = "hezarai/bert-base-fa"
 train_dataset = Dataset.load("hezarai/lscp-pos-500k", split="train", preprocessor=base_model_path)
 eval_dataset = Dataset.load("hezarai/lscp-pos-500k", split="test", preprocessor=base_model_path)
 
-model = BertSequenceLabeling(BertSequenceLabelingConfig(id2label=train_dataset.config.id2label))
+model = BertSequenceLabeling(
+    BertSequenceLabelingConfig(id2label=train_dataset.config.id2label, num_labels=len(train_dataset.config.id2label))
+)
 preprocessor = Preprocessor.load(base_model_path)
 
 train_config = TrainerConfig(

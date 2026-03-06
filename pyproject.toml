@@ -5,14 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "hezar"
 version = "0.44.0"
-packages = [{ include = "hezar" }]
 description = "Hezar: The all-in-one AI library for Persian, supporting a wide variety of tasks and modalities!"
 license = { text = "Apache-2.0" }
 readme = "README.md"
 authors = [{ name = "Aryan Shekarlaban", email = "arxyzan@gmail.com" }]
 maintainers = [{ name = "Aryan Shekarlaban", email = "arxyzan@gmail.com" }]
 keywords = ["nlp", "persian", "ai", "deep-learning", "transformers"]
-requires-python = ">=3.10.0"
+requires-python = ">=3.11.0"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",

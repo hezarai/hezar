@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
 
 import numpy as np
 import torch
@@ -26,7 +26,7 @@ __all__ = [
 logger = Logger(__name__)
 
 
-def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: list = None) -> dict:
+def convert_batch_dict_dtype(batch_dict: dict, dtype: str | None = "list", skip_keys: list | None = None) -> dict:
     """
     Convert data dtypes of the values in a batch dict.
 
@@ -69,10 +69,10 @@ def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: l
 
 
 def resolve_inputs_length_for_padding(
-    inputs: List[List[Any]],
-    padding: str | PaddingType = None,
-    max_length: Optional[bool | int] = None,
-    truncation: Optional[bool] = True,
+    inputs: list[list[Any]],
+    padding: str | PaddingType | None = None,
+    max_length: bool | int | None = None,
+    truncation: bool | None = True,
 ):
     """
     Resolve final inputs length based on padding and max_length values
@@ -124,12 +124,12 @@ def resolve_inputs_length_for_padding(
 
 
 def pad_batch_items(
-    inputs: List[List[int | float]],
-    padding: str | PaddingType = None,
+    inputs: list[list[int | float]],
+    padding: str | PaddingType | None = None,
     padding_side: Literal["right", "left"] = "right",
     pad_id: int = 0,
-    max_length: Optional[bool | int] = None,
-    truncation: Optional[bool] = True,
+    max_length: bool | int | None = None,
+    truncation: bool = True,
 ):
     """
     Given a nested container of unequal sized iterables e.g, batch of token ids, pad them based on padding strategy
@@ -166,9 +166,9 @@ def pad_batch_items(
 
 
 def shift_tokens_right(
-    token_ids: list[list[int]] | "torch.Tensor" | "np.ndarray",
+    token_ids: list[list[int]] | torch.Tensor | np.ndarray,
     pad_token_id: int,
-    decoder_start_token_id: int
+    decoder_start_token_id: int,
 ):
     """
     Shift input ids one token to the right.
@@ -224,7 +224,7 @@ def torch2numpy(*args):
     return [arg.cpu().numpy() if isinstance(arg, torch.Tensor) else arg for arg in args]
 
 
-def get_non_numeric_keys(d: Dict, batched=True):
+def get_non_numeric_keys(d: dict, batched=True):
     """
     Get keys that have string values in a dictionary
 
@@ -245,7 +245,7 @@ def get_non_numeric_keys(d: Dict, batched=True):
     return keys
 
 
-def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
+def flatten_dict(dict_config: dict | DictConfig) -> DictConfig:
     """
     Flatten a nested Dict/DictConfig object
 
@@ -258,7 +258,7 @@ def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
 
     config = DictConfig({})
     for k, v in dict_config.items():
-        if isinstance(v, (Dict, DictConfig)):
+        if isinstance(v, (dict, DictConfig)):
             config.update(flatten_dict(v))
         else:
             config[k] = v

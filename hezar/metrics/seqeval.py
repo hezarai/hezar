@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -29,16 +28,17 @@ class SeqevalConfig(MetricConfig):
         name (MetricType): The type of metric, Seqeval in this case.
         output_keys (tuple): Keys to filter the metric results for output.
         suffix (bool): Flag to indicate whether the labels have suffixes.
-        mode (Optional[str]): Evaluation mode for seqeval.
+        mode (str | None): Evaluation mode for seqeval.
         sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
         zero_division (str | int): Strategy for zero-division, default is 0.
     """
+
     name = MetricType.SEQEVAL
     objective: str = "maximize"
     output_keys: tuple = ("accuracy", "recall", "precision", "f1")
     suffix: bool = False
-    mode: Optional[str] = None
-    sample_weight: Optional[List[int]] = None
+    mode: str | None = None
+    sample_weight: list[int] | None = None
     zero_division: str | int = 0
 
 
@@ -51,6 +51,7 @@ class Seqeval(Metric):
         config (SeqevalConfig): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: SeqevalConfig, **kwargs):
@@ -58,14 +59,14 @@ class Seqeval(Metric):
 
     def compute(
         self,
-        predictions=None,
-        targets=None,
-        suffix: bool = None,
-        mode: Optional[str] = None,
-        sample_weight: Optional[List[int]] = None,
-        zero_division: str | int = None,
-        n_decimals: int = None,
-        output_keys=None,
+        predictions: list[int],
+        targets: list[int],
+        suffix: bool | None = None,
+        mode: str | None = None,
+        sample_weight: list[int] | None = None,
+        zero_division: str | int | None = None,
+        n_decimals: int | None = None,
+        output_keys: tuple | None = None,
         **kwargs,
     ):
         """
@@ -75,7 +76,7 @@ class Seqeval(Metric):
             predictions: Predicted labels.
             targets: Ground truth labels.
             suffix (bool): Flag to indicate whether the labels have suffixes.
-            mode (Optional[str]): Evaluation mode for seqeval.
+            mode (str | None): Evaluation mode for seqeval.
             sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
             zero_division (str | int): Strategy for zero-division, default is 0.
             n_decimals (int): Number of decimals for the final score.

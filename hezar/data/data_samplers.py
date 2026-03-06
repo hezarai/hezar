@@ -1,5 +1,5 @@
 import random
-from typing import Sized
+from collections.abc import Sized
 
 from torch.utils.data import Sampler
 
@@ -30,11 +30,11 @@ class RangedSampler(Sampler):
         self,
         data: Sized,
         batch_size: int,
-        start_index: int = None,
-        end_index: int = None,
+        start_index: int | None = None,
+        end_index: int | None = None,
         drop_last: bool = False,
         shuffle: bool = False,
-        seed: int = None
+        seed: int | None = None,
     ):
         super().__init__()
         self.data = data
@@ -58,7 +58,7 @@ class RangedSampler(Sampler):
                 raise ValueError("Parameter `seed` is required to enable shuffling in the data sampler!")
             set_seed(self.seed)
             random.shuffle(indices)
-        indices = indices[self.start_index:self.end_index]
+        indices = indices[self.start_index : self.end_index]
         return indices
 
     def __len__(self):

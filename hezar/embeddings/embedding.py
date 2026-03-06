@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import tempfile
-from typing import Dict, List
+from typing import Self
 
 from huggingface_hub import HfApi, hf_hub_download
 
@@ -15,30 +15,10 @@ from ..constants import (
     HEZAR_CACHE_DIR,
     Backends,
 )
-from ..utils import Logger, get_lib_version, verify_dependencies
+from ..utils import Logger, verify_dependencies
 
 
 logger = Logger(__name__)
-
-# The below code is a workaround. Gensim's models have this limitation that the models can only be loaded using the same
-# gensim & numpy version they were saved with.
-REQUIRED_GENSIM_VERSION = "4.3.2"
-REQUIRED_NUMPY_VERSION = "1.24"
-
-
-# Check if the right combo of gensim/numpy versions are installed
-def _verify_gensim_installation():
-    if (
-        not get_lib_version("numpy").startswith(REQUIRED_NUMPY_VERSION)
-        or not get_lib_version("gensim").startswith(REQUIRED_GENSIM_VERSION)
-    ):
-        raise ImportError(
-            f"The embeddings module in this version of Hezar, requires a combo of numpy>={REQUIRED_NUMPY_VERSION} and "
-            f"gensim=={REQUIRED_GENSIM_VERSION}. Please install them by running: \n"
-            f"`pip install numpy~={REQUIRED_NUMPY_VERSION} gensim=={REQUIRED_GENSIM_VERSION}`\n"
-            f"and make sure to restart your runtime if you're on a notebook environment!\n"
-            f"You can also set `bypass_version_check=True` in the embedding's config so that this error is not raised."
-        )
 
 
 class Embedding:
@@ -52,14 +32,16 @@ class Embedding:
         **kwargs: Extra embedding config parameters passed as keyword arguments.
     """
 
-    required_backends: List[str | Backends] = []
+    required_backends: list[str | Backends] = []
 
     filename = DEFAULT_EMBEDDING_FILE
     vectors_filename = f"{filename}.wv.vectors.npy"
     config_filename = DEFAULT_EMBEDDING_CONFIG_FILE
     subfolder = DEFAULT_EMBEDDING_SUBFOLDER
 
-    def __init__(self, config: EmbeddingConfig, embedding_file: str = None, vectors_file: str = None, **kwargs):
+    def __init__(
+        self, config: EmbeddingConfig, embedding_file: str | None = None, vectors_file: str | None = None, **kwargs
+    ):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
         self.config = config.update(kwargs)
 
@@ -82,7 +64,7 @@ class Embedding:
         """
         raise NotImplementedError
 
-    def __call__(self, inputs: str | List[str], **kwargs):
+    def __call__(self, inputs: str | list[str], **kwargs):
         """
         Get vectors for input words.
 
@@ -143,7 +125,7 @@ class Embedding:
         """
         raise NotImplementedError
 
-    def doesnt_match(self, words: List[str]):
+    def doesnt_match(self, words: list[str]):
         """
         Get the word that doesn't match the others in a list.
 
@@ -178,7 +160,7 @@ class Embedding:
         subfolder=None,
         cache_dir=None,
         **kwargs,
-    ) -> "Embedding":
+    ) -> Self:
         """
         Load an embedding model from a local or Hugging Face Hub path.
 
@@ -237,10 +219,10 @@ class Embedding:
     def save(
         self,
         path: str | os.PathLike,
-        filename: str = None,
-        subfolder: str = None,
+        filename: str | None = None,
+        subfolder: str | None = None,
         save_config: bool = True,
-        config_filename: str = None,
+        config_filename: str | None = None,
     ):
         """
         Save the embedding model to a specified path.
@@ -356,7 +338,7 @@ class Embedding:
         raise NotImplementedError
 
     @property
-    def vocab(self) -> Dict[str, int]:
+    def vocab(self) -> dict[str, int]:
         """
         Get the vocabulary.
         """

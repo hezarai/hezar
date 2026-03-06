@@ -3,18 +3,13 @@ from hezar.data import Dataset
 from hezar.preprocessors import Preprocessor
 from hezar.trainer import Trainer, TrainerConfig
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     dataset_path = "hezarai/xlsum-fa"
     base_model_path = "hezarai/t5-base-fa"
     PREFIX = "این متن را خلاصه کن: "
 
     train_dataset = Dataset.load(
-        dataset_path,
-        split="train",
-        preprocessor=base_model_path,
-        max_length=384,
-        max_target_length=80,
-        prefix=PREFIX
+        dataset_path, split="train", preprocessor=base_model_path, max_length=384, max_target_length=80, prefix=PREFIX
     )
     eval_dataset = Dataset.load(
         dataset_path,

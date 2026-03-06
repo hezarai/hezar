@@ -37,16 +37,17 @@ class TrainerState:
         best_checkpoint: Path to the best model checkpoint so far
         logs_dir: Path to the logs directory
     """
+
     epoch: int = 1
-    total_epochs: int = None
+    total_epochs: int | None = None
     global_step: int = 0
     epoch_step: int = 0
     loss_tracker_sum: float = 0.0
     loss_tracker_avg: float = 0.0
-    metric_for_best_checkpoint: str = None
-    best_metric_value: float = None
-    best_checkpoint: str = None
-    logs_dir: str = None
+    metric_for_best_checkpoint: str | None = None
+    best_metric_value: float | None = None
+    best_checkpoint: str | None = None
+    logs_dir: str | None = None
 
     def update(self, items: dict, **kwargs):
         items.update(kwargs)
@@ -87,7 +88,7 @@ class TrainerState:
         """
         state_file = OmegaConf.load(path)
         state_dict = OmegaConf.to_container(state_file)
-        state = cls(**state_dict)
+        state = cls(**state_dict)  # ty:ignore
         return state
 
 
@@ -121,7 +122,7 @@ class AverageMeter:
 
 class MetricsTracker:
     def __init__(self, metrics):
-        self.metrics = metrics or []
+        self.metrics = metrics
         self.trackers = {}
         if len(self.metrics):
             for m in self.metrics.values():
@@ -172,7 +173,7 @@ def resolve_logdir(log_dir) -> str:
     return os.path.join(log_dir, current_time + "_" + socket.gethostname())
 
 
-def get_distributed_logger(name: str, level: str = None, fmt: str = None):
+def get_distributed_logger(name: str, level: str | None = None, fmt: str | None = None):
     """
     Distributed logger is responsible for handling logging on multiple processes/machines
     """

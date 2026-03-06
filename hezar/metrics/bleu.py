@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -27,6 +26,7 @@ class BLEUConfig(MetricConfig):
         name (MetricType): The type of metric, BLEU in this case.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.BLEU
     objective: str = "maximize"
     output_keys: tuple = ("bleu",)
@@ -37,6 +37,7 @@ class BLEU(Metric):
     """
     BLEU metric for evaluating text generation models like translation, summarization, etc.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: BLEUConfig, **kwargs):
@@ -44,8 +45,8 @@ class BLEU(Metric):
 
     def compute(
         self,
-        predictions: Iterable[str] | str = None,
-        targets: Iterable[str] | str = None,
+        predictions: list[str] | str,
+        targets: list[str] | str,
         weights=(0.25, 0.25, 0.25, 0.25),
         n_decimals=None,
         output_keys=None,
@@ -67,8 +68,8 @@ class BLEU(Metric):
         n_decimals = n_decimals or self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
-        predictions = [x.split() if isinstance(x, str) else x for x in predictions]
-        targets = [x.split() if isinstance(x, str) else x for x in targets]
+        predictions = [x.split() if isinstance(x, str) else x for x in predictions]  # ty:ignore
+        targets = [x.split() if isinstance(x, str) else x for x in targets]  # ty:ignore
 
         score = corpus_bleu(targets, predictions, weights=weights)
 

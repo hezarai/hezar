@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict
-
-import torch
+from enum import StrEnum
 
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
@@ -21,6 +18,7 @@ logger = Logger(__name__)
 
 _required_backends = [Backends.SCIKIT]
 
+# fmt: off
 fa_characters = [
     "", "آ", "ا", "ب", "پ", "ت", "ث", "ج", "چ", "ح", "خ", "د", "ذ", "ر", "ز", "ژ", "س", "ش",
     "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ک", "گ", "ل", "م", "ن", "و", "ه", "ی", " "
@@ -30,11 +28,11 @@ fa_special_characters = ["ء", "ؤ", "ئ", "أ", "ّ"]
 fa_symbols = ["/", "(", ")", "+", "-", ":", "،", "!", ".", "؛", "=", "%", "؟"]
 en_numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 all_characters = fa_characters + fa_numbers + fa_special_characters + fa_symbols + en_numbers
-
+# fmt: on
 ID2LABEL = dict(enumerate(all_characters))
 
 
-class TextSplitType(str, Enum):
+class TextSplitType(StrEnum):
     CHAR_SPLIT = "char_split"  # mostly for char level ocr models
     TOKENIZE = "tokenize"  # mostly for transformer-based ocr models
 
@@ -55,17 +53,18 @@ class OCRDatasetConfig(DatasetConfig):
         reverse_digits (bool): Whether to reverse the digits in text.
 
     """
+
     name = "ocr"
     task: TaskType = TaskType.IMAGE2TEXT
-    path: str = None
+    path: str | None = None
     text_split_type: str | TextSplitType = TextSplitType.CHAR_SPLIT
-    id2label: Dict[int, str] = field(default_factory=lambda: ID2LABEL)
+    id2label: dict[int, str] = field(default_factory=lambda: ID2LABEL)
     text_column: str = "label"
     images_paths_column: str = "image_path"
-    max_length: int = None
-    invalid_characters: list = None
-    reverse_text: bool = None
-    reverse_digits: bool = None
+    max_length: int | None = None
+    invalid_characters: list | None = None
+    reverse_text: bool | None = None
+    reverse_digits: bool | None = None
 
 
 @register_dataset("ocr", config_class=OCRDatasetConfig)
@@ -78,6 +77,7 @@ class OCRDataset(Dataset):
     This behavior is specified by the `text_split_type` in config which can be either `tokenize` or `char_split`.
 
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: OCRDatasetConfig, split=None, preprocessor=None, **kwargs):
@@ -135,7 +135,7 @@ class OCRDataset(Dataset):
 
         """
         # Tokenize text inputs if text_split_type is set to `tokenize`
-        if self.config.text_split_type == TextSplitType.TOKENIZE:
+        if self.config.text_split_type == TextSplitType.TOKENIZE and self.tokenizer:
             token_ids = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)["token_ids"]
             # Make sure to ignore pad tokens by the loss function
             token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]

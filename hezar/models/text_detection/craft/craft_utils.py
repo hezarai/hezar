@@ -1,6 +1,7 @@
 """
 CRAFT utility functions copied and modified based on https://github.com/clovaai/CRAFT-pytorch/blob/master/craft_utils.py
 """
+
 import math
 
 import numpy as np
@@ -29,8 +30,9 @@ def get_boxes_core(textmap, linkmap, text_threshold, link_threshold, low_text):
     ret, link_score = cv2.threshold(linkmap, link_threshold, 1, 0)
 
     text_score_comb = np.clip(text_score + link_score, 0, 1)
-    n_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(text_score_comb.astype(np.uint8),
-                                                                          connectivity=4)
+    n_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
+        text_score_comb.astype(np.uint8), connectivity=4
+    )
 
     det = []
     mapper = []
@@ -106,8 +108,8 @@ def get_poly_core(boxes, labels, mapper):
             continue
 
         # warp image
-        tar = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
-        M = cv2.getPerspectiveTransform(box, tar)
+        tar = np.float32([[0, 0], [w, 0], [w, h], [0, h]])  # ty:ignore
+        M = cv2.getPerspectiveTransform(box, tar)  # ty:ignore
         word_label = cv2.warpPerspective(labels, M, (w, h), flags=cv2.INTER_NEAREST)
         try:
             m_inv = np.linalg.inv(M)
@@ -188,20 +190,20 @@ def get_poly_core(boxes, labels, mapper):
 
         # calc gradiant and apply to make horizontal pivots
         new_pp = []
-        for i, (x, cy) in enumerate(pp):
+        for i, (x, cy) in enumerate(pp):  # ty:ignore
             dx = cp_section[i * 2 + 2][0] - cp_section[i * 2][0]
             dy = cp_section[i * 2 + 2][1] - cp_section[i * 2][1]
             if dx == 0:  # gradient if zero
                 new_pp.append([x, cy - half_char_h, x, cy + half_char_h])
                 continue
-            rad = - math.atan2(dy, dx)
+            rad = -math.atan2(dy, dx)
             c, s = half_char_h * math.cos(rad), half_char_h * math.sin(rad)
             new_pp.append([x - s, cy - c, x + s, cy + c])
 
         # get edge points to cover character heatmaps
         is_spp_found, is_epp_found = False, False
-        grad_s = (pp[1][1] - pp[0][1]) / (pp[1][0] - pp[0][0]) + (pp[2][1] - pp[1][1]) / (pp[2][0] - pp[1][0])
-        grad_e = (pp[-2][1] - pp[-1][1]) / (pp[-2][0] - pp[-1][0]) + (pp[-3][1] - pp[-2][1]) / (pp[-3][0] - pp[-2][0])
+        grad_s = (pp[1][1] - pp[0][1]) / (pp[1][0] - pp[0][0]) + (pp[2][1] - pp[1][1]) / (pp[2][0] - pp[1][0])  # ty:ignore
+        grad_e = (pp[-2][1] - pp[-1][1]) / (pp[-2][0] - pp[-1][0]) + (pp[-3][1] - pp[-2][1]) / (pp[-3][0] - pp[-2][0])  # ty:ignore
         for r in np.arange(0.5, max_r, step_r):
             dx = 2 * half_char_h * r
             if not is_spp_found:

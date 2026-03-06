@@ -1,17 +1,16 @@
 from dataclasses import asdict, dataclass, field
-from typing import List
 
 from ....configs import ModelConfig
 
 
 @dataclass
 class WhisperSpeechRecognitionGenerationConfig:
-    alignment_heads: List[List[int]] = None
-    begin_suppress_tokens: List[int] = field(default_factory=lambda: [220, 50256])
+    alignment_heads: list[list[int]] | None = None
+    begin_suppress_tokens: list[int] = field(default_factory=lambda: [220, 50256])
     bos_token_id: int = 50257
     decoder_start_token_id: int = 50258
     eos_token_id: int = 50257
-    forced_decoder_ids: List[List[int]] = field(default_factory=lambda: [[1, None], [2, 50359]])
+    forced_decoder_ids: list[list[int]] = field(default_factory=lambda: [[1, None], [2, 50359]])
     is_multilingual: bool = True
     max_initial_timestamp_index: int = 50
     max_length: int = 448
@@ -20,10 +19,10 @@ class WhisperSpeechRecognitionGenerationConfig:
     pad_token_id: int = 50257
     prev_sot_token_id: int = 50361
     return_timestamps: int = False
-    suppress_tokens: List[int] = None
+    suppress_tokens: list[int] | None = None
     task_to_id: dict[str, int] = field(default_factory=lambda: {"transcribe": 50359, "translate": 50358})
 
-    def dict(self):
+    def to_dict(self):
         return asdict(self)
 
 
@@ -58,8 +57,8 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     pad_token_id: int = 50256
     bos_token_id: int = 50257
     eos_token_id: int = 50256
-    suppress_tokens: List[int] = None
-    begin_suppress_tokens: List[int] = field(default_factory=lambda: [220, 50256])
+    suppress_tokens: list[int] | None = None
+    begin_suppress_tokens: list[int] = field(default_factory=lambda: [220, 50256])
     use_weighted_layer_sum: bool = False
     classifier_proj_size: int = 256
     apply_spec_augment: bool = False
@@ -70,11 +69,11 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     mask_feature_length: int = 10
     mask_feature_min_masks: int = 0
     max_new_tokens: int = 448
-    generation_config: dict | WhisperSpeechRecognitionGenerationConfig = None
+    generation_config: dict | WhisperSpeechRecognitionGenerationConfig | None = None
 
     def __post_init__(self):
         super().__post_init__()
         if isinstance(self.generation_config, dict):
-            self.generation_config = WhisperSpeechRecognitionGenerationConfig(**self.generation_config)
+            self.generation_config = WhisperSpeechRecognitionGenerationConfig(**self.generation_config)  # ty:ignore
         elif self.generation_config is None:
             self.generation_config = WhisperSpeechRecognitionGenerationConfig()

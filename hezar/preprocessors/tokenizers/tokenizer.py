@@ -3,8 +3,9 @@ from __future__ import annotations
 import os
 import tempfile
 from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import Optional, Self
 
 import numpy as np
 import torch
@@ -58,22 +59,22 @@ class TokenizerConfig(PreprocessorConfig):
     """
 
     name = "tokenizer"
-    max_length: int = "deprecated"
-    truncation: str = "deprecated"
-    truncation_side: str = None
-    padding: str = "deprecated"
-    padding_side: str = None
-    stride: int = None
-    pad_to_multiple_of: int = "deprecated"
+    max_length: int | str = "deprecated"
+    truncation: str | bool = "deprecated"
+    truncation_side: str | None = None
+    padding: str | bool = "deprecated"
+    padding_side: str | None = None
+    stride: int | None = None
+    pad_to_multiple_of: int | str = "deprecated"
     pad_token_type_id: int = 0
-    bos_token: str = None
-    eos_token: str = None
-    unk_token: str = None
-    sep_token: str = None
-    pad_token: str = None
-    cls_token: str = None
-    mask_token: str = None
-    additional_special_tokens: List[str] = None
+    bos_token: str | None = None
+    eos_token: str | None = None
+    unk_token: str | None = None
+    sep_token: str | None = None
+    pad_token: str | None = None
+    cls_token: str | None = None
+    mask_token: str | None = None
+    additional_special_tokens: list[str] | None = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -99,7 +100,7 @@ class Tokenizer(Preprocessor):
         **kwargs: Extra config parameters that merge into the main config.
     """
 
-    required_backends: List[str | Backends] = []
+    required_backends: list[str | Backends] = []
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
@@ -180,12 +181,12 @@ class Tokenizer(Preprocessor):
                 inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
-    def decode(self, ids: List[int], skip_special_tokens: bool = True, **kwargs):
+    def decode(self, ids: list[int] | list[list[int]], skip_special_tokens: bool = True, **kwargs):
         """
         Decode a list of token IDs.
 
         Args:
-            ids (List[int]): List of token IDs.
+            ids (List[int] | List[List[int]]): List of token IDs.
             skip_special_tokens (bool): Whether to skip special tokens during decoding.
             **kwargs: Additional keyword arguments.
 
@@ -193,20 +194,20 @@ class Tokenizer(Preprocessor):
             List[str]: List of decoded strings.
         """
         if isinstance(ids[0], int):
-            ids = [ids]
+            ids = [ids]  # ty:ignore
         if isinstance(ids, (torch.Tensor, np.ndarray)):
-            ids = ids.tolist()
+            ids = ids.tolist()  # ty:ignore
         return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
 
     def pad_encoded_batch(
         self,
         inputs,
-        padding: str | PaddingType = None,
+        padding: str | PaddingType | None = None,
         max_length: Optional[int] = None,
         truncation: bool = True,
-        return_tensors: Optional[str] = None,
-        include_keys: Optional[List[str]] = None,
-        exclude_keys: List = None,
+        return_tensors: str | None = None,
+        include_keys: Optional[list[str]] = None,
+        exclude_keys: list | None = None,
     ):
         """
         Pad a batch of encoded inputs.
@@ -216,7 +217,7 @@ class Tokenizer(Preprocessor):
             padding (str | PaddingType): Padding type.
             max_length (Optional[int]): Max input length (only if padding is set to "max_length").
             truncation (bool): Whether to allow truncation.
-            return_tensors (Optional[str]): The type of tensors to return.
+            return_tensors (str | None): The type of tensors to return.
             include_keys: (Optional[List[str]]): Only pad these given set of keys
             exclude_keys (List): A list of keys to exclude when padding.
 
@@ -232,7 +233,7 @@ class Tokenizer(Preprocessor):
 
         include_keys = include_keys or list(inputs.keys())
 
-        for key, batch in inputs.items():
+        for key, _batch in inputs.items():
             if key in exclude_keys:
                 continue
             if key in include_keys:
@@ -253,18 +254,18 @@ class Tokenizer(Preprocessor):
 
     def __call__(
         self,
-        inputs: List[str] | List[Tuple[str, str]],
-        device: str | torch.device = None,
+        inputs: list[str] | list[tuple[str, str]],
+        device: str | torch.device | None = None,
         add_special_tokens: bool = True,
         padding=None,
         truncation=None,
-        max_length: int = None,
+        max_length: int | None = None,
         return_tensors: str = "list",
         stride: int = 0,
         is_split_into_words: bool = False,
-        pad_to_multiple_of: int = None,
-        return_tokens: bool = None,
-        return_token_type_ids: bool = None,
+        pad_to_multiple_of: int | None = None,
+        return_tokens: bool | None = None,
+        return_token_type_ids: bool | None = None,
         return_attention_mask: bool = True,
         return_overflowing_tokens: bool = False,
         return_special_tokens_mask: bool = False,
@@ -318,7 +319,7 @@ class Tokenizer(Preprocessor):
 
         # Convert to batch if input is a single string or a list of words (is split into words for sequence labeling)
         if isinstance(inputs, str) or (is_split_into_words and not isinstance(inputs[0], list)):
-            inputs = [inputs]
+            inputs = [inputs]  # type: ignore
             is_batch = False
         else:
             is_batch = True
@@ -386,9 +387,9 @@ class Tokenizer(Preprocessor):
         truncation=None,
         padding_side=None,
         truncation_side=None,
-        max_length: int = None,
-        stride: int = None,
-        pad_to_multiple_of: int = None,
+        max_length: int | None = None,
+        stride: int | None = None,
+        pad_to_multiple_of: int | None = None,
     ):
         # Set truncation and padding on the backend tokenizer
         if truncation == "no_truncation" or truncation is None or max_length is None:
@@ -424,15 +425,15 @@ class Tokenizer(Preprocessor):
                 "pad_to_multiple_of": pad_to_multiple_of,
             }
             if self.padding != target:
-                self.enable_padding(**target)
+                self.enable_padding(**target)  # ty:ignore
 
     def _convert_encodings(
         self,
         encoding,
         original_text: str | None = None,
-        return_tokens: bool = None,
-        return_token_type_ids: bool = None,
-        return_attention_mask: bool = None,
+        return_tokens: bool | None = None,
+        return_token_type_ids: bool | None = None,
+        return_attention_mask: bool | None = None,
         return_overflowing_tokens: bool = False,
         return_special_tokens_mask: bool = False,
         return_offsets_mapping: bool = False,
@@ -466,13 +467,13 @@ class Tokenizer(Preprocessor):
 
         return encoding_dict
 
-    def convert_tokens_to_ids(self, tokens: str | List[str]) -> int | List[int]:
+    def convert_tokens_to_ids(self, tokens: str | list[str]) -> list[int]:
         if isinstance(tokens, str):
             tokens = [tokens]
 
         return [self._tokenizer.token_to_id(token) for token in tokens]
 
-    def convert_ids_to_tokens(self, ids: int | List[int], skip_special_tokens: bool = False):
+    def convert_ids_to_tokens(self, ids: int | list[int], skip_special_tokens: bool = False):
         if isinstance(ids, int):
             ids = [ids]
         tokens = []
@@ -486,7 +487,7 @@ class Tokenizer(Preprocessor):
     def num_special_tokens_to_add(self, is_pair: bool) -> int:
         return self._tokenizer.num_special_tokens_to_add(is_pair)
 
-    def get_vocab(self, with_added_tokens: bool = True) -> Dict[str, int]:
+    def get_vocab(self, with_added_tokens: bool = True) -> dict[str, int]:
         return self._tokenizer.get_vocab(with_added_tokens=with_added_tokens)
 
     def get_vocab_size(self, with_added_tokens: bool = True) -> int:
@@ -495,11 +496,11 @@ class Tokenizer(Preprocessor):
     def enable_padding(
         self,
         direction: str = "right",
-        pad_to_multiple_of: int = None,
+        pad_to_multiple_of: int | None = None,
         pad_id: int = 0,
         pad_type_id: int = 0,
-        pad_token: str = None,
-        length: int = None,
+        pad_token: str | None = None,
+        length: int | None = None,
     ):
         return self._tokenizer.enable_padding(
             direction=direction,
@@ -531,7 +532,7 @@ class Tokenizer(Preprocessor):
     def id_to_token(self, id: int) -> str:
         return self._tokenizer.id_to_token(id)
 
-    def get_added_vocab(self) -> Dict[str, int]:
+    def get_added_vocab(self) -> dict[str, int]:
         """
         Returns the added tokens in the vocabulary as a dictionary of token to index.
 
@@ -598,8 +599,8 @@ class Tokenizer(Preprocessor):
     def get_tokens_from_offsets(
         self,
         text: str,
-        ids: List[int],
-        offsets_mapping: List[Tuple[int, int]],
+        ids: list[int],
+        offsets_mapping: list[tuple[int, int]],
     ):
         """
         Extract human-readable tokens by slicing *text* with the provided offsets.
@@ -622,13 +623,13 @@ class Tokenizer(Preprocessor):
         """
         if not isinstance(text, str):
             raise ValueError(f"Expected str type for `text`, got `{type(text)}({text})`")
-        if isinstance(offsets_mapping, list) and not isinstance(offsets_mapping[0], Tuple):
+        if isinstance(offsets_mapping, list) and not isinstance(offsets_mapping[0], tuple):
             raise ValueError(f"Expected a list of tuples for `offsets_mapping`, got List[{type(offsets_mapping[0])}]")
         tokens = []
         for offset in offsets_mapping:
             offset_start, offset_end = offset
             tokens.append(text[offset_start:offset_end])
-        for i, token in enumerate(tokens):
+        for i, _token in enumerate(tokens):
             if ids[i] in self.special_ids:
                 tokens[i] = self._tokenizer.id_to_token(ids[i])
         return tokens
@@ -638,11 +639,12 @@ class Tokenizer(Preprocessor):
         cls,
         hub_or_local_path,
         subfolder=None,
+        cache_dir=None,
         config_filename=None,
         tokenizer_filename=None,
-        cache_dir=None,
+        force_return_dict: bool = False,
         **kwargs,
-    ) -> "Tokenizer":
+    ) -> Self:
         """
         Load a tokenizer from a specified path or Hub repository.
 
@@ -683,7 +685,7 @@ class Tokenizer(Preprocessor):
         tokenizer = build_preprocessor(config.name, config, tokenizer_file=tokenizer_path, **kwargs)
         return tokenizer
 
-    def save(self, path, save_config=True, pretty=True):
+    def save(self, path, save_config=True, pretty=True, **kwargs):
         """
         Save the tokenizer and its configuration.
 
@@ -705,11 +707,12 @@ class Tokenizer(Preprocessor):
     def push_to_hub(
         self,
         repo_id,
-        commit_message=None,
         subfolder=None,
-        tokenizer_filename=None,
-        config_filename=None,
+        commit_message=None,
         private=False,
+        config_filename=None,
+        tokenizer_filename=None,
+        **kwargs,
     ):
         """
         Push tokenizer and config to the Hub

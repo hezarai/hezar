@@ -1,8 +1,9 @@
 """
 Define all model outputs here
 """
+
 from dataclasses import asdict, dataclass
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 __all__ = [
@@ -27,77 +28,77 @@ class ModelOutput:
     The helper functions in the class enable it to be treated as a mapping or a dict object.
     """
 
-    def dict(self):
+    def to_dict(self):
         return asdict(self)
 
     def __str__(self):
-        return str({k: v for k, v in self.dict().items() if v is not None})
+        return str({k: v for k, v in self.to_dict().items() if v is not None})
 
     def __repr__(self):
         return str(self)
 
     def __getitem__(self, item):
         try:
-            return self.dict()[item]
+            return self.to_dict()[item]
         except KeyError:
             raise AttributeError(f"`{self.__class__.__name__}` has no attribute `{item}`!")
 
     def __len__(self):
-        return len(self.dict())
+        return len(self.to_dict())
 
     def __iter__(self):
-        return iter(self.dict())
+        return iter(self.to_dict())
 
     def keys(self):
-        return list(self.dict().keys())
+        return list(self.to_dict().keys())
 
     def values(self):
-        return list(self.dict().values())
+        return list(self.to_dict().values())
 
     def items(self):
-        return self.dict().items()
+        return self.to_dict().items()
 
 
 @dataclass(repr=False)
 class MaskFillingOutput(ModelOutput):
     token: Optional[int] = None
-    sequence: Optional[str] = None
-    token_id: Optional[str] = None
+    sequence: str | None = None
+    token_id: str | None = None
     score: Optional[float] = None
 
 
 @dataclass(repr=False)
 class TextClassificationOutput(ModelOutput):
-    label: Optional[str] = None
+    label: str | None = None
     score: Optional[float] = None
 
 
 @dataclass(repr=False)
 class SequenceLabelingOutput(ModelOutput):
-    token: Optional[List[List[str]]] = None
-    label: Optional[List[List[str]]] = None
+    token: Optional[list[list[str]]] = None
+    label: Optional[list[list[str]]] = None
     start: Optional[int] = None
     end: Optional[int] = None
-    score: Optional[List[List[float]]] = None
+    score: Optional[list[list[float]]] = None
 
 
 @dataclass(repr=False)
 class TextGenerationOutput(ModelOutput):
-    text: Optional[str] = None
+    text: str | None = None
 
 
 @dataclass(repr=False)
 class SpeechRecognitionOutput(ModelOutput):
-    text: Optional[str] = None
-    chunks: Optional[List[Dict]] = None
+    text: str | None = None
+    chunks: Optional[list[dict]] = None
 
 
 @dataclass(repr=False)
 class Image2TextOutput(ModelOutput):
-    text: Optional[str] = None
-    score: Optional[str] = None
+    text: str | None = None
+    score: str | None = None
 
 
 @dataclass(repr=False)
 class TextDetectionOutput(ModelOutput):
-    boxes: list[int] = None
+    boxes: list[int] | None = None

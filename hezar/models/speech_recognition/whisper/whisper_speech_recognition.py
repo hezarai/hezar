@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-from typing import List
 
 import numpy as np
 import torch
@@ -59,10 +58,8 @@ class WhisperSpeechRecognition(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-        if decoder_input_ids is None or decoder_inputs_embeds is None:
-            decoder_input_ids = shift_tokens_right(
-                labels, self.config.pad_token_id, self.config.decoder_start_token_id
-            )
+        if (decoder_input_ids is None or decoder_inputs_embeds is None) and labels is not None:
+            decoder_input_ids = shift_tokens_right(labels, self.config.pad_token_id, self.config.decoder_start_token_id)
         outputs = self.whisper(
             input_features=input_features,
             attention_mask=attention_mask,
@@ -81,7 +78,7 @@ class WhisperSpeechRecognition(Model):
 
         return dict(outputs)
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, attention_mask: torch.Tensor = None):
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, attention_mask: torch.Tensor | None = None):
         labels = copy.deepcopy(labels)
         if attention_mask is not None:
             labels = labels.masked_fill(attention_mask.ne(1), -100)
@@ -97,8 +94,8 @@ class WhisperSpeechRecognition(Model):
         logits_processor=None,
         stopping_criteria=None,
         prefix_allowed_tokens_fn=None,
-        synced_gpus=None,
-        return_timestamps=None,
+        synced_gpus: bool = False,
+        return_timestamps: bool | None = None,
         task=None,
         language=None,
         is_multilingual=None,
@@ -108,7 +105,7 @@ class WhisperSpeechRecognition(Model):
         if generation_config is not None:
             self.config.generation_config.update(**generation_config)
 
-        generation_config = GenerationConfig(**self.config.generation_config.dict())
+        generation_config = GenerationConfig(**self.config.generation_config.to_dict())
 
         generation_outputs = self.whisper.generate(
             input_features=input_features,
@@ -168,10 +165,10 @@ class WhisperSpeechRecognition(Model):
     def freeze_encoder(self):
         self.whisper.freeze_encoder()
 
-    def preprocess(self, inputs: str | np.ndarray | List[np.ndarray] | List[str], language=None, **kwargs):
-        if isinstance(inputs, str) or (isinstance(inputs, List) and isinstance(inputs[0], str)):
+    def preprocess(self, inputs: str | np.ndarray | list[np.ndarray] | list[str], language=None, **kwargs):
+        if isinstance(inputs, str) or (isinstance(inputs, list) and isinstance(inputs[0], str)):
             inputs = load_audio_files(inputs)
-        elif isinstance(inputs, List) and isinstance(inputs[0], np.ndarray):
+        elif isinstance(inputs, list) and isinstance(inputs[0], np.ndarray):
             inputs = [librosa.to_mono(x.transpose()) for x in inputs if isinstance(x, np.ndarray) and len(x.shape) > 1]
 
         tokenizer = self.preprocessor.tokenizer
@@ -180,10 +177,7 @@ class WhisperSpeechRecognition(Model):
 
         forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=language, task="transcribe")
         inputs = feature_extractor(
-            inputs,
-            sampling_rate=self.config.sampling_rate,
-            return_attention_mask=True,
-            return_tensors="torch"
+            inputs, sampling_rate=self.config.sampling_rate, return_attention_mask=True, return_tensors="torch"
         )
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs

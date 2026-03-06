@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -21,7 +21,7 @@ class AccuracyConfig(MetricConfig):
     name = MetricType.ACCURACY
     objective: str = "maximize"
     normalize: bool = True
-    sample_weight: Iterable[float] = None
+    sample_weight: Iterable[float] | None = None
     output_keys: tuple = ("accuracy",)
 
 
@@ -34,6 +34,7 @@ class Accuracy(Metric):
         config (AccuracyConfig): Metric config object
         **kwargs: Extra config parameters passed as kwargs to update the `config`
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: AccuracyConfig, **kwargs):
@@ -47,6 +48,7 @@ class Accuracy(Metric):
         sample_weight=None,
         n_decimals=None,
         output_keys=None,
+        **kwargs,
     ):
         """
         Compute the accuracy score for the given predictions against targets.

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import numpy as np
 import torch
 
@@ -79,13 +77,13 @@ class TrOCRImage2Text(Model):
 
     def generate(self, pixel_values, generation_config=None, **kwargs):
         if generation_config is None:
-            generation_config = self.config.dict()["generation"]
+            generation_config = self.config.to_dict()["generation"]
         generation_config = GenerationConfig(**generation_config)
         outputs = self.trocr.generate(inputs=pixel_values, generation_config=generation_config, **kwargs)
 
         return outputs
 
-    def preprocess(self, inputs: List[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
+    def preprocess(self, inputs: list[str | np.ndarray | Image.Image | torch.Tensor], **kwargs):
         image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs

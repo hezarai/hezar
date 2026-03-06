@@ -12,14 +12,16 @@ Examples:
     >>> bert_config.save("saved/bert", filename="model_config.yaml")
     >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
 """
+
 from __future__ import annotations
 
+import builtins
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field, fields
 from enum import Enum
 from pprint import pformat
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Literal, Self
 
 from huggingface_hub import create_repo, hf_hub_download, upload_file
 from omegaconf import DictConfig, OmegaConf
@@ -29,11 +31,16 @@ from .constants import (
     HEZAR_CACHE_DIR,
     ConfigType,
     LRSchedulerType,
+    MetricType,
     OptimizerType,
     PrecisionType,
     TaskType,
 )
 from .utils import Logger, get_module_config_class
+
+
+if TYPE_CHECKING:
+    from .metrics import Metric
 
 
 __all__ = [
@@ -72,7 +79,7 @@ class Config:
 
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="")
     config_type: str = field(init=False, default=ConfigType.BASE)
 
     def __post_init__(self):
@@ -89,30 +96,30 @@ class Config:
                 )
 
         # Convert enums to values
-        for param, value in self.dict().items():
+        for param, _ in self.to_dict().items():
             if isinstance(getattr(self, param), Enum):
                 setattr(self, param, str(getattr(self, param)))
 
     def __str__(self):
-        return pformat(self.dict())
+        return pformat(self.to_dict())
 
     def __getitem__(self, item):
         try:
-            return self.dict()[item]
+            return self.to_dict()[item]
         except KeyError:
             raise AttributeError(f"`{self.__class__.__name__}` does not have the parameter `{item}`!")
 
     def __len__(self):
-        return len(self.dict())
+        return len(self.to_dict())
 
     def __iter__(self):
-        return iter(self.dict())
+        return iter(self.to_dict())
 
     @classmethod
     def fields(cls):
         return cls.__dataclass_fields__
 
-    def dict(self):
+    def to_dict(self):
         """
         Returns the config object as a dictionary (works on nested dataclasses too)
 
@@ -122,7 +129,7 @@ class Config:
         return asdict(self)
 
     def keys(self):
-        return list(self.dict().keys())
+        return list(self.to_dict().keys())
 
     def get(self, key, default=None):
         return getattr(self, key, default)
@@ -149,13 +156,13 @@ class Config:
     @classmethod
     def load(
         cls,
-        hub_or_local_path: str | os.PathLike,
-        filename: Optional[str] = None,
-        subfolder: Optional[str] = None,
-        repo_type: str = None,
-        cache_dir: str = None,
+        hub_or_local_path: str,
+        filename: str | None = None,
+        subfolder: str | None = None,
+        repo_type: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
-    ) -> "Config":
+    ) -> Self:
         """
         Load config from Hub or locally if it already exists on disk (handled by HfApi)
 
@@ -176,21 +183,21 @@ class Config:
         config_path = os.path.join(hub_or_local_path, subfolder, filename)
         is_local = os.path.isfile(config_path)
         if os.path.isdir(hub_or_local_path) and not is_local:
-            raise EnvironmentError(
-                f"Path `{hub_or_local_path}` exists locally but the config file {filename} is missing!"
-            )
+            raise ValueError(f"Path `{hub_or_local_path}` exists locally but the config file {filename} is missing!")
         # if the file or repo_id does not exist locally, load from the Hub
         if not is_local:
             config_path = hf_hub_download(
                 hub_or_local_path,
-                filename=filename,
+                filename,
                 subfolder=subfolder,
-                cache_dir=cache_dir or HEZAR_CACHE_DIR,
                 repo_type=repo_type,
+                cache_dir=cache_dir or HEZAR_CACHE_DIR,
             )
         # Load config file and convert to dictionary
         dict_config = OmegaConf.load(config_path)
         config = OmegaConf.to_container(dict_config)
+        if not isinstance(config, dict):
+            raise ValueError("Config must be a dictionary mapping.")
         # Check if config_type in the file and class are equal
         config_type = config.get("config_type", ConfigType.BASE)
         if config_type in _config_to_type_mapping.values():
@@ -206,7 +213,7 @@ class Config:
         return config
 
     @classmethod
-    def from_dict(cls, dict_config: Dict | DictConfig, **kwargs):
+    def from_dict(cls, dict_config: builtins.dict | DictConfig, **kwargs):
         """
         Load config from a dict-like object. Nested configs are also recursively converted to their classes if possible.
         """
@@ -214,7 +221,7 @@ class Config:
         dict_config.update(**kwargs)
 
         for k, v in dict_config.items():
-            if isinstance(v, Dict) and "name" in v and "config_type" in v:
+            if isinstance(v, dict) and "name" in v and "config_type" in v:
                 config_cls = get_module_config_class(v["name"], v["config_type"])
                 if config_cls is not None:
                     dict_config[k] = config_cls.from_dict(v)
@@ -229,8 +236,8 @@ class Config:
         self,
         save_dir: str | os.PathLike,
         filename: str,
-        subfolder: Optional[str] = None,
-        skip_none_fields: Optional[bool] = True,
+        subfolder: str | None = None,
+        skip_none_fields: bool = True,
     ):
         """
         Save the `*config.yaml` file to a local path
@@ -242,7 +249,7 @@ class Config:
              skip_none_fields (bool): Whether to skip saving None values or not
         """
         subfolder = subfolder or ""
-        config = self.dict()
+        config = self.to_dict()
 
         if skip_none_fields:
             # exclude None items
@@ -259,11 +266,11 @@ class Config:
         self,
         repo_id: str,
         filename: str,
-        subfolder: Optional[str] = None,
-        repo_type: Optional[str] = "model",
-        skip_none_fields: Optional[bool] = True,
-        private: Optional[bool] = False,
-        commit_message: Optional[str] = None,
+        subfolder: str | None = None,
+        repo_type: str = "model",
+        skip_none_fields: bool = True,
+        private: bool = False,
+        commit_message: str | None = None,
     ):
         """
         Push the config file to the hub
@@ -304,7 +311,7 @@ class ModelConfig(Config):
     Base dataclass for all model configs
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="")
     config_type: str = field(init=False, default=ConfigType.MODEL)
 
 
@@ -314,7 +321,7 @@ class PreprocessorConfig(Config):
     Base dataclass for all preprocessor configs
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="")
     config_type: str = field(init=False, default=ConfigType.PREPROCESSOR)
 
 
@@ -337,21 +344,21 @@ class DatasetConfig(Config):
             Keyword arguments to pass to the HF `datasets.load_dataset()`
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="")
     config_type: str = field(init=False, default=ConfigType.DATASET)
-    path: str = None
-    task: TaskType | List[TaskType] = field(
-        default=None,
-        metadata={"help": "Name of the task(s) this dataset is built for"}
+    path: str | None = None
+    task: TaskType | list[TaskType] | None = field(
+        default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
-    max_size: int | float = None
-    hf_load_kwargs: dict = None
+    max_size: int | float | None = None
+    hf_load_kwargs: dict | None = None
 
     def __post_init__(self):
         super().__post_init__()
         if self.path and ":" in self.path:
             self.path, config_name = self.path.split(":")
-            self.hf_load_kwargs["name"] = config_name
+            if self.hf_load_kwargs:
+                self.hf_load_kwargs["name"] = config_name
         if self.hf_load_kwargs:
             self.hf_load_kwargs.pop("path", None)
             self.hf_load_kwargs.pop("cache_dir", None)
@@ -366,7 +373,7 @@ class EmbeddingConfig(Config):
     Base dataclass for all embedding configs
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="")
     config_type: str = field(init=False, default=ConfigType.EMBEDDING)
     bypass_version_check: Literal["deprecated"] = field(
         default="deprecated",
@@ -380,10 +387,10 @@ class MetricConfig(Config):
     Base dataclass config for all metric configs
     """
 
-    name: str = field(init=False, default=None)
+    name: str = field(init=False, default="")
     config_type: str = field(init=False, default=ConfigType.METRIC)
-    objective: Literal["maximize", "minimize"] = None
-    output_keys: List | Tuple = None
+    objective: Literal["maximize", "minimize"] | None = None
+    output_keys: list | tuple | None = None
     n_decimals: int = 4
 
 
@@ -472,33 +479,33 @@ class TrainerConfig(Config):
     output_dir: str
     task: str | TaskType
     device: str = "cuda"
-    num_epochs: int = None
-    init_weights_from: str = None
-    resume_from_checkpoint: bool | str | os.PathLike = None
-    max_steps: int = None
+    num_epochs: int = 1
+    init_weights_from: str | None = None
+    resume_from_checkpoint: bool | str | None = None
+    max_steps: int | None = None
     num_dataloader_workers: int = 0
     dataloader_shuffle: bool = True
     seed: int = 42
-    optimizer: str | OptimizerType = None
+    optimizer: str | OptimizerType | None = None
     learning_rate: float = 2e-5
     weight_decay: float = 0.0
-    lr_scheduler: str | LRSchedulerType = None
-    lr_scheduler_kwargs: Dict[str, Any] = None
-    lr_scheduling_steps: int = None
-    batch_size: int = None
-    eval_batch_size: int = None
+    lr_scheduler: str | LRSchedulerType | None = None
+    lr_scheduler_kwargs: dict[str, Any] | None = None
+    lr_scheduling_steps: int | None = None
+    batch_size: int = 1
+    eval_batch_size: int | None = None
     gradient_accumulation_steps: int = 1
     distributed: bool = False
     mixed_precision: PrecisionType | str | None = None
     use_cpu: bool = False
     do_evaluate: bool = True
     evaluate_with_generate: bool = True
-    metrics: List[str | MetricConfig] = None
+    metrics: list[str | MetricType | Metric | MetricConfig] | None = None
     metric_for_best_model: str = "loss"
     save_enabled: bool = True
-    save_freq: int = "deprecated"
-    save_steps: int = None
-    log_steps: int = None
+    save_freq: int | str = "deprecated"
+    save_steps: int | None = None
+    log_steps: int | None = None
     checkpoints_dir: str = "checkpoints"
     logs_dir: str = "logs"
 
@@ -512,8 +519,7 @@ class TrainerConfig(Config):
         # Validate `task`
         if self.task not in list(TaskType):
             raise ValueError(
-                f"Invalid task `{self.task}` passed to `TrainerConfig`. "
-                f"Available options are {TaskType.list()}",
+                f"Invalid task `{self.task}` passed to `TrainerConfig`. Available options are {TaskType.list()}",
             )
         # Validate `metric_for_best_model`
         if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):
