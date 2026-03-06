@@ -22,7 +22,7 @@ class WhisperSpeechRecognitionGenerationConfig:
     suppress_tokens: list[int] | None = None
     task_to_id: dict[str, int] = field(default_factory=lambda: {"transcribe": 50359, "translate": 50358})
 
-    def dict(self):
+    def to_dict(self):
         return asdict(self)
 
 
