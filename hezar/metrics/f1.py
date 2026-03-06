@@ -60,7 +60,7 @@ class F1(Metric):
         pos_label: int | None = None,
         average: str | None = None,
         sample_weight: Iterable[float] | None = None,
-        zero_division: str | None = None,
+        zero_division: str | float = "warn",
         n_decimals: int | None = None,
         output_keys: tuple | None = None,
         **kwargs,
