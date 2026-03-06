@@ -28,35 +28,35 @@ class ModelOutput:
     The helper functions in the class enable it to be treated as a mapping or a dict object.
     """
 
-    def dict(self):
+    def to_dict(self):
         return asdict(self)
 
     def __str__(self):
-        return str({k: v for k, v in self.dict().items() if v is not None})
+        return str({k: v for k, v in self.to_dict().items() if v is not None})
 
     def __repr__(self):
         return str(self)
 
     def __getitem__(self, item):
         try:
-            return self.dict()[item]
+            return self.to_dict()[item]
         except KeyError:
             raise AttributeError(f"`{self.__class__.__name__}` has no attribute `{item}`!")
 
     def __len__(self):
-        return len(self.dict())
+        return len(self.to_dict())
 
     def __iter__(self):
-        return iter(self.dict())
+        return iter(self.to_dict())
 
     def keys(self):
-        return list(self.dict().keys())
+        return list(self.to_dict().keys())
 
     def values(self):
-        return list(self.dict().values())
+        return list(self.to_dict().values())
 
     def items(self):
-        return self.dict().items()
+        return self.to_dict().items()
 
 
 @dataclass(repr=False)
