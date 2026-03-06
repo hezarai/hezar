@@ -42,6 +42,7 @@ class CraftTextDetection(Model):
     """
     CRAFT for text detection. Copied from the original implementation at https://github.com/clovaai/CRAFT-pytorch
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: CraftTextDetectionConfig, **kwargs):
@@ -58,10 +59,14 @@ class CraftTextDetection(Model):
 
         num_class = 2
         self.conv_cls = nn.Sequential(
-            nn.Conv2d(32, 32, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(32, 32, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(32, 16, kernel_size=3, padding=1), nn.ReLU(inplace=True),
-            nn.Conv2d(16, 16, kernel_size=1), nn.ReLU(inplace=True),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(32, 32, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(32, 16, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(16, 16, kernel_size=1),
+            nn.ReLU(inplace=True),
             nn.Conv2d(16, num_class, kernel_size=1),
         )
 
@@ -72,22 +77,22 @@ class CraftTextDetection(Model):
         init_weights(self.conv_cls.modules())
 
     def forward(self, pixel_values, ratio_values=None):
-        """ Base network """
+        """Base network"""
         sources = self.basenet(pixel_values)
 
         """ U network """
         y = torch.cat([sources[0], sources[1]], dim=1)
         y = self.upconv1(y)
 
-        y = F.interpolate(y, size=sources[2].size()[2:], mode='bilinear', align_corners=False)
+        y = F.interpolate(y, size=sources[2].size()[2:], mode="bilinear", align_corners=False)
         y = torch.cat([y, sources[2]], dim=1)
         y = self.upconv2(y)
 
-        y = F.interpolate(y, size=sources[3].size()[2:], mode='bilinear', align_corners=False)
+        y = F.interpolate(y, size=sources[3].size()[2:], mode="bilinear", align_corners=False)
         y = torch.cat([y, sources[3]], dim=1)
         y = self.upconv3(y)
 
-        y = F.interpolate(y, size=sources[4].size()[2:], mode='bilinear', align_corners=False)
+        y = F.interpolate(y, size=sources[4].size()[2:], mode="bilinear", align_corners=False)
         y = torch.cat([y, sources[4]], dim=1)
         feature = self.upconv4(y)
 
@@ -164,7 +169,7 @@ class VGG16BN(nn.Module):
         self.slice5 = nn.Sequential(
             nn.MaxPool2d(kernel_size=3, stride=1, padding=1),
             nn.Conv2d(512, 1024, kernel_size=3, padding=6, dilation=6),
-            nn.Conv2d(1024, 1024, kernel_size=1)
+            nn.Conv2d(1024, 1024, kernel_size=1),
         )
 
         init_weights(self.slice1.modules())
@@ -184,7 +189,7 @@ class VGG16BN(nn.Module):
         h_relu5_3 = h
         h = self.slice5(h)
         h_fc7 = h
-        vgg_outputs = namedtuple("VggOutputs", ['fc7', 'relu5_3', 'relu4_3', 'relu3_2', 'relu2_2'])
+        vgg_outputs = namedtuple("VggOutputs", ["fc7", "relu5_3", "relu4_3", "relu3_2", "relu2_2"])
         out = vgg_outputs(h_fc7, h_relu5_3, h_relu4_3, h_relu3_2, h_relu2_2)
         return out
 
@@ -198,7 +203,7 @@ class DoubleConv(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1),
             nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):

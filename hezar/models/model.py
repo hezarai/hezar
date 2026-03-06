@@ -7,13 +7,15 @@ Examples:
     >>> from hezar.models import Model
     >>> model = Model.load("hezarai/bert-base-fa")
 """
+
 from __future__ import annotations
 
 import os
 import re
 import tempfile
 from collections import OrderedDict
-from typing import Any, Dict, List, Mapping, Optional
+from collections.abc import Mapping
+from typing import Any, Dict, List, Optional
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -46,7 +48,7 @@ losses_mapping = {
     LossType.BCE_WITH_LOGITS: nn.BCEWithLogitsLoss,
     LossType.CROSS_ENTROPY: nn.CrossEntropyLoss,
     LossType.TRIPLE_MARGIN: nn.TripletMarginLoss,
-    LossType.CTC: nn.CTCLoss
+    LossType.CTC: nn.CTCLoss,
 }
 
 
@@ -58,7 +60,7 @@ class Model(nn.Module):
         config: A dataclass model config
     """
 
-    required_backends: List[Backends | str] = []
+    required_backends: list[Backends | str] = []
     # Default file names
     model_filename = DEFAULT_MODEL_FILE
     config_filename = DEFAULT_MODEL_CONFIG_FILE
@@ -71,7 +73,7 @@ class Model(nn.Module):
 
     # Loss function name
     loss_func_name: str | LossType = LossType.CROSS_ENTROPY
-    loss_func_kwargs: Dict[str, Any] = {}
+    loss_func_kwargs: dict[str, Any] = {}
 
     def __init__(self, config: ModelConfig, *args, **kwargs):
         verify_dependencies(self, self.required_backends)
@@ -84,11 +86,11 @@ class Model(nn.Module):
     def __repr__(self):
         representation = super().__repr__()
         pattern = r"\('?_loss_func'?\): [^\)]+\)\s*"
-        representation = re.sub(pattern, '', representation)
+        representation = re.sub(pattern, "", representation)
         return representation
 
     @staticmethod
-    def _set_loss_func(loss_func_name: str, **loss_fn_kwargs: Dict[str, Any]):
+    def _set_loss_func(loss_func_name: str, **loss_fn_kwargs: dict[str, Any]):
         if loss_func_name not in losses_mapping:
             raise ValueError(f"Invalid loss_func_name `{loss_func_name}`. Available: {list(losses_mapping.keys())}")
         loss_fn = losses_mapping[loss_func_name](**loss_fn_kwargs)
@@ -300,7 +302,7 @@ class Model(nn.Module):
             target_path=os.path.join(repo_id, filename),
         )
 
-    def forward(self, *model_inputs, **kwargs) -> Dict:
+    def forward(self, *model_inputs, **kwargs) -> dict:
         """
         Forward inputs through the model and return logits, etc.
 
@@ -341,7 +343,7 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def preprocess(self, *raw_inputs: Any | List[Any], **kwargs):
+    def preprocess(self, *raw_inputs: Any | list[Any], **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
@@ -370,13 +372,13 @@ class Model(nn.Module):
     @torch.inference_mode()
     def predict(
         self,
-        inputs: Any | List[Any],
+        inputs: Any | list[Any],
         device: str | torch.device = None,
         preprocess: bool = True,
         unpack_forward_inputs: bool = True,
         post_process: bool = True,
         **kwargs,
-    ) -> List[Any] | torch.Tensor:
+    ) -> list[Any] | torch.Tensor:
         """
         Perform an end-to-end prediction on raw inputs.
 
@@ -498,7 +500,7 @@ class Model(nn.Module):
         return self._preprocessor
 
     @preprocessor.setter
-    def preprocessor(self, value: Preprocessor | PreprocessorsContainer | List[Preprocessor]):
+    def preprocessor(self, value: Preprocessor | PreprocessorsContainer | list[Preprocessor]):
         """
         A safe setter method for model's preprocessor. Value must be either a Preprocessor, a list of Preprocessors or
         a PreprocessorsContainer instance.

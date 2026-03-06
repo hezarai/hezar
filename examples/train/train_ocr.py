@@ -9,11 +9,7 @@ train_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="train", preproc
 eval_dataset = Dataset.load("hezarai/parsynth-ocr-200k", split="test", preprocessor=image_processor)
 
 model = CRNNImage2Text(
-    CRNNImage2TextConfig(
-        id2label=train_dataset.config.id2label,
-        map2seq_in_dim=1024,
-        map2seq_out_dim=96
-    )
+    CRNNImage2TextConfig(id2label=train_dataset.config.id2label, map2seq_in_dim=1024, map2seq_out_dim=96)
 )
 
 train_config = TrainerConfig(
@@ -23,7 +19,7 @@ train_config = TrainerConfig(
     batch_size=8,
     num_epochs=20,
     metrics=["cer"],
-    metric_for_best_model="cer"
+    metric_for_best_model="cer",
 )
 
 trainer = Trainer(

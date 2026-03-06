@@ -31,11 +31,11 @@ class TextSummarizationDatasetConfig(DatasetConfig):
 
     name = "text_summarization"
     task: TaskType = TaskType.TEXT_GENERATION
-    path: str = None
-    prefix: str = None
-    text_field: str = None
-    summary_field: str = None
-    title_field: str = None
+    path: str | None = None
+    prefix: str | None = None
+    text_field: str | None = None
+    summary_field: str | None = None
+    title_field: str | None = None
     max_length: int = None
     labels_max_length: int = None
 

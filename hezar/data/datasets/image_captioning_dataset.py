@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-import torch
-
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...registry import register_dataset
@@ -30,9 +28,10 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
         max_length (int): Maximum length of text.
 
     """
+
     name = "image_captioning"
     task: TaskType = TaskType.IMAGE2TEXT
-    path: str = None
+    path: str | None = None
     text_column: str = "label"
     images_paths_column = "image_path"
     max_length: int = None
@@ -49,7 +48,7 @@ class ImageCaptioningDataset(Dataset):
         self.data_collator = ImageCaptioningDataCollator(
             self.tokenizer,
             padding="max_length" if self.config.max_length is not None else "longest",
-            max_length=self.config.max_length
+            max_length=self.config.max_length,
         )
 
     def _load(self, split):

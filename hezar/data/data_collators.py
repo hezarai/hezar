@@ -307,9 +307,7 @@ class SequenceLabelingDataCollator:
                 [self.label_pad_token_id] * (sequence_length - len(label)) + list(label) for label in labels
             ]
 
-        input_batch = {
-            k: torch.tensor(v) if not isinstance(v, torch.Tensor) else v for k, v in input_batch.items()
-        }
+        input_batch = {k: torch.tensor(v) if not isinstance(v, torch.Tensor) else v for k, v in input_batch.items()}
 
         return input_batch
 

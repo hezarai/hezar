@@ -1,6 +1,7 @@
 """
 A DistilBERT model for text classification built using HuggingFace Transformers
 """
+
 from __future__ import annotations
 
 from typing import Dict, List
@@ -60,7 +61,7 @@ class DistilBertTextClassification(Model):
         output_attentions=None,
         output_hidden_states=None,
         **kwargs,
-    ) -> Dict:
+    ) -> dict:
         lm_outputs = self.distilbert(
             input_ids=token_ids,
             attention_mask=attention_mask,
@@ -89,7 +90,7 @@ class DistilBertTextClassification(Model):
         loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         if self.preprocessor.text_normalizer is not None:

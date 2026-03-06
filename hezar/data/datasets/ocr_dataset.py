@@ -4,8 +4,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict
 
-import torch
-
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
 from ...registry import register_dataset
@@ -21,6 +19,7 @@ logger = Logger(__name__)
 
 _required_backends = [Backends.SCIKIT]
 
+# fmt: off
 fa_characters = [
     "", "آ", "ا", "ب", "پ", "ت", "ث", "ج", "چ", "ح", "خ", "د", "ذ", "ر", "ز", "ژ", "س", "ش",
     "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ک", "گ", "ل", "م", "ن", "و", "ه", "ی", " "
@@ -30,7 +29,7 @@ fa_special_characters = ["ء", "ؤ", "ئ", "أ", "ّ"]
 fa_symbols = ["/", "(", ")", "+", "-", ":", "،", "!", ".", "؛", "=", "%", "؟"]
 en_numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 all_characters = fa_characters + fa_numbers + fa_special_characters + fa_symbols + en_numbers
-
+# fmt: on
 ID2LABEL = dict(enumerate(all_characters))
 
 
@@ -55,11 +54,12 @@ class OCRDatasetConfig(DatasetConfig):
         reverse_digits (bool): Whether to reverse the digits in text.
 
     """
+
     name = "ocr"
     task: TaskType = TaskType.IMAGE2TEXT
-    path: str = None
+    path: str | None = None
     text_split_type: str | TextSplitType = TextSplitType.CHAR_SPLIT
-    id2label: Dict[int, str] = field(default_factory=lambda: ID2LABEL)
+    id2label: dict[int, str] = field(default_factory=lambda: ID2LABEL)
     text_column: str = "label"
     images_paths_column: str = "image_path"
     max_length: int = None
@@ -78,6 +78,7 @@ class OCRDataset(Dataset):
     This behavior is specified by the `text_split_type` in config which can be either `tokenize` or `char_split`.
 
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: OCRDatasetConfig, split=None, preprocessor=None, **kwargs):

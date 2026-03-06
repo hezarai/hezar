@@ -29,12 +29,18 @@ class ROUGEConfig(MetricConfig):
         multi_ref (bool): Flag to indicate if multiple references are present.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.ROUGE
     objective: str = "maximize"
     use_stemmer: bool = False
     use_aggregator: bool = True
     multi_ref: bool = True
-    output_keys: tuple = ("rouge1", "rouge2", "rougeL", "rougeLsum",)
+    output_keys: tuple = (
+        "rouge1",
+        "rouge2",
+        "rougeL",
+        "rougeLsum",
+    )
 
 
 @register_metric("rouge", config_class=ROUGEConfig, description=_DESCRIPTION)
@@ -46,6 +52,7 @@ class ROUGE(Metric):
         config (ROUGEConfig): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: ROUGEConfig, **kwargs):

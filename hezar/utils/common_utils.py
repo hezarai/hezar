@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import inspect
 import re
+from collections.abc import Callable, Mapping
 from time import perf_counter
-from typing import Callable, Dict, List, Mapping
+from typing import Dict, List
 
 from ..constants import Color
 
@@ -60,19 +61,20 @@ def is_text_valid(text, valid_characters):
     """
     Given a list of valid characters, check if only those are included in the text
     """
-    pattern = re.compile(f'^[{re.escape("".join(valid_characters))}]+$')
+    pattern = re.compile(f"^[{re.escape(''.join(valid_characters))}]+$")
     return bool(pattern.match(text))
 
 
 def is_url(text):
     url_pattern = re.compile(
-        r'^(https?|ftp)://'  # Protocol (http, https, ftp)
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # Domain
-        r'localhost|'  # localhost
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # IPv4
-        r'\[?[A-F0-9]*:[A-F0-9:]+]?)'  # IPv6
-        r'(?::\d+)?'  # Port
-        r'(?:/?\S*)?$', re.IGNORECASE
+        r"^(https?|ftp)://"  # Protocol (http, https, ftp)
+        r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # Domain
+        r"localhost|"  # localhost
+        r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|"  # IPv4
+        r"\[?[A-F0-9]*:[A-F0-9:]+]?)"  # IPv6
+        r"(?::\d+)?"  # Port
+        r"(?:/?\S*)?$",
+        re.IGNORECASE,
     )
     return bool(re.match(url_pattern, text))
 
@@ -100,7 +102,7 @@ def colorize_text(text: str, color: str | Color):
     return color + text + Color.NORMAL
 
 
-def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
+def permute_dict_list(dict_list: list[dict]) -> dict[str, list]:
     """
     Convert a list of dictionaries to a dictionary of lists
 
@@ -116,7 +118,7 @@ def permute_dict_list(dict_list: List[Dict]) -> Dict[str, List]:
     return d
 
 
-def sanitize_function_parameters(func: Callable, params: Dict | Mapping, **kwargs):
+def sanitize_function_parameters(func: Callable, params: dict | Mapping, **kwargs):
     """
     Given a dict of parameters or kwargs, you can figure out which ones must be passed to the `func` based on its
     signature.

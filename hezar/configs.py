@@ -12,8 +12,10 @@ Examples:
     >>> bert_config.save("saved/bert", filename="model_config.yaml")
     >>> bert_config.push_to_hub("hezarai/bert-custom", filename="model_config.yaml")
 """
+
 from __future__ import annotations
 
+import builtins
 import os
 import tempfile
 from dataclasses import asdict, dataclass, field, fields
@@ -152,8 +154,8 @@ class Config:
         hub_or_local_path: str | os.PathLike,
         filename: Optional[str] = None,
         subfolder: Optional[str] = None,
-        repo_type: str = None,
-        cache_dir: str = None,
+        repo_type: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
     ) -> "Config":
         """
@@ -206,7 +208,7 @@ class Config:
         return config
 
     @classmethod
-    def from_dict(cls, dict_config: Dict | DictConfig, **kwargs):
+    def from_dict(cls, dict_config: builtins.dict | DictConfig, **kwargs):
         """
         Load config from a dict-like object. Nested configs are also recursively converted to their classes if possible.
         """
@@ -214,7 +216,7 @@ class Config:
         dict_config.update(**kwargs)
 
         for k, v in dict_config.items():
-            if isinstance(v, Dict) and "name" in v and "config_type" in v:
+            if isinstance(v, dict) and "name" in v and "config_type" in v:
                 config_cls = get_module_config_class(v["name"], v["config_type"])
                 if config_cls is not None:
                     dict_config[k] = config_cls.from_dict(v)
@@ -339,10 +341,9 @@ class DatasetConfig(Config):
 
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.DATASET)
-    path: str = None
-    task: TaskType | List[TaskType] = field(
-        default=None,
-        metadata={"help": "Name of the task(s) this dataset is built for"}
+    path: str | None = None
+    task: TaskType | list[TaskType] = field(
+        default=None, metadata={"help": "Name of the task(s) this dataset is built for"}
     )
     max_size: int | float = None
     hf_load_kwargs: dict = None
@@ -383,7 +384,7 @@ class MetricConfig(Config):
     name: str = field(init=False, default=None)
     config_type: str = field(init=False, default=ConfigType.METRIC)
     objective: Literal["maximize", "minimize"] = None
-    output_keys: List | Tuple = None
+    output_keys: list | tuple = None
     n_decimals: int = 4
 
 
@@ -473,7 +474,7 @@ class TrainerConfig(Config):
     task: str | TaskType
     device: str = "cuda"
     num_epochs: int = None
-    init_weights_from: str = None
+    init_weights_from: str | None = None
     resume_from_checkpoint: bool | str | os.PathLike = None
     max_steps: int = None
     num_dataloader_workers: int = 0
@@ -483,7 +484,7 @@ class TrainerConfig(Config):
     learning_rate: float = 2e-5
     weight_decay: float = 0.0
     lr_scheduler: str | LRSchedulerType = None
-    lr_scheduler_kwargs: Dict[str, Any] = None
+    lr_scheduler_kwargs: dict[str, Any] = None
     lr_scheduling_steps: int = None
     batch_size: int = None
     eval_batch_size: int = None
@@ -493,7 +494,7 @@ class TrainerConfig(Config):
     use_cpu: bool = False
     do_evaluate: bool = True
     evaluate_with_generate: bool = True
-    metrics: List[str | MetricConfig] = None
+    metrics: list[str | MetricConfig] = None
     metric_for_best_model: str = "loss"
     save_enabled: bool = True
     save_freq: int = "deprecated"
@@ -512,8 +513,7 @@ class TrainerConfig(Config):
         # Validate `task`
         if self.task not in list(TaskType):
             raise ValueError(
-                f"Invalid task `{self.task}` passed to `TrainerConfig`. "
-                f"Available options are {TaskType.list()}",
+                f"Invalid task `{self.task}` passed to `TrainerConfig`. Available options are {TaskType.list()}",
             )
         # Validate `metric_for_best_model`
         if not (self.metric_for_best_model.startswith("evaluation") or self.metric_for_best_model.startswith("train")):

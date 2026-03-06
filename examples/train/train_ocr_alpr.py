@@ -33,7 +33,7 @@ train_config = TrainerConfig(
     num_epochs=20,
     log_steps=100,
     metrics=["cer"],
-    metric_for_best_model="cer"
+    metric_for_best_model="cer",
 )
 
 trainer = Trainer(

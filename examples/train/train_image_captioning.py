@@ -20,7 +20,7 @@ train_config = TrainerConfig(
     log_steps=100,
     save_steps=500,
     metrics=["wer"],
-    metric_for_best_model="wer"
+    metric_for_best_model="wer",
 )
 
 trainer = Trainer(

@@ -20,7 +20,7 @@ class Preprocessor:
         config: Preprocessor properties
     """
 
-    required_backends: List[str | Backends] = []
+    required_backends: list[str | Backends] = []
 
     preprocessor_subfolder = DEFAULT_PREPROCESSOR_SUBFOLDER
 
@@ -56,10 +56,10 @@ class Preprocessor:
     def load(
         cls,
         hub_or_local_path,
-        subfolder: str = None,
+        subfolder: str | None = None,
         force_return_dict: bool = False,
-        cache_dir: str = None,
-        **kwargs
+        cache_dir: str | None = None,
+        **kwargs,
     ):
         """
         Load a preprocessor or a pipeline of preprocessors from a local or Hub path. This method automatically detects

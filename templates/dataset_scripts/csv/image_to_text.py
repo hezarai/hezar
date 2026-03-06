@@ -13,8 +13,8 @@ _DESCRIPTION = """Dataset description"""
 _DOWNLOAD_URLS = {
     "train": "https://huggingface.co/datasets/hezarai/persian-license-plate-v1/resolve/main/persian_license_plate_train.csv",
     "test": "https://huggingface.co/datasets/hezarai/persian-license-plate-v1/resolve/main/persian_license_plate_test.csv",
-    'train_dataset': "https://huggingface.co/datasets/hezarai/persian-license-plate-v1/resolve/main/persian_license_plate_train.zip",
-    'test_dataset': "https://huggingface.co/datasets/hezarai/persian-license-plate-v1/resolve/main/persian_license_plate_test.zip",
+    "train_dataset": "https://huggingface.co/datasets/hezarai/persian-license-plate-v1/resolve/main/persian_license_plate_train.zip",
+    "test_dataset": "https://huggingface.co/datasets/hezarai/persian-license-plate-v1/resolve/main/persian_license_plate_test.zip",
 }
 
 
@@ -52,10 +52,10 @@ class Image2TextDatasetName(datasets.GeneratorBasedBuilder):
         train_path = dl_manager.download_and_extract(_DOWNLOAD_URLS["train"])
         test_path = dl_manager.download_and_extract(_DOWNLOAD_URLS["test"])
 
-        archive_path = dl_manager.download(_DOWNLOAD_URLS['train_dataset'])
+        archive_path = dl_manager.download(_DOWNLOAD_URLS["train_dataset"])
         train_extracted_path = dl_manager.extract(archive_path) if not dl_manager.is_streaming else ""
 
-        archive_path = dl_manager.download(_DOWNLOAD_URLS['test_dataset'])
+        archive_path = dl_manager.download(_DOWNLOAD_URLS["test_dataset"])
         test_extracted_path = dl_manager.extract(archive_path) if not dl_manager.is_streaming else ""
 
         return [

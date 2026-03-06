@@ -1,6 +1,7 @@
 """
 A BERT model for text classification built using HuggingFace Transformers
 """
+
 from __future__ import annotations
 
 from typing import Dict, List
@@ -80,7 +81,7 @@ class BertTextClassification(Model):
         output_attentions=None,
         output_hidden_states=None,
         **kwargs,
-    ) -> Dict:
+    ) -> dict:
         lm_outputs = self.bert(
             token_ids,
             attention_mask=attention_mask,
@@ -105,7 +106,7 @@ class BertTextClassification(Model):
         }
         return outputs
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         if self.preprocessor.text_normalizer is not None:

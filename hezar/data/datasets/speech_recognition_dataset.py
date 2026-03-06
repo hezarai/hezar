@@ -20,7 +20,7 @@ _required_backends = [Backends.LIBROSA, Backends.DATASETS]
 class SpeechRecognitionDatasetConfig(DatasetConfig):
     name = "speech_recognition"
     task = TaskType.SPEECH_RECOGNITION
-    path: str = None
+    path: str | None = None
     sampling_rate: int = 16000
     audio_array_padding: bool | str | PaddingType = "longest"
     max_audio_array_length: int = None
@@ -60,9 +60,7 @@ class SpeechRecognitionDataset(Dataset):
         audio_array = sample_dict[self.config.audio_column][self.config.audio_array_column]
 
         input_features = self.feature_extractor(
-            audio_array,
-            sampling_rate=self.config.sampling_rate,
-            return_tensors="numpy"
+            audio_array, sampling_rate=self.config.sampling_rate, return_tensors="numpy"
         )["input_features"][0]
 
         labels = self.tokenizer(

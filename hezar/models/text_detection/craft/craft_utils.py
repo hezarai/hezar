@@ -1,6 +1,7 @@
 """
 CRAFT utility functions copied and modified based on https://github.com/clovaai/CRAFT-pytorch/blob/master/craft_utils.py
 """
+
 import math
 
 import numpy as np
@@ -29,8 +30,9 @@ def get_boxes_core(textmap, linkmap, text_threshold, link_threshold, low_text):
     ret, link_score = cv2.threshold(linkmap, link_threshold, 1, 0)
 
     text_score_comb = np.clip(text_score + link_score, 0, 1)
-    n_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(text_score_comb.astype(np.uint8),
-                                                                          connectivity=4)
+    n_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
+        text_score_comb.astype(np.uint8), connectivity=4
+    )
 
     det = []
     mapper = []
@@ -194,7 +196,7 @@ def get_poly_core(boxes, labels, mapper):
             if dx == 0:  # gradient if zero
                 new_pp.append([x, cy - half_char_h, x, cy + half_char_h])
                 continue
-            rad = - math.atan2(dy, dx)
+            rad = -math.atan2(dy, dx)
             c, s = half_char_h * math.cos(rad), half_char_h * math.sin(rad)
             new_pp.append([x - s, cy - c, x + s, cy + c])
 

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable, List
+from typing import List
 
 import numpy as np
 
@@ -76,8 +77,8 @@ class CraftImageProcessor(ImageProcessor):
 
     def __call__(
         self,
-        images: List,
-        device: str = None,
+        images: list,
+        device: str | None = None,
         mean: float = None,
         std: float = None,
         rescale: float = None,

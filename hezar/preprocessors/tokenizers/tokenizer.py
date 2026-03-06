@@ -3,8 +3,9 @@ from __future__ import annotations
 import os
 import tempfile
 from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -60,20 +61,20 @@ class TokenizerConfig(PreprocessorConfig):
     name = "tokenizer"
     max_length: int = "deprecated"
     truncation: str = "deprecated"
-    truncation_side: str = None
+    truncation_side: str | None = None
     padding: str = "deprecated"
-    padding_side: str = None
+    padding_side: str | None = None
     stride: int = None
     pad_to_multiple_of: int = "deprecated"
     pad_token_type_id: int = 0
-    bos_token: str = None
-    eos_token: str = None
-    unk_token: str = None
-    sep_token: str = None
-    pad_token: str = None
-    cls_token: str = None
-    mask_token: str = None
-    additional_special_tokens: List[str] = None
+    bos_token: str | None = None
+    eos_token: str | None = None
+    unk_token: str | None = None
+    sep_token: str | None = None
+    pad_token: str | None = None
+    cls_token: str | None = None
+    mask_token: str | None = None
+    additional_special_tokens: list[str] = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -99,7 +100,7 @@ class Tokenizer(Preprocessor):
         **kwargs: Extra config parameters that merge into the main config.
     """
 
-    required_backends: List[str | Backends] = []
+    required_backends: list[str | Backends] = []
 
     tokenizer_filename = DEFAULT_TOKENIZER_FILE
     tokenizer_config_filename = DEFAULT_TOKENIZER_CONFIG_FILE
@@ -180,7 +181,7 @@ class Tokenizer(Preprocessor):
                 inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
-    def decode(self, ids: List[int], skip_special_tokens: bool = True, **kwargs):
+    def decode(self, ids: list[int], skip_special_tokens: bool = True, **kwargs):
         """
         Decode a list of token IDs.
 
@@ -205,8 +206,8 @@ class Tokenizer(Preprocessor):
         max_length: Optional[int] = None,
         truncation: bool = True,
         return_tensors: Optional[str] = None,
-        include_keys: Optional[List[str]] = None,
-        exclude_keys: List = None,
+        include_keys: Optional[list[str]] = None,
+        exclude_keys: list = None,
     ):
         """
         Pad a batch of encoded inputs.
@@ -253,7 +254,7 @@ class Tokenizer(Preprocessor):
 
     def __call__(
         self,
-        inputs: List[str] | List[Tuple[str, str]],
+        inputs: list[str] | list[tuple[str, str]],
         device: str | torch.device = None,
         add_special_tokens: bool = True,
         padding=None,
@@ -466,13 +467,13 @@ class Tokenizer(Preprocessor):
 
         return encoding_dict
 
-    def convert_tokens_to_ids(self, tokens: str | List[str]) -> int | List[int]:
+    def convert_tokens_to_ids(self, tokens: str | list[str]) -> int | list[int]:
         if isinstance(tokens, str):
             tokens = [tokens]
 
         return [self._tokenizer.token_to_id(token) for token in tokens]
 
-    def convert_ids_to_tokens(self, ids: int | List[int], skip_special_tokens: bool = False):
+    def convert_ids_to_tokens(self, ids: int | list[int], skip_special_tokens: bool = False):
         if isinstance(ids, int):
             ids = [ids]
         tokens = []
@@ -486,7 +487,7 @@ class Tokenizer(Preprocessor):
     def num_special_tokens_to_add(self, is_pair: bool) -> int:
         return self._tokenizer.num_special_tokens_to_add(is_pair)
 
-    def get_vocab(self, with_added_tokens: bool = True) -> Dict[str, int]:
+    def get_vocab(self, with_added_tokens: bool = True) -> dict[str, int]:
         return self._tokenizer.get_vocab(with_added_tokens=with_added_tokens)
 
     def get_vocab_size(self, with_added_tokens: bool = True) -> int:
@@ -498,7 +499,7 @@ class Tokenizer(Preprocessor):
         pad_to_multiple_of: int = None,
         pad_id: int = 0,
         pad_type_id: int = 0,
-        pad_token: str = None,
+        pad_token: str | None = None,
         length: int = None,
     ):
         return self._tokenizer.enable_padding(
@@ -531,7 +532,7 @@ class Tokenizer(Preprocessor):
     def id_to_token(self, id: int) -> str:
         return self._tokenizer.id_to_token(id)
 
-    def get_added_vocab(self) -> Dict[str, int]:
+    def get_added_vocab(self) -> dict[str, int]:
         """
         Returns the added tokens in the vocabulary as a dictionary of token to index.
 
@@ -598,8 +599,8 @@ class Tokenizer(Preprocessor):
     def get_tokens_from_offsets(
         self,
         text: str,
-        ids: List[int],
-        offsets_mapping: List[Tuple[int, int]],
+        ids: list[int],
+        offsets_mapping: list[tuple[int, int]],
     ):
         """
         Extract human-readable tokens by slicing *text* with the provided offsets.
@@ -622,7 +623,7 @@ class Tokenizer(Preprocessor):
         """
         if not isinstance(text, str):
             raise ValueError(f"Expected str type for `text`, got `{type(text)}({text})`")
-        if isinstance(offsets_mapping, list) and not isinstance(offsets_mapping[0], Tuple):
+        if isinstance(offsets_mapping, list) and not isinstance(offsets_mapping[0], tuple):
             raise ValueError(f"Expected a list of tuples for `offsets_mapping`, got List[{type(offsets_mapping[0])}]")
         tokens = []
         for offset in offsets_mapping:

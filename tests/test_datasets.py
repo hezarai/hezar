@@ -43,7 +43,7 @@ TASK_TO_REQUIRED_FIELDS = {
     "ocr": ["pixel_values", "labels"],
     "image-captioning": ["pixel_values", "labels"],
     "text-summarization": ["token_ids", "attention_mask", "labels"],
-    "speech-recognition": ["input_features", "labels"]
+    "speech-recognition": ["input_features", "labels"],
 }
 
 INVALID_DATASET_TYPE = "Dataset instance must be of type `Dataset`, got `{}`!"
@@ -63,27 +63,17 @@ def test_load_dataset(task):
     path = DATASETS_MAPPING[task].pop("path")
     preprocessor = DATASETS_MAPPING[task].pop("preprocessor", None)
 
-    train_dataset = Dataset.load(
-        path,
-        split="train",
-        preprocessor=preprocessor,
-        **DATASETS_MAPPING[task]
-    )
+    train_dataset = Dataset.load(path, split="train", preprocessor=preprocessor, **DATASETS_MAPPING[task])
     assert isinstance(train_dataset, Dataset), INVALID_DATASET_TYPE.format(type(train_dataset))
     sample = train_dataset[0]
-    assert isinstance(sample, Dict)
+    assert isinstance(sample, dict)
     for field in required_fields:
         assert field in sample, INVALID_DATASET_FIELDS.format(field)
 
-    test_dataset = Dataset.load(
-        path,
-        split="test",
-        preprocessor=preprocessor,
-        **DATASETS_MAPPING[task]
-    )
+    test_dataset = Dataset.load(path, split="test", preprocessor=preprocessor, **DATASETS_MAPPING[task])
     assert isinstance(test_dataset, Dataset), INVALID_DATASET_TYPE.format(type(test_dataset))
     sample = test_dataset[0]
-    assert isinstance(sample, Dict)
+    assert isinstance(sample, dict)
     for field in required_fields:
         assert field in sample, INVALID_DATASET_FIELDS.format(field)
 
@@ -103,8 +93,8 @@ def test_load_dataset(task):
     train_batch = next(iter(train_loader))
     test_batch = next(iter(test_loader))
 
-    assert isinstance(train_batch, Dict), INVALID_BATCH_TYPE.format(type(train_batch))
-    assert isinstance(test_batch, Dict), INVALID_BATCH_TYPE.format(type(test_batch))
+    assert isinstance(train_batch, dict), INVALID_BATCH_TYPE.format(type(train_batch))
+    assert isinstance(test_batch, dict), INVALID_BATCH_TYPE.format(type(test_batch))
 
     # Clean cache so that CI environment does not run out of space
     if CI_MODE == "TRUE":

@@ -67,7 +67,7 @@ class BertMaskFilling(Model):
         loss = self.loss_func(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
 

@@ -3,7 +3,8 @@ from __future__ import annotations
 import math
 import os
 import tempfile
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any, Dict
 
 import pandas as pd
 import torch
@@ -121,11 +122,7 @@ class Trainer:
     lr_scheduler_file = DEFAULT_LR_SCHEDULER_FILE
     default_optimizer = OptimizerType.ADAM
     default_lr_scheduler = None
-    _required_backends = [
-        Backends.ACCELERATE,
-        Backends.TENSORBOARD,
-        Backends.DATASETS
-    ]
+    _required_backends = [Backends.ACCELERATE, Backends.TENSORBOARD, Backends.DATASETS]
 
     def __init__(
         self,
@@ -167,24 +164,21 @@ class Trainer:
         self.num_batches = math.ceil(len(self.train_dataset) / self.config.batch_size)
         self.config.max_steps = (
             math.ceil(self.config.max_steps * self.num_batches) * self.config.num_epochs
-            if isinstance(self.config.max_steps, float)
-            and 0 < self.config.max_steps <= 1
+            if isinstance(self.config.max_steps, float) and 0 < self.config.max_steps <= 1
             else self.config.max_steps
         )
         self.total_steps = min(
             self.config.max_steps or self.num_batches * self.config.num_epochs,
-            self.num_batches * self.config.num_epochs
+            self.num_batches * self.config.num_epochs,
         )
         self.config.save_steps = (
             math.ceil(self.config.save_steps * self.total_steps)
-            if isinstance(self.config.save_steps, float)
-            and 0 < self.config.save_steps <= 1
+            if isinstance(self.config.save_steps, float) and 0 < self.config.save_steps <= 1
             else self.config.save_steps
         )
         self.config.log_steps = (
             math.ceil(self.config.log_steps * self.total_steps)
-            if isinstance(self.config.log_steps, float)
-            and 0 < self.config.log_steps <= 1
+            if isinstance(self.config.log_steps, float) and 0 < self.config.log_steps <= 1
             else self.config.log_steps
         )
         self.steps_in_epoch = min(self.num_batches, self.total_steps)
@@ -233,7 +227,7 @@ class Trainer:
         self.tensorboard = SummaryWriter(log_dir=self.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.logs_dir, csv_filename=self.trainer_csv_log_file)
 
-    def _create_trainer_state(self, checkpoint: str = None):
+    def _create_trainer_state(self, checkpoint: str | None = None):
         """
         Create Trainer's state attribute.
 
@@ -425,7 +419,7 @@ class Trainer:
         logs = pd.read_csv(csv_path)
         return logs.to_dict()
 
-    def prepare_input_batch(self, input_batch) -> Dict[str, torch.Tensor]:
+    def prepare_input_batch(self, input_batch) -> dict[str, torch.Tensor]:
         """
         Every operation required to prepare the inputs for model forward like moving to device, permutations, etc.
 
@@ -455,7 +449,7 @@ class Trainer:
         """
         if isinstance(input_batch, torch.Tensor):
             outputs = self.model(input_batch)
-        elif isinstance(input_batch, Dict):
+        elif isinstance(input_batch, dict):
             forward_inputs = sanitize_function_parameters(self.model.forward, input_batch)
             outputs = self.model(**forward_inputs)
         else:
@@ -463,12 +457,12 @@ class Trainer:
                 f"`input_batch` must be a tensor or a dict-like object containing key/value pairs of tensors, "
                 f"but got {type(input_batch)}"
             )
-        if not isinstance(outputs, Dict):
+        if not isinstance(outputs, dict):
             raise ValueError(f"Model outputs must be dict-like not `{type(outputs)}`")
 
         return outputs
 
-    def compute_loss(self, model_outputs: Dict, labels: torch.Tensor, **kwargs) -> torch.Tensor:
+    def compute_loss(self, model_outputs: dict, labels: torch.Tensor, **kwargs) -> torch.Tensor:
         """
         Compute loss from model outputs
 
@@ -493,7 +487,7 @@ class Trainer:
         self.optimizer.step()
         self.optimizer.zero_grad()
 
-    def training_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
+    def training_step(self, input_batch: dict[str, torch.Tensor]) -> dict[str, Any]:
         """
         Train one batch of data and return loss and model outputs
 
@@ -514,7 +508,7 @@ class Trainer:
 
         return outputs
 
-    def evaluation_step(self, input_batch: Dict[str, torch.Tensor]) -> Dict[str, Any]:
+    def evaluation_step(self, input_batch: dict[str, torch.Tensor]) -> dict[str, Any]:
         """
         Evaluate one batch of data and return loss and model outputs
 
@@ -598,9 +592,9 @@ class Trainer:
 
                 # Scheduler step
                 if (
-                    self.lr_scheduler is not None and
-                    self.state.global_step % self.lr_scheduling_steps == 0 and
-                    self.lr_scheduler_type != LRSchedulerType.REDUCE_ON_PLATEAU
+                    self.lr_scheduler is not None
+                    and self.state.global_step % self.lr_scheduling_steps == 0
+                    and self.lr_scheduler_type != LRSchedulerType.REDUCE_ON_PLATEAU
                 ):
                     self.lr_scheduler.step()
 
@@ -767,7 +761,7 @@ class Trainer:
 
         self.logger.info("Training done!")
 
-    def log(self, logs: Dict[str, Any], step: int):
+    def log(self, logs: dict[str, Any], step: int):
         """
         Log metrics results
         """
@@ -788,13 +782,13 @@ class Trainer:
     def save(
         self,
         path: str,
-        config_filename: str = None,
-        model_filename: str = None,
-        model_config_filename: str = None,
-        subfolder: str = None,
-        dataset_config_file: str = None,
-        optimizer_file: str = None,
-        lr_scheduler_file: str = None,
+        config_filename: str | None = None,
+        model_filename: str | None = None,
+        model_config_filename: str | None = None,
+        subfolder: str | None = None,
+        dataset_config_file: str | None = None,
+        optimizer_file: str | None = None,
+        lr_scheduler_file: str | None = None,
     ):
         """
         Save the trainer and relevant files to a path.
@@ -831,16 +825,16 @@ class Trainer:
     def push_to_hub(
         self,
         repo_id: str,
-        config_filename: str = None,
+        config_filename: str | None = None,
         push_model: bool = True,
         push_optimizer: bool = True,
         push_logs: bool = True,
-        model_filename: str = None,
-        model_config_filename: str = None,
-        optimizer_filename: str = None,
-        subfolder: str = None,
-        dataset_config_filename: str = None,
-        commit_message: str = None,
+        model_filename: str | None = None,
+        model_config_filename: str | None = None,
+        optimizer_filename: str | None = None,
+        subfolder: str | None = None,
+        dataset_config_filename: str | None = None,
+        commit_message: str | None = None,
         private: bool = False,
     ):
         """
@@ -887,7 +881,7 @@ class Trainer:
                 filename=dataset_config_file,
                 subfolder=subfolder,
                 private=private,
-                commit_message=commit_message
+                commit_message=commit_message,
             )
 
         # Upload model

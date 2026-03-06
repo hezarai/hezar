@@ -23,6 +23,7 @@ def test_accuracy():
 @pytest.mark.skipif("bleu" not in list_available_metrics(), reason="`bleu` is not available!")
 def test_bleu():
     metric = build_metric("bleu")
+    # fmt: off
     pred_1 = ["It", "is", "a", "guide", "to", "action", "which", "ensures", "that", "the", "military", "always",
               "obeys", "the", "commands", "of", "the", "party"]
     ref_1a = ["It", "is", "a", "guide", "to", "action", "that", "ensures", "that", "the", "military", "will",
@@ -33,7 +34,7 @@ def test_bleu():
               "directions", "of", "the", "party"]
     pred_2 = ["he", "read", "the", "book", "because", "he", "was", "interested", "in", "world", "history"]
     ref_2a = ["he", "was", "interested", "in", "world", "history", "because", "he", "read", "the", "book"]
-
+    # fmt: on
     references = [[ref_1a, ref_1b, ref_1c], [ref_2a]]
     predictions = [pred_1, pred_2]
 
@@ -96,8 +97,8 @@ def test_rouge():
 @pytest.mark.skipif("seqeval" not in list_available_metrics(), reason="`seqeval` is not available!")
 def test_seqeval():
     metric = build_metric("seqeval")
-    predictions = [['O', 'O', 'O', 'B-MISC', 'I-MISC', 'I-MISC', 'O'], ['B-PER', 'I-PER', 'O']]
-    references = [['O', 'O', 'B-MISC', 'I-MISC', 'I-MISC', 'I-MISC', 'O'], ['B-PER', 'I-PER', 'O']]
+    predictions = [["O", "O", "O", "B-MISC", "I-MISC", "I-MISC", "O"], ["B-PER", "I-PER", "O"]]
+    references = [["O", "O", "B-MISC", "I-MISC", "I-MISC", "I-MISC", "O"], ["B-PER", "I-PER", "O"]]
     results = metric.compute(predictions, references)
     assert isinstance(results, dict), INVALID_OUTPUT_TYPE
     assert set(results.keys()) == set(metric.config.output_keys), INVALID_FIELDS

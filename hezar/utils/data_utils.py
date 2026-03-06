@@ -69,7 +69,7 @@ def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: l
 
 
 def resolve_inputs_length_for_padding(
-    inputs: List[List[Any]],
+    inputs: list[list[Any]],
     padding: str | PaddingType = None,
     max_length: Optional[bool | int] = None,
     truncation: Optional[bool] = True,
@@ -124,7 +124,7 @@ def resolve_inputs_length_for_padding(
 
 
 def pad_batch_items(
-    inputs: List[List[int | float]],
+    inputs: list[list[int | float]],
     padding: str | PaddingType = None,
     padding_side: Literal["right", "left"] = "right",
     pad_id: int = 0,
@@ -166,9 +166,7 @@ def pad_batch_items(
 
 
 def shift_tokens_right(
-    token_ids: list[list[int]] | "torch.Tensor" | "np.ndarray",
-    pad_token_id: int,
-    decoder_start_token_id: int
+    token_ids: list[list[int]] | "torch.Tensor" | "np.ndarray", pad_token_id: int, decoder_start_token_id: int
 ):
     """
     Shift input ids one token to the right.
@@ -224,7 +222,7 @@ def torch2numpy(*args):
     return [arg.cpu().numpy() if isinstance(arg, torch.Tensor) else arg for arg in args]
 
 
-def get_non_numeric_keys(d: Dict, batched=True):
+def get_non_numeric_keys(d: dict, batched=True):
     """
     Get keys that have string values in a dictionary
 
@@ -245,7 +243,7 @@ def get_non_numeric_keys(d: Dict, batched=True):
     return keys
 
 
-def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
+def flatten_dict(dict_config: dict | DictConfig) -> DictConfig:
     """
     Flatten a nested Dict/DictConfig object
 
@@ -258,7 +256,7 @@ def flatten_dict(dict_config: Dict | DictConfig) -> DictConfig:
 
     config = DictConfig({})
     for k, v in dict_config.items():
-        if isinstance(v, (Dict, DictConfig)):
+        if isinstance(v, (dict, DictConfig)):
             config.update(flatten_dict(v))
         else:
             config[k] = v

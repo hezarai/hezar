@@ -29,7 +29,7 @@ class SentencePieceBPEConfig(TokenizerConfig):
     pad_token: str = "<pad>"
     cls_token: str = "<cls>"
     mask_token: str = "<mask>"
-    additional_special_tokens: List[str] = None
+    additional_special_tokens: list[str] = None
     pad_to_multiple_of: int = 0
     dropout: float = None
     continuing_subword_prefix: str = ""
@@ -83,7 +83,7 @@ class SentencePieceBPETokenizer(Tokenizer):
 
         return tokenizer
 
-    def train(self, files: List[str], **train_kwargs):
+    def train(self, files: list[str], **train_kwargs):
         """Train the model using the given files"""
         self.config.update(train_kwargs)
 
@@ -98,7 +98,7 @@ class SentencePieceBPETokenizer(Tokenizer):
             files = [files]
         self._tokenizer.train(files, trainer=trainer)
 
-    def train_from_iterator(self, dataset: List[str], **train_kwargs):
+    def train_from_iterator(self, dataset: list[str], **train_kwargs):
         """Train the model using the given files"""
         self.config.update(train_kwargs)
 

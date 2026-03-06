@@ -16,57 +16,57 @@ TESTABLE_MODELS = {
         "inputs": {"type": "file", "value": "samples/speech_example.mp3"},
         "predict_kwargs": {},
         "output_type_within_batch": dict,
-        "required_output_keys": {"text", "chunks"}
+        "required_output_keys": {"text", "chunks"},
     },
     "mask-filling": {
         "path": "hezarai/roberta-fa-mask-filling",
         "inputs": {"type": "text", "value": "سلام بچه ها حالتون <mask>"},
         "predict_kwargs": {"top_k": 3},
         "output_type_within_batch": list,
-        "required_output_keys": {"token", "sequence", "token_id", "score"}
+        "required_output_keys": {"token", "sequence", "token_id", "score"},
     },
     "image-captioning": {
         "path": "hezarai/vit-roberta-fa-image-captioning-flickr30k",
         "inputs": {"type": "file", "value": "samples/image_captioning_example.jpg"},
         "predict_kwargs": {},
         "output_type_within_batch": dict,
-        "required_output_keys": {"text", "score"}
+        "required_output_keys": {"text", "score"},
     },
     "text_detection": {
         "path": "hezarai/CRAFT",
         "inputs": {"type": "file", "value": "samples/text_detection_example.png"},
         "predict_kwargs": {},
         "output_type_within_batch": dict,
-        "required_output_keys": {"boxes"}
+        "required_output_keys": {"boxes"},
     },
     "ocr": {
         "path": "hezarai/crnn-base-fa-v2",
         "inputs": {"type": "file", "value": "samples/ocr_example.jpg"},
         "predict_kwargs": {"return_scores": True},
         "output_type_within_batch": dict,
-        "required_output_keys": {"text", "score"}
+        "required_output_keys": {"text", "score"},
     },
     "text-classification": {
         "path": "hezarai/distilbert-fa-sentiment-dksf",
         "inputs": {"type": "text", "value": "هزار، کتابخانه‌ای کامل برای به کارگیری آسان هوش مصنوعی"},
         "predict_kwargs": {"top_k": 2},
         "output_type_within_batch": list,
-        "required_output_keys": {"label", "score"}
+        "required_output_keys": {"label", "score"},
     },
     "text-generation": {
         "path": "hezarai/gpt2-base-fa",
         "inputs": {"type": "text", "value": "با پیشرفت اخیر هوش مصنوعی در سال های اخیر، "},
         "predict_kwargs": {},
         "output_type_within_batch": dict,
-        "required_output_keys": {"text"}
+        "required_output_keys": {"text"},
     },
     "sequence-labeling": {
         "path": "hezarai/bert-fa-pos-lscp-500k",
         "inputs": {"type": "text", "value": "شرکت هوش مصنوعی هزار"},
         "predict_kwargs": {"return_offsets": True, "return_scores": True},
         "output_type_within_batch": list,
-        "required_output_keys": {"label", "token", "start", "end", "score"}
-    }
+        "required_output_keys": {"label", "token", "start", "end", "score"},
+    },
 }
 
 INVALID_OUTPUT_TYPE = "Model output must be a batch!"

@@ -27,6 +27,7 @@ class WERConfig(MetricConfig):
         concatenate_texts (bool): Flag to indicate whether to concatenate texts before WER calculation.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.WER
     objective: str = "minimize"
     concatenate_texts: bool = False
@@ -42,6 +43,7 @@ class WER(Metric):
         config (WERConfig): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: WERConfig, **kwargs):

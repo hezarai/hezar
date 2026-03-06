@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -27,6 +27,7 @@ class BLEUConfig(MetricConfig):
         name (MetricType): The type of metric, BLEU in this case.
         output_keys (tuple): Keys to filter the metric results for output.
     """
+
     name = MetricType.BLEU
     objective: str = "maximize"
     output_keys: tuple = ("bleu",)
@@ -37,6 +38,7 @@ class BLEU(Metric):
     """
     BLEU metric for evaluating text generation models like translation, summarization, etc.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: BLEUConfig, **kwargs):

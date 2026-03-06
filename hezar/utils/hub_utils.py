@@ -64,7 +64,7 @@ def exists_on_hub(hub_path: str, repo_type="model"):
     return hub_path in [path.id for path in paths]
 
 
-def list_repo_files(hub_or_local_path: str, subfolder: str = None, repo_type: str | RepoType = RepoType.MODEL):
+def list_repo_files(hub_or_local_path: str, subfolder: str | None = None, repo_type: str | RepoType = RepoType.MODEL):
     """
     List all files in a Hub or local model repo
 
@@ -121,7 +121,7 @@ def get_state_dict_from_hub(hub_id, filename, subfolder=None):
     return state_dict
 
 
-def clean_cache(cache_dir: str = None, delay: int = 10):
+def clean_cache(cache_dir: str | None = None, delay: int = 10):
     """
     Clean the whole cache directory of Hezar
 

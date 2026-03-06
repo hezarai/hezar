@@ -1,6 +1,7 @@
 """
 A DISTILBERT model for sequence labeling built using HuggingFace Transformers
 """
+
 from __future__ import annotations
 
 from typing import Dict, List
@@ -60,7 +61,7 @@ class DistilBertSequenceLabeling(Model):
         output_attentions=None,
         output_hidden_states=None,
         **kwargs,
-    ) -> Dict:
+    ) -> dict:
         lm_outputs = self.distilbert(
             input_ids=token_ids,
             attention_mask=attention_mask,
@@ -79,7 +80,7 @@ class DistilBertSequenceLabeling(Model):
             "hidden_states": lm_outputs.hidden_states,
             "attentions": lm_outputs.attentions,
             "tokens": kwargs.get("tokens", None),
-            "offsets": kwargs.get("offsets_mapping", None)
+            "offsets": kwargs.get("offsets_mapping", None),
         }
         return outputs
 
@@ -88,7 +89,7 @@ class DistilBertSequenceLabeling(Model):
         loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         if self.preprocessor.text_normalizer is not None:
@@ -108,7 +109,7 @@ class DistilBertSequenceLabeling(Model):
 
     def post_process(
         self,
-        model_outputs: Dict[str, torch.Tensor],
+        model_outputs: dict[str, torch.Tensor],
         return_offsets: bool = False,
         return_scores: bool = False,
     ):

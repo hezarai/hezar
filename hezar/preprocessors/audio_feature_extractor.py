@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping
 
 import numpy as np
 
@@ -16,9 +16,9 @@ from .preprocessor import Preprocessor
 class AudioFeatureExtractorConfig(PreprocessorConfig):
     feature_size: int = None
     sampling_rate: int = 16000
-    padding: str = None
+    padding: str | None = None
     padding_value: float = 0.0
-    padding_side: str = None
+    padding_side: str | None = None
 
 
 class AudioFeatureExtractor(Preprocessor):
@@ -303,9 +303,9 @@ class AudioFeatureExtractor(Preprocessor):
     def load(
         cls,
         hub_or_local_path,
-        subfolder: str = None,
-        config_filename: str = None,
-        cache_dir: str = None,
+        subfolder: str | None = None,
+        config_filename: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
     ):
         """

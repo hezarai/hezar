@@ -85,7 +85,7 @@ class BeitRobertaImage2Text(Model):
 
         return outputs
 
-    def preprocess(self, inputs: List[str] | List[np.ndarray] | List[Image] | List[torch.Tensor], **kwargs):
+    def preprocess(self, inputs: list[str] | list[np.ndarray] | list[Image] | list[torch.Tensor], **kwargs):
         image_processor = self.preprocessor.image_processor
         processed_outputs = image_processor(inputs, **kwargs)
         return processed_outputs

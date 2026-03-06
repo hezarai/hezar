@@ -1,6 +1,7 @@
 """
 Define all model outputs here
 """
+
 from dataclasses import asdict, dataclass
 from typing import Dict, List, Optional
 
@@ -74,11 +75,11 @@ class TextClassificationOutput(ModelOutput):
 
 @dataclass(repr=False)
 class SequenceLabelingOutput(ModelOutput):
-    token: Optional[List[List[str]]] = None
-    label: Optional[List[List[str]]] = None
+    token: Optional[list[list[str]]] = None
+    label: Optional[list[list[str]]] = None
     start: Optional[int] = None
     end: Optional[int] = None
-    score: Optional[List[List[float]]] = None
+    score: Optional[list[list[float]]] = None
 
 
 @dataclass(repr=False)
@@ -89,7 +90,7 @@ class TextGenerationOutput(ModelOutput):
 @dataclass(repr=False)
 class SpeechRecognitionOutput(ModelOutput):
     text: Optional[str] = None
-    chunks: Optional[List[Dict]] = None
+    chunks: Optional[list[dict]] = None
 
 
 @dataclass(repr=False)

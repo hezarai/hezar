@@ -37,6 +37,7 @@ class DatasetProcessor:
     """
     The base callable dataset processor class that can handle both single and batched mode dataset mapping.
     """
+
     required_backends = [Backends.DATASETS]
 
     def __init__(self, *args, **kwargs):
@@ -313,7 +314,7 @@ class SequenceLabelingDatasetProcessor(DatasetProcessor):
             padding=padding,
             truncation=True,
             max_length=max_length,
-            return_tensors=return_tensors
+            return_tensors=return_tensors,
         )
         word_ids = tokenized_inputs["word_ids"]
 

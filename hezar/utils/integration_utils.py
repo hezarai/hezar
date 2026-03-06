@@ -29,7 +29,7 @@ def is_backend_available(backend: Backends):
     return importlib.util.find_spec(backend) is not None
 
 
-def verify_dependencies(obj, backends: List[Backends | str] = None):
+def verify_dependencies(obj, backends: list[Backends | str] = None):
     """
     Check if all the required dependencies are installed or not.
 

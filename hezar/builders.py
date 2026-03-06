@@ -10,6 +10,7 @@ Examples:
     >>> print(model)
 
 """
+
 from typing import Optional
 
 from .configs import (
@@ -106,9 +107,7 @@ def build_dataset(name: str, config: DatasetConfig = None, split: SplitType = No
 
     available_datasets = list_available_datasets()
     if name not in available_datasets:
-        raise ValueError(
-            f"Unknown dataset name: `{name}`!\nAvailable dataset names: {available_datasets}"
-        )
+        raise ValueError(f"Unknown dataset name: `{name}`!\nAvailable dataset names: {available_datasets}")
     config = config or datasets_registry[name].config_class()
     dataset = datasets_registry[name].module_class(config, split, preprocessor=preprocessor, **kwargs)
     return dataset
@@ -131,9 +130,7 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
 
     available_embeddings = list_available_embeddings()
     if name not in available_embeddings:
-        raise ValueError(
-            f"Unknown embedding name: `{name}`!\nAvailable embedding names: {available_embeddings}"
-        )
+        raise ValueError(f"Unknown embedding name: `{name}`!\nAvailable embedding names: {available_embeddings}")
     config = config or embeddings_registry[name].config_class()
     embedding = embeddings_registry[name].module_class(config, **kwargs)
     return embedding

@@ -1,6 +1,7 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
+
 from __future__ import annotations
 
 from typing import List
@@ -89,7 +90,7 @@ class RobertaTextClassification(Model):
         loss = criterion(logits.view(-1, self.config.num_labels), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
         if self.preprocessor.text_normalizer is not None:

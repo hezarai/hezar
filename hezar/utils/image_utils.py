@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Iterable
 from io import BytesIO
-from typing import Iterable, Tuple
+from typing import Tuple
 
 import numpy as np
 import requests
@@ -134,7 +135,7 @@ def rescale_image(image: np.ndarray, scale: float):
 
 def resize_image(
     image: np.ndarray,
-    size: Tuple[int, int],
+    size: tuple[int, int],
     resample=None,
     reducing_gap: float = None,
     return_type: ImageType = ImageType.NUMPY,

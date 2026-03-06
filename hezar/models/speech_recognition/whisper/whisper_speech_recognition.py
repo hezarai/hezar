@@ -60,9 +60,7 @@ class WhisperSpeechRecognition(Model):
         **kwargs,
     ):
         if decoder_input_ids is None or decoder_inputs_embeds is None:
-            decoder_input_ids = shift_tokens_right(
-                labels, self.config.pad_token_id, self.config.decoder_start_token_id
-            )
+            decoder_input_ids = shift_tokens_right(labels, self.config.pad_token_id, self.config.decoder_start_token_id)
         outputs = self.whisper(
             input_features=input_features,
             attention_mask=attention_mask,
@@ -168,10 +166,10 @@ class WhisperSpeechRecognition(Model):
     def freeze_encoder(self):
         self.whisper.freeze_encoder()
 
-    def preprocess(self, inputs: str | np.ndarray | List[np.ndarray] | List[str], language=None, **kwargs):
-        if isinstance(inputs, str) or (isinstance(inputs, List) and isinstance(inputs[0], str)):
+    def preprocess(self, inputs: str | np.ndarray | list[np.ndarray] | list[str], language=None, **kwargs):
+        if isinstance(inputs, str) or (isinstance(inputs, list) and isinstance(inputs[0], str)):
             inputs = load_audio_files(inputs)
-        elif isinstance(inputs, List) and isinstance(inputs[0], np.ndarray):
+        elif isinstance(inputs, list) and isinstance(inputs[0], np.ndarray):
             inputs = [librosa.to_mono(x.transpose()) for x in inputs if isinstance(x, np.ndarray) and len(x.shape) > 1]
 
         tokenizer = self.preprocessor.tokenizer
@@ -180,10 +178,7 @@ class WhisperSpeechRecognition(Model):
 
         forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=language, task="transcribe")
         inputs = feature_extractor(
-            inputs,
-            sampling_rate=self.config.sampling_rate,
-            return_attention_mask=True,
-            return_tensors="torch"
+            inputs, sampling_rate=self.config.sampling_rate, return_attention_mask=True, return_tensors="torch"
         )
         inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs

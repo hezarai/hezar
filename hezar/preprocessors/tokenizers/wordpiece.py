@@ -29,7 +29,7 @@ class WordPieceConfig(TokenizerConfig):
     cls_token: str = "[CLS]"
     mask_token: str = "[MASK]"
     pad_token_type_id: int = 0
-    additional_special_tokens: List[str] = None
+    additional_special_tokens: list[str] = None
     wordpieces_prefix: str = "##"
     vocab_size: int = 30000
     min_frequency: int = 2
@@ -62,7 +62,7 @@ class WordPieceTokenizer(Tokenizer):
         tokenizer.decoder = decoders.WordPiece(self.config.wordpieces_prefix)  # noqa
         return tokenizer
 
-    def train(self, files: List[str], **train_kwargs):
+    def train(self, files: list[str], **train_kwargs):
         """Train the model using the given files"""
         self.config.update(train_kwargs)
 
@@ -79,7 +79,7 @@ class WordPieceTokenizer(Tokenizer):
             files = [files]
         self._tokenizer.train(files, trainer=trainer)
 
-    def train_from_iterator(self, dataset: List[str], **train_kwargs):
+    def train_from_iterator(self, dataset: list[str], **train_kwargs):
         """Train the model using the given files"""
         self.config.update(train_kwargs)
 

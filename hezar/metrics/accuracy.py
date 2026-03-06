@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from ..configs import MetricConfig
 from ..constants import Backends, MetricType
@@ -34,6 +34,7 @@ class Accuracy(Metric):
         config (AccuracyConfig): Metric config object
         **kwargs: Extra config parameters passed as kwargs to update the `config`
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: AccuracyConfig, **kwargs):

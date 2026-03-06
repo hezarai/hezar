@@ -1,6 +1,7 @@
 """
 A RoBERTa Language Model (HuggingFace Transformers) wrapped by a Hezar Model class
 """
+
 from __future__ import annotations
 
 from typing import List
@@ -69,7 +70,7 @@ class RobertaMaskFilling(Model):
         loss = self.loss_func(logits.view(-1, self.config.vocab_size), labels.view(-1))
         return loss
 
-    def preprocess(self, inputs: str | List[str], **kwargs):
+    def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
 

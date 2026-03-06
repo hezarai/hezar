@@ -33,12 +33,13 @@ class SeqevalConfig(MetricConfig):
         sample_weight (Optional[List[int]]): Sample weights for the seqeval metrics.
         zero_division (str | int): Strategy for zero-division, default is 0.
     """
+
     name = MetricType.SEQEVAL
     objective: str = "maximize"
     output_keys: tuple = ("accuracy", "recall", "precision", "f1")
     suffix: bool = False
     mode: Optional[str] = None
-    sample_weight: Optional[List[int]] = None
+    sample_weight: Optional[list[int]] = None
     zero_division: str | int = 0
 
 
@@ -51,6 +52,7 @@ class Seqeval(Metric):
         config (SeqevalConfig): Metric configuration object.
         **kwargs: Extra configuration parameters passed as kwargs to update the `config`.
     """
+
     required_backends = _required_backends
 
     def __init__(self, config: SeqevalConfig, **kwargs):
@@ -62,7 +64,7 @@ class Seqeval(Metric):
         targets=None,
         suffix: bool = None,
         mode: Optional[str] = None,
-        sample_weight: Optional[List[int]] = None,
+        sample_weight: Optional[list[int]] = None,
         zero_division: str | int = None,
         n_decimals: int = None,
         output_keys=None,

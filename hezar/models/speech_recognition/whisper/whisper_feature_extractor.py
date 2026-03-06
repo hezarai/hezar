@@ -61,11 +61,11 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
 
     def __call__(
         self,
-        raw_speech: np.ndarray | List[float] | List[np.ndarray] | List[List[float]],
-        device: str = None,
+        raw_speech: np.ndarray | list[float] | list[np.ndarray] | list[list[float]],
+        device: str | None = None,
         truncation: bool = True,
         pad_to_multiple_of: int = None,
-        return_tensors: str = None,
+        return_tensors: str | None = None,
         return_attention_mask: bool = None,
         padding: str = "max_length",
         max_length: int = None,
@@ -131,7 +131,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
 
         input_features = [self._torch_extract_fbank_features(waveform) for waveform in input_features[0]]
 
-        if isinstance(input_features[0], List):
+        if isinstance(input_features[0], list):
             padded_inputs["input_features"] = [np.asarray(feature, dtype=np.float32) for feature in input_features]
         else:
             padded_inputs["input_features"] = input_features
@@ -201,8 +201,8 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
 
     @staticmethod
     def zero_mean_unit_var_norm(
-        input_values: List[np.ndarray], attention_mask: List[np.ndarray], padding_value: float = 0.0
-    ) -> List[np.ndarray]:
+        input_values: list[np.ndarray], attention_mask: list[np.ndarray], padding_value: float = 0.0
+    ) -> list[np.ndarray]:
         """
         Every array in the list is normalized to have zero mean and unit variance
         """

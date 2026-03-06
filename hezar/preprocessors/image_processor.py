@@ -1,5 +1,6 @@
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable, List, Tuple
+from typing import List, Tuple
 
 import numpy as np
 
@@ -52,12 +53,13 @@ class ImageProcessorConfig(PreprocessorConfig):
     """
     Configuration class for the ImageProcessor.
     """
+
     name = "image_processor"
-    mean: List[float] = None
-    std: List[float] = None
+    mean: list[float] = None
+    std: list[float] = None
     rescale: float = None
     resample: int = None
-    size: Tuple[int, int] = field(
+    size: tuple[int, int] = field(
         default=None,
         metadata={"description": "Image size tuple (width, height)"},
     )
@@ -88,12 +90,12 @@ class ImageProcessor(Preprocessor):
 
     def __call__(
         self,
-        images: str | List,
-        device: str = None,
+        images: str | list,
+        device: str | None = None,
         mean: float = None,
         std: float = None,
         rescale: float = None,
-        size: Tuple[int, int] = None,
+        size: tuple[int, int] = None,
         resample: float = None,
         mirror: bool = None,
         gray_scale: bool = None,
@@ -178,9 +180,9 @@ class ImageProcessor(Preprocessor):
     def load(
         cls,
         hub_or_local_path,
-        subfolder: str = None,
-        config_filename: str = None,
-        cache_dir: str = None,
+        subfolder: str | None = None,
+        config_filename: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
     ) -> "ImageProcessor":
         """
@@ -225,14 +227,7 @@ class ImageProcessor(Preprocessor):
         config_filename = config_filename or self.image_processor_config_file
         self.config.save(path, subfolder=subfolder, filename=config_filename)
 
-    def push_to_hub(
-        self,
-        repo_id,
-        subfolder=None,
-        commit_message=None,
-        private=None,
-        config_filename=None
-    ):
+    def push_to_hub(self, repo_id, subfolder=None, commit_message=None, private=None, config_filename=None):
         """
         Push the ImageProcessor configuration to the hub.
 

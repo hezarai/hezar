@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Tuple
+from typing import Dict, List, Tuple
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
@@ -29,7 +30,7 @@ logger = Logger(__name__)
 @dataclass
 class TextNormalizerConfig(PreprocessorConfig):
     name = "text_normalizer"
-    replace_patterns: List[Tuple[str, str]] | List[List[str]] | List[Dict[str, List]] = None
+    replace_patterns: list[tuple[str, str]] | list[list[str]] | list[dict[str, list]] = None
     nfkd: bool = True
     nfkc: bool = True
 
@@ -59,8 +60,8 @@ class TextNormalizer(Preprocessor):
 
     def __call__(
         self,
-        inputs: str | List[str],
-        replace_patterns: List[Tuple[str, str]] | List[List[str]] = None,
+        inputs: str | list[str],
+        replace_patterns: list[tuple[str, str]] | list[list[str]] = None,
         nfkd: bool = None,
         nfkc: bool = None,
         **kwargs,
@@ -87,12 +88,7 @@ class TextNormalizer(Preprocessor):
 
     @classmethod
     def load(
-        cls,
-        hub_or_local_path,
-        subfolder=None,
-        config_filename=None,
-        cache_dir=None,
-        **kwargs
+        cls, hub_or_local_path, subfolder=None, config_filename=None, cache_dir=None, **kwargs
     ) -> "TextNormalizer":
         config_filename = config_filename or cls.normalizer_config_file
         subfolder = subfolder or cls.preprocessor_subfolder
@@ -108,9 +104,9 @@ class TextNormalizer(Preprocessor):
     def push_to_hub(
         self,
         repo_id,
-        commit_message: str = None,
-        subfolder: str = None,
-        config_filename: str = None,
+        commit_message: str | None = None,
+        subfolder: str | None = None,
+        config_filename: str | None = None,
         private: bool = None,
     ):
         """
