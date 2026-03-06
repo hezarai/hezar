@@ -55,11 +55,11 @@ class ImageProcessorConfig(PreprocessorConfig):
     """
 
     name = "image_processor"
-    mean: list[float] = None
-    std: list[float] = None
-    rescale: float = None
-    resample: int = None
-    size: tuple[int, int] = field(
+    mean: list[float] | None = None
+    std: list[float] | None = None
+    rescale: float | None = None
+    resample: int | None = None
+    size: tuple[int, int] | None = field(
         default=None,
         metadata={"description": "Image size tuple (width, height)"},
     )
@@ -162,17 +162,17 @@ class ImageProcessor(Preprocessor):
         images = [transpose_channels_axis_side(image, axis_side="first") for image in images]
 
         # Return images batch dict
-        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)
+        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)  # type: ignore
 
-        images = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)
+        images = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)  # type: ignore
 
         if device and return_tensors == "torch":
             import torch
 
-            images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}
+            images = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in images.items()}  # type: ignore
 
         if is_single and return_tensors == "list":
-            images = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in images.items()}
+            images = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in images.items()}  # type: ignore
 
         return images
 

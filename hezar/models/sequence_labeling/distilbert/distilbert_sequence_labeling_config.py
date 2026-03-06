@@ -8,8 +8,8 @@ from ....constants import TaskType
 class DistilBertSequenceLabelingConfig(ModelConfig):
     name = "distilbert_sequence_labeling"
     task: str = TaskType.SEQUENCE_LABELING
-    num_labels: int = None
-    id2label: dict = None
+    num_labels: int | None = None
+    id2label: dict | None = None
     activation: str = "gelu"
     attention_dropout: float = 0.1
     dim: int = 768
@@ -26,5 +26,5 @@ class DistilBertSequenceLabelingConfig(ModelConfig):
 
     hidden_dropout_prob: float = 0.1
     use_cache: bool = True
-    classifier_dropout: float = None
+    classifier_dropout: float | None = None
     prediction_skip_tokens: list = field(default_factory=lambda: ["[SEP]", "[CLS]"])

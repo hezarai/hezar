@@ -29,9 +29,9 @@ class SentencePieceUnigramConfig(TokenizerConfig):
     pad_token: str = "<pad>"
     cls_token: str = "<cls>"
     mask_token: str = "<mask>"
-    additional_special_tokens: list[str] = None
+    additional_special_tokens: list[str] | None = None
     pad_to_multiple_of: int = 0
-    dropout: float = None
+    dropout: float | None = None
     continuing_subword_prefix: str = ""
     replacement: str = "_"
     add_prefix_space: bool = True

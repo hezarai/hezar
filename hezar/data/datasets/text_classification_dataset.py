@@ -31,7 +31,7 @@ class TextClassificationDatasetConfig(DatasetConfig):
     path: str | None = None
     label_field: str | None = None
     text_field: str | None = None
-    max_length: int = None
+    max_length: int | None = None
 
 
 @register_dataset("text_classification", config_class=TextClassificationDatasetConfig)

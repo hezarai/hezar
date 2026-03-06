@@ -271,7 +271,7 @@ class WhisperBPEConfig(BPEConfig):
     model_max_length: int = 1024
     language: str | None = None
     task: str | None = None
-    predict_timestamps: str = False
+    predict_timestamps: str | bool = False
     show_progress: bool = True
 
 

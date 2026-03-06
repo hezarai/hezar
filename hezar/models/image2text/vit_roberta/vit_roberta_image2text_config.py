@@ -10,12 +10,12 @@ class DecoderConfig(ModelConfig):
     attention_probs_dropout_prob: float = 0.1
     bos_token_id: int = 0
     eos_token_id: int = 2
-    classifier_dropout: float = None
+    classifier_dropout: float | None = None
     gradient_checkpointing: bool = False
     hidden_act: str = "gelu"
     hidden_dropout_prob: float = 0.1
     hidden_size: int = 768
-    initializer_range: int = 0.02
+    initializer_range: float = 0.02
     intermediate_size: int = 3072
     layer_norm_eps: float = 1e-12
     max_position_embeddings: int = 514

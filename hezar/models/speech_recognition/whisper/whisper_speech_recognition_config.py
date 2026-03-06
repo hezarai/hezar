@@ -6,7 +6,7 @@ from ....configs import ModelConfig
 
 @dataclass
 class WhisperSpeechRecognitionGenerationConfig:
-    alignment_heads: list[list[int]] = None
+    alignment_heads: list[list[int]] | None = None
     begin_suppress_tokens: list[int] = field(default_factory=lambda: [220, 50256])
     bos_token_id: int = 50257
     decoder_start_token_id: int = 50258
@@ -20,7 +20,7 @@ class WhisperSpeechRecognitionGenerationConfig:
     pad_token_id: int = 50257
     prev_sot_token_id: int = 50361
     return_timestamps: int = False
-    suppress_tokens: list[int] = None
+    suppress_tokens: list[int] | None = None
     task_to_id: dict[str, int] = field(default_factory=lambda: {"transcribe": 50359, "translate": 50358})
 
     def dict(self):
@@ -58,7 +58,7 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     pad_token_id: int = 50256
     bos_token_id: int = 50257
     eos_token_id: int = 50256
-    suppress_tokens: list[int] = None
+    suppress_tokens: list[int] | None = None
     begin_suppress_tokens: list[int] = field(default_factory=lambda: [220, 50256])
     use_weighted_layer_sum: bool = False
     classifier_proj_size: int = 256
@@ -70,7 +70,7 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     mask_feature_length: int = 10
     mask_feature_min_masks: int = 0
     max_new_tokens: int = 448
-    generation_config: dict | WhisperSpeechRecognitionGenerationConfig = None
+    generation_config: dict | WhisperSpeechRecognitionGenerationConfig | None = None
 
     def __post_init__(self):
         super().__post_init__()

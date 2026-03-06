@@ -34,7 +34,7 @@ class SequenceLabelingDatasetConfig(DatasetConfig):
     path: str | None = None
     tags_field: str | None = None
     tokens_field: str | None = None
-    max_length: int = None
+    max_length: int | None = None
     ignore_index: int = -100
     label_all_tokens: bool = True
     is_iob_schema: bool = False  # Usually set to True for NER & Chunker and set to False for POS

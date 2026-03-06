@@ -490,7 +490,7 @@ def hertz_to_mel(freq: float | np.ndarray, mel_scale: str = "htk") -> float | np
 
     if isinstance(freq, np.ndarray):
         log_region = freq >= min_log_hertz
-        mels[log_region] = min_log_mel + np.log(freq[log_region] / min_log_hertz) * logstep
+        mels[log_region] = min_log_mel + np.log(freq[log_region] / min_log_hertz) * logstep  # ty:ignore
     elif freq >= min_log_hertz:
         mels = min_log_mel + np.log(freq / min_log_hertz) * logstep
 
@@ -524,7 +524,7 @@ def mel_to_hertz(mels: float | np.ndarray, mel_scale: str = "htk") -> float | np
 
     if isinstance(mels, np.ndarray):
         log_region = mels >= min_log_mel
-        freq[log_region] = min_log_hertz * np.exp(logstep * (mels[log_region] - min_log_mel))
+        freq[log_region] = min_log_hertz * np.exp(logstep * (mels[log_region] - min_log_mel))  # ty:ignore
     elif mels >= min_log_mel:
         freq = min_log_hertz * np.exp(logstep * (mels - min_log_mel))
 

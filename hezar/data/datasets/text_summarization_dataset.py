@@ -36,8 +36,8 @@ class TextSummarizationDatasetConfig(DatasetConfig):
     text_field: str | None = None
     summary_field: str | None = None
     title_field: str | None = None
-    max_length: int = None
-    labels_max_length: int = None
+    max_length: int | None = None
+    labels_max_length: int | None = None
 
 
 @register_dataset("text_summarization", config_class=TextSummarizationDatasetConfig)

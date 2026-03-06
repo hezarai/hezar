@@ -39,13 +39,13 @@ class TrainerState:
     """
 
     epoch: int = 1
-    total_epochs: int = None
+    total_epochs: int | None = None
     global_step: int = 0
     epoch_step: int = 0
     loss_tracker_sum: float = 0.0
     loss_tracker_avg: float = 0.0
     metric_for_best_checkpoint: str | None = None
-    best_metric_value: float = None
+    best_metric_value: float | None = None
     best_checkpoint: str | None = None
     logs_dir: str | None = None
 

@@ -23,9 +23,9 @@ class SpeechRecognitionDatasetConfig(DatasetConfig):
     path: str | None = None
     sampling_rate: int = 16000
     audio_array_padding: bool | str | PaddingType = "longest"
-    max_audio_array_length: int = None
+    max_audio_array_length: int | None = None
     labels_padding: bool | str | PaddingType = "longest"
-    labels_max_length: int = None
+    labels_max_length: int | None = None
     audio_file_path_column: str = "path"
     audio_column: str = "audio"
     audio_array_column: str = "array"

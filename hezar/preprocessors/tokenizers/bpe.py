@@ -30,8 +30,8 @@ class BPEConfig(TokenizerConfig):
     pad_token: str = "<pad>"
     cls_token: str = "<cls>"
     mask_token: str = "<mask>"
-    additional_special_tokens: list[str] = None
-    dropout: float = None
+    additional_special_tokens: list[str] | None = None
+    dropout: float | None = None
     continuing_subword_prefix: str = ""
     end_of_word_suffix: str = ""
     fuse_unk: bool = False

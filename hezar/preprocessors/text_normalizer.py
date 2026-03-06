@@ -30,7 +30,7 @@ logger = Logger(__name__)
 @dataclass
 class TextNormalizerConfig(PreprocessorConfig):
     name = "text_normalizer"
-    replace_patterns: list[tuple[str, str]] | list[list[str]] | list[dict[str, list]] = None
+    replace_patterns: list[tuple[str, str]] | list[list[str]] | list[dict[str, list]] | None = None
     nfkd: bool = True
     nfkc: bool = True
 

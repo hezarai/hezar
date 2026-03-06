@@ -21,7 +21,7 @@ class AccuracyConfig(MetricConfig):
     name = MetricType.ACCURACY
     objective: str = "maximize"
     normalize: bool = True
-    sample_weight: Iterable[float] = None
+    sample_weight: Iterable[float] | None = None
     output_keys: tuple = ("accuracy",)
 
 

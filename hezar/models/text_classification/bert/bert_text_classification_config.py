@@ -8,8 +8,8 @@ from ....constants import TaskType
 class BertTextClassificationConfig(ModelConfig):
     name = "bert_text_classification"
     task: str = TaskType.TEXT_CLASSIFICATION
-    num_labels: int = None
-    id2label: dict = None
+    num_labels: int | None = None
+    id2label: dict | None = None
     vocab_size: int = 42000
     hidden_size: int = 768
     num_hidden_layers: int = 12
@@ -25,4 +25,4 @@ class BertTextClassificationConfig(ModelConfig):
     pad_token_id: int = 0
     position_embedding_type: str = "absolute"
     use_cache: bool = True
-    classifier_dropout: float = None
+    classifier_dropout: float | None = None

@@ -29,7 +29,7 @@ class WordPieceConfig(TokenizerConfig):
     cls_token: str = "[CLS]"
     mask_token: str = "[MASK]"
     pad_token_type_id: int = 0
-    additional_special_tokens: list[str] = None
+    additional_special_tokens: list[str] | None = None
     wordpieces_prefix: str = "##"
     vocab_size: int = 30000
     min_frequency: int = 2

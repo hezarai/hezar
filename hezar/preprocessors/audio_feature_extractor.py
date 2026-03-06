@@ -14,7 +14,7 @@ from .preprocessor import Preprocessor
 
 @dataclass
 class AudioFeatureExtractorConfig(PreprocessorConfig):
-    feature_size: int = None
+    feature_size: int | None = None
     sampling_rate: int = 16000
     padding: str | None = None
     padding_value: float = 0.0

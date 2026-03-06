@@ -61,7 +61,7 @@ logger = Logger(__name__)
 @dataclass
 class Registry:
     module_class: type
-    config_class: type = None
+    config_class: type | None = None
     description: Optional[str] = None
 
 

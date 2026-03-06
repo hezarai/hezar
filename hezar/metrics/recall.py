@@ -36,7 +36,7 @@ class RecallConfig(MetricConfig):
     objective: str = "maximize"
     pos_label: int = 1
     average: str = "macro"
-    sample_weight: Iterable[float] = None
+    sample_weight: Iterable[float] | None = None
     zero_division: str | float = 0.0
     output_keys: tuple = ("recall",)
 

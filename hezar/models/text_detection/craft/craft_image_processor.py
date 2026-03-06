@@ -22,9 +22,9 @@ from ....utils import (
 @dataclass
 class CraftImageProcessorConfig(ImageProcessorConfig):
     name = "craft_image_processor"
-    mean: tuple[float] = (123.675, 116.28, 103.53)
-    std: tuple[float] = (58.395, 57.12, 57.375)
-    rescale: float = None
+    mean: tuple = (123.675, 116.28, 103.53)
+    std: tuple = (58.395, 57.12, 57.375)
+    rescale: float | None = None
     square_size: int = 2560
     mag_ratio: float = 1.0
 
@@ -34,7 +34,7 @@ class CraftImageProcessor(ImageProcessor):
     def __init__(self, config: CraftImageProcessorConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
-    def get_ratio(self, image, square_size: int = None, mag_ratio: float = None):
+    def get_ratio(self, image, square_size: int | None = None, mag_ratio: float | None = None):
         square_size = square_size or self.config.square_size
         mag_ratio = mag_ratio or self.config.mag_ratio
 
@@ -118,7 +118,7 @@ class CraftImageProcessor(ImageProcessor):
         images = [transpose_channels_axis_side(image, axis_side="first") for image in images]
 
         # Return images batch dict
-        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)
+        images = np.array([convert_image_type(image, target_type="numpy") for image in images], dtype=np.float32)  # ty:ignore
 
         outputs = convert_batch_dict_dtype({"pixel_values": images}, dtype=return_tensors)
 

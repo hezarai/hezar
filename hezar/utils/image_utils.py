@@ -300,7 +300,7 @@ def pad_boxes(bboxes, padding: int | tuple = None):
         A list of padded bounding boxes
     """
     if isinstance(padding, int):
-        padding = [padding] * 4
+        padding = [padding] * 4  # type: ignore
     if isinstance(padding, tuple) and len(padding) != 4:
         raise ValueError(f"padding must be a single int value or a tuple of size 4, got {len(padding)}!")
 

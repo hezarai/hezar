@@ -207,10 +207,10 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
         Every array in the list is normalized to have zero mean and unit variance
         """
         if attention_mask is not None:
-            attention_mask = np.array(attention_mask, np.int32)
+            attention_mask = np.array(attention_mask, np.int32)  # ty:ignore
             normed_input_values = []
 
-            for vector, length in zip(input_values, attention_mask.sum(-1)):
+            for vector, length in zip(input_values, attention_mask.sum(-1), strict=True):  # ty:ignore
                 normed_slice = (vector - vector[:length].mean()) / np.sqrt(vector[:length].var() + 1e-7)
                 if length < normed_slice.shape[0]:
                     normed_slice[length:] = padding_value

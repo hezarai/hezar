@@ -59,13 +59,13 @@ class TokenizerConfig(PreprocessorConfig):
     """
 
     name = "tokenizer"
-    max_length: int = "deprecated"
-    truncation: str = "deprecated"
+    max_length: int | str = "deprecated"
+    truncation: str | bool = "deprecated"
     truncation_side: str | None = None
-    padding: str = "deprecated"
+    padding: str | bool = "deprecated"
     padding_side: str | None = None
-    stride: int = None
-    pad_to_multiple_of: int = "deprecated"
+    stride: int | None = None
+    pad_to_multiple_of: int | str = "deprecated"
     pad_token_type_id: int = 0
     bos_token: str | None = None
     eos_token: str | None = None
@@ -74,7 +74,7 @@ class TokenizerConfig(PreprocessorConfig):
     pad_token: str | None = None
     cls_token: str | None = None
     mask_token: str | None = None
-    additional_special_tokens: list[str] = None
+    additional_special_tokens: list[str] | None = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -181,12 +181,12 @@ class Tokenizer(Preprocessor):
                 inputs = [inputs]
         return self._tokenizer.encode_batch(inputs, is_pretokenized, add_special_tokens)
 
-    def decode(self, ids: list[int], skip_special_tokens: bool = True, **kwargs):
+    def decode(self, ids: list[int] | list[list[int]], skip_special_tokens: bool = True, **kwargs):
         """
         Decode a list of token IDs.
 
         Args:
-            ids (List[int]): List of token IDs.
+            ids (List[int] | List[List[int]]): List of token IDs.
             skip_special_tokens (bool): Whether to skip special tokens during decoding.
             **kwargs: Additional keyword arguments.
 
@@ -194,20 +194,20 @@ class Tokenizer(Preprocessor):
             List[str]: List of decoded strings.
         """
         if isinstance(ids[0], int):
-            ids = [ids]
+            ids = [ids]  # ty:ignore
         if isinstance(ids, (torch.Tensor, np.ndarray)):
-            ids = ids.tolist()
+            ids = ids.tolist()  # ty:ignore
         return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
 
     def pad_encoded_batch(
         self,
         inputs,
-        padding: str | PaddingType = None,
+        padding: str | PaddingType | None = None,
         max_length: Optional[int] = None,
         truncation: bool = True,
         return_tensors: Optional[str] = None,
         include_keys: Optional[list[str]] = None,
-        exclude_keys: list = None,
+        exclude_keys: list | None = None,
     ):
         """
         Pad a batch of encoded inputs.
@@ -319,7 +319,7 @@ class Tokenizer(Preprocessor):
 
         # Convert to batch if input is a single string or a list of words (is split into words for sequence labeling)
         if isinstance(inputs, str) or (is_split_into_words and not isinstance(inputs[0], list)):
-            inputs = [inputs]
+            inputs = [inputs]  # type: ignore
             is_batch = False
         else:
             is_batch = True

@@ -101,4 +101,4 @@ class Image2TextOutput(ModelOutput):
 
 @dataclass(repr=False)
 class TextDetectionOutput(ModelOutput):
-    boxes: list[int] = None
+    boxes: list[int] | None = None

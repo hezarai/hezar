@@ -34,7 +34,7 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
     path: str | None = None
     text_column: str = "label"
     images_paths_column = "image_path"
-    max_length: int = None
+    max_length: int | None = None
 
 
 @register_dataset("image_captioning", config_class=ImageCaptioningDatasetConfig)

@@ -46,8 +46,8 @@ class BLEU(Metric):
 
     def compute(
         self,
-        predictions: Iterable[str] | str = None,
-        targets: Iterable[str] | str = None,
+        predictions: list[str] | str,
+        targets: list[str] | str,
         weights=(0.25, 0.25, 0.25, 0.25),
         n_decimals=None,
         output_keys=None,
@@ -69,8 +69,8 @@ class BLEU(Metric):
         n_decimals = n_decimals or self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
-        predictions = [x.split() if isinstance(x, str) else x for x in predictions]
-        targets = [x.split() if isinstance(x, str) else x for x in targets]
+        predictions = [x.split() if isinstance(x, str) else x for x in predictions]  # ty:ignore
+        targets = [x.split() if isinstance(x, str) else x for x in targets]  # ty:ignore
 
         score = corpus_bleu(targets, predictions, weights=weights)
 

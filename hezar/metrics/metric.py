@@ -24,7 +24,7 @@ class Metric:
 
         self.config = config.update(kwargs)
 
-    def compute(self, predictions=None, targets=None, **kwargs) -> dict:
+    def compute(self, predictions, targets, **kwargs) -> dict:
         """
         Compute metric value for the given predictions against the targets
         Args:
