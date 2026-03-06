@@ -30,11 +30,11 @@ class RangedSampler(Sampler):
         self,
         data: Sized,
         batch_size: int,
-        start_index: int = None,
-        end_index: int = None,
+        start_index: int | None = None,
+        end_index: int | None = None,
         drop_last: bool = False,
         shuffle: bool = False,
-        seed: int = None,
+        seed: int | None = None,
     ):
         super().__init__()
         self.data = data

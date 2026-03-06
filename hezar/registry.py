@@ -62,7 +62,7 @@ logger = Logger(__name__)
 class Registry:
     module_class: type
     config_class: type | None = None
-    description: Optional[str] = None
+    description: str | None = None
 
 
 models_registry: dict[str, Registry] = {}

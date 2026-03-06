@@ -1,6 +1,5 @@
 import re
 from dataclasses import dataclass, field
-from typing import List
 
 import numpy as np
 
@@ -287,7 +286,7 @@ class WhisperBPETokenizer(BPETokenizer):
 
     def decode(
         self,
-        token_ids,
+        ids,
         skip_special_tokens: bool = False,
         output_offsets: bool = False,
         time_precision=0.02,
@@ -297,7 +296,7 @@ class WhisperBPETokenizer(BPETokenizer):
         """
         Override decode method to enable timestamps and offsets.
         """
-        filtered_ids = self._preprocess_token_ids(token_ids, skip_special_tokens=skip_special_tokens)
+        filtered_ids = self._preprocess_token_ids(ids, skip_special_tokens=skip_special_tokens)
         text = super().decode(filtered_ids, skip_special_tokens=skip_special_tokens, **kwargs)
         if decode_with_timestamps:
             text = [
@@ -312,7 +311,7 @@ class WhisperBPETokenizer(BPETokenizer):
             text = [re.sub(re.compile(r"<\|(\d+\.\d+)\|>"), "", t) for t in text]
         # retrieve offsets
         if output_offsets:
-            offsets = self._compute_offsets(token_ids, time_precision=time_precision)
+            offsets = self._compute_offsets(ids, time_precision=time_precision)
             return {"text": text, "offsets": offsets}
         return text
 
@@ -420,7 +419,7 @@ class WhisperBPETokenizer(BPETokenizer):
         return batch_encoding["input_ids"]
 
     @staticmethod
-    def _strip_prompt(token_ids, prompt_token_id: int, decoder_start_token_id: int):
+    def _strip_prompt(token_ids, prompt_token_id: int | list[int], decoder_start_token_id: int | list[int]):
         has_prompt = isinstance(token_ids, list) and token_ids and token_ids[0] == prompt_token_id
         if has_prompt:
             if decoder_start_token_id in token_ids:
@@ -430,7 +429,7 @@ class WhisperBPETokenizer(BPETokenizer):
 
         return token_ids
 
-    def set_prefix_tokens(self, language: str | None = None, task: str | None = None, predict_timestamps: bool = None):
+    def set_prefix_tokens(self, language: str | None = None, task: str | None = None, predict_timestamps: bool | None = None):
         self.language = language if language is not None else self.language
         self.task = task if task is not None else self.task
         self.predict_timestamps = predict_timestamps if predict_timestamps is not None else self.predict_timestamps
@@ -443,7 +442,7 @@ class WhisperBPETokenizer(BPETokenizer):
             pair=f"{prefix_template} $A:0 $B:1 {self.eos_token}:1",
             special_tokens=[
                 (self.eos_token, self.eos_token_id),
-                *zip(prefixes, prefix_token_ids),
+                *zip(prefixes, prefix_token_ids, strict=True),
             ],
         )
 
@@ -517,7 +516,7 @@ class WhisperBPETokenizer(BPETokenizer):
         chunks = []
         chunk = new_chunk()
         time_offset = 0.0
-        timestamp_begin = self.convert_tokens_to_ids("<|notimestamps|>") + 1
+        timestamp_begin = self.convert_tokens_to_ids("<|notimestamps|>")[0] + 1
         previous_tokens = []
         skip = False
         right_stride_start = None

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
 import torch
 
 from ....constants import Backends
@@ -92,7 +90,7 @@ class T5TextGeneration(Model):
         # TODO Merge kwargs into generation config so users can control generation from kwargs
         model_inputs = {"input_ids": token_ids, "attention_mask": attention_mask}
         generation_kwargs = {"min_length": self.config.min_length, "max_length": self.config.max_length}
-        output_ids = self.t5.generate(**model_inputs, **generation_kwargs)
+        output_ids = self.t5.generate(**model_inputs, **generation_kwargs)  # ty:ignore
         return output_ids
 
     def preprocess(self, inputs: str | list[str], prefix=None):

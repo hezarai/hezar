@@ -4,8 +4,6 @@ Common audio utils taken from `transformers.audio_utils`
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 import numpy as np
 
 from ..constants import Backends
@@ -27,7 +25,7 @@ __all__ = [
 logger = Logger(__name__)
 
 
-def load_audio_files(paths: str | list[str], sampling_rate: int = 16000):
+def load_audio_files(paths: str | list, sampling_rate: int = 16000):
     if is_backend_available(Backends.LIBROSA):
         import librosa
 
@@ -44,19 +42,19 @@ def spectrogram(
     window: np.ndarray,
     frame_length: int,
     hop_length: int,
-    fft_length: Optional[int] = None,
-    power: Optional[float] = 1.0,
+    fft_length: int | None = None,
+    power: float | None = 1.0,
     center: bool = True,
     pad_mode: str = "reflect",
     onesided: bool = True,
-    preemphasis: Optional[float] = None,
-    mel_filters: Optional[np.ndarray] = None,
+    preemphasis: float | None = None,
+    mel_filters: np.ndarray | None = None,
     mel_floor: float = 1e-10,
-    log_mel: Optional[str] = None,
+    log_mel: str | None = None,
     reference: float = 1.0,
     min_value: float = 1e-10,
-    db_range: Optional[float] = None,
-    dtype: np.dtype = np.float32,
+    db_range: float | None = None,
+    dtype=np.float32,
 ) -> np.ndarray:
     """
     Calculates a spectrogram over one waveform using the Short-Time Fourier Transform.
@@ -169,7 +167,7 @@ def spectrogram(
     # center pad the waveform
     if center:
         padding = [(int(frame_length // 2), int(frame_length // 2))]
-        waveform = np.pad(waveform, padding, mode=pad_mode)
+        waveform = np.pad(waveform, padding, mode=pad_mode)  # ty:ignore
 
     # promote to float64, since np.fft uses float64 internally
     waveform = waveform.astype(np.float64)
@@ -231,7 +229,7 @@ def amplitude_to_db(
     spectrogram: np.ndarray,
     reference: float = 1.0,
     min_value: float = 1e-5,
-    db_range: Optional[float] = None,
+    db_range: float | None = None,
 ) -> np.ndarray:
     """
     Converts an amplitude spectrogram to the decibel scale. This computes `20 * log10(spectrogram / reference)`, using
@@ -280,7 +278,7 @@ def power_to_db(
     spectrogram: np.ndarray,
     reference: float = 1.0,
     min_value: float = 1e-10,
-    db_range: Optional[float] = None,
+    db_range: float | None = None,
 ) -> np.ndarray:
     """
     Converts a power spectrogram to the decibel scale. This computes `10 * log10(spectrogram / reference)`, using basic
@@ -331,7 +329,7 @@ def window_function(
     window_length: int,
     name: str = "hann",
     periodic: bool = True,
-    frame_length: Optional[int] = None,
+    frame_length: int | None = None,
     center: bool = True,
 ) -> np.ndarray:
     """
@@ -391,7 +389,7 @@ def mel_filter_bank(
     min_frequency: float,
     max_frequency: float,
     sampling_rate: int,
-    norm: Optional[str] = None,
+    norm: str | None = None,
     mel_scale: str = "htk",
 ) -> np.ndarray:
     """
@@ -446,15 +444,15 @@ def mel_filter_bank(
     mel_freqs = np.linspace(mel_min, mel_max, num_mel_filters + 2)
     filter_freqs = mel_to_hertz(mel_freqs, mel_scale=mel_scale)
 
-    mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs)
+    mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs)  # ty:ignore
 
     if norm is not None and norm == "slaney":
         # Slaney-style mel is scaled to be approx constant energy per channel
-        enorm = 2.0 / (filter_freqs[2 : num_mel_filters + 2] - filter_freqs[:num_mel_filters])
+        enorm = 2.0 / (filter_freqs[2 : num_mel_filters + 2] - filter_freqs[:num_mel_filters])  # ty:ignore
         mel_filters *= np.expand_dims(enorm, 0)
 
     if (mel_filters.max(axis=0) == 0.0).any():
-        logger.warn(
+        logger.warning(
             "At least one mel filter has all zero values. "
             f"The value for `num_mel_filters` ({num_mel_filters}) may be set too high. "
             f"Or, the value for `num_frequency_bins` ({num_frequency_bins}) may be set too low."

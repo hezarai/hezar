@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
 import numpy as np
 import torch
@@ -64,13 +63,13 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
         raw_speech: np.ndarray | list[float] | list[np.ndarray] | list[list[float]],
         device: str | None = None,
         truncation: bool = True,
-        pad_to_multiple_of: int = None,
+        pad_to_multiple_of: int | None = None,
         return_tensors: str | None = None,
-        return_attention_mask: bool = None,
+        return_attention_mask: bool | None = None,
         padding: str = "max_length",
-        max_length: int = None,
-        sampling_rate: int = None,
-        do_normalize: bool = None,
+        max_length: int | None = None,
+        sampling_rate: int | None = None,
+        do_normalize: bool | None = None,
         **kwargs,
     ):
         sampling_rate = sampling_rate or self.config.sampling_rate
@@ -88,7 +87,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
             )
 
         is_batched_numpy = isinstance(raw_speech, np.ndarray) and len(raw_speech.shape) > 1
-        if is_batched_numpy and len(raw_speech.shape) > 2:
+        if is_batched_numpy and len(raw_speech.shape) > 2:  # ty:ignore
             raise ValueError(f"Only mono-channel audio is supported for input to {self}")
         is_batched = is_batched_numpy or (
             isinstance(raw_speech, (list, tuple)) and (isinstance(raw_speech[0], (np.ndarray, tuple, list)))
@@ -99,7 +98,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
         elif not is_batched and not isinstance(raw_speech, np.ndarray):
             raw_speech = np.asarray(raw_speech, dtype=np.float32)
         elif isinstance(raw_speech, np.ndarray) and raw_speech.dtype is np.dtype(np.float64):
-            raw_speech = raw_speech.astype(np.float32)
+            raw_speech = raw_speech.astype(np.float32)  # ty:ignore
 
         # always return batch
         if not is_batched:
@@ -150,7 +149,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
 
         return padded_inputs
 
-    def _np_extract_fbank_features(self, waveform: np.array) -> np.ndarray:
+    def _np_extract_fbank_features(self, waveform: np.ndarray) -> np.ndarray:
         """
         Compute the log-mel spectrogram of the provided audio, gives similar results to Whisper's original torch
         implementation with 1e-5 tolerance.
@@ -169,18 +168,18 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
         log_spec = (log_spec + 4.0) / 4.0
         return log_spec
 
-    def _torch_extract_fbank_features(self, waveform: np.array, device: str = "cpu") -> np.ndarray:
+    def _torch_extract_fbank_features(self, waveform: np.ndarray, device: str = "cpu") -> np.ndarray:
         """
         Compute the log-mel spectrogram of the audio using PyTorch's GPU-accelerated STFT implementation with batching,
         yielding results similar to cpu computing with 1e-5 tolerance.
         """
-        waveform = torch.from_numpy(waveform).type(torch.float32)
+        waveform_t = torch.from_numpy(waveform).to(torch.float32)
 
         window = torch.hann_window(self.config.n_fft)
         if device != "cpu":
-            waveform = waveform.to(device)
+            waveform_t = waveform_t.to(device)
             window = window.to(device)
-        stft = torch.stft(waveform, self.config.n_fft, self.config.hop_length, window=window, return_complex=True)
+        stft = torch.stft(waveform_t, self.config.n_fft, self.config.hop_length, window=window, return_complex=True)
         magnitudes = stft[..., :-1].abs() ** 2
 
         mel_filters = torch.from_numpy(self.mel_filters).type(torch.float32)
@@ -189,7 +188,7 @@ class WhisperFeatureExtractor(AudioFeatureExtractor):
         mel_spec = mel_filters.T @ magnitudes
 
         log_spec = torch.clamp(mel_spec, min=1e-10).log10()
-        if waveform.dim() == 2:
+        if waveform_t.dim() == 2:
             max_val = log_spec.max(dim=2, keepdim=True)[0].max(dim=1, keepdim=True)[0]
             log_spec = torch.maximum(log_spec, max_val - 8.0)
         else:

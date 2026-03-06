@@ -122,7 +122,7 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
 
         return shifted_input_ids
 
-    def process_single(self, data, return_tensors=None, padding=None, max_length=None):
+    def process_single(self, data, return_tensors=None, padding=None, max_length=None, **kwargs):
         """
         Process image and tokenize captions for a single data sample.
 
@@ -154,7 +154,7 @@ class ImageCaptioningDatasetProcessor(DatasetProcessor):
 
         return data
 
-    def process_batch(self, data, return_tensors=None, padding=None, max_length=None):
+    def process_batch(self, data, return_tensors=None, padding=None, max_length=None, **kwargs):
         """
         Process image and tokenize captions for a batch of data samples.
 
@@ -209,7 +209,7 @@ class OCRDatasetProcessor(DatasetProcessor):
         self.text_split_type = text_split_type
         self.max_length = max_length
         self.reverse_digits = reverse_digits
-        self.id2label = id2label
+        self.id2label = id2label or {}
         self.image_field = image_field
         self.text_field = text_field
 
@@ -224,7 +224,7 @@ class OCRDatasetProcessor(DatasetProcessor):
             torch.Tensor: The output tensor.
 
         """
-        if self.text_split_type == "tokenize":
+        if self.text_split_type == "tokenize" and self.tokenizer:
             token_ids = self.tokenizer(text, padding="max_length", max_length=self.max_length)["input_ids"]
             labels = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
         elif self.text_split_type == "char_split":
@@ -236,7 +236,7 @@ class OCRDatasetProcessor(DatasetProcessor):
             raise ValueError(f"Invalid `text_split_type={self.text_split_type}`")
         return labels
 
-    def process_single(self, data, return_tensors=None):
+    def process_single(self, data, return_tensors=None, **kwargs):
         """
         Process a single image-to-text OCR example.
 
@@ -253,7 +253,7 @@ class OCRDatasetProcessor(DatasetProcessor):
         labels = self._text_to_ids(text)
         return {"pixel_values": pixel_values, "labels": labels}
 
-    def process_batch(self, data, return_tensors=None):
+    def process_batch(self, data, return_tensors=None, **kwargs):
         """
         Process a batch of image-to-text OCR examples.
 
@@ -339,7 +339,7 @@ class SequenceLabelingDatasetProcessor(DatasetProcessor):
         tokenized_inputs["labels"] = aligned_labels
         return tokenized_inputs
 
-    def process_single(self, data, return_tensors=None, padding=None, max_length=None):
+    def process_single(self, data, return_tensors=None, padding=None, max_length=None, **kwargs):
         """
         Process a single example of sequence labeling data.
 
@@ -367,7 +367,7 @@ class SequenceLabelingDatasetProcessor(DatasetProcessor):
 
         return data
 
-    def process_batch(self, data, return_tensors=None, padding=None, max_length=None):
+    def process_batch(self, data, return_tensors=None, padding=None, max_length=None, **kwargs):
         """
         Process a batch of sequence labeling examples.
 
@@ -424,7 +424,7 @@ class SpeechRecognitionDatasetProcessor(DatasetProcessor):
         self.audio_column = audio_column
         self.transcript_column = transcript_column
 
-    def process_single(self, data, return_tensors=None):
+    def process_single(self, data, return_tensors=None, **kwargs):
         """
         Process a single speech recognition example.
 
@@ -461,7 +461,7 @@ class SpeechRecognitionDatasetProcessor(DatasetProcessor):
 
         return data
 
-    def process_batch(self, data, return_tensors=None):
+    def process_batch(self, data, return_tensors=None, **kwargs):
         """
         Process a batch of speech recognition examples.
 
@@ -510,7 +510,7 @@ class TextClassificationDatasetProcessor(DatasetProcessor):
         self.padding = padding
         self.max_length = max_length
 
-    def process_single(self, data, return_tensors=None, padding=None, max_length=None):
+    def process_single(self, data, return_tensors=None, padding=None, max_length=None, **kwargs):
         """
         Process a single example for text classification.
 
@@ -541,7 +541,7 @@ class TextClassificationDatasetProcessor(DatasetProcessor):
 
         return data
 
-    def process_batch(self, data, return_tensors=None, padding=None, max_length=None):
+    def process_batch(self, data, return_tensors=None, padding=None, max_length=None, **kwargs):
         """
         Process a batch of examples for text classification.
 
@@ -597,7 +597,15 @@ class TextSummarizationDatasetProcessor(DatasetProcessor):
         self.summary_field = summary_field
         self.padding = padding
 
-    def process_single(self, data, return_tensors=None, padding=None, max_length=None, labels_max_length=None):
+    def process_single(
+        self,
+        data,
+        return_tensors=None,
+        padding=None,
+        max_length=None,
+        labels_max_length=None,
+        **kwargs,
+    ):
         """
         Process a single example for text summarization.
 
@@ -642,7 +650,7 @@ class TextSummarizationDatasetProcessor(DatasetProcessor):
 
         return inputs
 
-    def process_batch(self, data, return_tensors=None, padding=None, max_length=None, labels_max_length=None):
+    def process_batch(self, data, return_tensors=None, padding=None, max_length=None, labels_max_length=None, **kwargs):
         """
         Process a batch of examples for text summarization.
 

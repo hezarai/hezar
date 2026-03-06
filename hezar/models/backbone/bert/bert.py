@@ -4,8 +4,6 @@ A BERT base language model (HuggingFace Transformers) wrapped by a Hezar Model c
 
 from __future__ import annotations
 
-from typing import List
-
 from ....constants import Backends
 from ....models import Model
 from ....registry import register_model
@@ -67,8 +65,6 @@ class BERT(Model):
     def preprocess(self, inputs: str | list[str], **kwargs):
         if isinstance(inputs, str):
             inputs = [inputs]
-        if self.preprocessor.text_normalizer is not None:
-            inputs = self.preprocessor.text_normalizer(inputs)
         tokenizer = self.preprocessor.tokenizer
         inputs = tokenizer(inputs, return_tensors="torch", device=self.device)
         return inputs

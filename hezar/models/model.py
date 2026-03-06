@@ -15,7 +15,7 @@ import re
 import tempfile
 from collections import OrderedDict
 from collections.abc import Mapping
-from typing import Any, Dict, List, Optional
+from typing import Any, Self
 
 import torch
 from huggingface_hub import create_repo, hf_hub_download, upload_file
@@ -40,7 +40,7 @@ logger = Logger(__name__)
 losses_mapping = {
     LossType.L1: nn.L1Loss,
     LossType.NLL: nn.NLLLoss,
-    LossType.NLL_2D: nn.NLLLoss2d,
+    LossType.NLL_2D: nn.NLLLoss2d,  # ty:ignore
     LossType.POISSON_NLL: nn.PoissonNLLLoss,
     LossType.GAUSSIAN_NLL: nn.GaussianNLLLoss,
     LossType.MSE: nn.MSELoss,
@@ -79,7 +79,7 @@ class Model(nn.Module):
         verify_dependencies(self, self.required_backends)
         super().__init__()
         self.config = config.update(kwargs)
-        self._preprocessor = None
+        self._preprocessor: PreprocessorsContainer
         self._loss_func = self._set_loss_func(self.loss_func_name, **self.loss_func_kwargs)
         self._inference_fn = self.generate if self.is_generative else self.__call__
 
@@ -93,21 +93,21 @@ class Model(nn.Module):
     def _set_loss_func(loss_func_name: str, **loss_fn_kwargs: dict[str, Any]):
         if loss_func_name not in losses_mapping:
             raise ValueError(f"Invalid loss_func_name `{loss_func_name}`. Available: {list(losses_mapping.keys())}")
-        loss_fn = losses_mapping[loss_func_name](**loss_fn_kwargs)
+        loss_fn = losses_mapping[loss_func_name](**loss_fn_kwargs)  # ty:ignore
         return loss_fn
 
     @classmethod
     def load(
         cls,
-        hub_or_local_path: str | os.PathLike,
-        load_locally: Optional[bool] = False,
-        load_preprocessor: Optional[bool] = True,
-        model_filename: Optional[str] = None,
-        config_filename: Optional[str] = None,
-        save_path: Optional[str | os.PathLike] = None,
-        cache_dir: Optional[str | os.PathLike] = None,
+        hub_or_local_path: str,
+        load_locally: bool | None = False,
+        load_preprocessor: bool | None = True,
+        model_filename: str | None = None,
+        config_filename: str | None = None,
+        save_path: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
-    ) -> "Model":
+    ) -> Self:
         """
         Load the model from local path or hub.
 
@@ -154,7 +154,7 @@ class Model(nn.Module):
         if not is_local:
             model_path = hf_hub_download(
                 hub_or_local_path,
-                filename=model_filename,
+                model_filename,
                 cache_dir=cache_dir,
             )
         else:
@@ -172,7 +172,7 @@ class Model(nn.Module):
             model.preprocessor = preprocessor
         return model
 
-    def load_state_dict(self, state_dict: Mapping[str, Any], **kwargs):
+    def load_state_dict(self, state_dict: Mapping[str, Any], strict: bool = True, assign: bool = True, **kwargs):
         """
         Flexibly load the state dict to the model.
 
@@ -185,7 +185,7 @@ class Model(nn.Module):
         if len(self.skip_keys_on_load):
             for key in self.skip_keys_on_load:
                 if key in state_dict:
-                    state_dict.pop(key, None)  # noqa
+                    state_dict.pop(key, None)  # ty:ignore
         try:
             super().load_state_dict(state_dict, strict=True)
         except RuntimeError:
@@ -194,7 +194,9 @@ class Model(nn.Module):
 
             incompatible_keys = []
 
-            for (src_key, src_weight), (trg_key, trg_weight) in zip(src_state_dict.items(), state_dict.items()):
+            for (src_key, src_weight), (_trg_key, trg_weight) in zip(
+                src_state_dict.items(), state_dict.items(), strict=True
+            ):
                 if src_weight.shape == trg_weight.shape:
                     compatible_state_dict[src_key] = trg_weight
                 else:
@@ -214,9 +216,9 @@ class Model(nn.Module):
     def save(
         self,
         path: str | os.PathLike,
-        filename: Optional[str] = None,
-        save_preprocessor: Optional[bool] = True,
-        config_filename: Optional[str] = None,
+        filename: str | None = None,
+        save_preprocessor: bool = True,
+        config_filename: str | None = None,
     ):
         """
         Save model weights and config to a local path
@@ -247,11 +249,11 @@ class Model(nn.Module):
     def push_to_hub(
         self,
         repo_id: str,
-        filename: Optional[str] = None,
-        config_filename: Optional[str] = None,
-        push_preprocessor: Optional[bool] = True,
-        commit_message: Optional[str] = None,
-        private: Optional[bool] = False,
+        filename: str | None = None,
+        config_filename: str | None = None,
+        push_preprocessor: bool = True,
+        commit_message: str | None = None,
+        private: bool = False,
     ):
         """
         Push the model and required files to the hub
@@ -343,37 +345,37 @@ class Model(nn.Module):
         """
         raise NotImplementedError
 
-    def preprocess(self, *raw_inputs: Any | list[Any], **kwargs):
+    def preprocess(self, *args, **kwargs):
         """
         Given raw inputs, preprocess the inputs and prepare them for model's `forward()`.
 
         Args:
-            raw_inputs: Raw model inputs
+            *args: Raw model inputs
             **kwargs: Extra kwargs specific to the model. See the model's specific class for more info
 
         Returns:
             A dict of inputs for model forward
         """
-        return raw_inputs
+        return args
 
-    def post_process(self, *model_outputs: torch.Tensor | Any, **kwargs):
+    def post_process(self, *args, **kwargs):
         """
         Process model outputs and return human-readable results. Called in `self.predict()`
 
         Args:
-            model_outputs: model outputs to process
+            args: model outputs to process
             **kwargs: extra arguments specific to the derived class
 
         Returns:
             Processed model output values and converted to human-readable results
         """
-        return model_outputs
+        return args
 
     @torch.inference_mode()
     def predict(
         self,
         inputs: Any | list[Any],
-        device: str | torch.device = None,
+        device: str | torch.device | None = None,
         preprocess: bool = True,
         unpack_forward_inputs: bool = True,
         post_process: bool = True,
@@ -509,7 +511,7 @@ class Model(nn.Module):
             preprocessor = PreprocessorsContainer()
             preprocessor[value.config.name] = value
         elif isinstance(value, Mapping):
-            preprocessor = PreprocessorsContainer(**value)
+            preprocessor = PreprocessorsContainer(**value)  # ty:ignore
         elif isinstance(value, list):
             preprocessor = PreprocessorsContainer(**{p.config.name: p for p in value})
         elif value is None:

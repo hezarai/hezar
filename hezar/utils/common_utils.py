@@ -118,7 +118,7 @@ def permute_dict_list(dict_list: list[dict]) -> dict[str, list]:
     return d
 
 
-def sanitize_function_parameters(func: Callable, params: dict | Mapping, **kwargs):
+def sanitize_function_parameters(func: Callable, params: dict, **kwargs):
     """
     Given a dict of parameters or kwargs, you can figure out which ones must be passed to the `func` based on its
     signature.

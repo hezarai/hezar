@@ -129,13 +129,13 @@ class Trainer:
         model: Model,
         config: TrainerConfig,
         train_dataset: Dataset,
-        eval_dataset: Dataset = None,
-        data_collator: Callable = None,
-        preprocessor: Preprocessor | PreprocessorsContainer = None,
-        metrics_handler: MetricsHandler = None,
-        optimizer: torch.optim.Optimizer = None,
+        eval_dataset: Dataset | None = None,
+        data_collator: Callable | None = None,
+        preprocessor: Preprocessor | PreprocessorsContainer | None = None,
+        metrics_handler: MetricsHandler | None = None,
+        optimizer: torch.optim.Optimizer | None = None,
         lr_scheduler=None,
-        accelerator: "Accelerator" = None,
+        accelerator: Accelerator | None = None,
     ):
         # Check if all required dependencies are installed
         verify_dependencies(self._required_backends)
@@ -227,7 +227,7 @@ class Trainer:
         self.tensorboard = SummaryWriter(log_dir=self.logs_dir)
         self.csv_logger = CSVLogger(logs_dir=self.logs_dir, csv_filename=self.trainer_csv_log_file)
 
-    def _create_trainer_state(self, checkpoint: str | None = None):
+    def _create_trainer_state(self, checkpoint: bool | str | None = None):
         """
         Create Trainer's state attribute.
 
@@ -241,7 +241,7 @@ class Trainer:
         if checkpoint is not None and os.path.isfile(trainer_state_path):
             state = TrainerState.load(trainer_state_path)
             # Overwrite some fields if checkpoint is a path
-            if os.path.isdir(checkpoint):
+            if isinstance(checkpoint, str) and os.path.isdir(checkpoint):
                 step = os.path.basename(checkpoint)
                 state.global_step = int(step) if step.isdigit() else self.state.global_step
                 state.epoch = math.ceil(state.global_step / self.steps_in_epoch)
@@ -355,7 +355,7 @@ class Trainer:
 
         return eval_dataloader
 
-    def _create_optimizers(self, optimizer: torch.optim.Optimizer = None, lr_scheduler=None):
+    def _create_optimizers(self, optimizer: torch.optim.Optimizer | None = None, lr_scheduler=None):
         """
         Set up the optimizer and lr lr_scheduler if they're not already given
 
@@ -380,7 +380,7 @@ class Trainer:
                 if scheduler_name is None:
                     lr_scheduler = None
                 else:
-                    lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs, verbose=True)
+                    lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs)
 
         if self.config.resume_from_checkpoint:
             checkpoint_path = self._resolve_checkpoint_path(self.config.resume_from_checkpoint)
@@ -526,7 +526,7 @@ class Trainer:
         if self.model.is_generative and self.config.evaluate_with_generate:
             generate_inputs = sanitize_function_parameters(self.model.generate, input_batch)
             generated_ids = self.model.generate(**generate_inputs)
-            outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids
+            outputs["logits"] = generated_ids["generated_ids"] if isinstance(generated_ids, dict) else generated_ids  # ty:ignore
 
         outputs["loss"] = loss
 
@@ -612,7 +612,7 @@ class Trainer:
 
         return {"loss": self.train_loss_tracker.avg}
 
-    def evaluate(self, eval_dataset: Dataset = None):
+    def evaluate(self, eval_dataset: Dataset | None = None):
         """
         Evaluates the model on the whole eval dataset and verbose live metric values in the progress bar
 
@@ -678,7 +678,7 @@ class Trainer:
             "Epochs": self.config.num_epochs,
             "Total Steps": self.total_steps,
             "Training Dataset": f"{self.train_dataset.__class__.__name__}({len(self.train_dataset)})",
-            "Evaluation Dataset": f"{self.eval_dataset.__class__.__name__}({len(self.eval_dataset)})",
+            "Evaluation Dataset": f"{self.eval_dataset.__class__.__name__}({len(self.eval_dataset) if self.eval_dataset else 'N/A'})",
             "Optimizer": self.config.optimizer or self.default_optimizer,
             "Scheduler": self.config.lr_scheduler,
             "Initial Learning Rate": self.config.learning_rate,

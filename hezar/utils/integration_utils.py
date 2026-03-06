@@ -16,7 +16,7 @@ __all__ = [
 ]
 
 
-def is_backend_available(backend: Backends):
+def is_backend_available(backend: Backends | str):
     """
     Check if the backend package is installed or not
 
@@ -29,7 +29,7 @@ def is_backend_available(backend: Backends):
     return importlib.util.find_spec(backend) is not None
 
 
-def verify_dependencies(obj, backends: list[Backends | str] = None):
+def verify_dependencies(obj, backends: list[Backends | str] | None = None):
     """
     Check if all the required dependencies are installed or not.
 

@@ -5,7 +5,7 @@ import tempfile
 from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Self
 
 import numpy as np
 import torch
@@ -205,7 +205,7 @@ class Tokenizer(Preprocessor):
         padding: str | PaddingType | None = None,
         max_length: Optional[int] = None,
         truncation: bool = True,
-        return_tensors: Optional[str] = None,
+        return_tensors: str | None = None,
         include_keys: Optional[list[str]] = None,
         exclude_keys: list | None = None,
     ):
@@ -217,7 +217,7 @@ class Tokenizer(Preprocessor):
             padding (str | PaddingType): Padding type.
             max_length (Optional[int]): Max input length (only if padding is set to "max_length").
             truncation (bool): Whether to allow truncation.
-            return_tensors (Optional[str]): The type of tensors to return.
+            return_tensors (str | None): The type of tensors to return.
             include_keys: (Optional[List[str]]): Only pad these given set of keys
             exclude_keys (List): A list of keys to exclude when padding.
 
@@ -233,7 +233,7 @@ class Tokenizer(Preprocessor):
 
         include_keys = include_keys or list(inputs.keys())
 
-        for key, batch in inputs.items():
+        for key, _batch in inputs.items():
             if key in exclude_keys:
                 continue
             if key in include_keys:
@@ -255,17 +255,17 @@ class Tokenizer(Preprocessor):
     def __call__(
         self,
         inputs: list[str] | list[tuple[str, str]],
-        device: str | torch.device = None,
+        device: str | torch.device | None = None,
         add_special_tokens: bool = True,
         padding=None,
         truncation=None,
-        max_length: int = None,
+        max_length: int | None = None,
         return_tensors: str = "list",
         stride: int = 0,
         is_split_into_words: bool = False,
-        pad_to_multiple_of: int = None,
-        return_tokens: bool = None,
-        return_token_type_ids: bool = None,
+        pad_to_multiple_of: int | None = None,
+        return_tokens: bool | None = None,
+        return_token_type_ids: bool | None = None,
         return_attention_mask: bool = True,
         return_overflowing_tokens: bool = False,
         return_special_tokens_mask: bool = False,
@@ -387,9 +387,9 @@ class Tokenizer(Preprocessor):
         truncation=None,
         padding_side=None,
         truncation_side=None,
-        max_length: int = None,
-        stride: int = None,
-        pad_to_multiple_of: int = None,
+        max_length: int | None = None,
+        stride: int | None = None,
+        pad_to_multiple_of: int | None = None,
     ):
         # Set truncation and padding on the backend tokenizer
         if truncation == "no_truncation" or truncation is None or max_length is None:
@@ -425,15 +425,15 @@ class Tokenizer(Preprocessor):
                 "pad_to_multiple_of": pad_to_multiple_of,
             }
             if self.padding != target:
-                self.enable_padding(**target)
+                self.enable_padding(**target)  # ty:ignore
 
     def _convert_encodings(
         self,
         encoding,
         original_text: str | None = None,
-        return_tokens: bool = None,
-        return_token_type_ids: bool = None,
-        return_attention_mask: bool = None,
+        return_tokens: bool | None = None,
+        return_token_type_ids: bool | None = None,
+        return_attention_mask: bool | None = None,
         return_overflowing_tokens: bool = False,
         return_special_tokens_mask: bool = False,
         return_offsets_mapping: bool = False,
@@ -467,7 +467,7 @@ class Tokenizer(Preprocessor):
 
         return encoding_dict
 
-    def convert_tokens_to_ids(self, tokens: str | list[str]) -> int | list[int]:
+    def convert_tokens_to_ids(self, tokens: str | list[str]) -> list[int]:
         if isinstance(tokens, str):
             tokens = [tokens]
 
@@ -496,11 +496,11 @@ class Tokenizer(Preprocessor):
     def enable_padding(
         self,
         direction: str = "right",
-        pad_to_multiple_of: int = None,
+        pad_to_multiple_of: int | None = None,
         pad_id: int = 0,
         pad_type_id: int = 0,
         pad_token: str | None = None,
-        length: int = None,
+        length: int | None = None,
     ):
         return self._tokenizer.enable_padding(
             direction=direction,
@@ -629,7 +629,7 @@ class Tokenizer(Preprocessor):
         for offset in offsets_mapping:
             offset_start, offset_end = offset
             tokens.append(text[offset_start:offset_end])
-        for i, token in enumerate(tokens):
+        for i, _token in enumerate(tokens):
             if ids[i] in self.special_ids:
                 tokens[i] = self._tokenizer.id_to_token(ids[i])
         return tokens
@@ -639,11 +639,12 @@ class Tokenizer(Preprocessor):
         cls,
         hub_or_local_path,
         subfolder=None,
+        cache_dir=None,
         config_filename=None,
         tokenizer_filename=None,
-        cache_dir=None,
+        force_return_dict: bool = False,
         **kwargs,
-    ) -> "Tokenizer":
+    ) -> Self:
         """
         Load a tokenizer from a specified path or Hub repository.
 
@@ -684,7 +685,7 @@ class Tokenizer(Preprocessor):
         tokenizer = build_preprocessor(config.name, config, tokenizer_file=tokenizer_path, **kwargs)
         return tokenizer
 
-    def save(self, path, save_config=True, pretty=True):
+    def save(self, path, save_config=True, pretty=True, **kwargs):
         """
         Save the tokenizer and its configuration.
 
@@ -706,11 +707,12 @@ class Tokenizer(Preprocessor):
     def push_to_hub(
         self,
         repo_id,
-        commit_message=None,
         subfolder=None,
-        tokenizer_filename=None,
-        config_filename=None,
+        commit_message=None,
         private=False,
+        config_filename=None,
+        tokenizer_filename=None,
+        **kwargs,
     ):
         """
         Push tokenizer and config to the Hub

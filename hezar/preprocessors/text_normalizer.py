@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Self
 
 from ..builders import build_preprocessor
 from ..configs import PreprocessorConfig
@@ -40,7 +40,7 @@ class TextNormalizerConfig(PreprocessorConfig):
             if isinstance(self.replace_patterns, Mapping):
                 patterns = []
                 for v in self.replace_patterns.values():
-                    patterns += v
+                    patterns.append(v)
                 self.replace_patterns = patterns
 
 
@@ -61,9 +61,9 @@ class TextNormalizer(Preprocessor):
     def __call__(
         self,
         inputs: str | list[str],
-        replace_patterns: list[tuple[str, str]] | list[list[str]] = None,
-        nfkd: bool = None,
-        nfkc: bool = None,
+        replace_patterns: list[tuple[str, str]] | list[list[str]] | None = None,
+        nfkd: bool = True,
+        nfkc: bool = True,
         **kwargs,
     ):
         if isinstance(inputs, str):
@@ -88,8 +88,13 @@ class TextNormalizer(Preprocessor):
 
     @classmethod
     def load(
-        cls, hub_or_local_path, subfolder=None, config_filename=None, cache_dir=None, **kwargs
-    ) -> "TextNormalizer":
+        cls,
+        hub_or_local_path: str,
+        subfolder: str | None = None,
+        cache_dir: str | None = None,
+        config_filename: str | None = None,
+        **kwargs,
+    ) -> Self:
         config_filename = config_filename or cls.normalizer_config_file
         subfolder = subfolder or cls.preprocessor_subfolder
         config = TextNormalizerConfig.load(
@@ -103,11 +108,12 @@ class TextNormalizer(Preprocessor):
 
     def push_to_hub(
         self,
-        repo_id,
-        commit_message: str | None = None,
+        repo_id: str,
         subfolder: str | None = None,
+        commit_message: str | None = None,
+        private: bool | None = None,
         config_filename: str | None = None,
-        private: bool = None,
+        **kwargs,
     ):
         """
         Push normalizer config and other optional files to the Hub.
@@ -131,13 +137,15 @@ class TextNormalizer(Preprocessor):
             filename=config_filename,
             subfolder=subfolder,
             commit_message=commit_message,
+            private=private,
         )
 
     def save(
         self,
-        path,
-        subfolder=None,
-        config_filename=None,
+        path: str,
+        subfolder: str | None = None,
+        config_filename: str | None = None,
+        **kwargs,
     ):
         config_filename = config_filename or self.normalizer_config_file
         subfolder = subfolder or self.preprocessor_subfolder

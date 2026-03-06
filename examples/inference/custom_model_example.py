@@ -1,3 +1,4 @@
+from typing import Any
 from dataclasses import dataclass
 
 import torch
@@ -26,7 +27,7 @@ class Perceptron(Model):
             out_features=self.config.output_shape,
         )
 
-    def preprocess(self, raw_inputs):
+    def preprocess(self, raw_inputs: list, **kwargs):
         inputs_tensor = Tensor(raw_inputs)
         return inputs_tensor
 
@@ -35,7 +36,7 @@ class Perceptron(Model):
         x = self.nn(x)
         return x
 
-    def post_process(self, model_outputs: torch.Tensor):
+    def post_process(self, model_outputs: torch.Tensor, **kwargs):
         return model_outputs.cpu().numpy()
 
 

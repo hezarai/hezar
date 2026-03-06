@@ -63,14 +63,14 @@ def test_load_dataset(task):
     path = DATASETS_MAPPING[task].pop("path")
     preprocessor = DATASETS_MAPPING[task].pop("preprocessor", None)
 
-    train_dataset = Dataset.load(path, split="train", preprocessor=preprocessor, **DATASETS_MAPPING[task])
+    train_dataset = Dataset.load(path, split="train", preprocessor=preprocessor, **DATASETS_MAPPING[task])  # ty:ignore
     assert isinstance(train_dataset, Dataset), INVALID_DATASET_TYPE.format(type(train_dataset))
     sample = train_dataset[0]
     assert isinstance(sample, dict)
     for field in required_fields:
         assert field in sample, INVALID_DATASET_FIELDS.format(field)
 
-    test_dataset = Dataset.load(path, split="test", preprocessor=preprocessor, **DATASETS_MAPPING[task])
+    test_dataset = Dataset.load(path, split="test", preprocessor=preprocessor, **DATASETS_MAPPING[task])  # ty:ignore
     assert isinstance(test_dataset, Dataset), INVALID_DATASET_TYPE.format(type(test_dataset))
     sample = test_dataset[0]
     assert isinstance(sample, dict)

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from ...configs import DatasetConfig
-from ...constants import Backends, TaskType
+from ...constants import Backends, SplitType, TaskType
 from ...registry import register_dataset
 from ...utils import Logger, is_backend_available, shift_tokens_right
 from ..data_collators import ImageCaptioningDataCollator
@@ -41,7 +41,7 @@ class ImageCaptioningDatasetConfig(DatasetConfig):
 class ImageCaptioningDataset(Dataset):
     required_backends = _required_backends
 
-    def __init__(self, config: ImageCaptioningDatasetConfig, split=None, preprocessor=None, **kwargs):
+    def __init__(self, config: ImageCaptioningDatasetConfig, split: str | SplitType | None = None, preprocessor=None, **kwargs):
         super().__init__(config=config, split=split, preprocessor=preprocessor, **kwargs)
         self.image_processor = self.preprocessor.image_processor
         self.tokenizer = self.preprocessor.tokenizer

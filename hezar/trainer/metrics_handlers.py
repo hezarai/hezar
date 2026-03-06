@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -10,6 +10,9 @@ from ..constants import MetricType
 from ..metrics import Metric
 from .trainer_utils import MetricsTracker
 
+
+if TYPE_CHECKING:
+    from .trainer import Trainer
 
 __all__ = [
     "MetricsHandler",
@@ -34,7 +37,7 @@ class MetricsHandler:
 
     valid_metrics: list[MetricType] = []
 
-    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig], trainer=None, **kwargs):
+    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig] | None, trainer: Trainer, **kwargs):
         self.metrics = self._setup_metrics(metrics)
         self.trainer = trainer
         self.tracker = MetricsTracker(self.metrics)
@@ -100,14 +103,14 @@ class TextClassificationMetricsHandler(MetricsHandler):
         MetricType.F1,
     ]
 
-    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig] | None, trainer: Trainer):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
         predictions = np.array(predictions).argmax(1).flatten()
         labels = np.array(labels).flatten()
         results = {}
-        for metric_name, metric in self.metrics.items():
+        for _metric_name, metric in self.metrics.items():
             results.update(metric.compute(predictions, labels))
         return results
 
@@ -115,7 +118,7 @@ class TextClassificationMetricsHandler(MetricsHandler):
 class SequenceLabelingMetricsHandler(MetricsHandler):
     valid_metrics = [MetricType.SEQEVAL]
 
-    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig] | None, trainer: Trainer):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -125,16 +128,24 @@ class SequenceLabelingMetricsHandler(MetricsHandler):
         # Remove ignored index (special tokens) and append `B-` in the beginning for seqeval
         prefix = "" if self.trainer.train_dataset.config.is_iob_schema else "B-"
         true_predictions = [
-            [f"{prefix}{self.trainer.model.config.id2label[p]}" for (p, l) in zip(prediction, label) if l != -100]
-            for prediction, label in zip(predictions, labels)
+            [
+                f"{prefix}{self.trainer.model.config.id2label[p]}"
+                for (p, l) in zip(prediction, label, strict=True)
+                if l != -100
+            ]
+            for prediction, label in zip(predictions, labels, strict=True)
         ]
         true_labels = [
-            [f"{prefix}{self.trainer.model.config.id2label[l]}" for (p, l) in zip(prediction, label) if l != -100]
-            for prediction, label in zip(predictions, labels)
+            [
+                f"{prefix}{self.trainer.model.config.id2label[l]}"
+                for (p, l) in zip(prediction, label, strict=True)
+                if l != -100
+            ]
+            for prediction, label in zip(predictions, labels, strict=True)
         ]
 
         results = {}
-        for metric_name, metric in self.metrics.items():
+        for _metric_name, metric in self.metrics.items():
             x = metric.compute(true_predictions, true_labels)
             results.update(x)
         return results
@@ -143,7 +154,7 @@ class SequenceLabelingMetricsHandler(MetricsHandler):
 class Image2TextMetricHandler(MetricsHandler):
     valid_metrics = [MetricType.CER, MetricType.WER]
 
-    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig] | None, trainer: Trainer):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -152,7 +163,7 @@ class Image2TextMetricHandler(MetricsHandler):
         predictions = [x["text"] for x in predictions]
         labels = [x["text"] for x in labels]
         results = {}
-        for metric_name, metric in self.metrics.items():
+        for _metric_name, metric in self.metrics.items():
             x = metric.compute(predictions, labels)
             results.update(x)
         return results
@@ -161,7 +172,7 @@ class Image2TextMetricHandler(MetricsHandler):
 class SpeechRecognitionMetricsHandler(MetricsHandler):
     valid_metrics = [MetricType.CER, MetricType.WER]
 
-    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig] | None, trainer: Trainer):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -170,7 +181,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
         predictions = [x["text"] for x in predictions]
         labels = [x["text"] for x in labels]
         results = {}
-        for metric_name, metric in self.metrics.items():
+        for _metric_name, metric in self.metrics.items():
             x = metric.compute(predictions, labels)
             results.update(x)
         return results
@@ -179,7 +190,7 @@ class SpeechRecognitionMetricsHandler(MetricsHandler):
 class TextGenerationMetricsHandler(MetricsHandler):
     valid_metrics = [MetricType.ROUGE, MetricType.BLEU]
 
-    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig], trainer=None):
+    def __init__(self, metrics: list[str | MetricType | Metric | MetricConfig] | None, trainer: Trainer):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
@@ -188,7 +199,7 @@ class TextGenerationMetricsHandler(MetricsHandler):
         predictions = [x["text"] for x in predictions]
         labels = [x["text"] for x in labels]
         results = {}
-        for metric_name, metric in self.metrics.items():
+        for _metric_name, metric in self.metrics.items():
             x = metric.compute(predictions, labels)
             results.update(x)
         return results

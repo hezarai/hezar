@@ -1,5 +1,4 @@
 from dataclasses import asdict, dataclass, field
-from typing import List
 
 from ....configs import ModelConfig
 
@@ -75,6 +74,6 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     def __post_init__(self):
         super().__post_init__()
         if isinstance(self.generation_config, dict):
-            self.generation_config = WhisperSpeechRecognitionGenerationConfig(**self.generation_config)
+            self.generation_config = WhisperSpeechRecognitionGenerationConfig(**self.generation_config)  # ty:ignore
         elif self.generation_config is None:
             self.generation_config = WhisperSpeechRecognitionGenerationConfig()

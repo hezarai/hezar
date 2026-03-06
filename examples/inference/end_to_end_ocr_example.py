@@ -9,12 +9,12 @@ image = load_image("../assets/text_detection_example.png")
 
 detection_outputs = detector_model.predict(image)
 
-boxes = detection_outputs[0]["boxes"]
+boxes = detection_outputs[0]["boxes"]  # ty:ignore
 text_images = crop_boxes(image, boxes, padding=(0, 4, 0, 4))  # Add up/down padding for better accuracy
 
 results = []
-for text_image, box in zip(text_images, boxes):
-    text = recognition_model.predict(text_image)[0]["text"]
+for text_image, box in zip(text_images, boxes, strict=True):
+    text = recognition_model.predict(text_image)[0]["text"]  # ty:ignore
     save_image(text_image, f"outputs/{text}.png")
     results.append({"box": box, "text": text})
 

@@ -7,9 +7,9 @@ from ....constants import TaskType
 @dataclass
 class DistilBertSequenceLabelingConfig(ModelConfig):
     name = "distilbert_sequence_labeling"
-    task: str = TaskType.SEQUENCE_LABELING
-    num_labels: int | None = None
-    id2label: dict | None = None
+    task: str = field(init=False, default=TaskType.SEQUENCE_LABELING)
+    num_labels: int
+    id2label: dict
     activation: str = "gelu"
     attention_dropout: float = 0.1
     dim: int = 768

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import tempfile
-from typing import Dict, List
+from typing import Dict, List, Self
 
 from huggingface_hub import HfApi, hf_hub_download
 
@@ -160,7 +160,7 @@ class Embedding:
         subfolder=None,
         cache_dir=None,
         **kwargs,
-    ) -> "Embedding":
+    ) -> Self:
         """
         Load an embedding model from a local or Hugging Face Hub path.
 

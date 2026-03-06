@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
 
 import numpy as np
 import torch
@@ -26,7 +26,7 @@ __all__ = [
 logger = Logger(__name__)
 
 
-def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: list = None) -> dict:
+def convert_batch_dict_dtype(batch_dict: dict, dtype: str | None = "list", skip_keys: list | None = None) -> dict:
     """
     Convert data dtypes of the values in a batch dict.
 
@@ -70,9 +70,9 @@ def convert_batch_dict_dtype(batch_dict: dict, dtype: str = "list", skip_keys: l
 
 def resolve_inputs_length_for_padding(
     inputs: list[list[Any]],
-    padding: str | PaddingType = None,
-    max_length: Optional[bool | int] = None,
-    truncation: Optional[bool] = True,
+    padding: str | PaddingType | None = None,
+    max_length: bool | int | None = None,
+    truncation: bool | None = True,
 ):
     """
     Resolve final inputs length based on padding and max_length values
@@ -125,11 +125,11 @@ def resolve_inputs_length_for_padding(
 
 def pad_batch_items(
     inputs: list[list[int | float]],
-    padding: str | PaddingType = None,
+    padding: str | PaddingType | None = None,
     padding_side: Literal["right", "left"] = "right",
     pad_id: int = 0,
-    max_length: Optional[bool | int] = None,
-    truncation: Optional[bool] = True,
+    max_length: bool | int | None = None,
+    truncation: bool = True,
 ):
     """
     Given a nested container of unequal sized iterables e.g, batch of token ids, pad them based on padding strategy
@@ -166,7 +166,9 @@ def pad_batch_items(
 
 
 def shift_tokens_right(
-    token_ids: list[list[int]] | "torch.Tensor" | "np.ndarray", pad_token_id: int, decoder_start_token_id: int
+    token_ids: list[list[int]] | torch.Tensor | np.ndarray,
+    pad_token_id: int,
+    decoder_start_token_id: int,
 ):
     """
     Shift input ids one token to the right.

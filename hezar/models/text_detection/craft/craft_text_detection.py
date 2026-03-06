@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa
 
 from ....constants import Backends
 from ....registry import register_model
@@ -46,7 +46,7 @@ class CraftTextDetection(Model):
     required_backends = _required_backends
 
     def __init__(self, config: CraftTextDetectionConfig, **kwargs):
-        super(CraftTextDetection, self).__init__(config=config, **kwargs)
+        super().__init__(config=config, **kwargs)
 
         """ Base network """
         self.basenet = VGG16BN()
@@ -107,9 +107,9 @@ class CraftTextDetection(Model):
     def post_process(
         self,
         model_outputs: dict,
-        text_threshold: float = None,
-        link_threshold: float = None,
-        low_text: float = None,
+        text_threshold: float | None = None,
+        link_threshold: float | None = None,
+        low_text: float | None = None,
         poly: bool = False,
     ):
         text_threshold = text_threshold or self.config.text_threshold
@@ -121,7 +121,7 @@ class CraftTextDetection(Model):
 
         results = []
 
-        for output, ratio in zip(logits, ratio_values):
+        for output, ratio in zip(logits, ratio_values, strict=True):
             # make score and link map
             score_text = output[:, :, 0].cpu().data.numpy()
             score_link = output[:, :, 1].cpu().data.numpy()
@@ -148,7 +148,7 @@ class CraftTextDetection(Model):
 
 class VGG16BN(nn.Module):
     def __init__(self):
-        super(VGG16BN, self).__init__()
+        super().__init__()
         vgg_pretrained_features = vgg16_bn().features
 
         self.slice1 = nn.Sequential()
@@ -196,7 +196,7 @@ class VGG16BN(nn.Module):
 
 class DoubleConv(nn.Module):
     def __init__(self, in_ch, mid_ch, out_ch):
-        super(DoubleConv, self).__init__()
+        super().__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(in_ch + mid_ch, mid_ch, kernel_size=1),
             nn.BatchNorm2d(mid_ch),

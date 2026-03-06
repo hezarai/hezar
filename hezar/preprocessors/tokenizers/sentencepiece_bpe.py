@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from ...constants import DEFAULT_TOKENIZER_CONFIG_FILE, DEFAULT_TOKENIZER_FILE, Backends
 from ...registry import register_preprocessor
@@ -73,12 +72,11 @@ class SentencePieceBPETokenizer(Tokenizer):
                 fuse_unk=self.config.fuse_unk,
             )
         )
-        tokenizer.normalizer = normalizers.NFKC()  # noqa
         tokenizer.pre_tokenizer = pre_tokenizers.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space
+            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space  # ty:ignore
         )
         tokenizer.decoder = decoders.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space
+            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space  # ty:ignore
         )
 
         return tokenizer

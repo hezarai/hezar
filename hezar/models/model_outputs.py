@@ -62,14 +62,14 @@ class ModelOutput:
 @dataclass(repr=False)
 class MaskFillingOutput(ModelOutput):
     token: Optional[int] = None
-    sequence: Optional[str] = None
-    token_id: Optional[str] = None
+    sequence: str | None = None
+    token_id: str | None = None
     score: Optional[float] = None
 
 
 @dataclass(repr=False)
 class TextClassificationOutput(ModelOutput):
-    label: Optional[str] = None
+    label: str | None = None
     score: Optional[float] = None
 
 
@@ -84,19 +84,19 @@ class SequenceLabelingOutput(ModelOutput):
 
 @dataclass(repr=False)
 class TextGenerationOutput(ModelOutput):
-    text: Optional[str] = None
+    text: str | None = None
 
 
 @dataclass(repr=False)
 class SpeechRecognitionOutput(ModelOutput):
-    text: Optional[str] = None
+    text: str | None = None
     chunks: Optional[list[dict]] = None
 
 
 @dataclass(repr=False)
 class Image2TextOutput(ModelOutput):
-    text: Optional[str] = None
-    score: Optional[str] = None
+    text: str | None = None
+    score: str | None = None
 
 
 @dataclass(repr=False)

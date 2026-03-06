@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 from io import BytesIO
-from typing import Tuple
 
 import numpy as np
 import requests
@@ -137,7 +136,7 @@ def resize_image(
     image: np.ndarray,
     size: tuple[int, int],
     resample=None,
-    reducing_gap: float = None,
+    reducing_gap: float | None = None,
     return_type: ImageType = ImageType.NUMPY,
 ):
     """
@@ -169,7 +168,7 @@ def mirror_image(image: np.ndarray, return_type: str | ImageType = ImageType.NUM
     verify_image_dims(image)
 
     pil_image = convert_image_type(image, ImageType.PILLOW)
-    pil_image = pil_image.transpose(Image.FLIP_LEFT_RIGHT)
+    pil_image = pil_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
     final_image = convert_image_type(pil_image, return_type)
     return final_image
 
@@ -216,7 +215,7 @@ def normalize_image(
     return image
 
 
-def find_channels_axis_side(image: np.ndarray, num_channels: int = None):
+def find_channels_axis_side(image: np.ndarray, num_channels: int | None = None):
     valid_num_channels = (num_channels,) if num_channels is not None else (1, 2, 3)
     if image.shape[0] in valid_num_channels:
         return ChannelsAxisSide.FIRST
@@ -227,8 +226,8 @@ def find_channels_axis_side(image: np.ndarray, num_channels: int = None):
 def transpose_channels_axis_side(
     image: np.ndarray,
     axis_side: str | ChannelsAxisSide,
-    num_channels: int = None,
-    src_axis_side: str | ChannelsAxisSide = None,
+    num_channels: int | None = None,
+    src_axis_side: str | ChannelsAxisSide | None = None,
 ):
     """
     Convert an image channels axis side from (channels, ...) to (..., channels) or vise versa.
@@ -257,7 +256,7 @@ def transpose_channels_axis_side(
     return image
 
 
-def draw_boxes(image, bboxes, bbox_color: tuple = (0, 255, 0)) -> "Image.Image":
+def draw_boxes(image, bboxes, bbox_color: tuple = (0, 255, 0)) -> Image.Image:
     """
     Draw bbox on the image
 
@@ -287,7 +286,7 @@ def draw_boxes(image, bboxes, bbox_color: tuple = (0, 255, 0)) -> "Image.Image":
     return image
 
 
-def pad_boxes(bboxes, padding: int | tuple = None):
+def pad_boxes(bboxes, padding: int | tuple):
     """
     Add a padding to sides of the bounding boxes.
 
@@ -300,7 +299,7 @@ def pad_boxes(bboxes, padding: int | tuple = None):
         A list of padded bounding boxes
     """
     if isinstance(padding, int):
-        padding = [padding] * 4  # type: ignore
+        padding: list[int] = [padding] * 4
     if isinstance(padding, tuple) and len(padding) != 4:
         raise ValueError(f"padding must be a single int value or a tuple of size 4, got {len(padding)}!")
 
@@ -321,7 +320,7 @@ def pad_boxes(bboxes, padding: int | tuple = None):
     return padded_bboxes
 
 
-def crop_boxes(image, bboxes, padding: int | tuple = None) -> list["Image.Image"]:
+def crop_boxes(image, bboxes, padding: int | tuple) -> list[Image.Image]:
     """
     Crop all bounding boxes in an image
 

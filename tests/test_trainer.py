@@ -121,25 +121,25 @@ def test_trainer(task):
 
     # Datasets
     train_dataset = Dataset.load(
-        setup["dataset"]["path"],
+        setup["dataset"]["path"],  # type: ignore
         split="train",
-        preprocessor=setup["dataset"]["preprocessor"],
-        **setup["dataset"]["config"],
+        preprocessor=setup["dataset"]["preprocessor"],  # type: ignore
+        **setup["dataset"]["config"],  # type: ignore
     )
     eval_dataset = Dataset.load(
-        setup["dataset"]["path"],
+        setup["dataset"]["path"],  # type: ignore
         split="test",
-        preprocessor=setup["dataset"]["preprocessor"],
-        **setup["dataset"]["config"],
+        preprocessor=setup["dataset"]["preprocessor"],  # type: ignore
+        **setup["dataset"]["config"],  # type: ignore
     )
 
     # Model & Preprocessor
-    model_config = ModelConfig.load(setup["model"]["path"])
+    model_config = ModelConfig.load(setup["model"]["path"])  # type: ignore
     model = build_model(model_config.name, config=model_config)
-    preprocessor = Preprocessor.load(setup["model"]["path"])
+    preprocessor = Preprocessor.load(setup["model"]["path"])  # type: ignore
 
     # Trainer config
-    config = TrainerConfig(**common_train_config, **setup["config"])
+    config = TrainerConfig(**common_train_config, **setup["config"])  # type: ignore
 
     trainer = Trainer(
         config=config,

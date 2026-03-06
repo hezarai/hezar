@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Self
 
 import numpy as np
 
@@ -32,7 +33,7 @@ class AudioFeatureExtractor(Preprocessor):
     def __init__(self, config: AudioFeatureExtractorConfig, **kwargs):
         super().__init__(config=config, **kwargs)
 
-    def __call__(self, inputs, **kwargs):
+    def __call__(self, *args, **kwargs):
         raise NotImplementedError
 
     def pad(
@@ -40,10 +41,10 @@ class AudioFeatureExtractor(Preprocessor):
         processed_features,
         padding: bool | str | PaddingType = True,
         max_length=None,
-        truncation=None,
+        truncation: bool | None = None,
         pad_to_multiple_of=None,
         return_attention_mask=None,
-        return_tensors=None,
+        return_tensors: str | None = None,
     ):
         """
         Pad input values / input vectors or a batch of input values / input vectors up to predefined length or to the
@@ -166,13 +167,15 @@ class AudioFeatureExtractor(Preprocessor):
         if max_length is not None and pad_to_multiple_of is not None and (max_length % pad_to_multiple_of != 0):
             max_length = ((max_length // pad_to_multiple_of) + 1) * pad_to_multiple_of
 
-        needs_to_be_padded = padding is not None and len(required_input) < max_length
+        # TODO: max_length can still be None and unhandled
+
+        needs_to_be_padded = padding is not None and len(required_input) < max_length  # ty:ignore
 
         if return_attention_mask and "attention_mask" not in processed_features:
             processed_features["attention_mask"] = np.ones(len(required_input), dtype=np.int32)
 
         if needs_to_be_padded:
-            difference = max_length - len(required_input)
+            difference = max_length - len(required_input)  # ty:ignore
             if self.config.padding_side == "right":
                 if return_attention_mask:
                     processed_features["attention_mask"] = np.pad(processed_features["attention_mask"], (0, difference))
@@ -214,9 +217,9 @@ class AudioFeatureExtractor(Preprocessor):
     def _truncate(
         self,
         processed_features,
-        max_length: int = None,
-        pad_to_multiple_of: int = None,
-        truncation: bool = None,
+        max_length: int | None = None,
+        pad_to_multiple_of: int | None = None,
+        truncation: bool | None = None,
     ):
         """
         Truncate inputs to predefined length or max length in the batch
@@ -252,6 +255,7 @@ class AudioFeatureExtractor(Preprocessor):
         path,
         subfolder=None,
         config_filename=None,
+        **kwargs,
     ):
         """
         Save the feature extractor to the path. This normally is equal to only saving the
@@ -274,6 +278,7 @@ class AudioFeatureExtractor(Preprocessor):
         commit_message=None,
         private=None,
         config_filename=None,
+        **kwargs,
     ):
         """
         Push the feature extractor files to a repo on the Hub.
@@ -302,12 +307,13 @@ class AudioFeatureExtractor(Preprocessor):
     @classmethod
     def load(
         cls,
-        hub_or_local_path,
+        hub_or_local_path: str,
         subfolder: str | None = None,
-        config_filename: str | None = None,
         cache_dir: str | None = None,
+        force_return_dict: bool = False,
+        config_filename: str | None = None,
         **kwargs,
-    ):
+    ) -> Self:
         """
         Load a feature extractor from Hub or local path.
 

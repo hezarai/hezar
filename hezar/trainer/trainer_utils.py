@@ -88,7 +88,7 @@ class TrainerState:
         """
         state_file = OmegaConf.load(path)
         state_dict = OmegaConf.to_container(state_file)
-        state = cls(**state_dict)
+        state = cls(**state_dict)  # ty:ignore
         return state
 
 
@@ -122,7 +122,7 @@ class AverageMeter:
 
 class MetricsTracker:
     def __init__(self, metrics):
-        self.metrics = metrics or []
+        self.metrics = metrics
         self.trackers = {}
         if len(self.metrics):
             for m in self.metrics.values():

@@ -55,7 +55,7 @@ class TextPaddingDataCollator:
         tokenizer: Tokenizer,
         padding: str = "longest",
         padding_side: str = "right",
-        max_length: int = None,
+        max_length: int | None = None,
         return_tensors: str = "torch",
     ):
         self.tokenizer = tokenizer
@@ -124,10 +124,10 @@ class TextGenerationDataCollator:
     def __init__(
         self,
         tokenizer: Tokenizer,
-        padding: str = "longest",
+        padding: str | None = "longest",
         padding_side: str = "right",
-        max_length: int = None,
-        labels_max_length: int = None,
+        max_length: int | None = None,
+        labels_max_length: int | None = None,
     ):
         self.tokenizer = tokenizer
         self.padding = padding
@@ -182,7 +182,7 @@ class ImageCaptioningDataCollator:
         tokenizer: Tokenizer,
         padding: str = "longest",
         padding_side: str = "right",
-        max_length: int = None,
+        max_length: int | None = None,
     ):
         self.tokenizer = tokenizer
         self.padding = padding
@@ -215,9 +215,9 @@ class SpeechRecognitionDataCollator:
         feature_extractor: AudioFeatureExtractor,
         tokenizer: Tokenizer,
         inputs_padding: str = "longest",
-        inputs_max_length: int = None,
+        inputs_max_length: int | None = None,
         labels_padding: str = "longest",
-        labels_max_length: int = None,
+        labels_max_length: int | None = None,
     ):
         self.feature_extractor = feature_extractor
         self.tokenizer = tokenizer
@@ -265,7 +265,7 @@ class SequenceLabelingDataCollator:
         padding: str = "longest",
         padding_side: str = "right",
         label_pad_token_id: int = -100,
-        max_length: int = None,
+        max_length: int | None = None,
     ):
         self.tokenizer = tokenizer
         self.padding = padding

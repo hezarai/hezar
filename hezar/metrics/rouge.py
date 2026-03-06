@@ -65,11 +65,11 @@ class ROUGE(Metric):
 
     def compute(
         self,
-        predictions=None,
-        targets=None,
-        use_aggregator=None,
-        n_decimals=None,
-        output_keys=None,
+        predictions: list[str],
+        targets: list[str],
+        use_aggregator: bool | None = None,
+        n_decimals: int | None = None,
+        output_keys: tuple | None = None,
         **kwargs,
     ):
         """
@@ -87,7 +87,7 @@ class ROUGE(Metric):
         """
         aggregator = scoring.BootstrapAggregator()
 
-        for ref, pred in zip(targets, predictions):
+        for ref, pred in zip(targets, predictions, strict=True):
             if self.config.multi_ref:
                 score = self.scorer.score_multi(ref, pred)
             else:

@@ -54,15 +54,16 @@ class F1(Metric):
 
     def compute(
         self,
-        predictions=None,
-        targets=None,
-        labels=None,
-        pos_label=1,
-        average=None,
-        sample_weight=None,
-        zero_division="warn",
-        n_decimals=None,
-        output_keys=None,
+        predictions: list[int],
+        targets: list[int],
+        labels: list[int] | None = None,
+        pos_label: int | None = None,
+        average: str | None = None,
+        sample_weight: Iterable[float] | None = None,
+        zero_division: str | None = None,
+        n_decimals: int | None = None,
+        output_keys: tuple | None = None,
+        **kwargs,
     ):
         """
         Computes the F1 score for the given predictions against targets.

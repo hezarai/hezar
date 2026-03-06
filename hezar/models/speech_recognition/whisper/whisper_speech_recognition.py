@@ -59,7 +59,7 @@ class WhisperSpeechRecognition(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-        if decoder_input_ids is None or decoder_inputs_embeds is None:
+        if (decoder_input_ids is None or decoder_inputs_embeds is None) and labels is not None:
             decoder_input_ids = shift_tokens_right(labels, self.config.pad_token_id, self.config.decoder_start_token_id)
         outputs = self.whisper(
             input_features=input_features,
@@ -79,7 +79,7 @@ class WhisperSpeechRecognition(Model):
 
         return dict(outputs)
 
-    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, attention_mask: torch.Tensor = None):
+    def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor, attention_mask: torch.Tensor | None = None):
         labels = copy.deepcopy(labels)
         if attention_mask is not None:
             labels = labels.masked_fill(attention_mask.ne(1), -100)
@@ -95,8 +95,8 @@ class WhisperSpeechRecognition(Model):
         logits_processor=None,
         stopping_criteria=None,
         prefix_allowed_tokens_fn=None,
-        synced_gpus=None,
-        return_timestamps=None,
+        synced_gpus: bool = False,
+        return_timestamps: bool | None = None,
         task=None,
         language=None,
         is_multilingual=None,

@@ -84,23 +84,23 @@ def test_model_inference(task):
     output_type_within_batch = model_params["output_type_within_batch"]
     required_output_keys = model_params["required_output_keys"]
 
-    if model_params["inputs"]["type"] == "file":
+    if model_params["inputs"]["type"] == "file":  # type: ignore
         dirname = os.path.dirname(os.path.abspath(__file__))
-        inputs = os.path.join(dirname, model_params["inputs"]["value"])
+        inputs = os.path.join(dirname, model_params["inputs"]["value"])  # type: ignore
     else:
-        inputs = model_params["inputs"]["value"]
+        inputs = model_params["inputs"]["value"]  # type: ignore
 
-    model_config = ModelConfig.load(path)
+    model_config = ModelConfig.load(path)  # type: ignore
     model = build_model(model_config.name, config=model_config)
-    model.preprocessor = Preprocessor.load(path)
+    model.preprocessor = Preprocessor.load(path)  # type: ignore
 
-    outputs = model.predict(inputs, **predict_kwargs)
+    outputs = model.predict(inputs, **predict_kwargs)  # type: ignore
 
     assert isinstance(outputs, list), INVALID_OUTPUT_TYPE
     assert len(outputs) == 1, INVALID_OUTPUT_SIZE
-    if output_type_within_batch == list:
+    if output_type_within_batch is list:
         assert {k for el in outputs[0] for k in el.keys()} == required_output_keys
-    elif output_type_within_batch == dict:
+    elif output_type_within_batch is dict:
         assert set(outputs[0].keys()) == required_output_keys, INVALID_OUTPUT_FIELDS
 
     if CI_MODE == "TRUE":

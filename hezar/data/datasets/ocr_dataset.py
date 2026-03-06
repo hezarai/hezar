@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict
+from enum import StrEnum
 
 from ...configs import DatasetConfig
 from ...constants import Backends, TaskType
@@ -33,7 +32,7 @@ all_characters = fa_characters + fa_numbers + fa_special_characters + fa_symbols
 ID2LABEL = dict(enumerate(all_characters))
 
 
-class TextSplitType(str, Enum):
+class TextSplitType(StrEnum):
     CHAR_SPLIT = "char_split"  # mostly for char level ocr models
     TOKENIZE = "tokenize"  # mostly for transformer-based ocr models
 
@@ -62,10 +61,10 @@ class OCRDatasetConfig(DatasetConfig):
     id2label: dict[int, str] = field(default_factory=lambda: ID2LABEL)
     text_column: str = "label"
     images_paths_column: str = "image_path"
-    max_length: int = None
-    invalid_characters: list = None
-    reverse_text: bool = None
-    reverse_digits: bool = None
+    max_length: int | None = None
+    invalid_characters: list | None = None
+    reverse_text: bool | None = None
+    reverse_digits: bool | None = None
 
 
 @register_dataset("ocr", config_class=OCRDatasetConfig)
@@ -136,7 +135,7 @@ class OCRDataset(Dataset):
 
         """
         # Tokenize text inputs if text_split_type is set to `tokenize`
-        if self.config.text_split_type == TextSplitType.TOKENIZE:
+        if self.config.text_split_type == TextSplitType.TOKENIZE and self.tokenizer:
             token_ids = self.tokenizer(text, padding="max_length", max_length=self.config.max_length)["token_ids"]
             # Make sure to ignore pad tokens by the loss function
             token_ids = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]

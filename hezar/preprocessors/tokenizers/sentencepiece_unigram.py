@@ -65,18 +65,11 @@ class SentencePieceUnigramTokenizer(Tokenizer):
 
     def build(self):
         tokenizer = HFTokenizer(models.Unigram())  # noqa
-        tokenizer.normalizer = normalizers.Sequence(  # noqa
-            [  # noqa
-                normalizers.Nmt(),  # noqa
-                normalizers.NFKC(),  # noqa
-                normalizers.Replace(Regex(" {2,}"), " "),  # noqa
-            ]  # noqa
-        )  # noqa
         tokenizer.pre_tokenizer = pre_tokenizers.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space
+            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space  # ty:ignore
         )
         tokenizer.decoder = decoders.Metaspace(  # noqa
-            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space
+            replacement=self.config.replacement, add_prefix_space=self.config.add_prefix_space  # ty:ignore
         )
 
         return tokenizer

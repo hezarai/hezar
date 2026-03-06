@@ -58,7 +58,7 @@ def build_model(name: str, config: Optional[ModelConfig] = None, **kwargs):
     available_models = list_available_models()
     if name not in available_models:
         raise ValueError(f"Unknown model name: `{name}`!\nAvailable model names: {available_models}")
-    config = config or models_registry[name].config_class()
+    config = config or models_registry[name].config_class()  # ty:ignore
     model = models_registry[name].module_class(config, **kwargs)
     return model
 
@@ -83,12 +83,14 @@ def build_preprocessor(name: str, config: Optional[PreprocessorConfig] = None, *
         raise ValueError(
             f"Unknown preprocessor name: `{name}`!\nAvailable preprocessor names: {available_preprocessors}"
         )
-    config = config or preprocessors_registry[name].config_class()
+    config = config or preprocessors_registry[name].config_class()  # ty:ignore
     preprocessor = preprocessors_registry[name].module_class(config, **kwargs)
     return preprocessor
 
 
-def build_dataset(name: str, config: DatasetConfig = None, split: SplitType = None, preprocessor=None, **kwargs):
+def build_dataset(
+    name: str, config: DatasetConfig | None = None, split: SplitType | str | None = None, preprocessor=None, **kwargs
+):
     """
     Build the dataset using its registry name. If config is None then the dataset is built using the
     default config.
@@ -108,7 +110,7 @@ def build_dataset(name: str, config: DatasetConfig = None, split: SplitType = No
     available_datasets = list_available_datasets()
     if name not in available_datasets:
         raise ValueError(f"Unknown dataset name: `{name}`!\nAvailable dataset names: {available_datasets}")
-    config = config or datasets_registry[name].config_class()
+    config = config or datasets_registry[name].config_class()  # ty:ignore
     dataset = datasets_registry[name].module_class(config, split, preprocessor=preprocessor, **kwargs)
     return dataset
 
@@ -131,7 +133,7 @@ def build_embedding(name: str, config: Optional[EmbeddingConfig] = None, **kwarg
     available_embeddings = list_available_embeddings()
     if name not in available_embeddings:
         raise ValueError(f"Unknown embedding name: `{name}`!\nAvailable embedding names: {available_embeddings}")
-    config = config or embeddings_registry[name].config_class()
+    config = config or embeddings_registry[name].config_class()  # ty:ignore
     embedding = embeddings_registry[name].module_class(config, **kwargs)
     return embedding
 
@@ -154,6 +156,6 @@ def build_metric(name: str, config: Optional[MetricConfig] = None, **kwargs):
     available_metrics = list_available_metrics()
     if name not in available_metrics:
         raise ValueError(f"Unknown metric name: `{name}`!\nAvailable metric names: {available_metrics}")
-    config = config or metrics_registry[name].config_class()
+    config = config or metrics_registry[name].config_class()  # ty:ignore
     metric = metrics_registry[name].module_class(config, **kwargs)
     return metric
