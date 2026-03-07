@@ -89,7 +89,7 @@ class TextPaddingDataCollator:
             return_tensors=self.return_tensors,
             exclude_keys=["labels"]
         )
-
+        input_batch["labels"] = torch.tensor(input_batch["labels"], dtype=torch.long)
         return input_batch
 
 
