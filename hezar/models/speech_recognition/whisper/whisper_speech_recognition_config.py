@@ -10,11 +10,13 @@ class WhisperSpeechRecognitionGenerationConfig:
     bos_token_id: int = 50257
     decoder_start_token_id: int = 50258
     eos_token_id: int = 50257
-    forced_decoder_ids: list[list[int]] = field(default_factory=lambda: [[1, None], [2, 50359]])
+    task: str | None = "transcribe"
     is_multilingual: bool = True
+    language: str | None = None
+    lang_to_id: dict | None = None
     max_initial_timestamp_index: int = 50
     max_length: int = 448
-    max_new_tokens: int = 448
+    max_new_tokens: int | None = None
     no_timestamps_token_id: int = 50363
     pad_token_id: int = 50257
     prev_sot_token_id: int = 50361
@@ -68,7 +70,6 @@ class WhisperSpeechRecognitionConfig(ModelConfig):
     mask_feature_prob: float = 0.0
     mask_feature_length: int = 10
     mask_feature_min_masks: int = 0
-    max_new_tokens: int = 448
     generation_config: dict | WhisperSpeechRecognitionGenerationConfig | None = None
 
     def __post_init__(self):

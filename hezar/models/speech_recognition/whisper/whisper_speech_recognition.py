@@ -96,12 +96,16 @@ class WhisperSpeechRecognition(Model):
         prefix_allowed_tokens_fn=None,
         synced_gpus: bool = False,
         return_timestamps: bool | None = None,
-        task=None,
-        language=None,
-        is_multilingual=None,
+        task: str | None = None,
+        language: str | None = None,
+        is_multilingual: bool | None = None,
         prompt_ids=None,
         **kwargs,
     ):
+
+        task = task or self.config.generation_config.task
+        language = language or self.config.generation_config.language
+
         if generation_config is not None:
             self.config.generation_config.update(**generation_config)
 
@@ -120,7 +124,6 @@ class WhisperSpeechRecognition(Model):
             language=language,
             is_multilingual=is_multilingual,
             prompt_ids=prompt_ids,
-            forced_decoder_ids=forced_decoder_ids,
             **kwargs,
         )
         return generation_outputs
