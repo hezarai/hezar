@@ -1,0 +1,7 @@
+hezar.registry module
+=====================
+
+.. automodule:: hezar.registry
+   :members:
+   :show-inheritance:
+   :undoc-members:

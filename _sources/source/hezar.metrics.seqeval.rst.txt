@@ -1,0 +1,7 @@
+hezar.metrics.seqeval module
+============================
+
+.. automodule:: hezar.metrics.seqeval
+   :members:
+   :show-inheritance:
+   :undoc-members:

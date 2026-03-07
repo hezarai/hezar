@@ -1,0 +1,7 @@
+hezar.metrics.cer module
+========================
+
+.. automodule:: hezar.metrics.cer
+   :members:
+   :show-inheritance:
+   :undoc-members:

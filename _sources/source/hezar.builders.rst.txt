@@ -1,0 +1,7 @@
+hezar.builders module
+=====================
+
+.. automodule:: hezar.builders
+   :members:
+   :show-inheritance:
+   :undoc-members:

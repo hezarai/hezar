@@ -1,0 +1,7 @@
+hezar.preprocessors.tokenizers.tokenizer module
+===============================================
+
+.. automodule:: hezar.preprocessors.tokenizers.tokenizer
+   :members:
+   :show-inheritance:
+   :undoc-members:

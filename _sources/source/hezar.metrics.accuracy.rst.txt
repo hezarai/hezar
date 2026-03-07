@@ -1,0 +1,7 @@
+hezar.metrics.accuracy module
+=============================
+
+.. automodule:: hezar.metrics.accuracy
+   :members:
+   :show-inheritance:
+   :undoc-members:
