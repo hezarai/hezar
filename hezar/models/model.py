@@ -182,36 +182,67 @@ class Model(nn.Module):
         Args:
             state_dict: Model state dict
         """
+        # Create a shallow copy to avoid mutating the original dict in-place
+        state_dict_copy = OrderedDict(state_dict)
+
         if len(self.skip_keys_on_load):
             for key in self.skip_keys_on_load:
-                if key in state_dict:
-                    state_dict.pop(key, None)  # ty:ignore
-        try:
-            super().load_state_dict(state_dict, strict=True)
-        except RuntimeError:
-            compatible_state_dict = OrderedDict()
-            src_state_dict = self.state_dict()
+                state_dict_copy.pop(key, None)
 
+        try:
+            return super().load_state_dict(state_dict_copy, strict=True, assign=assign, **kwargs)
+        except RuntimeError as e:
+            error_msg = str(e)
+            if (
+                "Missing key(s)" not in error_msg
+                and "Unexpected key(s)" not in error_msg
+                and "size mismatch" not in error_msg
+            ):
+                raise
+
+            src_state_dict = self.state_dict()
+            compatible_state_dict = OrderedDict()
             incompatible_keys = []
 
+            # Fallback to positional mapping via zip to handle renamed modules and prefix differences seamlessly.
+            # strict=False (default behavior) gracefully ignores differing lengths.
             for (src_key, src_weight), (_trg_key, trg_weight) in zip(
-                src_state_dict.items(), state_dict.items(), strict=True
+                src_state_dict.items(), state_dict_copy.items(), strict=False
             ):
                 if src_weight.shape == trg_weight.shape:
                     compatible_state_dict[src_key] = trg_weight
                 else:
-                    # put the source key and weight if trg weight is incompatible
-                    compatible_state_dict[src_key] = src_weight
                     incompatible_keys.append(src_key)
 
-            missing_keys, _ = super().load_state_dict(compatible_state_dict, strict=False)
-            if len(missing_keys) or len(incompatible_keys):
+            # Fall back to flexible loading
+            result = super().load_state_dict(compatible_state_dict, strict=False, assign=assign, **kwargs)
+
+            missing_keys = list(getattr(result, "missing_keys", []))
+            unexpected_keys = list(getattr(result, "unexpected_keys", []))
+
+            # Since zip truncates to the shortest dict, any extra keys in checkpoint are effectively unexpected.
+            if len(state_dict_copy) > len(src_state_dict):
+                ignored_keys = list(state_dict_copy.keys())[len(src_state_dict) :]
+                unexpected_keys.extend(ignored_keys)
+                if hasattr(result, "unexpected_keys"):
+                    try:
+                        result = type(result)(missing_keys, unexpected_keys)
+                    except Exception:
+                        pass
+
+            # Incompatible keys will inherently appear in missing_keys because we excluded them from compatible_state_dict
+            logged_missing_keys = [k for k in missing_keys if k not in incompatible_keys]
+
+            if logged_missing_keys or unexpected_keys or incompatible_keys:
                 logger.warning(
                     "Partially loading the weights as the model architecture and the given state dict are "
                     "incompatible! \nIgnore this warning in case you plan on fine-tuning this model\n"
-                    f"Incompatible keys: {incompatible_keys}\n"
-                    f"Missing keys: {missing_keys}\n"
+                    + (f"Incompatible keys (shape mismatch): {incompatible_keys}\n" if incompatible_keys else "")
+                    + (f"Missing keys: {logged_missing_keys}\n" if logged_missing_keys else "")
+                    + (f"Unexpected keys: {unexpected_keys}\n" if unexpected_keys else "")
                 )
+
+            return result
 
     def save(
         self,
