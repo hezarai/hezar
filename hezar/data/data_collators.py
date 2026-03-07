@@ -82,27 +82,13 @@ class TextPaddingDataCollator:
         Returns:
             Dict: The same batch dictionary but padded
         """
-        input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
-        input_batch = _convert_to_batch_dict(input_batch)
-        labels = input_batch.pop("labels")
-        input_length = self.max_length or max(len(x) for x in input_batch["token_ids"])
-
-        for field, batch in input_batch.items():
-            padded_batch = []
-            for x in batch:
-                if isinstance(x, torch.Tensor):
-                    x = x.cpu().numpy().tolist()
-                elif isinstance(x, np.ndarray):
-                    x = x.tolist()
-                difference = input_length - len(x)
-                paddings = [self.field_to_pad_id_mapping[field]] * difference
-                padded_x = x + paddings if self.padding_side == "right" else paddings + x
-                padded_batch.append(padded_x)
-            input_batch[field] = padded_batch
-
-        input_batch["labels"] = labels
-
-        input_batch = convert_batch_dict_dtype(input_batch, dtype=self.return_tensors)
+        input_batch = self.tokenizer.pad_encoded_batch(
+            input_batch,
+            padding=self.padding,
+            max_length=self.max_length,
+            return_tensors=self.return_tensors,
+            exclude_keys=["labels"]
+        )
 
         return input_batch
 
