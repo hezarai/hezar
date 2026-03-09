@@ -1,0 +1,7 @@
+hezar.metrics.recall module
+===========================
+
+.. automodule:: hezar.metrics.recall
+   :members:
+   :show-inheritance:
+   :undoc-members:

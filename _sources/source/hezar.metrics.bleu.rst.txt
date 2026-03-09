@@ -1,0 +1,7 @@
+hezar.metrics.bleu module
+=========================
+
+.. automodule:: hezar.metrics.bleu
+   :members:
+   :show-inheritance:
+   :undoc-members:

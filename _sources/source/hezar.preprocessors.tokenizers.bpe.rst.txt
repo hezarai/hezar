@@ -1,0 +1,7 @@
+hezar.preprocessors.tokenizers.bpe module
+=========================================
+
+.. automodule:: hezar.preprocessors.tokenizers.bpe
+   :members:
+   :show-inheritance:
+   :undoc-members:
