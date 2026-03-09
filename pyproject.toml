@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hezar"
-version = "1.0.0b1"
+version = "1.0.0"
 description = "Hezar: The all-in-one AI library for Persian, supporting a wide variety of tasks and modalities!"
 license = { text = "Apache-2.0" }
 readme = "README.md"
