@@ -112,9 +112,9 @@ class CraftTextDetection(Model):
         low_text: float | None = None,
         poly: bool = False,
     ):
-        text_threshold = text_threshold or self.config.text_threshold
-        link_threshold = link_threshold or self.config.link_threshold
-        low_text = low_text or self.config.low_text
+        text_threshold = text_threshold if text_threshold is not None else self.config.text_threshold
+        link_threshold = link_threshold if link_threshold is not None else self.config.link_threshold
+        low_text = low_text if low_text is not None else self.config.low_text
 
         logits = model_outputs["logits"]
         ratio_values = model_outputs["ratio_values"]
@@ -136,8 +136,9 @@ class CraftTextDetection(Model):
                 poly,
             )
 
-            # coordinate adjustment
-            boxes = adjust_result_coordinates(boxes, ratio, ratio)
+            # coordinate adjustment (ratio is the forward resize ratio, so invert it to map back)
+            inv_ratio = 1.0 / ratio
+            boxes = adjust_result_coordinates(boxes, inv_ratio, inv_ratio)
             for k in range(len(polys)):
                 if polys[k] is None:
                     polys[k] = boxes[k]

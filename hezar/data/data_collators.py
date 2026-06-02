@@ -82,6 +82,7 @@ class TextPaddingDataCollator:
         Returns:
             Dict: The same batch dictionary but padded
         """
+        self.tokenizer.config.padding_side = self.padding_side
         input_batch = self.tokenizer.pad_encoded_batch(
             input_batch,
             padding=self.padding,
@@ -131,6 +132,7 @@ class TextGenerationDataCollator:
         Returns:
             Dict: The same batch dictionary but padded
         """
+        self.tokenizer.config.padding_side = self.padding_side
         input_batch = [convert_batch_dict_dtype(x, dtype="list") for x in input_batch]
         input_batch = _convert_to_batch_dict(input_batch)
         padded_batch = self.tokenizer.pad_encoded_batch(
@@ -176,6 +178,7 @@ class ImageCaptioningDataCollator:
         self.max_length = max_length
 
     def __call__(self, input_batch):
+        self.tokenizer.config.padding_side = self.padding_side
         input_batch = _convert_to_batch_dict(input_batch)
         input_batch = self.tokenizer.pad_encoded_batch(
             input_batch,
@@ -329,7 +332,7 @@ class CharLevelOCRDataCollator:
         max_length = max(map(len, input_batch["labels"]))
         all_labels = []
         for labels in input_batch["labels"]:
-            labels += [self.pad_token_id] * (max_length - len(labels))
+            labels = labels + [self.pad_token_id] * (max_length - len(labels))
             all_labels.append(labels)
         input_batch["labels"] = torch.tensor(all_labels)
         return input_batch

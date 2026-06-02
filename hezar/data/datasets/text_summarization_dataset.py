@@ -100,7 +100,7 @@ class TextSummarizationDataset(Dataset):
         )
         labels = self.tokenizer(
             summary,
-            max_length=self.config.max_length,
+            max_length=self.config.labels_max_length,
             padding="max_length" if self.config.labels_max_length else None,
             return_attention_mask=True,
         )

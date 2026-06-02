@@ -58,7 +58,7 @@ class WhisperSpeechRecognition(Model):
         output_hidden_states=None,
         **kwargs,
     ):
-        if (decoder_input_ids is None or decoder_inputs_embeds is None) and labels is not None:
+        if labels is not None and decoder_input_ids is None and decoder_inputs_embeds is None:
             decoder_input_ids = shift_tokens_right(labels, self.config.pad_token_id, self.config.decoder_start_token_id)
         outputs = self.whisper(
             input_features=input_features,
@@ -89,7 +89,6 @@ class WhisperSpeechRecognition(Model):
         self,
         input_features,
         attention_mask=None,
-        forced_decoder_ids=None,
         generation_config=None,
         logits_processor=None,
         stopping_criteria=None,
@@ -106,10 +105,10 @@ class WhisperSpeechRecognition(Model):
         task = task or self.config.generation_config.task
         language = language or self.config.generation_config.language
 
+        merged = self.config.generation_config.to_dict()
         if generation_config is not None:
-            self.config.generation_config.update(**generation_config)
-
-        generation_config = GenerationConfig(**self.config.generation_config.to_dict())
+            merged.update(generation_config)
+        generation_config = GenerationConfig(**merged)
 
         generation_outputs = self.whisper.generate(
             input_features=input_features,
@@ -172,17 +171,15 @@ class WhisperSpeechRecognition(Model):
         if isinstance(inputs, str) or (isinstance(inputs, list) and isinstance(inputs[0], str)):
             inputs = load_audio_files(inputs)
         elif isinstance(inputs, list) and isinstance(inputs[0], np.ndarray):
-            inputs = [librosa.to_mono(x.transpose()) for x in inputs if isinstance(x, np.ndarray) and len(x.shape) > 1]
+            inputs = [
+                librosa.to_mono(x.transpose()) if (isinstance(x, np.ndarray) and x.ndim > 1) else x
+                for x in inputs
+            ]
 
-        tokenizer = self.preprocessor.tokenizer
         feature_extractor = self.preprocessor.audio_feature_extractor
-        language = language or tokenizer.language
-
-        forced_decoder_ids = tokenizer.get_decoder_prompt_ids(language=language, task="transcribe")
         inputs = feature_extractor(
             inputs, sampling_rate=self.config.sampling_rate, return_attention_mask=True, return_tensors="torch"
         )
-        inputs["forced_decoder_ids"] = forced_decoder_ids
         return inputs
 
     def post_process(

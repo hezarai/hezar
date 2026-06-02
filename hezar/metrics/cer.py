@@ -83,7 +83,7 @@ class CER(Metric):
             dict: A dictionary of the metric results, with keys specified by `output_keys`.
         """
         concatenate_texts = concatenate_texts or self.config.concatenate_texts
-        n_decimals = n_decimals or self.config.n_decimals
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
 
         if concatenate_texts:
             score = jiwer.process_words(

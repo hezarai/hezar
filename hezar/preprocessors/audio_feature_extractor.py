@@ -20,6 +20,7 @@ class AudioFeatureExtractorConfig(PreprocessorConfig):
     padding: str | None = None
     padding_value: float = 0.0
     padding_side: str | None = None
+    return_attention_mask: bool = False
 
 
 class AudioFeatureExtractor(Preprocessor):

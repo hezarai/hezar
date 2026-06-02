@@ -63,7 +63,6 @@ class OCRDatasetConfig(DatasetConfig):
     images_paths_column: str = "image_path"
     max_length: int | None = None
     invalid_characters: list | None = None
-    reverse_text: bool | None = None
     reverse_digits: bool | None = None
 
 
@@ -110,7 +109,8 @@ class OCRDataset(Dataset):
         invalid_indices = []
         for i, sample in enumerate(list(iter(data))):
             path, text = sample.values()
-            if len(text) <= self.config.max_length and is_text_valid(text, self.config.id2label.values()):
+            within_len = self.config.max_length is None or len(text) <= self.config.max_length
+            if within_len and is_text_valid(text, self.config.id2label.values()):
                 valid_indices.append(i)
             else:
                 invalid_indices.append(i)

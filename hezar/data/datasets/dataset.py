@@ -51,6 +51,7 @@ class Dataset(TorchDataset):
         **kwargs,
     ):
         verify_dependencies(self, self.required_backends)
+        self.cache_dir = kwargs.pop("cache_dir", None) or self.cache_dir
         self.config = config.update(kwargs)
         self.split = split
         self.data = self._load(self.split)
@@ -160,13 +161,12 @@ class Dataset(TorchDataset):
         split = split or "train"
         config_filename = config_filename or cls.config_filename
 
-        if ":" in hub_path:
-            hub_path, hf_dataset_config_name = hub_path.split(":")
+        if ":" in hub_path and not os.path.exists(hub_path):
+            hub_path, hf_dataset_config_name = hub_path.split(":", 1)
             kwargs["hf_load_kwargs"] = kwargs.get("hf_load_kwargs", {})
             kwargs["hf_load_kwargs"]["name"] = hf_dataset_config_name
 
-        if cache_dir is not None:
-            cls.cache_dir = cache_dir
+        cache_dir = cache_dir or cls.cache_dir
 
         has_config = config_filename in list_repo_files(hub_path, repo_type="dataset")
 
@@ -177,7 +177,7 @@ class Dataset(TorchDataset):
                 hub_path,
                 filename=config_filename,
                 repo_type=RepoType.DATASET,
-                cache_dir=cls.cache_dir,
+                cache_dir=cache_dir,
                 **kwargs,
             )
         elif kwargs.get("task", None):
@@ -199,6 +199,7 @@ class Dataset(TorchDataset):
             config=dataset_config,
             split=split,
             preprocessor=preprocessor,
+            cache_dir=cache_dir,
             **kwargs,
         )
         return dataset

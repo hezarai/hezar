@@ -74,10 +74,12 @@ class GPT2TextGeneration(Model):
         loss = self.loss_func(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
         return loss
 
-    def generate(self, token_ids, **kwargs):
-        self.config.generation.update(kwargs or {})
-        generation_config = GenerationConfig(**self.config.generation)
-        generated_ids = self.gpt2.generate(token_ids, generation_config=generation_config)
+    def generate(self, token_ids, attention_mask=None, **kwargs):
+        gen_kwargs = {**self.config.generation, **kwargs}
+        generation_config = GenerationConfig(**gen_kwargs)
+        generated_ids = self.gpt2.generate(
+            token_ids, attention_mask=attention_mask, generation_config=generation_config
+        )
         return generated_ids
 
     def preprocess(self, texts: str | list[str], **kwargs):

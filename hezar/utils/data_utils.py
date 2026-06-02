@@ -237,11 +237,13 @@ def get_non_numeric_keys(d: dict, batched=True):
     """
     keys = []
     for k, v in d.items():
-        if len(v) and isinstance(v[0], list):
-            if batched and not isinstance(v[0][0], (int, float, complex)) and not isinstance(v[0][0], bool):
+        if not len(v):
+            continue
+        if batched and isinstance(v[0], list):
+            if v[0] and not isinstance(v[0][0], (int, float, complex)):
                 keys.append(k)
-            elif isinstance(v[0], str):
-                keys.append(k)
+        elif not batched and isinstance(v[0], str):
+            keys.append(k)
     return keys
 
 

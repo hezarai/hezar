@@ -199,13 +199,15 @@ def normalize_image(
 
     num_channels = image.shape[0 if channel_axis == ChannelsAxisSide.FIRST else -1]
 
+    image = image.astype(np.float32)
+
     if not isinstance(mean, Iterable):
         mean = [mean] * num_channels
-    mean = np.array(mean, dtype=image.dtype)
+    mean = np.asarray(mean, dtype=np.float32)
 
     if not isinstance(std, Iterable):
         std = [std] * num_channels
-    std = np.array(std, dtype=image.dtype)
+    std = np.asarray(std, dtype=np.float32)
 
     if channel_axis == ChannelsAxisSide.LAST:
         image = (image - mean) / std

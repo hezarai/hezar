@@ -52,12 +52,15 @@ class MetricsHandler:
         if "loss" in objective_metric:
             objective = "minimize"
         else:
-            if objective_metric not in self.metrics:
+            if objective_metric not in self.tracker.trackers:
                 raise ValueError(
                     f"{objective_metric} is not a valid metric for this task, "
-                    f"available metrics: {list(self.tracker.trackers.values())}"
+                    f"available metrics: {list(self.tracker.trackers.keys())}"
                 )
-            objective = self.metrics[objective_metric].config.objective
+            owner = next(
+                metric for metric in self.metrics.values() if objective_metric in metric.config.output_keys
+            )
+            objective = owner.config.objective
         return objective
 
     def _setup_metrics(self, metrics):
@@ -122,8 +125,8 @@ class SequenceLabelingMetricsHandler(MetricsHandler):
         super().__init__(metrics=metrics, trainer=trainer)
 
     def compute_metrics(self, predictions, labels, **kwargs):
-        predictions = np.array(predictions).argmax(2).squeeze()
-        labels = np.array(labels).squeeze()
+        predictions = np.array(predictions).argmax(-1)
+        labels = np.array(labels)
 
         # Remove ignored index (special tokens) and append `B-` in the beginning for seqeval
         prefix = "" if self.trainer.train_dataset.config.is_iob_schema else "B-"

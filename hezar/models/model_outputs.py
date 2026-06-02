@@ -61,9 +61,9 @@ class ModelOutput:
 
 @dataclass(repr=False)
 class MaskFillingOutput(ModelOutput):
-    token: Optional[int] = None
+    token: str | None = None
     sequence: str | None = None
-    token_id: str | None = None
+    token_id: int | None = None
     score: Optional[float] = None
 
 

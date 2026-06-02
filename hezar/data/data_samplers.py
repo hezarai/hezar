@@ -62,7 +62,7 @@ class RangedSampler(Sampler):
         return indices
 
     def __len__(self):
-        return self.total_length
+        return len(self.indices)
 
     def __iter__(self):
         for indice in self.indices:

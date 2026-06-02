@@ -86,7 +86,8 @@ def list_repo_files(hub_or_local_path: str, subfolder: str | None = None, repo_t
         files = HfApi().list_repo_files(hub_or_local_path, repo_type=str(repo_type))
 
     if subfolder:
-        files = [os.path.relpath(f, subfolder) for f in files if subfolder in f]
+        prefix = subfolder.rstrip("/") + "/"
+        files = [os.path.relpath(f, subfolder) for f in files if f.replace(os.sep, "/").startswith(prefix)]
     return files
 
 
@@ -116,7 +117,7 @@ def get_state_dict_from_hub(hub_id, filename, subfolder=None):
         cache_dir=HEZAR_CACHE_DIR,
     )
 
-    state_dict = torch.load(weights_file)
+    state_dict = torch.load(weights_file, map_location="cpu", weights_only=False)
 
     return state_dict
 
