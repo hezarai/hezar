@@ -128,7 +128,7 @@ class PrecisionType(ExplicitEnum):
 class OptimizerType(ExplicitEnum):
     ADAM = "adam"
     ADAMW = "adamw"
-    SDG = "sdg"
+    SGD = "sgd"
 
 
 class LRSchedulerType(ExplicitEnum):
@@ -143,7 +143,7 @@ class LRSchedulerType(ExplicitEnum):
     CYCLIC = "cyclic"
     SEQUENTIAL = "sequential"
     POLYNOMIAL = "polynomial"
-    COSINE_ANEALING = "cosine_anealing"
+    COSINE_ANNEALING = "cosine_annealing"
 
 
 class SplitType(ExplicitEnum):

@@ -64,9 +64,9 @@ class Accuracy(Metric):
         Returns:
             A dictionary of the metric results
         """
-        normalize = normalize or self.config.normalize
+        normalize = normalize if normalize is not None else self.config.normalize
         sample_weight = sample_weight or self.config.sample_weight
-        n_decimals = n_decimals or self.config.n_decimals
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
         score = accuracy_score(

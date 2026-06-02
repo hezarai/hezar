@@ -220,6 +220,7 @@ def spectrogram(
         else:
             raise ValueError(f"Unknown log_mel option: {log_mel}")
 
+    if power is not None:
         spectrogram = np.asarray(spectrogram, dtype)
 
     return spectrogram

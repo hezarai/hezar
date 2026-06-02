@@ -40,7 +40,7 @@ logger = Logger(__name__)
 losses_mapping = {
     LossType.L1: nn.L1Loss,
     LossType.NLL: nn.NLLLoss,
-    LossType.NLL_2D: nn.NLLLoss2d,  # ty:ignore
+    LossType.NLL_2D: nn.NLLLoss,
     LossType.POISSON_NLL: nn.PoissonNLLLoss,
     LossType.GAUSSIAN_NLL: nn.GaussianNLLLoss,
     LossType.MSE: nn.MSELoss,
@@ -128,7 +128,7 @@ class Model(nn.Module):
             The fully loaded Hezar model
         """
         # Get device if provided in the kwargs
-        device = None or kwargs.pop("device", None)
+        device = kwargs.pop("device", None)
         # Load config
         config_filename = config_filename or cls.config_filename
         cache_dir = cache_dir or HEZAR_CACHE_DIR
@@ -276,6 +276,8 @@ class Model(nn.Module):
         if save_preprocessor:
             if self.preprocessor is not None:
                 self.preprocessor.save(path)
+
+        return model_save_path
 
     def push_to_hub(
         self,

@@ -90,7 +90,7 @@ class Recall(Metric):
         average = average or self.config.average
         sample_weight = sample_weight or self.config.sample_weight
         zero_division = zero_division or self.config.zero_division
-        n_decimals = n_decimals or self.config.n_decimals
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
         score = recall_score(

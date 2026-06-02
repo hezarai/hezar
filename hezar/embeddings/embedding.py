@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import os
 import tempfile
 from typing import Self
@@ -43,8 +44,6 @@ class Embedding:
         self, config: EmbeddingConfig, embedding_file: str | None = None, vectors_file: str | None = None, **kwargs
     ):
         verify_dependencies(self, self.required_backends)  # Check if all the required dependencies are installed
-        self.config = config.update(kwargs)
-
         self.config = config.update(kwargs)
         self.model = self.from_file(embedding_file, vectors_file) if embedding_file else self.build()
 
@@ -102,6 +101,11 @@ class Embedding:
         """
         return self.vocab.get(word, -1)
 
+    @functools.cached_property
+    def _index2word(self):
+        """Reverse vocabulary mapping (index -> word), built once and cached."""
+        return {v: k for k, v in self.vocab.items()}
+
     def index2word(self, index):
         """
         Get the word corresponding to a given index.
@@ -112,8 +116,7 @@ class Embedding:
         Returns:
             str: Word corresponding to the index.
         """
-        keyed_vocab = {v: k for k, v in self.vocab.items()}
-        return keyed_vocab[index]
+        return self._index2word[index]
 
     def similarity(self, word1: str, word2: str):
         """

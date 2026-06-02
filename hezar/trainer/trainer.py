@@ -70,9 +70,10 @@ logger = Logger(__name__)
 optimizers = {
     OptimizerType.ADAM: torch.optim.Adam,
     OptimizerType.ADAMW: torch.optim.AdamW,
-    OptimizerType.SDG: torch.optim.SGD,
+    OptimizerType.SGD: torch.optim.SGD,
 }
 lr_schedulers = {
+    LRSchedulerType.CONSTANT: torch.optim.lr_scheduler.ConstantLR,
     LRSchedulerType.LAMBDA: torch.optim.lr_scheduler.LambdaLR,
     LRSchedulerType.REDUCE_ON_PLATEAU: torch.optim.lr_scheduler.ReduceLROnPlateau,
     LRSchedulerType.STEP: torch.optim.lr_scheduler.StepLR,
@@ -83,7 +84,7 @@ lr_schedulers = {
     LRSchedulerType.CYCLIC: torch.optim.lr_scheduler.CyclicLR,
     LRSchedulerType.SEQUENTIAL: torch.optim.lr_scheduler.SequentialLR,
     LRSchedulerType.POLYNOMIAL: torch.optim.lr_scheduler.PolynomialLR,
-    LRSchedulerType.COSINE_ANEALING: torch.optim.lr_scheduler.CosineAnnealingLR,
+    LRSchedulerType.COSINE_ANNEALING: torch.optim.lr_scheduler.CosineAnnealingLR,
 }
 
 task_to_metrics_handlers_mapping = {
@@ -243,7 +244,7 @@ class Trainer:
             # Overwrite some fields if checkpoint is a path
             if isinstance(checkpoint, str) and os.path.isdir(checkpoint):
                 step = os.path.basename(checkpoint)
-                state.global_step = int(step) if step.isdigit() else self.state.global_step
+                state.global_step = int(step) if step.isdigit() else state.global_step
                 state.epoch = math.ceil(state.global_step / self.steps_in_epoch)
                 state.epoch_step = state.global_step % self.steps_in_epoch
 
@@ -368,6 +369,12 @@ class Trainer:
         """
         if optimizer is None:
             optimizer_type = self.config.optimizer or self.default_optimizer
+            if optimizer_type == "sdg":  # Backward-compat: legacy misspelling of "sgd"
+                optimizer_type = OptimizerType.SGD
+            if optimizer_type not in optimizers:
+                raise ValueError(
+                    f"Unsupported optimizer `{optimizer_type}`! Available optimizers: {[str(o) for o in optimizers]}"
+                )
             optimizer = optimizers[optimizer_type](
                 self.model.parameters(),
                 lr=self.config.learning_rate,
@@ -377,8 +384,15 @@ class Trainer:
             if lr_scheduler is None:
                 scheduler_name = self.config.lr_scheduler or self.default_lr_scheduler
                 scheduler_kwargs = self.config.lr_scheduler_kwargs or {}
+                if scheduler_name == "cosine_anealing":  # Backward-compat: legacy misspelling
+                    scheduler_name = LRSchedulerType.COSINE_ANNEALING
                 if scheduler_name is None:
                     lr_scheduler = None
+                elif scheduler_name not in lr_schedulers:
+                    raise ValueError(
+                        f"Unsupported lr_scheduler `{scheduler_name}`! "
+                        f"Available schedulers: {[str(s) for s in lr_schedulers]}"
+                    )
                 else:
                     lr_scheduler = lr_schedulers[scheduler_name](optimizer, **scheduler_kwargs)
 
@@ -547,6 +561,7 @@ class Trainer:
         self.model.train()
 
         accumulated_loss = 0
+        accumulated_count = 0
 
         with tqdm(
             train_dataloader,
@@ -578,17 +593,19 @@ class Trainer:
 
                 # Gather outputs for metrics
                 accumulated_loss += outputs["loss"].item()
+                accumulated_count += 1
                 if (
                     self.state.epoch_step % self.config.gradient_accumulation_steps == 0
                     or self.state.epoch_step == self.steps_in_epoch
                 ):
-                    accumulated_loss = accumulated_loss / self.config.gradient_accumulation_steps
+                    accumulated_loss = accumulated_loss / accumulated_count
                     self.train_loss_tracker.update(accumulated_loss)
                     iterator.set_postfix(loss=self.train_loss_tracker.avg)
 
                     self.state.loss_tracker_avg = self.train_loss_tracker.avg
                     self.state.loss_tracker_sum = self.train_loss_tracker.sum
                     accumulated_loss = 0
+                    accumulated_count = 0
 
                 # Scheduler step
                 if (
@@ -650,7 +667,7 @@ class Trainer:
                         logits.clone().detach().cpu(),
                         labels.clone().detach().cpu(),
                     )
-                    evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).item()
+                    evaluation_results["loss"] = self.accelerator.gather_for_metrics(outputs["loss"]).mean().item()
                     # Gather outputs for metrics
                     self.metrics_handler.tracker.update(evaluation_results)
                     iterator.set_postfix(**self.metrics_handler.tracker.avg())

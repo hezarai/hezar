@@ -85,7 +85,7 @@ class F1(Metric):
         pos_label = pos_label or self.config.pos_label
         average = average or self.config.average
         sample_weight = sample_weight or self.config.sample_weight
-        n_decimals = n_decimals or self.config.n_decimals
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
         score = f1_score(

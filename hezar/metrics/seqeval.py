@@ -89,7 +89,7 @@ class Seqeval(Metric):
         mode = mode or self.config.mode
         sample_weight = sample_weight or self.config.sample_weight
         zero_division = zero_division or self.config.zero_division
-        n_decimals = n_decimals or self.config.n_decimals
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
         report = classification_report(
@@ -106,7 +106,7 @@ class Seqeval(Metric):
         overall_score = report.pop("micro avg")
 
         results = {
-            "accuracy": format(accuracy_score(predictions, targets)),
+            "accuracy": accuracy_score(targets, predictions),
             "f1": overall_score["f1-score"],
             "recall": overall_score["recall"],
             "precision": overall_score["precision"],

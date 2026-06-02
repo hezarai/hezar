@@ -108,7 +108,7 @@ class CraftImageProcessor(ImageProcessor):
         if mirror:
             images = [mirror_image(image, return_type="numpy") for image in images]
 
-        ratio_values = [self.get_ratio(image) for image in images]
+        ratio_values = [self.get_ratio(image, square_size=size, mag_ratio=mag_ratio) for image in images]
         images = [self._resize(image, square_size=size, mag_ratio=mag_ratio) for image in images]
 
         if mean is not None and std is not None:

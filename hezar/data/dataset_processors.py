@@ -225,7 +225,7 @@ class OCRDatasetProcessor(DatasetProcessor):
 
         """
         if self.text_split_type == "tokenize" and self.tokenizer:
-            token_ids = self.tokenizer(text, padding="max_length", max_length=self.max_length)["input_ids"]
+            token_ids = self.tokenizer(text, padding="max_length", max_length=self.max_length)["token_ids"]
             labels = [token_id if token_id != self.tokenizer.pad_token_id else -100 for token_id in token_ids]
         elif self.text_split_type == "char_split":
             if self.reverse_digits:

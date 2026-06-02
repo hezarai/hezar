@@ -62,15 +62,15 @@ class TextNormalizer(Preprocessor):
         self,
         inputs: str | list[str],
         replace_patterns: list[tuple[str, str]] | list[list[str]] | None = None,
-        nfkd: bool = True,
-        nfkc: bool = True,
+        nfkd: bool | None = None,
+        nfkc: bool | None = None,
         **kwargs,
     ):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        nfkd = nfkd or self.config.nfkd
-        nfkc = nfkc or self.config.nfkc
+        nfkd = self.config.nfkd if nfkd is None else nfkd
+        nfkc = self.config.nfkc if nfkc is None else nfkc
         replace_patterns = replace_patterns or self.config.replace_patterns
 
         if nfkd:
@@ -80,7 +80,7 @@ class TextNormalizer(Preprocessor):
 
         if replace_patterns is not None:
             replacer = normalizers.Sequence(
-                [normalizers.Replace(Regex(src), trg) for src, trg in self.config.replace_patterns]  # noqa
+                [normalizers.Replace(Regex(src), trg) for src, trg in replace_patterns]
             )
             inputs = [replacer.normalize_str(x) for x in inputs]
 

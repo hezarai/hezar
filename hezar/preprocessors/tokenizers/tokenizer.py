@@ -193,10 +193,10 @@ class Tokenizer(Preprocessor):
         Returns:
             List[str]: List of decoded strings.
         """
-        if isinstance(ids[0], int):
-            ids = [ids]  # ty:ignore
         if isinstance(ids, (torch.Tensor, np.ndarray)):
             ids = ids.tolist()  # ty:ignore
+        if len(ids) > 0 and isinstance(ids[0], int):
+            ids = [ids]  # ty:ignore
         return self._tokenizer.decode_batch(ids, skip_special_tokens=skip_special_tokens)
 
     def pad_encoded_batch(
@@ -227,8 +227,7 @@ class Tokenizer(Preprocessor):
         if isinstance(inputs, (list, tuple)) and isinstance(inputs[0], Mapping):
             inputs = {key: [example[key] for example in inputs] for key in inputs[0].keys()}
 
-        exclude_keys = exclude_keys or []
-        exclude_keys += self.uncastable_keys  # avoid possible errors
+        exclude_keys = (exclude_keys or []) + self.uncastable_keys  # avoid possible errors
         inputs = convert_batch_dict_dtype(inputs, dtype="list", skip_keys=exclude_keys)
 
         include_keys = include_keys or list(inputs.keys())
@@ -330,7 +329,7 @@ class Tokenizer(Preprocessor):
             padding_side=self.config.padding_side,
             truncation_side=self.config.truncation_side,
             max_length=max_length,
-            stride=self.config.stride,
+            stride=stride or self.config.stride,
             pad_to_multiple_of=pad_to_multiple_of,
         )
         encodings = self.encode(
@@ -364,13 +363,13 @@ class Tokenizer(Preprocessor):
         if return_overflowing_tokens:
             overflow_to_sample_mapping = []
             for i, encodings_ in enumerate(encodings_dict):
-                overflow_to_sample_mapping += [i] * len(encodings_["input_ids"])
+                overflow_to_sample_mapping += [i] * len(encodings_[self.token_ids_name])
             sanitized_outputs["overflow_to_sample_mapping"] = overflow_to_sample_mapping
 
         # Squeeze tensor if the original input is a single string and return_tensors is `list`
         if (return_tensors == "list" or return_tensors is None) and not is_batch:
             sanitized_outputs = {
-                key: value[0] if len(value) > 0 and isinstance(value[0], list) else value
+                key: value[0] if len(value) == 1 else value
                 for key, value in sanitized_outputs.items()
             }
 
@@ -623,7 +622,7 @@ class Tokenizer(Preprocessor):
         """
         if not isinstance(text, str):
             raise ValueError(f"Expected str type for `text`, got `{type(text)}({text})`")
-        if isinstance(offsets_mapping, list) and not isinstance(offsets_mapping[0], tuple):
+        if isinstance(offsets_mapping, list) and offsets_mapping and not isinstance(offsets_mapping[0], tuple):
             raise ValueError(f"Expected a list of tuples for `offsets_mapping`, got List[{type(offsets_mapping[0])}]")
         tokens = []
         for offset in offsets_mapping:

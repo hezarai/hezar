@@ -70,7 +70,6 @@ class BPETokenizer(Tokenizer):
                 fuse_unk=self.config.fuse_unk,
             )
         )
-        tokenizer.decoder = decoders.ByteLevel()  # noqa
         tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)  # noqa
         tokenizer.decoder = decoders.ByteLevel()  # noqa
         tokenizer.post_processor = processors.ByteLevel(trim_offsets=False)  # noqa

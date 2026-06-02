@@ -125,8 +125,8 @@ class ImageProcessor(Preprocessor):
         rescale = rescale or self.config.rescale
         size = size or self.config.size
         resample = resample or self.config.resample
-        mirror = mirror or self.config.mirror
-        gray_scale = gray_scale or self.config.gray_scale
+        mirror = self.config.mirror if mirror is None else mirror
+        gray_scale = self.config.gray_scale if gray_scale is None else gray_scale
 
         is_single = False
         if not isinstance(images, list) or isinstance(images, str) or isinstance(images, np.ndarray):

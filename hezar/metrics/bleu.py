@@ -65,11 +65,12 @@ class BLEU(Metric):
         Returns:
             dict: A dictionary of the metric results, with keys specified by `output_keys`.
         """
-        n_decimals = n_decimals or self.config.n_decimals
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
         output_keys = output_keys or self.config.output_keys
 
         predictions = [x.split() if isinstance(x, str) else x for x in predictions]  # ty:ignore
-        targets = [x.split() if isinstance(x, str) else x for x in targets]  # ty:ignore
+        # Each hypothesis needs a *list of references*; wrap a tokenized string reference accordingly.
+        targets = [[x.split()] if isinstance(x, str) else x for x in targets]  # ty:ignore
 
         score = corpus_bleu(targets, predictions, weights=weights)
 

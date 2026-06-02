@@ -299,13 +299,14 @@ class WhisperBPETokenizer(BPETokenizer):
         filtered_ids = self._preprocess_token_ids(ids, skip_special_tokens=skip_special_tokens)
         text = super().decode(filtered_ids, skip_special_tokens=skip_special_tokens, **kwargs)
         if decode_with_timestamps:
+            ids_batch = [filtered_ids] if (len(filtered_ids) and isinstance(filtered_ids[0], int)) else filtered_ids
             text = [
                 self._decode_with_timestamps(
-                    ids,
+                    seq,
                     time_precision=time_precision,
                     skip_special_tokens=skip_special_tokens,
                 )
-                for ids in filtered_ids
+                for seq in ids_batch
             ]
         else:
             text = [re.sub(re.compile(r"<\|(\d+\.\d+)\|>"), "", t) for t in text]
@@ -378,7 +379,7 @@ class WhisperBPETokenizer(BPETokenizer):
                 end_timestamp_position = sliced_tokens[-1].item() - timestamp_begin
                 offsets.append(
                     {
-                        "text": self.decode(sliced_tokens),
+                        "text": self.decode(sliced_tokens.tolist())[0],
                         "timestamp": (
                             start_timestamp_position * time_precision,
                             end_timestamp_position * time_precision,
@@ -573,7 +574,7 @@ class WhisperBPETokenizer(BPETokenizer):
                 # - 4/ Regular text
                 if token in all_special_ids:
                     # Either language code or other
-                    text = self.decode([token])
+                    text = self.decode([token])[0]
                     # Removing outer shell <|XX|>
                     text = text[2:-2]
                     language = LANGUAGES.get(text, None)

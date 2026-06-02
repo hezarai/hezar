@@ -85,21 +85,28 @@ class ROUGE(Metric):
         Returns:
             dict: A dictionary of the metric results, with keys specified by `output_keys`.
         """
-        aggregator = scoring.BootstrapAggregator()
+        use_aggregator = use_aggregator if use_aggregator is not None else self.config.use_aggregator
+        n_decimals = n_decimals if n_decimals is not None else self.config.n_decimals
+        output_keys = output_keys or self.config.output_keys
 
-        for ref, pred in zip(targets, predictions, strict=True):
-            if self.config.multi_ref:
-                score = self.scorer.score_multi(ref, pred)
-            else:
-                score = self.scorer.score(ref, pred)
+        score_fn = self.scorer.score_multi if self.config.multi_ref else self.scorer.score
 
-            aggregator.add_scores(score)
+        if use_aggregator:
+            aggregator = scoring.BootstrapAggregator()
+            for ref, pred in zip(targets, predictions, strict=True):
+                aggregator.add_scores(score_fn(ref, pred))
+            agg = aggregator.aggregate()
+            results = {k: agg[k].mid.fmeasure for k in agg}
+        else:
+            sums = {}
+            n = 0
+            for ref, pred in zip(targets, predictions, strict=True):
+                scores = score_fn(ref, pred)
+                for k, v in scores.items():
+                    sums[k] = sums.get(k, 0.0) + v.fmeasure
+                n += 1
+            results = {k: (v / n if n else 0.0) for k, v in sums.items()}
 
-        results = aggregator.aggregate()
-        for key in results:
-            results[key] = results[key].mid.fmeasure
-
-        if output_keys:
-            results = {k: round(v, 4) for k, v in results.items() if k in output_keys}
+        results = {k: round(v, n_decimals) for k, v in results.items() if (not output_keys or k in output_keys)}
 
         return results
